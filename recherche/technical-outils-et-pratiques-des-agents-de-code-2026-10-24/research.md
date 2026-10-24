@@ -1,18 +1,380 @@
 ---
-title: 'technical research: outils, plugins et pratiques des agents de code'
-type: 'technical'
-topic: 'outils, plugins et pratiques des agents de code'
-decision: 'Composer la configuration Claude Code d'Anaël et poser la base de la veille continue'
-source: 'run natif'
-status: draft
+title: 'Veille : outils, plugins et pratiques des agents de code'
+type: 'technical (+ user-voice, academic-lit), forme « select »'
+topic: 'outils, plugins et pratiques des agents de code (Claude Code)'
+decision: "Composer la configuration Claude Code d'Anaël et poser la base de la veille continue"
+source: 'run natif bmad-deep-recon'
+status: complete
 preset: 'deep'
 validation: 'normal'
 created: '2026-10-24'
 updated: '2026-10-24'
+claims: 'registre : 21 affirmations porteuses, 15 verified, 4 unverified, 2 disputed, 0 overturned (recon_kit tally)'
 ---
 
-# technical research: outils, plugins et pratiques des agents de code
+# Veille : outils, plugins et pratiques des agents de code (octobre 2026)
 
-**Decision this research serves:** Composer la configuration Claude Code d'Anaël et poser la base de la veille continue
+**Décision servie :** quelle configuration Claude Code adopter pour la conception, le front, le back, les tests, les coûts et le confort d'usage, sur un poste Windows avec un abonnement Max, la méthode BMAD et le plugin maison agent-cost-kit ; et quelle base donner à une veille continue.
 
-_Sections are appended per the approved research plan; the executive summary is written last and placed here, first._
+## Résumé exécutif
+
+**Ce que disent les preuves.** En 2026, ce qui fait la différence n'est plus le modèle ni le nombre d'outils installés, c'est le **cadrage de l'agent** : un contexte court, des contrôles automatiques qui jugent son travail, et une validation tôt dans la story. Le Thoughtworks Radar d'avril 2026 met le *context engineering* en Adopt et les fichiers d'instructions qui enflent en Caution [1]. La recherche situe les échecs des agents dans leurs premières étapes, invisibles jusqu'à être irrécupérables [2], et la qualité ne s'obtient pas par le prompt mais par l'outillage et la revue [3][4].
+
+**Les trois constats qui pilotent la recommandation.**
+1. **Le natif couvre déjà l'essentiel de la liste.** Mémoire, orchestration parallèle, routage par modèle, revue, navigateur, mesure des coûts : pour chaque catégorie, Claude Code a une fonction native ou un plugin officiel au moins équivalent pour un développeur seul [5][6][7][8]. Sur les 47 dépôts, aucun n'est « strictement meilleur » que son équivalent natif dans la configuration étudiée : 1 est à adopter (en partie), 13 à essayer, 15 à évaluer, 10 à écarter et 8 hors périmètre (tableau en section 2).
+2. **Le coût caché, c'est le contexte fixe et le cache, pas la sortie.** L'écriture du cache pèse 42 à 44 % de la dépense, et compresser les sorties de commandes n'économise que 0,5 à 2,7 % [9]. Le seul gain mesuré sérieusement vient du retrait des outils et du contexte inutiles : −18 à −31 % [10]. Les gros packs de skills vont dans le mauvais sens : ECC ajoute ~131 k caractères de contexte fixe [11], et la liste des skills est plafonnée à 1 % de la fenêtre, au-delà de quoi des descriptions disparaissent [12].
+3. **Les preuves d'efficacité des plugins sont faibles.** Les skills de méthode et de design ne sont évaluées que par leurs auteurs ; le seul test « en aveugle » publié pour une skill de design tombe dans le bruit (7,7 avec, 7,8 sans) [13]. À l'inverse, les contrôles déterministes ont des preuves : tests en lecture seule contre la triche [14], mutation testing contre les tests faibles [15][16], détecteurs exécutés sur la page rendue [17].
+
+**Recommandation.** Garder BMAD et agent-cost-kit comme colonne vertébrale, ne pas installer de pack de méthode concurrent, et investir dans des **contrôles automatiques** plutôt que dans des consignes : protection des tests, porte empirique en revue, boucle de vérification du front, mesure du contexte fixe. Six réglages sont sans regret et applicables tout de suite ; huit hypothèses demandent un test pratique avant décision (section 6).
+
+**Principale réserve.** Presque toutes les études sont des préprints d'un seul laboratoire, et plusieurs chiffres portent sur des modèles de 2025 : chez Claude 5.5, un audit d'octobre 2026 ne voit presque plus de triche aux tests [14]. D'où l'importance des tests pratiques sur tes propres stories.
+
+## 1. Méthode et limites
+
+- **Corpus.** 50 ressources recommandées (47 dépôts GitHub après retrait de 3 doublons, 6 articles ou pages). Métadonnées relues par `gh api` le 2026-10-24 (`data/depots.json`).
+- **Recherche.** 10 dimensions confiées à des chercheurs Opus en parallèle (3 tours au plus, 25 appels web chacun), plus un inventaire des fonctions natives depuis la documentation officielle, puis un tour 2 sur les trous. Chaque affirmation porte sa source ; 21 affirmations porteuses ont été revérifiées par des agents au contexte vierge : 15 confirmées, 4 non vérifiées faute de source indépendante (mais conformes à leur source primaire), 2 contestées et corrigées ici.
+- **Limites.** Reddit est inaccessible aux outils ; ses retours ne passent que par la presse ou les issues GitHub. L'article Medium comparant Superpowers, agent-skills, Pocock et ECC est derrière un paywall (non lu). Aucun outil n'a encore été exécuté : les verdicts « Essayer » et « Évaluer » attendent les tests de la section 6. Le Thoughtworks Radar vol. 35 n'est pas encore paru (attendu début novembre 2026) [1].
+
+## 2. Les 47 dépôts, regroupés par problématique
+
+Verdicts pour la configuration étudiée (Windows, Max, BMAD, FastAPI + Jinja2 + HTML/CSS/JS vanilla). **Adopter** : à installer ou appliquer tel quel. **Essayer** : test court avant adoption. **Évaluer** : intérêt possible, preuves insuffisantes. **Écarter** : moins bon que l'existant ou risqué. **Hors périmètre** : pas un outil d'agent de code pour cette configuration.
+
+| Problématique | Outil | Verdict | Doublon ou équivalent natif | Pourquoi |
+|---|---|---|---|---|
+| Méthode | obra/superpowers | Évaluer | BMAD ; plan mode, `feature-dev` | Revendique les mêmes étapes que BMAD, règle « 1 % de chance → invoquer » [18], gains auto-mesurés, plaintes de lenteur [19][20][21] |
+| Méthode | mattpocock/skills | Essayer, à la carte | — | Skills manuelles sans conflit (`grill-with-docs`, `diagnosing-bugs`), 2,3 k caractères [11] |
+| Méthode | addyosmani/agent-skills | Évaluer | BMAD | Méta-routeur concurrent de BMAD, ~11 k caractères [11] |
+| Méthode | affaan-m/ECC | Écarter | — | ~131 k caractères de contexte fixe, 311 skills : dépasse le budget de la liste d'un ordre de grandeur [11] |
+| Méthode | multica-ai/andrej-karpathy-skills | Essayer (4 principes dans CLAUDE.md, sans plugin) | — | 0,2 à 2,4 k caractères ; dépôt inactif depuis avril |
+| Méthode | liza-mas/liza | Évaluer (lecture seulement) | dev-story → second-avis → reviewer | Même idée que la chaîne maison, rendue mécanique ; WSL2, contrat de ~54 k caractères [11][22] |
+| Méthode | deepakkamboj/developer-assistant-skills | Écarter | BMAD | 1 étoile, ~15 k caractères |
+| Méthode | spotify/portal-ai-plugins | Hors périmètre | — | Lié à Spotify Portal (Backstage) |
+| Méthode | anthropics/skills | Adopter `skill-creator` seulement | officiel | Bench avec et sans skill pour mesurer les skills maison [23] |
+| Design front | pbakaus/impeccable | Essayer (sans hooks ni télémétrie) | `frontend-design` (officiel) | Seul détecteur déterministe sur URL rendue (62 règles), donc compatible Jinja ; télémétrie par défaut [24][17] |
+| Design front | Leonxlnx/taste-skill | Évaluer | — | Landing pages seulement ; centaines de milliers de tokens par page ; gain dans le bruit [13] |
+| Design front | Nutlope/hallmark | Évaluer | — | Ne se déclenche pas sans être nommé (0/12), sous-agent imbriqué, bloque 30 % des essais non interactifs [13] |
+| Design front | nextlevelbuilder/ui-ux-pro-max-skill | Écarter | — | Tailwind par défaut, publication npm cassée depuis août |
+| Design front | google-labs-code/design.md | Essayer | Claude Design | Contrat commun lu ou écrit par les autres skills ; format en alpha [25][26] |
+| Design front | VoltAgent/awesome-design-md | Évaluer (exemples du format) | — | Collection de DESIGN.md de marques |
+| Design front | nexu-io/open-design | Hors périmètre | Claude Design (inclus dans Max) [27] | Espace de design complet, doublon du natif |
+| Design front | emilkowalski/skills | Essayer, sélectivement | — | Règles d'animation et de performance CSS utiles en vanilla |
+| Design front | greensock/gsap-skills | Hors périmètre | — | Utile seulement si GSAP est adopté |
+| Design front | DavidHDev/react-bits, DavidHDev/canvas-ui, oso95/scroll-world | Écarter | — | Liés à React / shadcn / WebGL |
+| Contexte, mémoire | thedotmack/claude-mem | Écarter | mémoire automatique native | 9 types de hooks dont un PreToolUse synchrone, faille corrigée en septembre, aucun gain mesuré [28][29] |
+| Contexte, mémoire | Graphify-Labs/graphify | Évaluer (mode code seul, à la demande) | grep + LSP + Explore | Seul banc : 6 questions, comparé à grep et jamais au LSP [30][31][32] |
+| Contexte, mémoire | elstongun/leviathan | Hors périmètre | — | Index de jeux d'enregistrements ; 19 jours, un contributeur [33] |
+| Diagrammes | tt-a1i/archify | Évaluer | Mermaid | Fidélité au code non prouvée ; contacte son serveur toutes les 24 h [34] |
+| Diagrammes | cathrynlavery/diagram-design | Essayer (livrables client) | Mermaid pour la doc versionnée | Se dit lui-même moins adapté que Mermaid à la doc versionnée [35] |
+| Coûts | microsoft/TokenEconomizer | Évaluer ; reprendre son idée | — | Meilleures preuves de la liste (−18 à −31 %), mais pas de Windows natif [10] |
+| Coûts | alexei-led/claude-router | Écarter | `/advisor`, effort, modèle des sous-agents | Aucune économie mesurée, de l'aveu de l'auteur ; prompts envoyés à un classifieur tiers [36][37] |
+| Coûts, sobriété | Institut-du-Numerique-Responsable/green-claude | Évaluer (audit d'écoconception à la demande) | — | Ne mesure rien, ajoute ~15,8 k caractères et des hooks [38][39] |
+| Routage | BerriAI/litellm | Évaluer | endpoint Anthropic natif d'Ollama / LM Studio | Utile seulement pour mêler cloud et local facturés à l'API ; paquets PyPI compromis en mars 2026 [40] |
+| Routage | felipevicens/aaif-labs (agentgateway) | Hors périmètre ; agentgateway : Évaluer | Claude apps gateway | Le dépôt est un lab K8s personnel ; agentgateway (AAIF, Apache-2.0, binaire Windows) est la piste pour conseiller des clients [41][42][43] |
+| Routage | theroyallab/tabbyAPI | Écarter | Ollama, llama.cpp | Pas d'endpoint Anthropic, GPU NVIDIA requis, AGPL [44] |
+| Modèles locaux | AlexsJones/llmfit | Essayer (présélection) | — | Estimations optimistes sur matériel modeste ; ne pas installer sa skill (faite pour OpenClaw) |
+| Revue | alibaba/open-code-review | Essayer (en délégation) | `/code-review` | Déterministe + LLM, ~15× moins de tokens selon l'éditeur, contredit par une reproduction sur 10 PR [45][46] |
+| Sécurité | cloudflare/security-audit-skill | Évaluer (sous WSL) | `/security-review`, ultrareview | Meilleure méthode (vérificateur frais qui tente de réfuter), mais validateurs cassés sous Windows natif [47][48] |
+| Sécurité des skills | NVIDIA/SkillSpector | Essayer (`--no-llm`, avant installation) | — | Aucun taux de détection publié ; tous les scanners testés ont été contournés [49] |
+| Tests | microsoft/playwright-cli | Essayer (vérification headless) | Claude in Chrome, Playwright MCP | Plus d'écart de tokens notable avec le MCP [50] ; génère des tests TypeScript hors de pytest [51] |
+| Orchestration | paperclipai/paperclip | Écarter | agent view | « Entreprise d'agents » hors méthode supervisée ; blocages silencieux, bugs Windows, télémétrie ; 106 k étoiles pour très peu de discussions [52][53][54][55] |
+| Orchestration | stablyai/orca | Évaluer | agent view | Multi-fournisseurs, annotation de diffs, Design Mode ; usage réel attesté [56][57][58] |
+| Orchestration | SmythOS/smythos-studio | Hors périmètre | — | Constructeur d'agents visuel, dormant [59] |
+| Expérience | ayghri/i-have-adhd | Évaluer (essayer d'abord le style natif Concise) | output style Concise | Régression en débogage : pousse à affirmer une cause sans preuve [60][61] |
+| Rédaction | blader/humanizer | Essayer (rédaction seulement) | — | Préféré en aveugle (16/16, petit échantillon), mais les détecteurs le repèrent toujours [62][63] |
+| Veille, données web | firecrawl/firecrawl | Essayer (veille, service hébergé) | WebFetch | WebFetch échoue sur les pages rendues en JavaScript ; cœur sous AGPL [64][65] |
+| Veille, données web | apify/apify-mcp-server | Évaluer | WebFetch, WebSearch | Télémétrie par défaut, paiements par l'agent à interdire |
+| Données | public-apis/public-apis | Hors périmètre | — | Annuaire d'API |
+| Marketing | every-app/open-seo | Hors périmètre | — | Utile seulement en mission SEO |
+| Démonstrations | heygen-com/hyperframes | Essayer (vidéos de démo) | — | Vidéo à partir de HTML, comme ta pile ; Windows non vérifié [66] |
+
+Articles et pages de la liste : la page **advisor** décrit une fonction native à essayer [67] ; l'article d'Anthropic sur **sa revue de code** donne des règles de convergence à adopter [68][69] ; le billet **MLflow** confirme que l'OpenTelemetry natif suffit pour tracer [70] ; **agent-standup** est trop jeune pour conclure ; le billet **RTK** mesure un gain marginal [9] ; l'article **Medium** n'a pas pu être lu.
+
+## 3. Constats par problématique
+
+### 3.1 Méthode de développement
+- Trois philosophies : pipeline imposé (Superpowers, Liza, ECC), boîte à outils à la carte (Pocock, Karpathy), cycle complet routé par une méta-skill (addy, deepakkamboj) [71][72]. Superpowers, addy et BMAD revendiquent les mêmes étapes : en faire tourner deux comme routeurs automatiques crée deux sources de vérité. Seules les skills **manuelles** (`disable-model-invocation`) s'ajoutent à BMAD sans conflit [23].
+- Aucun banc indépendant ne compare ces méthodes. Les skills curées aident (+11,6 points en génie logiciel dans SkillsBench v4), celles générées par le modèle font **moins bien** que rien ; multiplier les skills disponibles ne fait pas chuter la réussite, mais rend leur usage imprécis [18].
+- Natif : plan mode, `/goal`, hook Stop, `/code-review`, plugins officiels `feature-dev` et `skill-creator` [73][74].
+- **Face à tes projets** : BMAD + agent-cost-kit couvre déjà toutes les étapes, avec des mesures (1,18 à 1,60 $ par story contre 6,77 à 7,31 $ avec l'ancien setup). Aucun pack n'a de raison de le remplacer.
+
+### 3.2 Design et front
+- Aucune skill anti-« AI slop » n'est strictement meilleure ; chacune gagne dans un cas (tableau de la section 2). Leur point faible commun est l'**activation** : sans être nommées, elles ne se déclenchent pas, et leurs fichiers de règles ne sont pas lus [13]. Dans un sous-agent `dev-story`, il faut donc nommer la skill dans le prompt.
+- Ce qui a des preuves : la vérification **sur la page rendue** (détecteurs déterministes, puis critique visuelle sur capture, jusqu'à +17,8 % en 3 cycles) [17][75][25].
+- Trous : aucune skill ne lit les templates Jinja (il faut passer par l'URL rendue), aucune n'intègre un audit d'accessibilité sémantique (axe), aucune ne traite la sobriété [76][77].
+- Natif ou officiel : skill `frontend-design`, plugins `playwright`, `chrome-devtools-mcp` et `modern-web-guidance` (Google Chrome, utile pour les API HTML/CSS natives), Claude in Chrome, Claude Design [78][79][27][80].
+
+### 3.3 Contexte, mémoire, compréhension du code
+- Le natif suffit : CLAUDE.md court et règles par chemin chargées à la demande, mémoire automatique (index de 200 lignes ou 25 Ko), `/doctor prompt-audit`, sous-agent Explore, LSP, et coût de contexte affiché par plugin [8][81].
+- Les résumés en langage naturel restituent mal le comportement du code (4 questions sur 45, contre 27 avec le code source) : un argument contre les mémoires « résumées » [82]. L'empoisonnement de mémoire est démontré, y compris sur le MEMORY.md de Claude Code [83][84].
+- **Face à tes projets** : ta mémoire automatique et ton `MEMORY.md` court suivent déjà la bonne pratique ; aucun outil ne traite la péremption des mémoires.
+
+### 3.4 Coûts et tokens
+- Postes de coût : écriture du cache 42 à 44 %, lecture 35 à 38 %, sortie 10 à 29 % selon les mesures [9], ce que confirment tes propres mesures (39 à 42 / 38 à 40 / 19 à 21 %).
+- Leviers natifs : TTL du cache des sous-agents (5 min par défaut, même sur abonnement) [85], éviter tout changement de modèle en cours de session (`opusplan` en est un) [86], `/clear` plutôt que `/compact` [87], réduire la liste des skills et les outils jamais appelés [12][10], filtrer les sorties de tests par hook [88].
+- `/advisor` (Opus conseille un exécutant moins cher) : +2,7 points et −11,9 % de coût sur des modèles 4.6, non mesuré sur les 5.5 [67][89].
+- Empreinte : rien n'est mesuré pour un modèle fermé ; EcoLogits ne compte que les tokens de sortie [90][91]. agent-cost-kit hérite de cette limite.
+- **Face à tes projets** : agent-cost-kit couvre déjà la mesure, l'estimation EcoLogits et la règle du TTL ; il lui manque la mesure du **contexte fixe** (skills, hooks, outils) et une règle sur le retrait des outils inutilisés.
+
+### 3.5 Routage cloud / local
+- Claude Code se branche sur tout serveur au format Anthropic Messages via `ANTHROPIC_BASE_URL`, mais Anthropic ne prend pas en charge les modèles non-Claude [92]. Ollama, LM Studio et llama.cpp exposent nativement `/v1/messages` : pas besoin de passerelle pour le local [93][94][95]. Ollama n'a ni cache de prompt ni `count_tokens` [96].
+- Une passerelle avec sa propre clé **fait sortir de l'abonnement Max** (facturation au token) ; `ANTHROPIC_BASE_URL` seul le conserve [96].
+- Une requête Claude Code pèse ~29 k tokens, surtout des définitions d'outils (une mesure de blog) [97] : un modèle ≤ 4B sur CPU ne peut pas servir de moteur à Claude Code ; il reste utile en appel direct (lookup, résumé). Les MoE à ~3 B actifs (Qwen3.6-35B-A3B, que tu as) sont la classe crédible [98].
+- Les en-têtes d'indice de passerelle (v2.1.273+) permettent de router et d'attribuer les coûts par sous-agent ; ils sont désactivés par défaut sur une URL personnalisée [99].
+- **Face à tes projets** : slm-quality-bench et wavelocalai appellent Ollama directement ; c'est la bonne voie pour les SLM. La comparaison cloud / local « en situation d'agent » demande un protocole dédié (section 6, après ton benchmark).
+
+### 3.6 Revue de code et sécurité
+- Anthropic ne publie pour sa revue ni taux de faux positifs ni coût ; ce qui se transpose à un dev solo, ce sont ses **règles de convergence** : 3 passes au plus, ne relire que le nouveau diff, constats étiquetés Important / Nit / Pre-existing [68][69].
+- Sur Max, le service Code Review (GitHub) est inaccessible ; restent `/code-review`, `/code-review ultra` (3 essais gratuits puis 5 à 25 $) et `/security-review` [100].
+- La précision des revues par LLM reste basse (5,6 à 39,9 % selon les modèles, une étude) ; l'accord de plusieurs relecteurs ne prouve rien, un test si [101]. Ta chaîne Sonnet → Haiku → Opus reste dans une seule famille de modèles ; l'apport d'un critique d'une autre famille est une hypothèse, pas une mesure [101].
+- Chaîne d'approvisionnement : les scanners de skills ont tous été contournés [49] ; lire une skill avant de l'installer reste indispensable. Le sandbox natif exige WSL2 sous Windows [102].
+
+### 3.7 Tests et vérification
+- Navigateurs pour agents : plus d'écart de tokens notable entre playwright-cli et Playwright MCP [50]. Claude in Chrome pour la vérification interactive (pas en CI), une CLI headless pour les runs autonomes ; agent-browser est le seul à intégrer diff visuel et audit d'accessibilité [103][104].
+- Triche aux tests : chez les modèles de 2025, elle passait surtout par la modification des tests, que des tests en lecture seule bloquent [14]. Règle native `deny Edit(tests/**)` (ne couvre pas un script Python qui écrit le fichier) [105].
+- Tests faibles : 36 % des commits d'agents ajoutent des mocks contre 26 % des commits non-agents [106] ; les tests jetables (`print`) coûtent jusqu'à 49 % de tokens d'entrée pour ~2 points de résolution [107]. Parades étayées : mutation testing (cosmic-ray tourne nativement sous Windows, mutmut exige WSL) [15][16][108], property-based testing [109], couverture différentielle en CI [110].
+- Playwright Python n'a pas de comparaison de captures et ne l'aura pas ; il a les snapshots ARIA [111][112].
+
+### 3.8 Orchestration, observabilité, expérience
+- Natif : agent view (sessions en arrière-plan, worktree par session, notifications), dynamic workflows, `/batch`, agent teams (expérimental, sans reprise après `/resume`, sans panneaux dans Windows Terminal) [6][113][7].
+- OpenTelemetry natif : coût et tokens par agent (`agent_id`, `parent_agent_id`, `workflow.run_id`) ; le tracing de base est en bêta, seule sa version détaillée demande une liste blanche en CLI interactive [114]. Il pourrait remplacer une partie de l'analyse des transcriptions d'agent-cost-kit.
+- Lisibilité : le style natif **Concise** recouvre l'essentiel d'i-have-adhd [60].
+
+### 3.9 Capacités voisines
+Pas des outils d'agent de code, mais utiles à la veille et aux démonstrateurs.
+- **firecrawl** : Essayer pour la veille, en service hébergé (le cœur est sous AGPL). WebFetch natif convertit en Markdown avec perte et échoue sur les pages rendues en JavaScript [115][64][65].
+- **apify-mcp-server** : Évaluer ; télémétrie par défaut, et paiements par l'agent à interdire.
+- **public-apis** : Hors périmètre (annuaire). **open-seo** : Hors périmètre, sauf mission SEO.
+- **hyperframes** : Essayer pour les vidéos de démo de tes applications, car il part de HTML, comme ta pile ; environ 3 min de rendu pour 30 s en 1080p, Windows non vérifié [66].
+
+**Voix des analystes et des autres outils.** Gartner conseille de ne pas confier toutes les tâches aux agents et met la gouvernance de tout le cycle de développement au premier plan [116] ; Forrester juge le code produit « souvent problématique » [117]. Les plaintes vues pour Claude Code sont transverses : quotas opaques chez Codex, Copilot (facturé au token depuis le 2026-06-01) et Cursor [118][119][120], question tranchée d'office après 60 s dans Claude Code et Codex [121].
+
+## 4. Problématiques que rien ne traite bien
+
+| Problème | Ce qui existe | Source |
+|---|---|---|
+| Évaluer sa configuration d'agent dans le temps | `claude plugin eval`, `skill-creator`, `/skill-doctor` pour une skill ; rien pour une configuration entière | [122][123] |
+| Charge de l'humain qui relit | Agent view regroupe ce qui est prêt ; span `blocked_on_user` en traces bêta ; rien ne régule | [7][114] |
+| Tests trichés ou faibles, mesurés à chaque story | Mutation testing trop lent tel quel ; détection de triche à 42–65 % | [124][16] |
+| Robustesse du relecteur à l'injection de prompt | `/security-review` non durci ; aucun outil ne mesure la sienne | [125][126] |
+| Contrôle à l'exécution des skills tierces | Scanners statiques contournés ; rien de prêt sous Windows | [49] |
+| Péremption et empoisonnement de la mémoire | Rappel à élaguer dans la doc ; rien ne lie une mémoire à sa source | [83][84] |
+| Garder l'abonnement Max en routant une partie vers le local | Non documenté | [96] |
+| Empreinte réelle d'un modèle fermé | Estimations sur les seuls tokens de sortie | [90] |
+| Accessibilité sémantique et sobriété du front généré | Aucune skill n'intègre axe ; aucune ne vise la sobriété | [76] |
+| Traçabilité exigences → code et attribution du code IA, licences | Git AI, Agent Trace en Assess ; voir tour 2 | [122][127][128] |
+| Propriété intellectuelle du code livré à un client | L'indemnisation d'Anthropic figure dans les Commercial Terms (API, Team, Enterprise), pas dans les Consumer Terms qui couvrent Max ; elle exclut le code modifié ou combiné | [129][130] |
+| Évaluer une configuration complète | `claude plugin eval` exécute sans CLAUDE.md, réglages, hooks ni autres plugins | [131] |
+| Conflits sémantiques entre stories parallèles | Isolement par worktree seulement | [58] |
+| Coût des reprises après pause (cache expiré) | Rien ; un praticien attribue 55 % de ses écritures de cache aux reprises après une heure | [132] |
+
+## 5. Enseignements transverses
+
+1. **Du prompt vers le contrôle.** Les dimensions méthode, tests, revue et design convergent : les consignes (skills, CLAUDE.md, prompts de sécurité) ont un effet faible ou non mesuré [4][13], les contrôles déterministes ont des preuves [14][15][17]. Le Radar fait la même lecture : « feedback sensors » en Trial, « instruction bloat » en Caution [1].
+2. **Le contexte fixe est un coût et un risque.** Chaque skill, hook ou plugin installé est relu à chaque appel, consomme le budget de la liste des skills, et élargit la surface d'attaque [12][49]. La meilleure économie mesurée vient du retrait [10]. Corollaire : le critère d'entrée d'un outil dans ta configuration doit inclure son coût de contexte, mesuré.
+3. **Le natif rattrape les plugins en 6 mois.** Mémoire, orchestration, navigateur, design system, évaluations de plugins : la plupart des fonctions vendues par les dépôts les plus étoilés de la liste ont un équivalent natif apparu en 2026. Pour la veille, un changelog Claude Code vaut plus qu'un classement d'étoiles.
+4. **Les étoiles ne disent rien.** paperclip (106 k étoiles) a très peu de discussions ; TokenEconomizer (223 étoiles) a les meilleures preuves de la liste [55][10].
+
+## 6. Recommandations
+
+### 6.1 Sans regret, applicables maintenant (confiance haute, réglages réversibles)
+1. **Ne pas installer de pack de méthode à côté de BMAD** (Superpowers, addy, ECC, deepakkamboj). Base : conflit d'étapes et coût fixe mesurés [11][71].
+2. **Mesurer ton contexte fixe actuel** (`/context`, `/skill-doctor`, `claude plugin details`) avant tout ajout, et faire de ce coût un critère d'entrée. Base : [12][8].
+3. **Adopter les règles de convergence d'Anthropic dans le reviewer** d'agent-cost-kit : 3 passes au plus, nouveau diff seulement, étiquettes Important / Nit / Pre-existing. Base : [69] (pratique publiée, non chiffrée).
+4. **Ajouter au prompt de `dev-story` une consigne anti-mock et anti-`print`** (pas de mock des modules internes, assertions plutôt que `print`, pas de script de test jetable), plutôt que dans CLAUDE.md, pour ne pas alourdir le contexte de toutes les sessions. Base : [106][107] (études sur des modèles de 2025).
+5. **Écarter** claude-mem, claude-router, RTK, paperclip, ui-ux-pro-max, tabbyAPI. Base : section 2.
+6. **Avant toute installation d'une skill tierce** : la lire, puis la passer à SkillSpector `--no-llm` ; ne jamais considérer un scan propre comme une preuve. Base : [49].
+
+### 6.2 À décider après un test pratique (section 7)
+Les huit tests ci-dessous portent les décisions qui restent : CLAUDE.md minimal, protection des tests et mutation testing, porte empirique et critique d'une autre famille en revue, `/advisor`, boucle de vérification front et choix de la skill de design, choix du navigateur, OpenTelemetry natif contre l'analyse des transcriptions, modèles locaux.
+
+### 6.3 À construire en s'inspirant des outils (évolutions d'agent-cost-kit ou nouveaux mods)
+| Outil à construire | Inspiré de | Pourquoi le construire plutôt que l'installer |
+|---|---|---|
+| **Mesure et garde-fou du contexte fixe** : coût par skill, plugin, hook et outil depuis les transcriptions, alerte au-delà d'un seuil, liste des outils jamais appelés | TokenEconomizer, `/skill-doctor` | TokenEconomizer ne tourne pas sous Windows ; le levier est le plus rentable mesuré [10] |
+| **Boucle de vérification du front** pour FastAPI + Jinja : page rendue, captures à 3 largeurs, audit axe, snapshots ARIA, détecteur de motifs | impeccable `detect`, hallmark `sloplint`, agent-browser | Aucune skill ne traite Jinja ni l'accessibilité sémantique [76] |
+| **Second avis d'une autre famille** (GPT, Gemini ou Mistral via OpenRouter) | Refute-or-Promote, Cloudflare | Hypothèse à tester ; ta chaîne est mono-famille [101] |
+| **Porte empirique** : un test qui échoue exigé pour tout constat Important | Refute-or-Promote, revue d'Anthropic | Le consensus ne prouve rien, un test si [101] |
+| **Protection des tests par phase** : tests de la story relus puis verrouillés pendant l'implémentation (hook PreToolUse), contrôle du diff sur `tests/` par le second avis | ImpossibleBench, superpowers TDD | La règle `deny` native vaut pour toute la session [105] |
+| **Veille continue** : `watchlist` des dépôts et sources, collecte `gh api` mensuelle, routine planifiée qui signale releases et nouveaux candidats | ce run | Aucun outil de la liste ne fait de veille sur sa propre catégorie |
+
+## 7. Tests pratiques proposés (phase 4)
+
+Contraintes : ni Ollama ni GPU avant la fin du benchmark local (~2026-10-27), charge locale minimale (pas de rejeu de stories ni de suite complète en local) ; les tests lourds passent par la CI GitHub ou une session cloud. Appels hors Claude via OpenRouter (facturés à l'usage).
+
+| # | Test | Décide | Coût et contrainte | Quand |
+|---|---|---|---|---|
+| T1 | **Diagnostics sans rejeu** : contexte fixe actuel ; sur tes transcriptions passées, part de Bash dans les tokens d'entrée, coût des reprises après pause, part des constats du second avis Haiku retenus par le reviewer, simulation d'un critère d'arrêt | Garde-fou du contexte fixe ; utilité du second avis ; règle de reprise | Très faible, scripts sur fichiers | Maintenant |
+| T2 | **OpenTelemetry natif contre `mesurer-couts`** sur une session | Simplification d'agent-cost-kit | Faible | Maintenant |
+| T3 | **CLAUDE.md minimal contre actuel**, 5 stories rejouées | Taille de tes CLAUDE.md | Élevé ; en CI ou après le benchmark | Après accord |
+| T4 | **Tests** : consigne anti-mock + tests verrouillés pendant l'implémentation + couverture différentielle + mutation testing (cosmic-ray) borné à la story | Protection des tests, porte de CI | Moyen ; mutation en CI | Après accord |
+| T5 | **Revue** : porte empirique + règles de convergence + second avis d'une autre famille (OpenRouter), sur 5 PR aux bugs connus ; open-code-review en option | Chaîne de revue | Moyen ; quelques dollars OpenRouter | Après accord et clé |
+| T6 | **`/advisor`** : Sonnet + conseiller Opus contre le pipeline actuel, 5 stories | Modèle de `dev-story` | Élevé | Après T3 |
+| T7 | **Front** : rien / `frontend-design` / impeccable / hallmark, puis boucle déterministe, sur un écran Jinja ; navigateur : Claude in Chrome / playwright-cli / agent-browser sur un parcours de 7 étapes | Skill de design, boucle de vérification, navigateur | Moyen ; ta note à l'aveugle requise | Après accord |
+| T8 | **Local** : ≤ 4B en appel direct comme lookup contre Haiku ; MoE 35B-A3B dans Claude Code ; routage des sous-agents Explore par en-têtes | Place des modèles locaux | GPU et Ollama | Après le benchmark |
+
+Tests écartés faute d'enjeu suffisant pour l'instant : graphify contre LSP, agent view contre le run autonome, orca, Concise contre i-have-adhd (à faire au fil de l'eau), humanizer en français (à faire avec le post LinkedIn).
+
+## 8. Questions ouvertes
+
+- **Les chiffres sur la triche et les mocks valent-ils pour Claude 5.5 ?** Les études portent sur des modèles de 2025 [14][106]. T4 y répond sur tes stories.
+- **Un critique d'une autre famille trouve-t-il des défauts qu'Opus manque ?** Aucune mesure contrôlée [101]. T5.
+- **Les gains de `/advisor` tiennent-ils sur les modèles 5.5 ?** [67]. T6.
+- **Que dit le Thoughtworks Radar vol. 35 ?** Attendu début novembre 2026 : premier contrôle de la veille continue.
+- **Productivité réelle** : non tranchée par la recherche [133] ; seule la mesure sur tes propres projets (coût, défauts, temps humain) peut trancher pour toi.
+- **Code produit sous Max et livré à un client** : quelles garanties de propriété intellectuelle ? Les Consumer Terms n'ont pas été lus ; avant une mission, vérifier ou passer par une offre commerciale (API, Team, Enterprise) [129][130].
+- **BCG, Accenture, Capgemini, Deloitte** : aucune publication publique trouvée sur les agents de code en 2026.
+
+## 9. Preuves contraires
+
+Le passage « red team » (recherche délibérée de preuves contraires sur chaque conclusion majeure) n'a pas été lancé à ce stade (validation « normal »). Les vérifications ont toutefois renversé ou nuancé trois idées reçues de départ : l'avantage de tokens des CLI sur les MCP [50], l'effondrement des skills en grand nombre [18], et le gain des skills de design [13]. Un passage red team sur la recommandation finale est proposé après les tests.
+
+## 10. Sources
+
+| n | affirmation ou constat appuyé | éditeur (lien) | date de publication | consultée | confiance | trace |
+|---|---|---|---|---|---|---|
+| 1 | Vérification C3 : verified (vol. 34) ; vol. 35 non paru | [vérification du run](https://agentic-ai.readthedocs.io/en/latest/AgenticTechStack/thoughtworks-radar-vol34/) | — | 2026-10-24 | verified (vol. 34) ; vol. 35 non paru | verifications (C3) |
+| 2 | Sur 1 794 trajectoires Terminal-Bench (7 modèles, 3 scaffolds), les échecs sont surtout épistémiques, commencent dans les premières étapes et restent cachés jusqu'à ce qu'ils soient irrécupérables. | [Zhao, Barr, Sarro, Ye et al.](https://arxiv.org/abs/2607.09510) | 2026-07-10 | 2026-10-24 | moyenne (un seul labo) | digests/litterature-r1.md (A1) |
+| 3 | Cursor (807 dépôts contre 1 380 témoins) : vitesse en hausse transitoire ; alertes statiques et complexité en hausse persistante, qui expliquent le ralentissement ultérieur. | [He, Miller, Agarwal, Kästner, Vasilescu, MSR 2026](https://arxiv.org/abs/2511.04427) | 2025-11 | 2026-10-24 | haute (Pub, x) | digests/litterature-r1.md (A19) |
+| 4 | SusVibes : SWE-agent avec Claude 4 Sonnet, 57 % fonctionnel contre 11,8 % sûr ; les consignes de sécurité génériques sont inefficaces. | [CMU (équipe LeiLi)](https://arxiv.org/abs/2512.03262) | 2025-12 | 2026-10-24 | moyenne (x, P) | digests/litterature-r1.md (A21) |
+| 5 | Documentation officielle Claude Code : `sub-agents` | [Anthropic](https://code.claude.com/docs/en/sub-agents) | page vivante | 2026-10-24 | haute | digests/natif-anthropic-r1.md |
+| 6 | Claude Code offre 5 modes de parallélisme (sous-agents, agent view, agent teams, dynamic workflows, Projects), plus worktrees, cross-session messaging et `/batch` (5–30 sous-agents en worktree) | [Anthropic](https://code.claude.com/docs/en/agents.md) | n.d. | 2026-10-24 | haute | digests/orchestration-ux-r1.md (A1) |
+| 7 | Agent view : aperçu de recherche ; worktree par session sous `.claude/worktrees/` ; états « Needs input »/« Ready for review » ; notifications + hook Notification (`agent_needs_input`, `agent_completed`) ; superviseur qui survit à la fermeture du terminal ; extinction = sessions « failed » relançables ; correctifs spécifiques à Windows ; PR brouillon automatique | [Anthropic](https://code.claude.com/docs/en/agent-view.md) | n.d. (changelog jusqu'à v2.1.299) | 2026-10-24 | haute | digests/orchestration-ux-r1.md (A3) |
+| 8 | Mémoire automatique : index MEMORY.md (200 lignes ou 25 Ko chargés), fichiers par sujet, locale à la machine, par dépôt ; ignore architecture, chemins et correctifs ; rappel à élaguer les entrées périmées | [Anthropic](https://code.claude.com/docs/en/memory) | n.d. | 2026-10-24 | haute | digests/contexte-memoire-r1.md (N1) |
+| 9 | Vérification A3 : verified (avec corrections) | [vérification du run](https://arxiv.org/html/2607.12161) | — | 2026-10-24 | verified (avec corrections) | verifications (A3) |
+| 10 | Vérification A2 : verified (avec corrections) | [vérification du run](https://www.yodev.dev/t/tokeneconomizer-el-plugin-de-microsoft-para-claude-code-codex-y-copilot-cli-que-recorto-un-31-por-ciento-del-contexto-yodev-tested/5756) | — | 2026-10-24 | verified (avec corrections) | verifications (A2) |
+| 11 | Coût fixe mesuré (caractères de descriptions listées et injection au démarrage) : Superpowers 2 632 + ~3,4 k ; Pocock 2 266 (11 listées sur 27) ; addy ~11 k ; ECC ~131 k (311 skills, 97 commandes, 71 agents, 27 hooks) ; Liza 5 k + contrat ~54 k ; deepak ~15 k ; Karpathy 238 ou 2 357 | mesure du chercheur (archives des dépôts (`gh api …/tarball`), script local) | — | 2026-10-24 | haute | digests/methode-r1.md (M1) |
+| 12 | Vérification A4 : unverified (primaire confirmée) | [vérification du run](https://dev.to/rulestack/too-many-claude-code-skills-how-the-listing-budget-decides-which-descriptions-claude-sees-4a6m) | — | 2026-10-24 | unverified (primaire confirmée) | verifications (A4) |
+| 13 | Vérification C1 : verified (avec nuances) | vérification du run (lot-c.md) | — | 2026-10-24 | verified (avec nuances) | verifications (C1) |
+| 14 | Vérification B2 : verified (avec précisions) | [vérification du run](https://www.lesswrong.com/posts/qnrjAhiqire7JeoN2/good-evals-are-hard-an-impossiblebench-audit) | — | 2026-10-24 | verified (avec précisions) | verifications (B2) |
+| 15 | Meta ACH : tests guidés par les mutants, 73 % acceptés par les ingénieurs | [Meta (FSE 2025)](https://alphaxiv.org/abs/2501.12862) | 2025-01 | 2026-10-24 | moyenne | digests/tests-verification-r1.md (A16) |
+| 16 | SWE-Mutation : les suites écrites par LLM détectent 36 % des mutants (DeepSeek-V3.1) | [ACL 2026 Findings](https://preview.aclanthology.org/ingest-acl/2026.findings-acl.1976/) | 2026 | 2026-10-24 | basse (résumé de recherche seul) | digests/tests-verification-r1.md (A17) |
+| 17 | Le détecteur scanne HTML/CSS/JSX/Vue/Svelte/Astro et des URL rendues ; Jinja non listé ; un scan propre n'est pas une preuve de qualité | [impeccable](https://impeccable.style/docs/detector) | n.d. | 2026-10-24 | haute | digests/design-front-r1.md (A2) |
+| 18 | Vérification C6 : overturned (« effondré ») ; disputed (+4,5) ; verified (Superpowers) | vérification du run (lot-c.md) | — | 2026-10-24 | overturned (« effondré ») ; disputed (+4,5) ; verified (Superpowers) | verifications (C6) |
+| 19 | Lenteur de réponse attribuée à Superpowers (issue ouverte, 27 commentaires) | [GitHub](https://github.com/obra/superpowers/issues/743) | 2026-03-15 | 2026-10-24 | moyenne | digests/methode-r1.md (U1) |
+| 20 | En exécution par sous-agents, un plan simple épuise le budget de 5 h (Codex) ; reproduit en 2026-09 | [GitHub](https://github.com/obra/superpowers/issues/1152) | 2026-04-13 | 2026-10-24 | moyenne | digests/methode-r1.md (U2) |
+| 21 | v7 : questions de brainstorming de faible valeur ; le mainteneur reproduit un saut d'implémentation dans 24 essais sur 24 | [GitHub](https://github.com/obra/superpowers/issues/2530) | 2026-10-16 | 2026-10-24 | haute | digests/methode-r1.md (U3) |
+| 22 | Liza : contrat, paires adversariales, superviseur Go, 13 rôles, worktrees, reprise après crash ; « reviewer accuracy … total cost … have not been independently established » ; runs gourmands en tokens | liza-mas (README liza-mas/liza (data/raw)) | 2026-10 | 2026-10-24 | haute | digests/orchestration-ux-r1.md (A25) |
+| 23 | La liste des skills est plafonnée à 1 % de la fenêtre ; en cas de dépassement, les descriptions des skills les moins invoquées sont retirées ; plafond de 1 536 caractères par entrée ; `disable-model-invocation` retire la description du contexte ; `/skill-doctor`, `skillOverrides`, `claude plugin eval` ; `skill-creator` fait du bench avec et sans skill | [Anthropic](https://code.claude.com/docs/en/skills) | n.d. | 2026-10-24 | haute | digests/methode-r1.md (D1) |
+| 24 | Impeccable : 1 skill, 24 commandes, 62 règles déterministes, hooks Claude Code dans settings.local.json, hooks exécutés même si l'appel du modèle est refusé, télémétrie par défaut (opt-out), dérivé de frontend-design | [pbakaus (auteur)](https://github.com/pbakaus/impeccable) | README au 2026-10-24 | 2026-10-24 | haute (faits de config) | digests/design-front-r1.md (A1) |
+| 25 | Vérification C2 : verified | vérification du run (lot-c.md) | — | 2026-10-24 | verified | verifications (C2) |
+| 26 | Plancher de hallmark : focus-visible, repli reduced-motion, contenu sans JS ; DESIGN.md à la racine prioritaire ; relecteur en sous-agent | [Nutlope](https://github.com/Nutlope/hallmark/blob/main/skills/hallmark/SKILL.md) | v2.0.0 | 2026-10-24 | haute | digests/design-front-r1.md (A11) |
+| 27 | Claude Design (2026-04-17) : design system lu depuis le code, handoff bundle vers Claude Code, inclus dans Pro/Max | [Anthropic](https://www.anthropic.com/news/claude-design-anthropic-labs) | 2026-04-17 | 2026-10-24 | haute | digests/design-front-r1.md (A22) |
+| 28 | Vérification B7 : verified (avec précision) | vérification du run (lot-b.md) | — | 2026-10-24 | verified (avec précision) | verifications (B7) |
+| 29 | claude-mem : architecture, inscription et observateur hébergé par défaut (« off-plan »), synchronisation cmem.ai, jeton CMEM, support Windows | [auteur de l'outil](https://github.com/thedotmack/claude-mem) | 2026-10 | 2026-10-24 | haute (pour la description) | digests/contexte-memoire-r1.md (C1) |
+| 30 | graphify : analyse AST locale sans modèle ; mode always-on avec hook ; journal des requêtes ; pas de télémétrie ; offre Cloud payante | [éditeur (YC S26)](https://github.com/Graphify-Labs/graphify) | 2026-10 | 2026-10-24 | haute (pour la description) | digests/contexte-memoire-r1.md (G1) |
+| 31 | Les bancs LOCOMO et LongMemEval mesurent la mémoire conversationnelle, pas le code | éditeur (idem G2) | 2026-07-05 | 2026-10-24 | haute | digests/contexte-memoire-r1.md (G3) |
+| 32 | Issue ouverte : la description de skill fait passer toute question par un graphe peut-être périmé ; le gain disparaît face à grep et quelques lectures | [contributeur](https://github.com/Graphify-Labs/graphify/issues/2216) | 2026-07-26 | 2026-10-24 | moyenne | digests/contexte-memoire-r1.md (G5) |
+| 33 | leviathan : FTS5 et BM25, 436 contre 107 122 tokens médians à 1 M d'enregistrements (synthétique) ; MCP environ 640 tokens par session ; hors ligne | [auteur](https://github.com/elstongun/leviathan) | 2026-10 | 2026-10-24 | moyenne | digests/contexte-memoire-r1.md (L1) |
+| 34 | Contrôle de mise à jour : GET d'un manifeste toutes les 24 h environ (IP et heure visibles) | auteur (idem A1) | 2026-10 | 2026-10-24 | haute | digests/contexte-memoire-r1.md (A2) |
+| 35 | diagram-design : HTML et SVG, 45 types ; « Mermaid is still the better fit » pour la documentation versionnée | [auteure](https://github.com/cathrynlavery/diagram-design) | 2026-10 | 2026-10-24 | haute | digests/contexte-memoire-r1.md (D1) |
+| 36 | « The native Mod has no measured savings result » ; ancienne passerelle : −15,5 % contre Opus xhigh, −4,1 % contre le meilleur modèle par session, un seul développeur, prix catalogue, pas de qualité ; rejeu natif 0/37 différences | [alexei-led](https://github.com/alexei-led/claude-router/blob/main/docs/evaluation.md) | 2026-10 | 2026-10-24 | haute | digests/couts-tokens-r1.md (C10) |
+| 37 | Le classifieur actif reçoit le prompt et le dialogue récent ; Jev (typesafe.ai) par défaut | [alexei-led](https://github.com/alexei-led/claude-router) | 2026-10 | 2026-10-24 | haute | digests/couts-tokens-r1.md (C11) |
+| 38 | green-claude : 107 + 127 règles, 13 pratiques, 30 NR-TOK ; l'audit ne certifie rien et ne mesure aucune économie d'énergie ; 38/107 règles reliées à un critère RGESN précis | INR (README green-claude (data/raw/readmes)) | 2026-10 | 2026-10-24 | haute | digests/couts-tokens-r1.md (C12) |
+| 39 | SKILL.md de 15 788 octets ; description « Use when Claude writes, modifies or reviews code… » | [INR](https://github.com/Institut-du-Numerique-Responsable/green-claude/blob/main/skills/green-claude/SKILL.md) | 2026-10-21 | 2026-10-24 | haute | digests/couts-tokens-r1.md (C13) |
+| 40 | litellm 1.82.7 et 1.82.8 sur PyPI compromis (TeamPCP, mars 2026 ; charge dans `proxy_server.py` puis dans un `.pth`) ; image Docker non touchée | [Help Net Security, BleepingComputer](https://www.helpnetsecurity.com/2026/03/25/teampcp-supply-chain-attacks/) | 2026-03-25 | 2026-10-24 | haute | digests/routage-local-r1.md (A17) |
+| 41 | agentgateway : créé par Solo.io, à la LF depuis août 2025, projet hébergé par l'AAIF depuis juin 2026, Apache-2.0 | [Linux Foundation, IT Brief](https://linuxfoundation.org/press/linux-foundation-welcomes-agentgateway-project-to-accelerate-ai-agent-adoption-while-maintaining-security-observability-and-governance) | 2025-08 ; 2026-06 | 2026-10-24 | haute | digests/routage-local-r1.md (A20) |
+| 42 | Tutoriel agentgateway pour Claude Code : route `/v1/messages` (Messages) et `*` en passthrough ; erreur 400 trompeuse si le modèle épinglé diffère | [agentgateway](https://agentgateway.dev/docs/kubernetes/latest/tutorials/claude-code-proxy/) | n.d. | 2026-10-24 (via résumé) | moyenne | digests/routage-local-r1.md (A21) |
+| 43 | agentgateway v1.6.0 (2026-10-02) publie `agentgateway-windows-amd64.exe` | [agentgateway](https://github.com/agentgateway/agentgateway/releases) | 2026-10-02 | 2026-10-24 | haute | digests/routage-local-r1.md (A22) |
+| 44 | tabbyAPI n'expose que les endpoints `OAI` et `Kobold`, sans `/v1/messages` | [theroyallab](https://github.com/theroyallab/tabbyAPI/tree/main/endpoints) | — | 2026-10-24 | haute | digests/routage-local-r1.md (A24) |
+| 45 | Banc OCR (image) : OCR + Opus 4.6 P 33,9 % R 20,0 % F1 25,1 % 385 k tokens ; Claude Code v2.1.169 + Opus 4.6 P 7,2 % R 28,9 % 5 664 k tokens ; OCR v1.3.1 | [Alibaba](https://github.com/alibaba/open-code-review/blob/main/imgs/benchmark-en.png) | n.d. | 2026-10-24 | basse-moyenne (éditeur, image, versions anciennes) | digests/revue-securite-r1.md (A16) |
+| 46 | Reproduction HN sur 10 PR du banc Martian : ~74 % rappel, ~12 % précision ; le chef de projet invoque une anomalie corrigée ; règles chinoises traduites en anglais depuis | [Botmonster](https://botmonster.com/coding/alibaba-open-code-review-finds-fewer-bugs-on-purpose/) | 2026-08-10 | 2026-10-24 | basse | digests/revue-securite-r1.md (A17) |
+| 47 | Modes guidance/full audit ; description de déclenchement large | [Cloudflare](https://github.com/cloudflare/security-audit-skill/blob/main/skills/security-audit/SKILL.md) | 2026-09-14 | 2026-10-24 | haute | digests/revue-securite-r1.md (A22) |
+| 48 | Validateurs inopérants sous Windows (O_NOFOLLOW/O_NONBLOCK absents) ; contenu cible non déclaré non fiable dans les prompts ; corrigé par PR #75/#99 non fusionnées | [contributeur externe + code](https://github.com/cloudflare/security-audit-skill/issues/75) | 2026-10-11 | 2026-10-24 | haute | digests/revue-securite-r1.md (A23) |
+| 49 | Vérification B6 : verified (avec précisions) | vérification du run (lot-b.md) | — | 2026-10-24 | verified (avec précisions) | verifications (B6) |
+| 50 | Vérification B1 : verified | [vérification du run](https://www.checklyhq.com/blog/mcp-vs-cli-token-efficiency/) | — | 2026-10-24 | verified | verifications (B1) |
+| 51 | Microsoft présente la CLI comme plus économe en tokens que le MCP (pas de schémas ni d'arbres d'accessibilité dans le contexte), sans chiffre ; snapshots écrits dans des fichiers ; codegen en TypeScript | [Microsoft](https://github.com/microsoft/playwright-cli) | 2026-10 (README) | 2026-10-24 | haute | digests/tests-verification-r1.md (A1) |
+| 52 | Paperclip : serveur Node et UI React, heartbeats, organigramme, budgets avec arrêt automatique, worktrees optionnels ; télémétrie activée par défaut (`PAPERCLIP_TELEMETRY_DISABLED`) | paperclipai (README paperclipai/paperclip (data/raw)) | 2026-10 | 2026-10-24 | haute | digests/orchestration-ux-r1.md (A6) |
+| 53 | Revue Paperclip : chaque heartbeat est un appel LLM, les budgets ne baissent pas le coût unitaire, installation lourde ; aucun test documenté ; l'éditeur vend un produit concurrent | [eesel](https://www.eesel.ai/blog/paperclip-ai-review) | 2026-07-20 | 2026-10-24 | basse | digests/orchestration-ux-r1.md (A7) |
+| 54 | Paperclip : issues ouvertes sur des blocages silencieux de passation et des deadlocks (sept. 2026) et 5 bugs Windows ouverts (oct. 2026) ; au plus 34 commentaires sur les issues les plus commentées | [GitHub](https://github.com/paperclipai/paperclip/issues) | 2026-06→10 | 2026-10-24 | haute | digests/orchestration-ux-r1.md (A8) |
+| 55 | Paperclip 106 825 étoiles / 6 457 issues ouvertes ; orca 104 671 / 8 724 ; ratio forks/étoiles de 0,17 (paperclip) et 0,06 (orca) | collecte du run (veille-agents-code/data/depots.json) | 2026-10-24 | 2026-10-24 | haute | digests/orchestration-ux-r1.md (A9) |
+| 56 | Orca : worktree par agent, annotation de diffs, Design Mode, app mobile, suivi des quotas, Windows signé, télémétrie anonyme désactivable | Stably AI (README stablyai/orca (data/raw)) | 2026-10 | 2026-10-24 | haute | digests/orchestration-ux-r1.md (A10) |
+| 57 | Retours d'usage d'orca sur HN : « a remplacé herdr » ; « édition trop lente pour un usage quotidien » ; Show HN à 21 points | [HN](https://hn.algolia.com/api/v1/items/49103047) | 2026-03-27→2026-10-01 | 2026-10-24 | moyenne | digests/orchestration-ux-r1.md (A11) |
+| 58 | Orca : issues sur la lenteur et les gels (55 et 24 commentaires) ; worktree Windows bloqué par un antivirus ; conflits delete/modify non résolubles dans la GUI (ouvert) | [GitHub](https://github.com/stablyai/orca/issues) | 2026-06→10 | 2026-10-24 | haute | digests/orchestration-ux-r1.md (A12) |
+| 59 | SmythOS Studio : constructeur visuel no-code ; dernier push le 2026-04-03, 0 commit en 90 jours, pas de release | SmythOS (depots.json + README) | 2026-04 | 2026-10-24 | haute | digests/orchestration-ux-r1.md (A28) |
+| 60 | Style Concise natif (v2.1.237+) : résultat d'abord, sans préambule ni récapitulatif, erreurs complètes ; styles personnalisés avec `keep-coding-instructions`, `force-for-plugin` ; les styles ne s'appliquent pas aux sous-agents | [Anthropic](https://code.claude.com/docs/en/output-styles.md) | n.d. | 2026-10-24 | haute | digests/orchestration-ux-r1.md (A19) |
+| 61 | Éval i-have-adhd : 4,045 → 4,473 ; concision +1,14 ; régression sur partial-success (−0,63), mécanisme plausible = règle 8 ; juge du même modèle ; porte de release FAILED | [ayghri (auteur)](https://github.com/ayghri/i-have-adhd/blob/main/evals/RESULTS.md) | 2026-08-02 | 2026-10-24 | moyenne | digests/orchestration-ux-r1.md (A20) |
+| 62 | humanizer : SKILL.md de 32 ko, 26 motifs issus de Wikipedia, ne vise pas à tromper les détecteurs (« detectors still flag most of its output ») | [blader](https://github.com/blader/humanizer) | 2026-09-28 (v3.1.0) | 2026-10-24 | haute | digests/orchestration-ux-r1.md (A22) |
+| 63 | Étude en aveugle : la réécriture gagne 16/16 ; détection 100 → 98,6 % ; Pangram classe 100 % en IA ; tics lexicaux 70 → 0, rythmiques 60 → 101 et 38 → 61 | [itsryanlenk (tiers)](https://github.com/blader/humanizer/issues/229) | 2026-08-19 | 2026-10-24 | moyenne | digests/orchestration-ux-r1.md (A23) |
+| 64 | WebFetch inefficace sur les pages rendues en JavaScript ; test isolé : 42 s avec Firecrawl contre plus de 4 min 30 | [Firecrawl, ScrapingAnt (fournisseurs)](https://www.firecrawl.dev/blog/claude-web-fetch-vs-firecrawl) | 2026 | 2026-10-24 | basse | digests/tour2-trous-r1.md (A29) |
+| 65 | Firecrawl : AGPL-3.0 (SDK sous MIT), cloud avec des fonctions en plus, section du README adressée aux agents | dépôt (README `firecrawl__firecrawl.md`) | 2026-10 | 2026-10-24 | haute | digests/tour2-trous-r1.md (A30) |
+| 66 | HyperFrames : environ 3 min de rendu pour 30 s en 1080p (test indépendant, chiffre tronqué) | [blog](https://yuv.ai/blog/heygen-hyperframes-html-video) | 2026 | 2026-10-24 | basse | digests/tour2-trous-r1.md (A31) |
+| 67 | Advisor : Sonnet 4.6 + Opus 4.6 = +2,7 pts SWE-bench Multilingual, −11,9 % de coût ; Haiku + Opus BrowseComp 41,2 % contre 19,7 % | [Anthropic](https://claude.com/blog/the-advisor-strategy) | 2026-04-09 | 2026-10-24 | moyenne (éditeur, modèles 4.6) | digests/couts-tokens-r1.md (C14) |
+| 68 | La revue interne d'Anthropic : plusieurs agents cherchent en parallèle, un groupe distinct vote sur chaque constat, publication si assez d'accord ; étiquettes Important/Nit/Pre-existing ; passe sécurité séparée ; aucun taux de faux positifs, coût ou modèle publié | [Anthropic (Osmani, Lunt, Wang)](https://claude.dev/blog/solving-code-review-at-anthropic/) | 2026-10-15 | 2026-10-24 | haute | digests/revue-securite-r1.md (A1) |
+| 69 | Leçons : boucle à > 50 passes en une nuit ; plafond 3 passes, revue du nouveau diff seulement, signaler la classe de bug, ne pas répéter ; 59 % des constats répétés visaient du code présent à la 1re passe ; le bruit coûte plus quand l'auteur est un agent | Anthropic (idem) | 2026-10-15 | 2026-10-24 | haute | digests/revue-securite-r1.md (A2) |
+| 70 | MLflow ≥ 3.17.1 reçoit directement les traces OTLP de Claude Code ; contenu masqué par défaut ; erreurs d'export silencieuses | [Databricks/MLflow](https://mlflow.org/blog/claude-otel-tracing) | 2026-10-14 | 2026-10-24 | haute | digests/orchestration-ux-r1.md (A16) |
+| 71 | Ne pas faire tourner deux routeurs (méta-skills) en même temps : collisions de commandes, philosophies TDD divergentes | projet addy (même source que S2) | n.d. | 2026-10-24 | moyenne | digests/methode-r1.md (M3) |
+| 72 | « Never run two on the same change » ; coût fixe estimé : BMAD ~1 676 tokens, Superpowers ~838, `subagent-driven-development` ~11,8 k par déclenchement | [M. Jaskólski (vend un guide)](https://developertoolkit.ai/en/ecosystem/frameworks/spec-driven-frameworks/) | 2026-09-26 | 2026-10-24 | moyenne | digests/methode-r1.md (M4) |
+| 73 | Bonnes pratiques officielles : vérification, explore → plan → code, plan mode inutile si le diff tient en une phrase, interview AskUserQuestion → SPEC.md, hooks pour les règles impératives, `/code-review` intégré, relecteur qui pousse à la sur-ingénierie | [Anthropic](https://code.claude.com/docs/en/best-practices) | n.d. | 2026-10-24 | haute | digests/methode-r1.md (D2) |
+| 74 | `feature-dev` : 7 phases, agents code-explorer, code-architect et code-reviewer | [Anthropic](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/feature-dev) | dépôt poussé le 2026-10-24 | 2026-10-24 | haute | digests/methode-r1.md (D3) |
+| 75 | hallmark : 48 thèmes, sloplint à 8 largeurs, relecteur en contexte neuf, pages HTML/CSS autonomes, contrôle de préservation en refonte | [Nutlope / Together AI](https://github.com/Nutlope/hallmark) | README au 2026-10-24 | 2026-10-24 | haute | digests/design-front-r1.md (A10) |
+| 76 | Environ 1,8 violation sémantique d'accessibilité par UI générée (300 UI, 3 modèles, CHI EA '26) | [résumé d'un article de Calò et al.](https://a11y-paradise.onrender.com/reviews/69e8d16a891b0e7c69dbcfff) | 2026 | 2026-10-24 | basse (résumé secondaire) | digests/design-front-r1.md (A34) |
+| 77 | taste échoue une page avec moins de 4 photos réelles ou moins de 8 éléments en mouvement | [Leonxlnx](https://github.com/Leonxlnx/taste-skill/blob/main/CHANGELOG.md) | 2026 | 2026-10-24 | haute | digests/design-front-r1.md (A8) |
+| 78 | frontend-design (Anthropic) : dernière mise à jour 2026-09-03 « avoid generic design defaults » ; description de 279 c | [Anthropic](https://github.com/anthropics/skills/commits/main/skills/frontend-design/SKILL.md) | 2026-09-03 | 2026-10-24 | haute | digests/design-front-r1.md (A20) |
+| 79 | Intégration Chrome de Claude Code : vérification de design, régressions visuelles, beta, Chrome/Edge, pas WSL, plan Anthropic direct | [Anthropic](https://code.claude.com/docs/en/chrome) | n.d. | 2026-10-24 | haute | digests/design-front-r1.md (A21) |
+| 80 | modern-web-guidance (Google Chrome, preview, Apache-2.0) : API web modernes, perf/a11y, guides élagués par évaluations ; présent dans le marketplace officiel | [Google Chrome](https://github.com/GoogleChrome/modern-web-guidance) | créé 2026-03-23 | 2026-10-24 | haute (existence), basse (efficacité) | digests/design-front-r1.md (A23) |
+| 81 | CLAUDE.md : moins de 200 lignes recommandé ; sous-dossiers et règles `paths:` à la demande ; CLAUDE.md racine rechargé après /compact ; AGENTS.md lu en l'absence de CLAUDE.md | [Anthropic](https://code.claude.com/docs/en/memory) | n.d. | 2026-10-24 | haute | digests/contexte-memoire-r1.md (N2) |
+| 82 | Résumés : 4/45 contre 27/45 avec le source ; squelettes pas meilleurs que la suppression (N = 70, p = 0,75) ; 9 % de résultats changent à température 0 | [Sam-Bodden](https://arxiv.org/abs/2607.09691) | 2026-06-19 | 2026-10-24 | moyenne (préprint, un seul auteur) | digests/contexte-memoire-r1.md (R4) |
+| 83 | MPBench : 50,46 % de réussite moyenne des attaques par empoisonnement de mémoire ; plus l'agent écrit, plus il est vulnérable | [auteurs ICML 2026](https://arxiv.org/pdf/2606.04329) | 2026-06 | 2026-10-24 (résumé de recherche) | moyenne | digests/contexte-memoire-r1.md (R6) |
+| 84 | Empoisonnement du MEMORY.md de Claude Code par un dépôt non fiable ; mesure d'atténuation en v2.1.50 | [Cisco](https://blogs.cisco.com/ai/identifying-and-remediating-a-persistent-memory-compromise-in-claude-code) | 2026-04-01 | 2026-10-24 | haute | digests/contexte-memoire-r1.md (R7) |
+| 85 | Vérification A5 : verified (avec nuances) | [vérification du run](https://claudeissues.com/issue/99360-subagents-use-the-5-minute-prompt-cache-while-the-main-session-uses-1-hour-slow) | — | 2026-10-24 | verified (avec nuances) | verifications (A5) |
+| 86 | Changer de modèle (et `opusplan` à chaque bascule de plan mode) invalide le cache ; changer d'effort le garde sur Opus, Sonnet, Haiku 5.5 et Fable 5.1 | [Anthropic](https://code.claude.com/docs/en/prompt-caching) | n.d. | 2026-10-24 | haute | digests/couts-tokens-r1.md (C17) |
+| 87 | `/clear` gratuit, `/compact` coûteux ; CLAUDE.md sous 200 lignes ; sous-agent `model: haiku` ; équipes d'agents ≈ 7× les tokens | [Anthropic](https://code.claude.com/docs/en/costs) | n.d. | 2026-10-24 | haute | digests/couts-tokens-r1.md (C18) |
+| 88 | Exemple officiel de hook `PreToolUse` qui filtre la sortie de pytest/npm test sur les échecs | [Anthropic](https://code.claude.com/docs/en/costs) | n.d. | 2026-10-24 | haute | digests/couts-tokens-r1.md (C20) |
+| 89 | Advisor : expérimental, reçoit toute la conversation, appel décidé par le modèle, lecture non cachée, activation sans casser le cache principal, désactivé si DISABLE_TELEMETRY, API Anthropic seulement | [Anthropic](https://code.claude.com/docs/en/advisor) | n.d. | 2026-10-24 | haute | digests/couts-tokens-r1.md (C15) |
+| 90 | EcoLogits : énergie modélisée par token de sortie et paramètres actifs ; rien n'est mesuré ; entrée et cache non pris en compte | [GenAI Impact](https://ecologits.ai/latest/methodology/llm_inference/) | n.d. | 2026-10-24 | haute | digests/couts-tokens-r1.md (C21) |
+| 91 | Modèles fermés : paramètres estimés à la main ; Claude 3 Opus ≈ 2 T de paramètres, 200 à 600 Md actifs (ratio de 10 à 30 %) | [GenAI Impact](https://ecologits.ai/latest/methodology/proprietary_models/) | n.d. | 2026-10-24 | haute | digests/couts-tokens-r1.md (C22) |
+| 92 | Anthropic n'avalise ni n'audite les passerelles tierces et « doesn't support routing Claude Code to non-Claude models through any gateway » | [Anthropic](https://code.claude.com/docs/en/llm-gateway) | n.d. (page vivante) | 2026-10-24 | haute | digests/routage-local-r1.md (A1) |
+| 93 | Ollama `/v1/messages` : messages, streaming, outils et images base64 ; thinking partiel ; pas de `count_tokens`, `tool_choice`, `cache_control` ni Batches | [Ollama](https://docs.ollama.com/api/anthropic-compatibility) | n.d. | 2026-10-24 | haute | digests/routage-local-r1.md (A10) |
+| 94 | LM Studio 0.4.1 ajoute `POST /v1/messages` ; contexte de plus de 25k recommandé ; `CLAUDE_CODE_ATTRIBUTION_HEADER=0` dans sa recette | [LM Studio](https://www.lmstudio.ai/docs/integrations/claude-code) | 2026-01-30 (billet) | 2026-10-24 | haute | digests/routage-local-r1.md (A12) |
+| 95 | llama.cpp server expose `/v1/messages` et `/v1/messages/count_tokens`, avec outils, vision et thinking (PR #17570) | [ggml-org / HF](https://huggingface.co/blog/ggml-org/anthropic-messages-api-in-llamacpp) | 2026-01 | 2026-10-24 (via résumé de recherche) | moyenne | digests/routage-local-r1.md (A13) |
+| 96 | Vérification A6 : unverified (primaire confirmée) | vérification du run (lot-a.md) | — | 2026-10-24 | unverified (primaire confirmée) | verifications (A6) |
+| 97 | Une requête Claude Code mesurée pèse environ 29K tokens (131 Ko), dont environ 81 % de définitions d'outils ; 12 s pour « 7+5 » sur un Qwen local | [blog personnel](https://mykolaaleksandrov.dev/posts/2026/06/claude-code-huge-prompt-investigation/) | 2026-06 | 2026-10-24 (via résumé) | moyenne | digests/routage-local-r1.md (A31) |
+| 98 | Qwen3-Coder-Next : 80B au total, 3B actifs, 256K de contexte ; SWE-bench Verified 70,6, Pro 44,3, Terminal-Bench 2.0 36,2 (scaffold non précisé) ; compatible Claude Code | [Qwen](https://huggingface.co/Qwen/Qwen3-Coder-Next) | 2026-02 | 2026-10-24 | haute (chiffres de l'éditeur) | digests/routage-local-r1.md (A33) |
+| 99 | Vérification A7 : unverified (primaire confirmée) | vérification du run (lot-a.md) | — | 2026-10-24 | unverified (primaire confirmée) | verifications (A7) |
+| 100 | Vérification B5 : verified | vérification du run (lot-b.md) | — | 2026-10-24 | verified | verifications (B5) |
+| 101 | Vérification B4 : verified (partiel, à reformuler) | vérification du run (lot-b.md) | — | 2026-10-24 | verified (partiel, à reformuler) | verifications (B4) |
+| 102 | Documentation officielle Claude Code : `sandboxing` | [Anthropic](https://code.claude.com/docs/en/sandboxing) | page vivante | 2026-10-24 | haute | digests/natif-anthropic-r1.md |
+| 103 | Claude in Chrome : `--chrome`, offre Pro/Max ou supérieure, Chrome ou Edge, partage les sessions connectées, fenêtre visible, problèmes Windows documentés (named pipe), contexte accru s'il est activé par défaut | [Anthropic](https://code.claude.com/docs/en/chrome) | 2026-10 | 2026-10-24 | haute | digests/tests-verification-r1.md (A7) |
+| 104 | agent-browser : CLI Rust ; `diff snapshot`/`diff screenshot` ; `snapshot --delta` ; axe-core ; bureau privé et Job Object sous Windows ; README de 107 Ko ; dépôt créé le 2026-01-11 | [Vercel Labs](https://github.com/vercel-labs/agent-browser) | 2026-10 | 2026-10-24 | haute | digests/tests-verification-r1.md (A26) |
+| 105 | Les règles deny `Edit(path)` s'appliquent aux outils de fichiers, à `cat`, `sed`, `tee` et aux redirections, mais pas aux scripts Python ou Node ; le sandbox protège au niveau de l'OS ; une règle deny l'emporte sur un hook | [Anthropic](https://code.claude.com/docs/en/permissions) | 2026-10 | 2026-10-24 | haute | digests/tests-verification-r1.md (A12) |
+| 106 | Vérification B3 : verified (étude unique) | [vérification du run](https://2026.msrconf.org/details/msr-2026-technical-papers/29/Are-Coding-Agents-Generating-Over-Mocked-Tests-An-Empirical-Study) | — | 2026-10-24 | verified (étude unique) | verifications (B3) |
+| 107 | Tests ad hoc des agents sur SWE-bench Verified : plutôt des `print` ; les décourager coûte 1,8 à 2,6 points de résolution et économise 33 à 49 % de tokens d'entrée | [auteurs académiques](https://huggingface.co/papers/2602.07900) | 2026-02 | 2026-10-24 | haute | digests/tests-verification-r1.md (A14) |
+| 108 | mutmut : « to run on windows, you must run inside WSL » ; cosmic-ray affiche un badge Windows, licence MIT, push 2026-10-15 | [mainteneurs](https://github.com/boxed/mutmut) | 2026-10 | 2026-10-24 | haute | digests/tests-verification-r1.md (A19) |
+| 109 | PBT par agent (Hypothesis) : 56 % de bugs valides sur 100 paquets, correctifs fusionnés ; PBT-Bench donne 83 % de rappel au mieux | [Anthropic et al. (NeurIPS 2025) ; PBT-Bench](https://arxiv.org/abs/2510.09907) | 2025-10 ; 2026-05 | 2026-10-24 | moyenne | digests/tests-verification-r1.md (A20) |
+| 110 | diff-cover fournit `--compare-branch` et `--fail-under` ; Apache-2.0, push 2026-10-23 | [mainteneurs](https://github.com/Bachmann1234/diff_cover) | 2026-10 | 2026-10-24 | haute | digests/tests-verification-r1.md (A21) |
+| 111 | Comparaison visuelle dans Playwright Python : « No plans to implement this » (issue fermée not_planned) | [Microsoft](https://github.com/microsoft/playwright-python/issues/837) | 2026-04-30 | 2026-10-24 | haute | digests/tests-verification-r1.md (A23) |
+| 112 | `to_match_aria_snapshot` existe en Python (tests sync et async dans le dépôt) | [Microsoft](https://github.com/microsoft/playwright-python) | 2026 | 2026-10-24 | haute | digests/tests-verification-r1.md (A24) |
+| 113 | Agent teams : expérimental, désactivé par défaut ; pas de reprise des coéquipiers en cours de session après `/resume` ; panneaux séparés non pris en charge dans Windows Terminal ni dans le terminal VS Code ; pas d'isolation par worktree ; hooks TaskCompleted/TeammateIdle | [Anthropic](https://code.claude.com/docs/en/agent-teams) | n.d. | 2026-10-24 | haute | digests/orchestration-ux-r1.md (A2) |
+| 114 | Vérification C7 : disputed (liste blanche) ; verified (le reste) | vérification du run (lot-c.md) | — | 2026-10-24 | disputed (liste blanche) ; verified (le reste) | verifications (C7) |
+| 115 | WebFetch : conversion en Markdown, extraction par un modèle secondaire, « lossy by design », 100 000 caractères par appel, cache de 15 min ; 200 WebSearch par session | [Anthropic](https://code.claude.com/docs/en/tools-reference.md) | courant | 2026-10-24 | haute | digests/tour2-trous-r1.md (A28) |
+| 116 | Note Gartner 2026 « Don't Use AI Coding Agents for Every Software Engineering Task » ; marché des agents de code en entreprise : gouvernance sur tout le SDLC | [Gartner](https://www.gartner.com/en/documents/7721957) | 2026-06 / 2026-09 | 2026-10-24 | basse (vu via un moteur de recherche seulement) | digests/tour2-trous-r1.md (A3) |
+| 117 | Forrester 2026 : outils produisant souvent du code problématique ; « vibe engineering » | [SD Times (relaie Forrester)](https://sdtimes.com/softwaredev/forrester-shares-its-predictions-for-how-ai-will-continue-to-shape-software-development-in-2026/) | 2025-10 | 2026-10-24 | moyenne | digests/tour2-trous-r1.md (A5) |
+| 118 | Codex : coût par token × 10 à 20 depuis le 16/06/2026 (561 réactions) ; demande de supprimer la limite de 5 h | [issues](https://github.com/openai/codex/issues/28879) | 2026-06 / 2026-07 | 2026-10-24 | haute (fait d'usage) | digests/tour2-trous-r1.md (A16) |
+| 119 | Copilot facturé en crédits IA au token (entrée, sortie, cache) depuis le 01/06/2026 | [GitHub](https://github.blog/changelog/2026/04/27/github-copilot-is-moving-to-usage-based-billing/) | 2026-04 / 2026-06 | 2026-10-24 | haute | digests/tour2-trous-r1.md (A18) |
+| 120 | Cursor : limites et manque de transparence du forfait Pro, plaintes sur le forum | [forum Cursor](https://forum.cursor.com/t/pro-plan-rate-limit-transparency-issues-need-specific-usage-details/113028) | 2025 | 2026-10-24 | moyenne (hors fenêtre de fraîcheur) | digests/tour2-trous-r1.md (A20) |
+| 121 | Question auto-répondue au bout de 60 s dans Claude Code (#73125, fermée le 04/07) et Codex (#28969, ouverte) ; commentaires verbeux et tics de style dans Claude Code | [issues](https://github.com/anthropics/claude-code/issues/73125) | 2026-06 / 2026-07 | 2026-10-24 | haute | digests/tour2-trous-r1.md (A17) |
+| 122 | Anneaux vol. 34 : Adopt context engineering, curated shared instructions, Claude Code, Cursor ; Trial skills, feedback sensors, progressive disclosure, sandbox, plugin marketplace, Codex ; Assess Spec Kit, OpenSpec, Beads, Git AI, Agent Trace, Superpowers, measuring collaboration quality ; Caution instruction bloat, swarms, MCP by default, cognitive debt, throughput comme productivité | [Thoughtworks](https://www.thoughtworks.com/radar) | 2026-04 | 2026-10-24 | haute | digests/praticiens-r1.md (R2) |
+| 123 | Documentation officielle Claude Code : `plugin-evals` | [Anthropic](https://code.claude.com/docs/en/plugin-evals) | page vivante | 2026-10-24 | haute | digests/natif-anthropic-r1.md |
+| 124 | Chez les modèles Claude, plus de 79 % des triches modifient les tests ; des tests en lecture seule bloquent cette voie et préservent la réussite ; la consigne fait passer GPT-5 de 92 % à 1 % ; l'option d'abandon aide peu Opus 4.1 ; les moniteurs détectent 42 à 65 % des triches sur SWE-bench | [idem](https://arxiv.org/html/2510.20270v1) | 2025-10-23 | 2026-10-24 | haute | digests/tests-verification-r1.md (A10) |
+| 125 | Action `claude-code-security-review` : non durcie contre l'injection de prompt ; modèle par défaut Opus 4.1 ; filtrage des faux positifs configurable ; `/security-review` = même analyse en local ; dernier push 2026-02-11 | [Anthropic](https://github.com/anthropics/claude-code-security-review) | 2026-02-11 (push) | 2026-10-24 | haute | digests/revue-securite-r1.md (A12) |
+| 126 | Checkmarx : `/security-review` contourné par commentaire trompeur (0 vulnérabilité sur un `nc -e /bin/bash`) et par code découpé ; injection pandas classée faux positif ; requête SQL réelle exécutée pendant la revue | [Checkmarx (D. Meyer)](https://checkmarx.com/zero-post/bypassing-claude-code-how-easy-is-it-to-trick-an-ai-security-reviewer/) | 2025-09-04 | 2026-10-24 | moyenne (ancien, vendeur SAST concurrent) | digests/revue-securite-r1.md (A13) |
+| 127 | Git AI : attribution ligne par ligne déclarée par l'agent, stockée dans des Git Notes, conservée au rebase et au squash ; prend en charge Claude Code, Cursor et Copilot | [projet](https://github.com/acunniffe/git-ai) | 2026 | 2026-10-24 | moyenne | digests/tour2-trous-r1.md (A12) |
+| 128 | Thoughtworks Radar : Git AI en « Assess » (avril 2026) ; ne prouve pas la licence ; fusions faites dans l'interface web non suivies | [Thoughtworks ; Rubin Lake](https://www.thoughtworks.com/radar/tools/git-ai) | 2026-04 | 2026-10-24 | moyenne | digests/tour2-trous-r1.md (A13) |
+| 129 | Claude Code : Commercial Terms pour Team, Enterprise et API ; Consumer Terms pour Free, Pro et Max | [Anthropic](https://code.claude.com/docs/en/legal-and-compliance) | courant | 2026-10-24 | haute | digests/tour2-trous-r1.md (A8) |
+| 130 | Indemnisation PI des sorties (Section K) avec exclusions : modification, combinaison, usage contrefaisant connu, brevets, marques ; « not for consumer use » | [Anthropic](https://www.anthropic.com/legal/commercial-terms) | 2025-06-17 | 2026-10-24 | haute | digests/tour2-trous-r1.md (A9) |
+| 131 | Les passes n'ont ni `CLAUDE.md`, ni réglages, ni hooks, ni autres plugins, ni mémoire | [Anthropic](https://code.claude.com/docs/en/plugin-evals.md) | 2026-09 | 2026-10-24 | haute | digests/tour2-trous-r1.md (A25) |
+| 132 | Issue #16157 « Instantly hitting usage limits with Max » : 1 499 commentaires, ouverte, active en octobre 2026 ; un praticien attribue 55 % de ses écritures de cache aux reprises après pause ; Opus 5.5 jugé « predictable, stable » | [GitHub (anthropics)](https://github.com/anthropics/claude-code/issues/16157) | 2026-01-03 | 2026-10-24 | haute (existence et volume), basse (chiffres individuels) | digests/praticiens-r1.md (R13) |
+| 133 | Vérification C4 : verified | vérification du run (lot-c.md) | — | 2026-10-24 | verified | verifications (C4) |
+
+## 11. Carte de péremption
+
+Calculée par `recon_kit.py staleness` sur les 21 affirmations du registre (`claims.json`, `staleness.json`). Fenêtres en mois : versions et comportement de Claude Code 1, prix 3, paysage 3, performance 6, sécurité 6, résultats empiriques 6 (domaine IA).
+
+| À revoir | Affirmations | Pourquoi |
+|---|---|---|
+| **Déjà dépassé** (6) | B2 triche aux tests, B3 mocks, B4 précision des revues, C2 critique visuelle, C3 Radar vol. 34, C4 METR et essai d'Anthropic | Résultats publiés il y a plus de 6 mois (ou 3 pour le Radar) ; les modèles ont changé depuis. Le vol. 35 du Radar et les tests T4 et T5 les remplacent. |
+| **2026-11-01** | A4 budget des skills, A5 TTL du cache, A6 passerelles et abonnement, A7 en-têtes de passerelle, C7 OpenTelemetry | Comportement de Claude Code, qui change à chaque version : à recontrôler chaque mois contre le changelog. |
+| 2026-12-01 | C6 SkillsBench | Nouvelle version du benchmark probable. |
+| 2027-01 à 2027-04 | B1, B5, B6, A3, B7, C1, A1, A2, C5 | Mesures et prix récents. |
+
+Premier contrôle : **2026-11-01**, à faire avec la parution du Radar vol. 35.

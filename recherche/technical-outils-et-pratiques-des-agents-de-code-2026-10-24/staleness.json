@@ -1,0 +1,155 @@
+{
+  "today": "2026-10-24",
+  "claims": [
+    {
+      "claim": "A1 AGENTS.md générés par LLM : réussite −0,5 à −2 pts (ns), coût +20 à 23 % ; écrits à la mai",
+      "class": "empirique",
+      "pub_date": "2026-09-01",
+      "recheck": "2027-03-01",
+      "stale": false
+    },
+    {
+      "claim": "A2 TokenEconomizer (arXiv 2610.22732) : −18,4 à −30,9 % de coût, Pass@1 meilleur dans 4 régla",
+      "class": "performance",
+      "pub_date": "2026-10-01",
+      "recheck": "2027-04-01",
+      "stale": false
+    },
+    {
+      "claim": "A3 Écriture du cache = premier poste de coût (42–44 %) ; RTK mesuré −2,7 % (PointFive), estim",
+      "class": "performance",
+      "pub_date": "2026-08-01",
+      "recheck": "2027-02-01",
+      "stale": false
+    },
+    {
+      "claim": "A4 Liste des skills : budget 1 % de la fenêtre (réglable), descriptions des moins invoquées r",
+      "class": "version",
+      "pub_date": "2026-10-01",
+      "recheck": "2026-11-01",
+      "stale": false
+    },
+    {
+      "claim": "A5 Cache 1 h pour la conversation principale dans l'usage inclus du forfait ; sous-agents, wo",
+      "class": "version",
+      "pub_date": "2026-10-01",
+      "recheck": "2026-11-01",
+      "stale": false
+    },
+    {
+      "claim": "A6 Identifiant de passerelle = facturation au token hors abonnement ; ANTHROPIC_BASE_URL seul",
+      "class": "version",
+      "pub_date": "2026-10-01",
+      "recheck": "2026-11-01",
+      "stale": false
+    },
+    {
+      "claim": "A7 En-têtes d'indice de passerelle (v2.1.273+) : request-class main/subagent/workflow/compact",
+      "class": "version",
+      "pub_date": "2026-10-01",
+      "recheck": "2026-11-01",
+      "stale": false
+    },
+    {
+      "claim": "B1 playwright-cli vs Playwright MCP : écart ~1 % (DEV) et sans différence notable (Checkly, 4",
+      "class": "performance",
+      "pub_date": "2026-07-01",
+      "recheck": "2027-01-01",
+      "stale": false
+    },
+    {
+      "claim": "B2 ImpossibleBench : Claude et Qwen3-Coder trichent surtout (>79 %) en modifiant les tests ; ",
+      "class": "empirique",
+      "pub_date": "2025-10-01",
+      "recheck": "2026-04-01",
+      "stale": true
+    },
+    {
+      "claim": "B3 36 % des commits d'agents ajoutent des mocks contre 26 % des commits non-agents (MSR 2026,",
+      "class": "empirique",
+      "pub_date": "2026-01-01",
+      "recheck": "2026-07-01",
+      "stale": true
+    },
+    {
+      "claim": "B4 Précision des revues LLM 5,6 à 39,9 % (AACR-Bench, une étude) ; dix relecteurs unanimes ré",
+      "class": "empirique",
+      "pub_date": "2026-04-01",
+      "recheck": "2026-10-01",
+      "stale": true
+    },
+    {
+      "claim": "B5 Code Review GitHub réservé Team/Enterprise ; /code-review ultra : 3 essais gratuits Pro/Ma",
+      "class": "pricing",
+      "pub_date": "2026-10-01",
+      "recheck": "2027-01-01",
+      "stale": false
+    },
+    {
+      "claim": "B6 Scanners de skills contournés (Trail of Bits ; SkillCloak >90 % pour SFS Packing) ; Snyk :",
+      "class": "security",
+      "pub_date": "2026-07-01",
+      "recheck": "2027-01-01",
+      "stale": false
+    },
+    {
+      "claim": "B7 claude-mem : 9 types d'événements de hooks, PreToolUse synchrone ; faille de lecture de fi",
+      "class": "security",
+      "pub_date": "2026-09-01",
+      "recheck": "2027-03-01",
+      "stale": false
+    },
+    {
+      "claim": "C1 taste-skill 7,7 vs 7,8 sans skill (un juré, bruit ±0,5) ; hallmark : activation 0/12 sans ",
+      "class": "empirique",
+      "pub_date": "2026-09-01",
+      "recheck": "2027-03-01",
+      "stale": false
+    },
+    {
+      "claim": "C2 Boucle de critique visuelle : jusqu'à +17,8 % en 3 cycles (préprint) ; DESIGN.md en alpha,",
+      "class": "empirique",
+      "pub_date": "2026-04-01",
+      "recheck": "2026-10-01",
+      "stale": true
+    },
+    {
+      "claim": "C3 Thoughtworks Radar vol. 34 : Adopt context engineering, curated shared instructions ; Tria",
+      "class": "landscape",
+      "pub_date": "2026-04-01",
+      "recheck": "2026-07-01",
+      "stale": true
+    },
+    {
+      "claim": "C4 METR 2026 : IC incluant zéro, « very weak evidence » sur l'ampleur ; Anthropic : quiz 50 %",
+      "class": "empirique",
+      "pub_date": "2026-02-01",
+      "recheck": "2026-08-01",
+      "stale": true
+    },
+    {
+      "claim": "C5 Agents ~1 000× les tokens d'un chat de code, jusqu'à 30× d'écart entre runs (SWE-bench Ver",
+      "class": "empirique",
+      "pub_date": "2026-10-01",
+      "recheck": "2027-04-01",
+      "stale": false
+    },
+    {
+      "claim": "C6 Skills curées : +11,6 pts en génie logiciel (SkillsBench v4), pas +4,5 ; auto-générées sou",
+      "class": "empirique",
+      "pub_date": "2026-06-01",
+      "recheck": "2026-12-01",
+      "stale": false
+    },
+    {
+      "claim": "C7 OTel natif : agent_id, parent_agent_id (v2.1.310+), workflow.run_id ; liste blanche seulem",
+      "class": "version",
+      "pub_date": "2026-10-01",
+      "recheck": "2026-11-01",
+      "stale": false
+    }
+  ],
+  "stale_count": 6,
+  "earliest_recheck": "2026-04-01",
+  "no_window_classes": []
+}
