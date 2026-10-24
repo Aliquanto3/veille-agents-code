@@ -116,7 +116,8 @@ a.cite{font-size:.8em;text-decoration:none;vertical-align:super}
 tr:target{background:var(--evaluer-f)}
 .theme{position:fixed;right:16px;bottom:16px;font:inherit;font-size:13px;padding:6px 12px;border-radius:999px;border:1px solid var(--trait);background:var(--surface);color:var(--texte);cursor:pointer}
 @media (max-width:1100px){.radar-bloc{grid-template-columns:1fr}.contexte-grille,.verdicts{grid-template-columns:1fr}}
-@media (max-width:860px){.page{grid-template-columns:1fr}nav.sommaire{position:static;height:auto;border-right:0;border-bottom:1px solid var(--trait)}
+@media (max-width:860px){.page{grid-template-columns:minmax(0,1fr)}nav.sommaire{position:static;height:auto;border-right:0;border-bottom:1px solid var(--trait)}
+nav.sommaire .niv2{display:none}header.titre h1{font-size:1.5rem}
 main{padding:20px 16px 60px}.quadrants,.nouveautes,.legendes{grid-template-columns:1fr}.rapport{padding:16px}}
 @media print{nav.sommaire,.theme,.filtres{display:none}.page{display:block}main{padding:0}.probleme,.quadrant{break-inside:avoid}}
 </style>
