@@ -56,3 +56,7 @@ https://atoll92.github.io/agent-standup/
 https://mlflow.org/blog/claude-otel-tracing
 https://medium.com/@martin.jordanovski/superpowers-vs-agent-skills-vs-pocock-vs-ecc-four-philosophies-of-ai-coding-workflows-c996eab1c899
 https://codepointer.dev/p/cutting-llm-token-costs-with-rtk
+
+# Compléments du 2026-10-24 (apportés par Anaël après le premier run)
+https://linas.substack.com/p/how-to-use-jev-ai
+# PDF LinkedIn : « Jev Engineering for Coding Agents », synthèse indépendante des notes de Diogo Almeida (TypeSafe), septembre 2026
