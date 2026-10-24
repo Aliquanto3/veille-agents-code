@@ -1,0 +1,405 @@
+{
+  "titre": "Agents de code : problèmes, outils, verdicts",
+  "date": "2026-10-24",
+  "quadrants": [
+    {"id": "concevoir", "nom": "Concevoir et cadrer"},
+    {"id": "verifier", "nom": "Vérifier et sécuriser"},
+    {"id": "couts", "nom": "Coûts et modèles"},
+    {"id": "piloter", "nom": "Piloter et travailler"}
+  ],
+  "problemes": [
+    {
+      "id": "methode", "quadrant": "concevoir", "nom": "Cadrer et discipliner l'agent",
+      "resume": "Faire suivre à l'agent une méthode (cadrage, spec, plan, implémentation, revue) sans lourdeur ni dérive.",
+      "constat": "Les échecs des agents naissent dans les premières étapes et restent invisibles jusqu'à être irrécupérables ; valider tôt (plan relu, critères d'acceptation) vise le bon moment. Les packs de méthode ne sont évalués que par leurs auteurs ; les skills curées aident (+11,6 points en génie logiciel dans SkillsBench v4), celles générées par le modèle font moins bien que rien.",
+      "etat_art": ["Plan mode, /goal, hook Stop et skills à invocation manuelle (natif)", "Spec-driven development (Spec Kit, OpenSpec) : en Assess au Thoughtworks Radar, jugé lourd sur les petites stories", "Peu de skills, procédurales, bien décrites : la recherche et le Radar convergent"],
+      "chez_toi": "BMAD couvre toutes les étapes, et agent-cost-kit (dev-story Sonnet → second-avis Haiku → reviewer Opus) les exécute à 1,18–1,60 $ par story contre 6,77–7,31 $ avec l'ancien setup. Aucun pack n'a de raison de le remplacer.",
+      "recommandes": [
+        {"outil": "mattpocock-skills", "pourquoi": "Skills manuelles qui ne revendiquent aucune étape : grill-with-docs (cadrage par questions) et diagnosing-bugs s'ajoutent à BMAD sans conflit, 2,3 k caractères de contexte."},
+        {"outil": "karpathy", "pourquoi": "Reprendre ses 4 principes (penser avant de coder, simplicité, changements chirurgicaux, objectif vérifiable) en quelques lignes de CLAUDE.md, sans installer le plugin."},
+        {"outil": "skill-creator", "pourquoi": "Mesure avec et sans skill : le moyen de savoir ce que tes skills maison rapportent vraiment."}
+      ],
+      "doute": [
+        {"outil": "superpowers", "pourquoi": "Discipline anti-rationalisation intéressante, mais revendique les mêmes étapes que BMAD, impose d'invoquer une skill dès « 1 % de chance », gains auto-mesurés, plaintes de lenteur et de budget."},
+        {"outil": "addy-skills", "pourquoi": "Le plus large et le plus portable (Codex, Cursor), mais c'est un méta-routeur concurrent de BMAD (~11 k caractères)."},
+        {"outil": "liza", "pourquoi": "Même idée que ta chaîne dev → second avis → revue, rendue mécanique par un superviseur ; à lire pour des idées, pas à installer (WSL2, contrat de ~54 k caractères)."},
+        {"outil": "openspec", "pourquoi": "Nouveau : variante légère du spec-driven, candidate pour une « voie story légère » sur les changements d'un fichier (test BMAD complet contre léger)."},
+        {"outil": "feature-dev", "pourquoi": "Nouveau : plugin officiel d'Anthropic ; doublon de BMAD pour toi, utile chez un client sans méthode."}
+      ],
+      "ecartes": [
+        {"outil": "ecc", "pourquoi": "~131 k caractères injectés (311 skills, 97 commandes, 71 agents, 27 hooks) : ses descriptions dépassent à elles seules le budget de la liste des skills et masqueraient celles de BMAD."},
+        {"outil": "deepakkamboj", "pourquoi": "1 étoile, ~15 k caractères, doublon de BMAD."},
+        {"outil": "speckit", "pourquoi": "Nouveau : doublon lourd de BMAD ; un praticien de Thoughtworks le juge trop lourd (« I'd rather review code than all these markdown files »)."}
+      ],
+      "hors": [{"outil": "spotify-portal", "pourquoi": "Lié à Spotify Portal (Backstage)."}]
+    },
+    {
+      "id": "contexte", "quadrant": "concevoir", "nom": "Contexte, mémoire et compréhension du code",
+      "resume": "Donner à l'agent le bon contexte au bon moment, garder la mémoire entre sessions, comprendre un code existant.",
+      "constat": "La performance baisse avec la longueur du contexte (« context rot »). Les AGENTS.md générés par LLM n'améliorent pas la réussite et coûtent +20 à 23 % ; écrits à la main, effet non significatif pour +19 % de coût en moyenne. Les résumés de code restituent mal son comportement (4 questions sur 45 contre 27 avec le source). L'empoisonnement de mémoire est démontré, y compris sur le MEMORY.md de Claude Code.",
+      "etat_art": ["Récupération au moment du besoin (grep, glob, LSP, sous-agent Explore) plutôt qu'un index pré-calculé, selon Anthropic", "CLAUDE.md court, règles par chemin chargées à la demande, /doctor prompt-audit (natif)", "Mémoire automatique : index de 200 lignes ou 25 Ko, fichiers par sujet (natif)"],
+      "chez_toi": "Ta mémoire automatique, ton MEMORY.md d'une ligne par souvenir et la navigation par symbole (pyright-lsp) suivent déjà la bonne pratique. Ton CLAUDE.md global et celui de la racine GitHub sont longs : c'est l'objet du test T3.",
+      "recommandes": [
+        {"outil": "natif-memoire", "pourquoi": "CLAUDE.md court, règles paths:, mémoire automatique, Explore et LSP couvrent l'essentiel sans hook ni service tiers."},
+        {"outil": "diagram-design", "pourquoi": "Pour les livrables client à l'esthétique soignée ; Mermaid reste meilleur pour la doc versionnée, de l'aveu même de l'outil."}
+      ],
+      "doute": [
+        {"outil": "graphify", "pourquoi": "Graphe du code construit en local, sans modèle ; mais son seul banc compte 6 questions, comparé à grep et jamais au LSP ni à Explore, à ~140 k tokens par requête. À n'utiliser qu'en mode code seul, à la demande."},
+        {"outil": "archify", "pourquoi": "Diagrammes interactifs liés au code, fidélité non prouvée ; contacte son serveur toutes les 24 h."},
+        {"outil": "serena", "pourquoi": "Nouveau : outils LSP exposés par MCP ; seules des évaluations de l'éditeur existent, et tu as déjà pyright-lsp en natif."}
+      ],
+      "ecartes": [
+        {"outil": "claude-mem", "pourquoi": "9 types de hooks dont un PreToolUse synchrone, modèle « observateur » qui consomme du quota, données vers un service hébergé par défaut, faille de lecture de fichiers corrigée en septembre, aucun gain mesuré indépendamment."}
+      ],
+      "hors": [{"outil": "leviathan", "pourquoi": "Index de jeux d'enregistrements (tickets, logs), pas de code ; 19 jours, un contributeur."}]
+    },
+    {
+      "id": "front", "quadrant": "concevoir", "nom": "Qualité visuelle et UX du front généré",
+      "resume": "Éviter le front générique « AI slop », tenir un design system, garder accessibilité et sobriété.",
+      "constat": "Aucune skill anti-slop n'a d'effet mesuré : le test en aveugle publié par taste-skill (noté par un modèle, ±0,5 point de bruit) donne 7,7 avec contre 7,8 sans. Leur point faible mesuré est l'activation : sans être nommées, hallmark et impeccable ne se sont pas déclenchés (mesures d'un même auteur). Ce qui a une mesure : la critique visuelle sur capture d'écran, jusqu'à +17,8 % en 3 cycles (préprint).",
+      "etat_art": ["Skill officielle frontend-design (Anthropic), plugin modern-web-guidance (Google Chrome) pour les API HTML/CSS natives", "Claude in Chrome, chrome-devtools-mcp, Claude Design (inclus dans Max)", "DESIGN.md (Google, alpha) comme contrat commun lu par les skills"],
+      "chez_toi": "Ta pile est FastAPI + Jinja2 + HTML/CSS/JS sans framework : tout ce qui suppose React, Tailwind ou WebGL tombe. Aucune skill ne lit Jinja : il faut vérifier sur l'URL rendue. Ta skill bmad-ux écrit déjà un DESIGN.md : il faut un seul propriétaire de ce fichier.",
+      "recommandes": [
+        {"outil": "frontend-design", "pourquoi": "Nouveau (officiel) : la base la moins chère (279 caractères de description), maintenue par Anthropic ; à confirmer contre les autres par le test T7."},
+        {"outil": "impeccable", "pourquoi": "Détecteur déterministe de 62 règles utilisable sur une URL rendue, donc sur tes pages Jinja ; à installer sans ses hooks et sans télémétrie."},
+        {"outil": "design-md", "pourquoi": "Format de design system lu ou écrit par impeccable, hallmark et open-design ; manquent encore les jetons d'animation et responsive (alpha)."},
+        {"outil": "emil-skills", "pourquoi": "Règles d'animation et de performance CSS, utiles en vanilla ; à prendre sélectivement."},
+        {"outil": "modern-web-guidance", "pourquoi": "Nouveau (marketplace officiel) : pousse les API natives (<dialog>, popover) plutôt que du JS lourd ; hypothèse à tester."}
+      ],
+      "doute": [
+        {"outil": "taste-skill", "pourquoi": "Boucle navigateur la plus poussée, mais pour des landing pages, coûteuse en tokens, et son gain tombe dans le bruit de sa propre mesure."},
+        {"outil": "hallmark", "pourquoi": "Plancher d'accessibilité utile, mais ne se déclenche pas sans être nommé (mesure sur Haiku 4.5), bloque des essais non interactifs et lance un sous-agent (à proscrire dans tes runs)."},
+        {"outil": "awesome-design-md", "pourquoi": "Bonne collection d'exemples du format DESIGN.md, pas un outil."},
+        {"outil": "claude-design", "pourquoi": "Nouveau (natif, research preview, inclus dans Max) : construit un design system depuis le code ; non évalué ici."}
+      ],
+      "ecartes": [
+        {"outil": "ui-ux-pro-max", "pourquoi": "Tailwind par défaut et publication npm cassée depuis août : aucun cas où il gagne pour ta pile."},
+        {"outil": "react-bits", "pourquoi": "Composants React / Next.js."},
+        {"outil": "canvas-ui", "pourquoi": "Effets WebGL distribués via shadcn."},
+        {"outil": "scroll-world", "pourquoi": "Landing page 3D de marque, hors de tes besoins."}
+      ],
+      "hors": [
+        {"outil": "open-design", "pourquoi": "Espace de design complet, doublon de Claude Design."},
+        {"outil": "gsap-skills", "pourquoi": "Utile seulement si tu adoptes GSAP."}
+      ]
+    },
+    {
+      "id": "tests", "quadrant": "verifier", "nom": "Vérifier le travail de l'agent (tests, navigateur)",
+      "resume": "Que l'agent vérifie ce qu'il fait : tests qui testent vraiment, vérification dans le navigateur, régression visuelle.",
+      "constat": "Chez les modèles de 2025, la triche passait surtout par la modification des tests (plus de 79 % chez Claude et Qwen3-Coder) ; des tests en lecture seule la bloquent sans perte légitime. Un audit d'octobre 2026 ne voit presque plus de triche chez Claude 5.5 sur LiveCodeBench. Les agents ajoutent plus de mocks (36 % des commits contre 26 %), et leurs tests jetables à base de print coûtent jusqu'à 49 % de tokens d'entrée pour ~2 points de résolution.",
+      "etat_art": ["Règle native deny Edit(tests/**) (ne couvre pas un script Python qui écrit le fichier)", "Mutation testing (mesure la force des assertions), property-based testing piloté par agent (56 % de bugs signalés valides), couverture différentielle en CI", "Playwright Python : pas de comparaison de captures (non prévue), mais des snapshots ARIA"],
+      "chez_toi": "Tes stories passent pytest + ruff et une CI sur 3 OS ; ton reviewer Opus lit les tests. Rien ne protège aujourd'hui les tests pendant l'implémentation, ni ne mesure la force des assertions.",
+      "recommandes": [
+        {"outil": "claude-in-chrome", "pourquoi": "Nouveau (natif, inclus dans Max, Windows documenté) : le meilleur choix pour vérifier une page à la main pendant une session ; pas pour la CI."},
+        {"outil": "playwright-cli", "pourquoi": "Vérification headless scriptable dans un run autonome ; plus d'écart de tokens notable avec le MCP (~1 %), mais il génère ses tests en TypeScript, hors de pytest."},
+        {"outil": "deny-tests", "pourquoi": "Nouveau (natif) : verrouiller les tests de la story une fois relus, pendant l'implémentation ; à tester par phase (T4)."},
+        {"outil": "mutation", "pourquoi": "Nouveau : cosmic-ray (support Windows affiché, non testé) ou mutmut (WSL), borné aux fichiers de la story, à la revue ou en CI."},
+        {"outil": "hypothesis", "pourquoi": "Nouveau : le property-based testing est la seule parade aux tests faibles dont l'efficacité est mesurée pour un agent."}
+      ],
+      "doute": [
+        {"outil": "agent-browser", "pourquoi": "Nouveau : seul outil vu qui intègre diff visuel et audit axe-core, Windows soigné ; mais dépôt de janvier 2026 à croissance rapide."},
+        {"outil": "playwright-test-agents", "pourquoi": "Nouveau : agents planificateur, générateur et « healer » ; le healer peut marquer un test skip, comportement voisin de la triche à encadrer."},
+        {"outil": "diff-cover", "pourquoi": "Nouveau : porte de couverture sur les lignes modifiées ; maintenu, mais aucune preuve publiée de son effet sur les agents."}
+      ],
+      "ecartes": [],
+      "hors": []
+    },
+    {
+      "id": "revue", "quadrant": "verifier", "nom": "Revue de code et sécurité du code produit",
+      "resume": "Trouver les défauts du code généré sans noyer l'humain sous les faux positifs.",
+      "constat": "La précision des revues par LLM reste basse (5,6 à 39,9 % selon les modèles, une étude). Le code d'agent est fonctionnel à 57 % mais sûr à 11,8 %, et des consignes de sécurité dans le prompt n'y changent rien. Un préprint relate dix relecteurs unanimes réfutés par un seul test et recommande un critique d'une autre famille plus une preuve empirique ; c'est une recommandation, pas une mesure.",
+      "etat_art": ["Revue interne d'Anthropic : chercheurs en parallèle, vérificateurs qui votent, étiquettes Important / Nit / Pre-existing, plafond de 3 passes, revue du seul nouveau diff", "Hybride SAST + juge LLM (Semgrep ou CodeQL en entrée), imposé dans le pipeline", "Natif : /code-review, /code-review ultra (payant au-delà de 3 essais), /security-review, plugin security-guidance ; Code Review GitHub réservé à Team et Enterprise"],
+      "chez_toi": "Ta chaîne dev-story → second-avis Haiku → reviewer Opus est mesurée (Opus : 11 défauts medium+ sur 8 stories) ; elle reste dans une seule famille de modèles. wavedevsecops enseigne justement cette chaîne de contrôle.",
+      "recommandes": [
+        {"outil": "anthropic-review", "pourquoi": "Article de la liste : reprendre ses règles de convergence dans ton reviewer (3 passes au plus, nouveau diff seulement, Important / Nit / Pre-existing)."},
+        {"outil": "open-code-review", "pourquoi": "Déterministe pour le choix des fichiers, LLM pour le jugement, ~15× moins de tokens selon l'éditeur ; à essayer en délégation, car une reproduction indépendante (10 PR, confiance basse) trouve une précision bien plus basse."},
+        {"outil": "critique-famille", "pourquoi": "Nouveau : un second avis GPT, Gemini ou Mistral via OpenRouter, pour casser les angles morts communs à une même famille (test T5)."},
+        {"outil": "porte-empirique", "pourquoi": "Nouveau : exiger un test qui échoue pour tout constat Important ; l'accord entre relecteurs ne prouve rien (test T5)."}
+      ],
+      "doute": [
+        {"outil": "security-audit-skill", "pourquoi": "Méthode la plus rigoureuse vue (vérificateur frais qui tente de réfuter), mais validateurs cassés sous Windows natif, correctif non fusionné : à essayer sous WSL."},
+        {"outil": "security-guidance", "pourquoi": "Nouveau (plugin officiel) : motifs à chaque édition, revue Opus à chaque tour, revue à chaque commit ; utile, mais coûteux en quota sur de longs runs."},
+        {"outil": "semgrep-llm", "pourquoi": "Nouveau : SAST + filtre LLM, F1 90,9 % contre 78,4 % pour Semgrep seul sur un banc Java synthétique (préprint)."}
+      ],
+      "ecartes": [],
+      "hors": []
+    },
+    {
+      "id": "chaine", "quadrant": "verifier", "nom": "Sécurité de la chaîne d'outils de l'agent",
+      "resume": "Installer des skills, plugins et serveurs MCP tiers sans exposer son poste.",
+      "constat": "Un plugin exécute du code avec tes droits. Les scanners statiques de skills ont tous été contournés (Trail of Bits : 3 skills malveillantes écrites en moins d'une heure ; SkillCloak : plus de 90 % d'évasion pour la meilleure technique). Snyk compte 13,4 % de skills publiques avec un défaut critique (chiffre du vendeur). Une détection dynamique fait mieux dans un préprint.",
+      "etat_art": ["Marketplaces curées, versions épinglées, « traiter les dépôts de skills publics comme du code non fiable »", "Sandbox natif (macOS, Linux, WSL2 ; pas Windows natif), auto mode", "Scanners : SkillSpector, Snyk Agent Scan"],
+      "chez_toi": "Tu installes peu de plugins (4) et lis ce que tu installes ; wavedevsecops enseigne ces risques. Le sandbox natif t'est inaccessible sans WSL2.",
+      "recommandes": [
+        {"outil": "lire-avant", "pourquoi": "Lire chaque skill avant installation, épingler les versions, préférer les marketplaces officiels : la seule défense qui ne se contourne pas par obfuscation."},
+        {"outil": "skillspector", "pourquoi": "En mode --no-llm, hors ligne, comme garde-fou d'installation ; jamais comme preuve d'innocuité (aucun taux de détection publié)."}
+      ],
+      "doute": [
+        {"outil": "snyk-agent-scan", "pourquoi": "Nouveau : découvre les MCP et skills installés, mais exige un jeton Snyk, passe par leur API et lance les serveurs stdio qu'il analyse : à faire en bac à sable."},
+        {"outil": "sandbox-wsl", "pourquoi": "Nouveau (natif) : isolation OS des commandes, au prix d'un passage à WSL2."}
+      ],
+      "ecartes": [],
+      "hors": []
+    },
+    {
+      "id": "gouvernance", "quadrant": "verifier", "nom": "Gouvernance, propriété intellectuelle et traçabilité",
+      "nouveau": true,
+      "resume": "Savoir quel code vient de l'IA, à quelles conditions il peut être livré à un client, et partager une configuration en équipe.",
+      "constat": "Problème absent de ta liste initiale. L'indemnisation d'Anthropic sur la propriété intellectuelle figure dans les Commercial Terms (API, Team, Enterprise), annoncée « not for consumer use » ; Max relève des Consumer Terms (non lus ici). 93 % des développeurs veulent l'attribution des sources (Stack Overflow 2026). Gartner met la gouvernance de tout le cycle au premier plan.",
+      "etat_art": ["Git AI : attribution ligne par ligne déclarée par l'agent, conservée au rebase et au squash (Assess au Radar)", "Agent Trace (Assess au Radar)", "Instructions partagées et curées en équipe : Adopt au Radar ; managed settings et allowedProviders côté organisation"],
+      "chez_toi": "claude-config partage déjà tes réglages entre postes ; agent-cost-kit ajoute Co-Authored-By aux commits. Pour une mission client, la question des conditions d'usage du code produit sous Max reste ouverte.",
+      "recommandes": [
+        {"outil": "terms", "pourquoi": "Avant de livrer du code produit sous Max à un client : vérifier les Consumer Terms, ou passer par une offre commerciale (API, Team, Enterprise)."}
+      ],
+      "doute": [
+        {"outil": "git-ai", "pourquoi": "Nouveau : traçabilité du code IA pour les clients ; ne prouve pas la licence et ne suit pas les fusions faites depuis l'interface web de GitHub."}
+      ],
+      "ecartes": [],
+      "hors": []
+    },
+    {
+      "id": "couts", "quadrant": "couts", "nom": "Coûts, quotas et tokens",
+      "resume": "Payer moins (ou tenir dans son quota) sans perdre en qualité.",
+      "constat": "Un agent consomme ~1 000× les tokens d'un chat de code, avec jusqu'à 30× d'écart entre deux runs de la même tâche. Le premier poste est l'écriture du cache (42 à 44 %), pas la sortie. Compresser les sorties de commandes rapporte ~2,7 % mesuré ; retirer les outils inutilisés rapporte 13 à 18 % (TokenEconomizer, papier arXiv). Les quotas opaques sont la première plainte, chez Claude Code comme chez Codex, Copilot et Cursor.",
+      "etat_art": ["TTL du cache des sous-agents (5 min par défaut, même sur abonnement), éviter tout changement de modèle en session (opusplan en est un), /clear plutôt que /compact", "Budget de la liste des skills (1 % de la fenêtre par défaut), skills manuelles, /skill-doctor", "/advisor : un modèle fort conseille un exécutant moins cher (+2,7 points et −11,9 % sur des modèles 4.6)"],
+      "chez_toi": "agent-cost-kit couvre déjà la mesure depuis les transcriptions, la règle du TTL et l'estimation EcoLogits, avec tes propres chiffres (cache 39–42 % en écriture). Il lui manque la mesure du contexte fixe (skills, hooks, outils) et une règle sur les outils jamais appelés.",
+      "recommandes": [
+        {"outil": "contexte-fixe", "pourquoi": "Nouveau : mesurer puis réduire le contexte fixe (outils jamais appelés, skills en invocation manuelle) ; l'idée de TokenEconomizer, à porter sous Windows dans agent-cost-kit."},
+        {"outil": "advisor", "pourquoi": "Page de la liste : fonction native à essayer (Sonnet conseillé par Opus contre ton pipeline, test T6) ; non mesurée sur les modèles 5.5."}
+      ],
+      "doute": [
+        {"outil": "tokeneconomizer", "pourquoi": "Les meilleures preuves de la liste (−18 à −31 % pour le plugin complet, −15 % dans un essai indépendant), mais il déclare ne pas tourner sous Windows et ne vise que quelques versions de Claude Code."},
+        {"outil": "green-claude", "pourquoi": "Référentiel d'écoconception du code (RGESN), utile en audit à la demande ; ne mesure rien et ajoute ~15,8 k caractères et des hooks s'il est chargé en permanence."},
+        {"outil": "headroom", "pourquoi": "Nouveau : proxy qui compresse la partie non cachée des requêtes (2,8 % en rejeu) ; il lit tout ton trafic."}
+      ],
+      "ecartes": [
+        {"outil": "claude-router", "pourquoi": "La version actuelle n'a aucun résultat mesuré, de l'aveu de l'auteur, et envoie par défaut tes prompts à un classifieur tiers ; /advisor et le modèle des sous-agents couvrent le besoin."},
+        {"outil": "rtk", "pourquoi": "Article de la liste : gain mesuré ~2,7 %, car l'essentiel des sorties passe par Read, hors de portée de son hook ; risque d'exécuter une release compromise via le hook."}
+      ],
+      "hors": []
+    },
+    {
+      "id": "routage", "quadrant": "couts", "nom": "Routage multi-modèles et modèles locaux",
+      "resume": "Brancher Claude Code sur d'autres modèles, cloud ou locaux, pour comparer ou économiser.",
+      "constat": "Claude Code se branche sur tout serveur au format Anthropic Messages via ANTHROPIC_BASE_URL, mais Anthropic ne prend pas en charge les modèles non-Claude. Une passerelle avec son propre identifiant fait sortir de l'abonnement Max. Une requête Claude Code pèse ~29 k tokens, surtout des définitions d'outils (mesure de blog) : un modèle ≤ 4B sur CPU paraît inadapté comme moteur, utile en appel direct.",
+      "etat_art": ["Ollama, LM Studio et llama.cpp exposent nativement /v1/messages : pas besoin de passerelle pour le local (Ollama : ni cache_control ni count_tokens)", "En-têtes d'indice de passerelle (v2.1.273+) pour router et attribuer les coûts par sous-agent", "Classe locale crédible : MoE à ~3 B actifs (Qwen3-Coder-Next, Qwen3.6-35B-A3B), 24 à 48 Go de mémoire"],
+      "chez_toi": "slm-quality-bench et wavelocalai appellent Ollama directement : c'est la bonne voie pour les SLM. Tu as qwen3.6:35b-a3b et nemotron 30b-a3b ; ton benchmark occupe Ollama et le GPU jusqu'au ~27 octobre.",
+      "recommandes": [
+        {"outil": "ollama-natif", "pourquoi": "Nouveau : endpoint Anthropic natif d'Ollama (ou LM Studio, llama.cpp) pour tes essais locaux, un composant de moins qu'une passerelle (test T8 après ton benchmark)."},
+        {"outil": "openrouter", "pourquoi": "Nouveau : une seule clé pour comparer plusieurs familles de modèles (second avis, comparaisons), en appels directs hors de Claude Code."},
+        {"outil": "llmfit", "pourquoi": "Présélection des modèles qui tiennent sur une machine ; ses estimations sont optimistes sur du matériel modeste, et sa skill est faite pour OpenClaw : ne pas l'installer."}
+      ],
+      "doute": [
+        {"outil": "litellm", "pourquoi": "Utile seulement pour mêler cloud et local facturés à l'API ; réécrit le corps des requêtes ; paquets PyPI compromis en mars 2026 : épingler les versions."},
+        {"outil": "agentgateway", "pourquoi": "Nouveau (via le lab aaif-labs de la liste) : passerelle de la Linux Foundation, Apache-2.0, binaire Windows ; la piste pour conseiller des clients."},
+        {"outil": "hint-headers", "pourquoi": "Nouveau (natif) : router les sous-agents Explore vers le local et garder le reste sur Claude ; prometteur, mais hors support pour les modèles non-Claude et hors abonnement."},
+        {"outil": "claude-code-router", "pourquoi": "Nouveau : proxy Node avec routage par rôle pensé pour Claude Code ; guides antérieurs à sa v3 périmés."}
+      ],
+      "ecartes": [
+        {"outil": "tabbyapi", "pourquoi": "Pas d'endpoint Anthropic, GPU NVIDIA (ou AMD sous Linux), AGPL, se dit lui-même projet amateur."}
+      ],
+      "hors": [{"outil": "aaif-labs", "pourquoi": "Lab Kubernetes personnel sans licence ; l'intérêt est agentgateway lui-même."}]
+    },
+    {
+      "id": "orchestration", "quadrant": "piloter", "nom": "Orchestrer plusieurs agents en parallèle",
+      "resume": "Faire avancer plusieurs stories à la fois sans conflits ni perte de contrôle.",
+      "constat": "Le Radar met les essaims d'agents en Caution. Le natif couvre l'essentiel pour un développeur seul : agent view (sessions en arrière-plan, worktree par session, notifications), dynamic workflows, /batch. Aucun outil ne prévient les conflits sémantiques entre stories parallèles ni ne reprend un run multi-stories après extinction du poste.",
+      "etat_art": ["Agent view, dynamic workflows, /batch, sous-agents en worktree (natif)", "Agent teams : expérimental, pas de reprise après /resume, pas de panneaux dans Windows Terminal"],
+      "chez_toi": "Ton run autonome orchestré par la session principale, avec fichier d'état run-autonome.md et avancement-run, fait déjà ce qu'aucun outil ne fait (vagues, dépendances, CI, reprise après /clear).",
+      "recommandes": [],
+      "doute": [
+        {"outil": "agent-view", "pourquoi": "Nouveau (natif, aperçu) : alternative à ton orchestration pour des stories indépendantes ; correctifs Windows au changelog, support non déclaré."},
+        {"outil": "orca", "pourquoi": "IDE multi-fournisseurs avec annotation de diffs et Design Mode ; usage réel attesté ; intéressant surtout pour des clients multi-outils."},
+        {"outil": "beads", "pourquoi": "Nouveau : suivi de tâches pour agents (Assess au Radar) ; recoupe ton fichier d'état et le sprint status."}
+      ],
+      "ecartes": [
+        {"outil": "paperclip", "pourquoi": "« Entreprise d'agents » hors méthode supervisée ; blocages silencieux, bugs Windows, télémétrie ; 106 k étoiles mais au plus 34 commentaires par issue."},
+        {"outil": "agent-teams", "pourquoi": "Nouveau (natif, expérimental) : ~7× les tokens, pas de reprise, panneaux non pris en charge sous Windows Terminal ; pas encore."}
+      ],
+      "hors": [{"outil": "smythos", "pourquoi": "Constructeur visuel d'agents, dormant."}]
+    },
+    {
+      "id": "observabilite", "quadrant": "piloter", "nom": "Mesurer : traces, coûts par agent, qualité d'une configuration",
+      "resume": "Voir ce que font les agents, ce qu'ils coûtent, et si sa configuration s'améliore dans le temps.",
+      "constat": "Claude Code exporte nativement en OpenTelemetry le coût et les tokens par agent (agent_id, parent_agent_id, workflow.run_id), et des traces en bêta (dont le temps passé à attendre l'humain). Évaluer une configuration entière dans le temps reste un trou : claude plugin eval exécute sans CLAUDE.md, réglages, hooks ni autres plugins.",
+      "etat_art": ["OpenTelemetry natif ; MLflow le reçoit directement, Langfuse et Phoenix par des plugins à hooks", "claude plugin eval, skill-creator, /skill-doctor pour une skill ou un plugin", "Le Radar ne place « measuring collaboration quality » qu'en Assess"],
+      "chez_toi": "mesurer-couts (agent-cost-kit) reconstitue le coût par agent depuis les transcriptions ; couts-session l'affiche. WaveEval traitera l'évaluation de l'IA générative.",
+      "recommandes": [
+        {"outil": "otel", "pourquoi": "Nouveau (natif) : à comparer à mesurer-couts sur une session (test T2) ; pourrait simplifier agent-cost-kit."},
+        {"outil": "plugin-eval", "pourquoi": "Nouveau (natif) : suite de cas avec et sans plugin pour agent-cost-kit, à épingler sur un modèle ; les cas qui ouvrent le shell exigent WSL2 sous Windows."},
+        {"outil": "mlflow-otel", "pourquoi": "Article de la liste : MLflow reçoit directement les traces OpenTelemetry natives (contenu masqué par défaut, erreurs d'export silencieuses)."}
+      ],
+      "doute": [
+        {"outil": "agent-standup", "pourquoi": "Article de la liste : trop jeune pour conclure."},
+        {"outil": "langfuse-phoenix", "pourquoi": "Nouveau : plateformes de traces par plugins à hooks ; utiles en équipe, superflues en solo à côté de l'OpenTelemetry natif."}
+      ],
+      "ecartes": [],
+      "hors": []
+    },
+    {
+      "id": "experience", "quadrant": "piloter", "nom": "Expérience de l'utilisateur et charge cognitive",
+      "resume": "Des réponses lisibles, moins d'interruptions, et garder la maîtrise de son code.",
+      "constat": "La revue devient le goulot (DORA 2025, McKinsey via la presse). Un essai randomisé d'Anthropic mesure une compréhension plus faible avec assistance IA (quiz à 50 % contre 67 %, surtout des juniors) : la « dette cognitive » est en Caution au Radar. Aucun outil ne mesure ni ne régule la charge de relecture.",
+      "etat_art": ["Output styles natifs (Concise, Proactive, personnalisés), statusline, mods", "Span blocked_on_user des traces bêta : seule mesure du temps d'attente de l'humain"],
+      "chez_toi": "diff-replie (claude-code-mods) replie diffs et sorties shell, couts-session affiche le coût ; wavestack et wavedevsecops visent justement à faire comprendre ce que fait l'agent.",
+      "recommandes": [
+        {"outil": "concise", "pourquoi": "Nouveau (natif) : le style Concise recouvre l'essentiel d'i-have-adhd, sans dépendance."},
+        {"outil": "humanizer", "pourquoi": "Pour la rédaction (ton futur post LinkedIn) : préféré en aveugle sur un petit échantillon ; les détecteurs le repèrent toujours, et il renforce certains tics de rythme."}
+      ],
+      "doute": [
+        {"outil": "i-have-adhd", "pourquoi": "+0,43/5 en auto-évaluation, mais régression sur les cas de succès partiel, où une règle pousse à affirmer une cause."}
+      ],
+      "ecartes": [],
+      "hors": []
+    },
+    {
+      "id": "veille", "quadrant": "piloter", "nom": "Veille, données web et contenus",
+      "resume": "Collecter des sources pour la veille, produire des démos et des contenus.",
+      "constat": "Pas un problème d'agent de code à proprement parler, mais utile à ton activité. WebFetch convertit en Markdown avec perte et est jugé inefficace sur les pages rendues en JavaScript (par deux fournisseurs concurrents).",
+      "etat_art": ["WebFetch et WebSearch natifs", "Changelog Claude Code, Thoughtworks Radar (vol. 35 attendu début novembre), issues triées par réactions"],
+      "chez_toi": "Ce dépôt et son script de collecte gh api posent la base de ta veille continue.",
+      "recommandes": [
+        {"outil": "firecrawl", "pourquoi": "Pour les pages rendues en JavaScript dans la veille, en service hébergé (cœur sous AGPL)."},
+        {"outil": "hyperframes", "pourquoi": "Vidéos de démo de tes applications à partir de HTML, comme ta pile ; Windows non vérifié."}
+      ],
+      "doute": [
+        {"outil": "apify-mcp", "pourquoi": "Données de réseaux sociaux et de moteurs ; télémétrie par défaut et paiements par l'agent à interdire."}
+      ],
+      "ecartes": [],
+      "hors": [
+        {"outil": "public-apis", "pourquoi": "Annuaire d'API."},
+        {"outil": "open-seo", "pourquoi": "Utile seulement en mission SEO."}
+      ]
+    }
+  ],
+  "outils": [
+    {"id": "superpowers", "nom": "obra/superpowers", "url": "https://github.com/obra/superpowers", "origine": "liste", "problemes": ["methode", "tests"], "verdict": "Évaluer"},
+    {"id": "mattpocock-skills", "nom": "mattpocock/skills", "url": "https://github.com/mattpocock/skills", "origine": "liste", "problemes": ["methode"], "verdict": "Essayer"},
+    {"id": "addy-skills", "nom": "addyosmani/agent-skills", "url": "https://github.com/addyosmani/agent-skills", "origine": "liste", "problemes": ["methode", "revue"], "verdict": "Évaluer"},
+    {"id": "ecc", "nom": "affaan-m/ECC", "url": "https://github.com/affaan-m/ECC", "origine": "liste", "problemes": ["methode", "contexte", "couts"], "verdict": "Écarter"},
+    {"id": "karpathy", "nom": "multica-ai/andrej-karpathy-skills", "url": "https://github.com/multica-ai/andrej-karpathy-skills", "origine": "liste", "problemes": ["methode"], "verdict": "Essayer"},
+    {"id": "liza", "nom": "liza-mas/liza", "url": "https://github.com/liza-mas/liza", "origine": "liste", "problemes": ["methode", "orchestration", "revue"], "verdict": "Évaluer"},
+    {"id": "deepakkamboj", "nom": "deepakkamboj/developer-assistant-skills", "url": "https://github.com/deepakkamboj/developer-assistant-skills", "origine": "liste", "problemes": ["methode"], "verdict": "Écarter"},
+    {"id": "spotify-portal", "nom": "spotify/portal-ai-plugins", "url": "https://github.com/spotify/portal-ai-plugins", "origine": "liste", "problemes": ["methode"], "verdict": "Hors périmètre"},
+    {"id": "skill-creator", "nom": "anthropics/skills (skill-creator)", "url": "https://github.com/anthropics/skills", "origine": "liste", "problemes": ["methode", "observabilite"], "verdict": "Adopter"},
+    {"id": "impeccable", "nom": "pbakaus/impeccable", "url": "https://github.com/pbakaus/impeccable", "origine": "liste", "problemes": ["front", "tests"], "verdict": "Essayer"},
+    {"id": "taste-skill", "nom": "Leonxlnx/taste-skill", "url": "https://github.com/Leonxlnx/taste-skill", "origine": "liste", "problemes": ["front"], "verdict": "Évaluer"},
+    {"id": "hallmark", "nom": "Nutlope/hallmark", "url": "https://github.com/Nutlope/hallmark", "origine": "liste", "problemes": ["front"], "verdict": "Évaluer"},
+    {"id": "ui-ux-pro-max", "nom": "nextlevelbuilder/ui-ux-pro-max-skill", "url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill", "origine": "liste", "problemes": ["front"], "verdict": "Écarter"},
+    {"id": "design-md", "nom": "google-labs-code/design.md", "url": "https://github.com/google-labs-code/design.md", "origine": "liste", "problemes": ["front", "contexte"], "verdict": "Essayer"},
+    {"id": "awesome-design-md", "nom": "VoltAgent/awesome-design-md", "url": "https://github.com/VoltAgent/awesome-design-md", "origine": "liste", "problemes": ["front"], "verdict": "Évaluer"},
+    {"id": "open-design", "nom": "nexu-io/open-design", "url": "https://github.com/nexu-io/open-design", "origine": "liste", "problemes": ["front"], "verdict": "Hors périmètre"},
+    {"id": "emil-skills", "nom": "emilkowalski/skills", "url": "https://github.com/emilkowalski/skills", "origine": "liste", "problemes": ["front"], "verdict": "Essayer"},
+    {"id": "gsap-skills", "nom": "greensock/gsap-skills", "url": "https://github.com/greensock/gsap-skills", "origine": "liste", "problemes": ["front"], "verdict": "Hors périmètre"},
+    {"id": "react-bits", "nom": "DavidHDev/react-bits", "url": "https://github.com/DavidHDev/react-bits", "origine": "liste", "problemes": ["front"], "verdict": "Écarter"},
+    {"id": "canvas-ui", "nom": "DavidHDev/canvas-ui", "url": "https://github.com/DavidHDev/canvas-ui", "origine": "liste", "problemes": ["front"], "verdict": "Écarter"},
+    {"id": "scroll-world", "nom": "oso95/scroll-world", "url": "https://github.com/oso95/scroll-world", "origine": "liste", "problemes": ["front"], "verdict": "Écarter"},
+    {"id": "claude-mem", "nom": "thedotmack/claude-mem", "url": "https://github.com/thedotmack/claude-mem", "origine": "liste", "problemes": ["contexte", "chaine"], "verdict": "Écarter"},
+    {"id": "graphify", "nom": "Graphify-Labs/graphify", "url": "https://github.com/Graphify-Labs/graphify", "origine": "liste", "problemes": ["contexte"], "verdict": "Évaluer"},
+    {"id": "leviathan", "nom": "elstongun/leviathan", "url": "https://github.com/elstongun/leviathan", "origine": "liste", "problemes": ["contexte"], "verdict": "Hors périmètre"},
+    {"id": "archify", "nom": "tt-a1i/archify", "url": "https://github.com/tt-a1i/archify", "origine": "liste", "problemes": ["contexte"], "verdict": "Évaluer"},
+    {"id": "diagram-design", "nom": "cathrynlavery/diagram-design", "url": "https://github.com/cathrynlavery/diagram-design", "origine": "liste", "problemes": ["contexte", "veille"], "verdict": "Essayer"},
+    {"id": "tokeneconomizer", "nom": "microsoft/TokenEconomizer", "url": "https://github.com/microsoft/TokenEconomizer", "origine": "liste", "problemes": ["couts", "contexte"], "verdict": "Évaluer"},
+    {"id": "claude-router", "nom": "alexei-led/claude-router", "url": "https://github.com/alexei-led/claude-router", "origine": "liste", "problemes": ["couts", "routage"], "verdict": "Écarter"},
+    {"id": "green-claude", "nom": "Institut-du-Numerique-Responsable/green-claude", "url": "https://github.com/Institut-du-Numerique-Responsable/green-claude", "origine": "liste", "problemes": ["couts", "front"], "verdict": "Évaluer"},
+    {"id": "litellm", "nom": "BerriAI/litellm", "url": "https://github.com/BerriAI/litellm", "origine": "liste", "problemes": ["routage", "observabilite"], "verdict": "Évaluer"},
+    {"id": "aaif-labs", "nom": "felipevicens/aaif-labs (agentgateway)", "url": "https://github.com/felipevicens/aaif-labs/tree/main/agentgateway/multi-provider/manifests", "origine": "liste", "problemes": ["routage"], "verdict": "Hors périmètre"},
+    {"id": "tabbyapi", "nom": "theroyallab/tabbyAPI", "url": "https://github.com/theroyallab/tabbyAPI", "origine": "liste", "problemes": ["routage"], "verdict": "Écarter"},
+    {"id": "llmfit", "nom": "AlexsJones/llmfit", "url": "https://github.com/AlexsJones/llmfit", "origine": "liste", "problemes": ["routage"], "verdict": "Essayer"},
+    {"id": "open-code-review", "nom": "alibaba/open-code-review", "url": "https://github.com/alibaba/open-code-review", "origine": "liste", "problemes": ["revue", "couts"], "verdict": "Essayer"},
+    {"id": "security-audit-skill", "nom": "cloudflare/security-audit-skill", "url": "https://github.com/cloudflare/security-audit-skill", "origine": "liste", "problemes": ["revue"], "verdict": "Évaluer"},
+    {"id": "skillspector", "nom": "NVIDIA/SkillSpector", "url": "https://github.com/NVIDIA/SkillSpector", "origine": "liste", "problemes": ["chaine"], "verdict": "Essayer"},
+    {"id": "playwright-cli", "nom": "microsoft/playwright-cli", "url": "https://github.com/microsoft/playwright-cli", "origine": "liste", "problemes": ["tests", "front"], "verdict": "Essayer"},
+    {"id": "paperclip", "nom": "paperclipai/paperclip", "url": "https://github.com/paperclipai/paperclip", "origine": "liste", "problemes": ["orchestration"], "verdict": "Écarter"},
+    {"id": "orca", "nom": "stablyai/orca", "url": "https://github.com/stablyai/orca", "origine": "liste", "problemes": ["orchestration", "experience", "front"], "verdict": "Évaluer"},
+    {"id": "smythos", "nom": "SmythOS/smythos-studio", "url": "https://github.com/SmythOS/smythos-studio", "origine": "liste", "problemes": ["orchestration"], "verdict": "Hors périmètre"},
+    {"id": "i-have-adhd", "nom": "ayghri/i-have-adhd", "url": "https://github.com/ayghri/i-have-adhd", "origine": "liste", "problemes": ["experience"], "verdict": "Évaluer"},
+    {"id": "humanizer", "nom": "blader/humanizer", "url": "https://github.com/blader/humanizer", "origine": "liste", "problemes": ["experience", "veille"], "verdict": "Essayer"},
+    {"id": "firecrawl", "nom": "firecrawl/firecrawl", "url": "https://github.com/firecrawl/firecrawl", "origine": "liste", "problemes": ["veille"], "verdict": "Essayer"},
+    {"id": "apify-mcp", "nom": "apify/apify-mcp-server", "url": "https://github.com/apify/apify-mcp-server", "origine": "liste", "problemes": ["veille", "chaine"], "verdict": "Évaluer"},
+    {"id": "public-apis", "nom": "public-apis/public-apis", "url": "https://github.com/public-apis/public-apis", "origine": "liste", "problemes": ["veille"], "verdict": "Hors périmètre"},
+    {"id": "open-seo", "nom": "every-app/open-seo", "url": "https://github.com/every-app/open-seo", "origine": "liste", "problemes": ["veille"], "verdict": "Hors périmètre"},
+    {"id": "hyperframes", "nom": "heygen-com/hyperframes", "url": "https://github.com/heygen-com/hyperframes", "origine": "liste", "problemes": ["veille"], "verdict": "Essayer"},
+    {"id": "advisor", "nom": "Doc : advisor (Claude Code)", "url": "https://code.claude.com/docs/en/advisor", "origine": "liste-doc", "problemes": ["couts"], "verdict": "Essayer"},
+    {"id": "anthropic-review", "nom": "Blog : Solving code review at Anthropic", "url": "https://claude.dev/blog/solving-code-review-at-anthropic/", "origine": "liste-doc", "problemes": ["revue"], "verdict": "Adopter"},
+    {"id": "agent-standup", "nom": "Page : agent-standup", "url": "https://atoll92.github.io/agent-standup/", "origine": "liste-doc", "problemes": ["observabilite", "orchestration"], "verdict": "Évaluer"},
+    {"id": "mlflow-otel", "nom": "Blog : MLflow, traces Claude par OpenTelemetry", "url": "https://mlflow.org/blog/claude-otel-tracing", "origine": "liste-doc", "problemes": ["observabilite"], "verdict": "Essayer"},
+    {"id": "rtk", "nom": "Blog : réduire les coûts avec RTK", "url": "https://codepointer.dev/p/cutting-llm-token-costs-with-rtk", "origine": "liste-doc", "problemes": ["couts"], "verdict": "Écarter"},
+    {"id": "medium", "nom": "Medium : Superpowers vs agent-skills vs Pocock vs ECC", "url": "https://medium.com/@martin.jordanovski/superpowers-vs-agent-skills-vs-pocock-vs-ecc-four-philosophies-of-ai-coding-workflows-c996eab1c899", "origine": "liste-doc", "problemes": ["methode"], "verdict": "Non lu"},
+
+    {"id": "feature-dev", "nom": "Plugin officiel feature-dev", "url": "https://code.claude.com/docs/en/plugins/anthropic-marketplaces", "origine": "natif", "problemes": ["methode"], "verdict": "Évaluer"},
+    {"id": "openspec", "nom": "OpenSpec", "url": "https://github.com/Fission-AI/OpenSpec", "origine": "nouveau", "problemes": ["methode"], "verdict": "Évaluer"},
+    {"id": "speckit", "nom": "GitHub Spec Kit", "url": "https://github.com/github/spec-kit", "origine": "nouveau", "problemes": ["methode"], "verdict": "Écarter"},
+    {"id": "natif-memoire", "nom": "CLAUDE.md court, règles paths:, mémoire auto, Explore, LSP", "url": "https://code.claude.com/docs/en/memory", "origine": "natif", "problemes": ["contexte"], "verdict": "Adopter"},
+    {"id": "serena", "nom": "Serena (LSP par MCP)", "url": "https://github.com/oraios/serena", "origine": "nouveau", "problemes": ["contexte"], "verdict": "Évaluer"},
+    {"id": "frontend-design", "nom": "Skill officielle frontend-design", "url": "https://github.com/anthropics/claude-plugins-official", "origine": "natif", "problemes": ["front"], "verdict": "Essayer"},
+    {"id": "modern-web-guidance", "nom": "Plugin modern-web-guidance (Google Chrome)", "url": "https://github.com/anthropics/claude-plugins-official", "origine": "natif", "problemes": ["front"], "verdict": "Essayer"},
+    {"id": "claude-design", "nom": "Claude Design", "url": "https://code.claude.com/docs/en/artifacts", "origine": "natif", "problemes": ["front"], "verdict": "Évaluer"},
+    {"id": "claude-in-chrome", "nom": "Claude in Chrome", "url": "https://code.claude.com/docs/en/chrome", "origine": "natif", "problemes": ["tests", "front"], "verdict": "Adopter"},
+    {"id": "deny-tests", "nom": "Règle deny Edit(tests/**)", "url": "https://code.claude.com/docs/en/permissions", "origine": "natif", "problemes": ["tests"], "verdict": "Essayer"},
+    {"id": "mutation", "nom": "Mutation testing (cosmic-ray, mutmut)", "url": "https://github.com/sixty-north/cosmic-ray", "origine": "nouveau", "problemes": ["tests"], "verdict": "Essayer"},
+    {"id": "hypothesis", "nom": "Property-based testing (Hypothesis)", "url": "https://hypothesis.readthedocs.io/", "origine": "nouveau", "problemes": ["tests"], "verdict": "Essayer"},
+    {"id": "agent-browser", "nom": "vercel-labs/agent-browser", "url": "https://github.com/vercel-labs/agent-browser", "origine": "nouveau", "problemes": ["tests", "front"], "verdict": "Évaluer"},
+    {"id": "playwright-test-agents", "nom": "Playwright Test Agents", "url": "https://playwright.dev/docs/test-agents", "origine": "nouveau", "problemes": ["tests"], "verdict": "Évaluer"},
+    {"id": "diff-cover", "nom": "diff-cover", "url": "https://github.com/Bachmann1234/diff_cover", "origine": "nouveau", "problemes": ["tests"], "verdict": "Évaluer"},
+    {"id": "critique-famille", "nom": "Second avis d'une autre famille (OpenRouter)", "url": "https://openrouter.ai/", "origine": "nouveau", "problemes": ["revue"], "verdict": "Essayer"},
+    {"id": "porte-empirique", "nom": "Porte empirique : un test par constat Important", "url": "https://arxiv.org/abs/2604.19049", "origine": "nouveau", "problemes": ["revue", "tests"], "verdict": "Essayer"},
+    {"id": "security-guidance", "nom": "Plugin officiel security-guidance", "url": "https://code.claude.com/docs/en/security-guidance", "origine": "natif", "problemes": ["revue"], "verdict": "Évaluer"},
+    {"id": "semgrep-llm", "nom": "SAST + filtre LLM (Semgrep, CodeQL)", "url": "https://semgrep.dev/", "origine": "nouveau", "problemes": ["revue"], "verdict": "Évaluer"},
+    {"id": "lire-avant", "nom": "Lire avant d'installer, versions épinglées", "url": "https://blog.trailofbits.com/", "origine": "nouveau", "problemes": ["chaine"], "verdict": "Adopter"},
+    {"id": "snyk-agent-scan", "nom": "Snyk Agent Scan (ex-mcp-scan)", "url": "https://github.com/snyk/agent-scan", "origine": "nouveau", "problemes": ["chaine"], "verdict": "Évaluer"},
+    {"id": "sandbox-wsl", "nom": "Sandbox natif (WSL2)", "url": "https://code.claude.com/docs/en/sandboxing", "origine": "natif", "problemes": ["chaine"], "verdict": "Évaluer"},
+    {"id": "terms", "nom": "Conditions d'usage (Consumer ou Commercial Terms)", "url": "https://www.anthropic.com/legal/commercial-terms", "origine": "nouveau", "problemes": ["gouvernance"], "verdict": "Adopter"},
+    {"id": "git-ai", "nom": "Git AI", "url": "https://github.com/git-ai-project/git-ai", "origine": "nouveau", "problemes": ["gouvernance"], "verdict": "Évaluer"},
+    {"id": "contexte-fixe", "nom": "Mesure et réduction du contexte fixe", "url": "https://code.claude.com/docs/en/skills", "origine": "nouveau", "problemes": ["couts", "contexte"], "verdict": "Adopter"},
+    {"id": "headroom", "nom": "headroom (proxy de compression)", "url": "https://codepointer.dev/p/cutting-llm-token-costs-with-rtk", "origine": "nouveau", "problemes": ["couts"], "verdict": "Évaluer"},
+    {"id": "ollama-natif", "nom": "Endpoint Anthropic natif d'Ollama / LM Studio / llama.cpp", "url": "https://docs.ollama.com/api/anthropic-compatibility", "origine": "nouveau", "problemes": ["routage"], "verdict": "Essayer"},
+    {"id": "openrouter", "nom": "OpenRouter", "url": "https://openrouter.ai/", "origine": "nouveau", "problemes": ["routage", "revue"], "verdict": "Essayer"},
+    {"id": "agentgateway", "nom": "agentgateway (Linux Foundation AAIF)", "url": "https://github.com/agentgateway/agentgateway", "origine": "nouveau", "problemes": ["routage", "gouvernance"], "verdict": "Évaluer"},
+    {"id": "hint-headers", "nom": "En-têtes d'indice de passerelle", "url": "https://code.claude.com/docs/en/llm-gateway-protocol", "origine": "natif", "problemes": ["routage", "observabilite"], "verdict": "Évaluer"},
+    {"id": "claude-code-router", "nom": "claude-code-router", "url": "https://github.com/musistudio/claude-code-router", "origine": "nouveau", "problemes": ["routage"], "verdict": "Évaluer"},
+    {"id": "agent-view", "nom": "Agent view", "url": "https://code.claude.com/docs/en/agent-view", "origine": "natif", "problemes": ["orchestration"], "verdict": "Évaluer"},
+    {"id": "beads", "nom": "Beads", "url": "https://github.com/gastownhall/beads", "origine": "nouveau", "problemes": ["orchestration"], "verdict": "Évaluer"},
+    {"id": "agent-teams", "nom": "Agent teams", "url": "https://code.claude.com/docs/en/agent-teams", "origine": "natif", "problemes": ["orchestration"], "verdict": "Écarter"},
+    {"id": "otel", "nom": "OpenTelemetry natif", "url": "https://code.claude.com/docs/en/monitoring-usage", "origine": "natif", "problemes": ["observabilite", "couts"], "verdict": "Essayer"},
+    {"id": "plugin-eval", "nom": "claude plugin eval", "url": "https://code.claude.com/docs/en/plugin-evals", "origine": "natif", "problemes": ["observabilite"], "verdict": "Essayer"},
+    {"id": "langfuse-phoenix", "nom": "Langfuse, Phoenix", "url": "https://langfuse.com/", "origine": "nouveau", "problemes": ["observabilite"], "verdict": "Évaluer"},
+    {"id": "concise", "nom": "Output style Concise", "url": "https://code.claude.com/docs/en/output-styles", "origine": "natif", "problemes": ["experience"], "verdict": "Essayer"}
+  ],
+  "existants": [
+    {"nom": "BMAD (29 skills)", "problemes": ["methode"]},
+    {"nom": "agent-cost-kit : dev-story, second-avis, reviewer, lookup", "problemes": ["methode", "revue", "couts"]},
+    {"nom": "agent-cost-kit : mesurer-couts, avancement-run ; mod couts-session", "problemes": ["couts", "observabilite", "orchestration"]},
+    {"nom": "claude-code-mods : diff-replie", "problemes": ["experience"]},
+    {"nom": "pyright-lsp, mémoire automatique, MEMORY.md", "problemes": ["contexte"]},
+    {"nom": "claude-config (réglages partagés entre postes)", "problemes": ["gouvernance"]},
+    {"nom": "slm-quality-bench, wavelocalai (Ollama)", "problemes": ["routage"]},
+    {"nom": "wavestack, wavedevsecops (pédagogie du harnais et de la chaîne DevSecOps)", "problemes": ["experience", "revue", "chaine"]},
+    {"nom": "WaveEval (en spécification)", "problemes": ["observabilite"]}
+  ],
+  "nouveaux_problemes": [
+    {"nom": "Gouvernance, propriété intellectuelle et traçabilité du code IA", "detail": "Conditions d'usage du code produit sous Max pour un client, indemnisation, attribution du code (Git AI, Agent Trace)."},
+    {"nom": "Évaluer sa configuration d'agent dans le temps", "detail": "Les outils évaluent une skill ou un plugin isolé, jamais une configuration complète (CLAUDE.md + réglages + plugins)."},
+    {"nom": "Tests trichés ou faibles", "detail": "Modification des tests pour passer, mocks excessifs, tests jetables ; parades : tests verrouillés, mutation, propriétés."},
+    {"nom": "Le contexte fixe comme coût caché", "detail": "Descriptions de skills, sorties de hooks et définitions d'outils relues à chaque appel ; le budget de la liste des skills masque des descriptions au-delà de 1 % de la fenêtre."},
+    {"nom": "Charge de relecture et dette cognitive", "detail": "La revue devient le goulot ; compréhension mesurée plus faible avec assistance IA ; rien ne régule la charge de l'humain."},
+    {"nom": "Robustesse du relecteur à l'injection de prompt", "detail": "/security-review non durci ; un commentaire dans le code a suffi à obtenir « 0 vulnérabilité » chez un éditeur."},
+    {"nom": "Empoisonnement et péremption de la mémoire", "detail": "Démontré sur le MEMORY.md de Claude Code ; aucun outil ne lie une mémoire à sa source."},
+    {"nom": "Garder l'abonnement en routant une partie vers le local", "detail": "Non documenté ; une passerelle à clé propre bascule en facturation au token."},
+    {"nom": "Conflits sémantiques entre stories parallèles", "detail": "Tous les outils isolent par worktree, aucun ne prévient le conflit de sens."},
+    {"nom": "Coût des reprises après une pause", "detail": "Le cache expire ; un praticien attribue 55 % de ses écritures de cache aux reprises après une heure."},
+    {"nom": "Accessibilité sémantique et sobriété du front généré", "detail": "Aucune skill de design n'intègre axe ni ne vise la sobriété."},
+    {"nom": "Empreinte réelle d'un modèle fermé", "detail": "Les estimations (EcoLogits) ne comptent que les tokens de sortie, alors que l'entrée et le cache dominent."}
+  ],
+  "nouvelles_sources": [
+    {"nom": "Thoughtworks Technology Radar vol. 34 (avril 2026)", "apport": "Adopt context engineering et instructions partagées ; Trial feedback sensors, skills, sandbox ; Caution instruction bloat, essaims, MCP par défaut, dette cognitive.", "url": "https://www.thoughtworks.com/radar"},
+    {"nom": "SkillsBench v4 et Jiang et al. 2026", "apport": "Skills curées +11,6 points en génie logiciel, auto-générées sous la base ; 100 skills disponibles ne font pas chuter la réussite mais rendent leur usage imprécis.", "url": "https://arxiv.org/abs/2602.12670"},
+    {"nom": "Gloaguen et al. ; Lulla et al. (AGENTS.md)", "apport": "Fichiers de contexte : effet discuté, coût certain ; écrire peu et seulement le non-standard.", "url": "https://arxiv.org/abs/2602.11988"},
+    {"nom": "TokenEconomizer (arXiv 2610.22732) et PointFive (arXiv 2607.12161)", "apport": "Le cache domine le coût ; retirer les outils rapporte plus que compresser les sorties.", "url": "https://arxiv.org/abs/2610.22732"},
+    {"nom": "ImpossibleBench ; Hora et Robbes (MSR 2026)", "apport": "Triche par modification des tests ; mocks plus fréquents chez les agents.", "url": "https://arxiv.org/abs/2510.20270"},
+    {"nom": "AACR-Bench ; Refute-or-Promote", "apport": "Précision basse des revues LLM ; le consensus ne remplace pas un test.", "url": "https://arxiv.org/abs/2601.19494"},
+    {"nom": "Trail of Bits ; SkillCloak ; Snyk ToxicSkills", "apport": "Les scanners statiques de skills se contournent ; défauts critiques fréquents dans les skills publiques.", "url": "https://arxiv.org/abs/2607.02357"},
+    {"nom": "METR 2026 ; essai randomisé d'Anthropic ; DORA 2025", "apport": "Productivité non tranchée, compréhension plus faible avec l'IA, l'IA amplifie l'existant.", "url": "https://metr.org/blog/2026-02-24-uplift-update"},
+    {"nom": "Stack Overflow 2026 ; JetBrains 2026 ; Gartner 2026", "apport": "Claude Code en tête des usages ; plafonds d'usage et routage entre modèles courants en entreprise ; gouvernance du cycle complet.", "url": "https://survey.stackoverflow.co/"}
+  ]
+}
