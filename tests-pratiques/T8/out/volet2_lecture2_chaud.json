@@ -1,0 +1,53 @@
+{
+ "essai": "lecture2_chaud",
+ "modele": "qwen3.6:35b-a3b",
+ "realiste": false,
+ "ttft_s": 52.36562810000032,
+ "init_s": 0.4902952999691479,
+ "total_s": 69.5,
+ "code": 0,
+ "timeout": false,
+ "outils": [
+  [
+   54.0,
+   "Glob",
+   "{\"pattern\": \"**/main.py\"}"
+  ],
+  [
+   58.2,
+   "Read",
+   "{\"file_path\": \"<user>\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-user-Documents-GitHub\\\\791fed94-a8b0-414e-8a6c-8fe967283749\\\\scratchpad\\\\t8"
+  ]
+ ],
+ "erreurs_outils": [],
+ "ram_base_go": 30.6,
+ "ram_pic_go": 30.6,
+ "vram_base_mo": 6467,
+ "vram_pic_mo": 6467,
+ "resultat": "Voici un résumé des routes définies dans `main.py` :\n\n| Méthode | Route | Description |\n|---------|-------|-------------|\n| `GET`   | `/`   | Retourne un message de bienvenue `{ \"message\": \"bienvenue\" }` |\n| `GET`   | `/items` | Liste tous les items stockés en mémoire (`stylo`, `cahier`, ...) |\n| `GET`   | `/items/{id}` | Récupère un item par son ID (ex: `/items/1`). Retourne **404** si introuvable. |\n| `POST`  | `/items` | Crée un nouvel item en attendant `{ \"nom\": \"...\", \"prix\": ... }` dans le corps de la requête. |\n\nLe fichier est une mini-application HTTP sans dépendances externes (stdlib uniquement). Les routes sont enregistrées via le décorateur `@route(methode, chemin)` dans un dictionnaire global `ROUTES`, et l'attribut `appeler()` se charge de résoudre les chemins (avec support du paramètre `{id}`) et d'invoquer la bonne fonction. Les données (`ITEMS`) sont stockées en mémoire — pas de persistance.",
+ "is_error": false,
+ "usage": {
+  "input_tokens": 15192,
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 29289,
+  "output_tokens": 455,
+  "output_tokens_details": {
+   "thinking_tokens": 0
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 0,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "",
+  "iterations": [],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "num_turns": 3,
+ "stderr": "⚠ claude.ai connectors are disabled because ANTHROPIC_API_KEY or another auth source is set and takes precedence over your claude.ai login · Unset it to load your organization's connectors\n[claude-code:unrecognized_model] {\"model\":\"qwen3.6:35b-a3b\",\"query_source\":\"sdk\"}\n"
+}

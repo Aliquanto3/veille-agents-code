@@ -1,0 +1,53 @@
+{
+ "essai": "lecture3_froid",
+ "modele": "qwen3.6:35b-a3b",
+ "realiste": false,
+ "ttft_s": 74.23529849998886,
+ "init_s": 0.37817149999318644,
+ "total_s": 94.2,
+ "code": 0,
+ "timeout": false,
+ "outils": [
+  [
+   75.5,
+   "Glob",
+   "{\"pattern\": \"**/main.py\"}"
+  ],
+  [
+   78.6,
+   "Read",
+   "{\"file_path\": \"<user>\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-user-Documents-GitHub\\\\791fed94-a8b0-414e-8a6c-8fe967283749\\\\scratchpad\\\\t8"
+  ]
+ ],
+ "erreurs_outils": [],
+ "ram_base_go": 11.3,
+ "ram_pic_go": 29.4,
+ "vram_base_mo": 0,
+ "vram_pic_mo": 6467,
+ "resultat": "Voici un résumé des routes de `main.py` :\n\nC'est une mini-application HTTP écrite en pur Python (stdlib), qui déclare ses routes via un décorateur `@route(methode, chemin)` stockées dans un dictionnaire `ROUTES`. Il n'y a pas de serveur réel — juste une fonction `appeler()` qui résout les routes en mémoire.\n\n| Méthode | Chemin | Description |\n|---------|---------|-------------|\n| `GET`   | `/health` | Vérification de santé (retourne `{\"status\": \"ok\"}`) |\n| `GET`   | `/`       | Page d'accueil (retourne `{\"message\": \"bienvenue\"}`) |\n| `GET`   | `/items`  | Liste tous les items en mémoire |\n| `GET`   | `/items/{id}` | Récupère un item par son ID (404 si introuvable) |\n| `POST`  | `/items`  | Crée un nouvel item (attend `nom` et `prix` dans le corps) |\n\n**Points notables :**\n- **État en mémoire** : les items sont stockés dans un dictionnaire `ITEMS` initialisé avec 2 entrées (`stylo` à 1.5, `cahier` à 3.2). Pas de persistance.\n- **Routing par correspondance** : la fonction `appeler()` fait une correspondance manuelle — elle vérifie si le chemin correspond exactement au pattern, ou s'il s'agit d'un template `/items/{id}` dont le dernier segment est un entier.\n- **Aucun framework** : pas de Flask, FastAPI, etc. C'est entièrement fait main avec des décorateurs et un dictionnaire de dispatch.",
+ "is_error": false,
+ "usage": {
+  "input_tokens": 15231,
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 29293,
+  "output_tokens": 588,
+  "output_tokens_details": {
+   "thinking_tokens": 0
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 0,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "",
+  "iterations": [],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "num_turns": 3,
+ "stderr": "⚠ claude.ai connectors are disabled because ANTHROPIC_API_KEY or another auth source is set and takes precedence over your claude.ai login · Unset it to load your organization's connectors\n[claude-code:unrecognized_model] {\"model\":\"qwen3.6:35b-a3b\",\"query_source\":\"sdk\"}\n"
+}

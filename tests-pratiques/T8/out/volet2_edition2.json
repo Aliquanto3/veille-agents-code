@@ -1,0 +1,92 @@
+{
+ "essai": "edition2",
+ "modele": "qwen3.6:35b-a3b",
+ "realiste": false,
+ "ttft_s": 0.871664599981159,
+ "init_s": 0.3436547000310384,
+ "total_s": 61.0,
+ "code": 0,
+ "timeout": false,
+ "outils": [
+  [
+   4.9,
+   "Read",
+   "{\"file_path\": \"<user>\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users\\\\C--Users-user-Documents-GitHub\\\\791fed94-a8b0-414e-8a6c-8fe967283749\\\\scratchpad\\\\t"
+  ],
+  [
+   7.3,
+   "Read",
+   "{\"file_path\": \"<user>\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users\\\\C--Users-user-Documents-GitHub\\\\791fed94-a8b0-414e-8a6c-8fe967283749\\\\scratchpad\\\\t"
+  ],
+  [
+   15.0,
+   "Glob",
+   "{\"pattern\": \"**/*.py\", \"path\": \"<user>\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-user-Documents-GitHub\\\\791fed94-a8b0-414e-8a6c-8fe96728374"
+  ],
+  [
+   19.0,
+   "Read",
+   "{\"file_path\": \"<user>\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-user-Documents-GitHub\\\\791fed94-a8b0-414e-8a6c-8fe967283749\\\\scratchpad\\\\t8"
+  ],
+  [
+   21.7,
+   "Read",
+   "{\"file_path\": \"<user>\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-user-Documents-GitHub\\\\791fed94-a8b0-414e-8a6c-8fe967283749\\\\scratchpad\\\\t8"
+  ],
+  [
+   37.2,
+   "Edit",
+   "{\"replace_all\": false, \"file_path\": \"<user>\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-user-Documents-GitHub\\\\791fed94-a8b0-414e-8a6c-8fe967"
+  ],
+  [
+   43.6,
+   "Edit",
+   "{\"replace_all\": false, \"file_path\": \"<user>\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-user-Documents-GitHub\\\\791fed94-a8b0-414e-8a6c-8fe967"
+  ],
+  [
+   52.7,
+   "Bash",
+   "{\"command\": \"uv run --no-project python -m unittest -q 2>&1\", \"description\": \"Run tests with uv\", \"timeout\": 60000}"
+  ]
+ ],
+ "erreurs_outils": [
+  [
+   5.0,
+   "File does not exist. Note: your current working directory is <user>\\AppData\\Local\\Temp\\claude\\C--Users-user-Documents-GitHub\\791fed94-a8b0-414e-8a6c-8fe967283749\\scratchpad\\t8\\vol"
+  ],
+  [
+   7.3,
+   "File does not exist. Note: your current working directory is <user>\\AppData\\Local\\Temp\\claude\\C--Users-user-Documents-GitHub\\791fed94-a8b0-414e-8a6c-8fe967283749\\scratchpad\\t8\\vol"
+  ]
+ ],
+ "ram_base_go": 27.6,
+ "ram_pic_go": 29.2,
+ "vram_base_mo": 6467,
+ "vram_pic_mo": 6469,
+ "resultat": "Les **4 tests passent** sans erreur :\n\n- ✅ `test_accueil`\n- ✅ `test_item_existant`\n- ✅ `test_route_inconnue`\n- ✅ `test_health` *(nouveau)*\n\nLa route GET `/health` a été ajoutée avec le décorateur `@route(\"GET\", \"/health\")` qui renvoie `{\"status\": \"ok\"}`, et le test vérifie que `main.appeler(\"GET\", \"/health\")` retourne bien ce dictionnaire.",
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2072,
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 93851,
+  "output_tokens": 1714,
+  "output_tokens_details": {
+   "thinking_tokens": 0
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 0,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "",
+  "iterations": [],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "num_turns": 9,
+ "stderr": "⚠ claude.ai connectors are disabled because ANTHROPIC_API_KEY or another auth source is set and takes precedence over your claude.ai login · Unset it to load your organization's connectors\n[claude-code:unrecognized_model] {\"model\":\"qwen3.6:35b-a3b\",\"query_source\":\"sdk\"}\n"
+}

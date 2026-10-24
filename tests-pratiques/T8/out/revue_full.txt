@@ -1,0 +1,100 @@
+=== Q1 Quelle constante de serveur.py donne l'adresse d'écoute du serveur et quelle est sa valeur ?
+REF: HOTE = "127.0.0.1"
+[haiku] La constante est `HOTE`, qui vaut `"127.0.0.1"` : le serveur n'écoute que sur cette adresse, jamais sur le réseau.
+[qwen3.5_4b] La constante `HOTE` définit l'adresse d'écoute du serveur avec la valeur "127.0.0.1".
+[nemotron-3-nano_4b] HOTE = "127.0.0.1"
+=== Q2 Quelles routes de l'application acceptent la méthode POST ? Donne les chemins.
+REF: /api/mode, /api/chaine, /api/agent/question
+[haiku] Les routes acceptant POST sont `/api/mode`, `/api/chaine` (lancement de la Chaîne, en plus de sa lecture en GET) et `/api/agent/question`.
+[qwen3.5_4b] Les routes acceptant la méthode POST sont `/api/mode`, `/api/chaine` et `/api/agent/question`.
+[nemotron-3-nano_4b] /api/mode, /api/chaine, /api/agent/question, /api/agent/enregistrees/{rang}, /api/avant-apres, /api/pseudonymisation
+=== Q3 Quel code de statut HTTP la route POST /api/chaine renvoie-t-elle quand le lancement est accepté, et lequel quand il est refusé ?
+REF: 202 accepté ; 409 refusé
+[haiku] Le lancement accepté renvoie le statut 202 (`status_code=202` dans `application.add_api_route`), et le refus renvoie 409 (`HTTPException(status_code=409, detail=str(exc))` levé quand `LancementRefuse` est déclenchée).
+[qwen3.5_4b] La route POST /api/chaine renvoie le statut 202 si le lancement est accepté et le statut 409 en cas de refus.
+[nemotron-3-nano_4b] La route POST /api/chaine renvoie le code 202 quand le lancement est accepté et 409 quand il est refusé.
+=== Q4 Quel code HTTP est renvoyé quand l'en-tête Origin d'une écriture ne correspond pas à l'hôte ?
+REF: 403 (Origine refusée)
+[haiku] Le code HTTP est **403** : `_meme_origine` lève `HTTPException(status_code=403, detail="Origine refusée.")` quand l'en-tête `Origin` ne nomme pas un hôte autorisé ou un port différent de celui de `Host`.
+[qwen3.5_4b] Le code HTTP 403 est renvoyé si l'origine ne correspond pas à l'hôte autorisé.
+[nemotron-3-nano_4b] 403
+=== Q5 Que renvoie la route POST /api/agent/question quand le serveur est en Mode repli ?
+REF: HTTP 409 avec le message MODE_REPLI_SANS_LLM
+[haiku] En Mode repli, la route renvoie une erreur HTTP 409 avec le détail `MODE_REPLI_SANS_LLM`, sans appeler le LLM. La vérification `if mode.repli` intervient après la vérification de `services` (503) et avant la lecture du Passage.
+[qwen3.5_4b] La route POST /api/agent/question renvoie une erreur HTTP 409 avec le détail "Réponses enregistrées : Mode repli seulement." car elle refuse l'appel de l'Agent dans ce mode.
+[nemotron-3-nano_4b] La route POST /api/agent/question renvoie une erreur 409 avec le détail "Mode repli sans LLM".
+=== Q6 Quelle page statique HTML est servie par la route « / » ?
+REF: carte-meteo.html
+[haiku] Le fichier statique servi par la route « / » est `carte-meteo.html` (dans le dictionnaire `PAGES`, `serveur.py`).
+[qwen3.5_4b] La route « / » sert la page statique `carte-meteo.html`.
+[nemotron-3-nano_4b] La page statique HTML servie par la route « / » est « carte-meteo.html ».
+=== Q7 Quelles tables l'entrepôt DuckDB crée-t-il ?
+REF: evenements et repere (plus la séquence lots_evenements)
+[haiku] L'entrepôt crée deux tables : `evenements` (une ligne par événement, avec `id_evenement` comme clé primaire, plus `lot` et `rang`) et `repere` (une seule ligne, clé `cle = 1`, qui stocke l'instant du repère). Il crée aussi une séquence `lots_evenements`, mais ce n'est pas une table.
+[qwen3.5_4b] L'entrepôt crée deux tables : `evenements` et `repere`.
+[nemotron-3-nano_4b] L'entrepôt DuckDB crée deux tables : `evenements` et `repere`.
+=== Q8 Quelle clause SQL évite d'insérer deux fois un événement déjà stocké, et quel événement gagne en cas de doublon ?
+REF: ON CONFLICT DO NOTHING ; le premier stocké gagne
+[haiku] La clause `ON CONFLICT DO NOTHING` évite le doublon : l'insertion depuis `lot_evenements` ignore les événements dont l'`id_evenement` existe déjà, donc c'est le premier stocké qui gagne.
+[qwen3.5_4b] La clause SQL utilisée est `ON CONFLICT DO NOTHING` dans l'instruction `INSERT INTO evenements`. En cas de doublon, le premier événement stocké (celui qui a été inséré avant) conserve ses données.
+[nemotron-3-nano_4b] La clause SQL `ON CONFLICT DO NOTHING` évite d'insérer deux fois un événement déjà stocké, et l'événement qui gagne en cas de doublon est le premier stocké.
+=== Q9 Dans quel fuseau les horodatages sont-ils stockés dans DuckDB, et pourquoi pas en TIMESTAMPTZ ?
+REF: UTC, TIMESTAMP naïfs ; relire un TIMESTAMPTZ exigerait une bibliothèque de fuseaux absente des dépendances
+[haiku] Les horodatages sont stockés en `TIMESTAMP` naïfs, exprimés en UTC : `_en_utc_naif` convertit en UTC puis retire le fuseau. La docstring du module justifie le choix : relire un `TIMESTAMPTZ` exigerait une bibliothèque de fuseaux absente des dépendances.
+[qwen3.5_4b] Les horodatages sont stockés sous forme de `TIMESTAMP` naïfs exprimés en UTC car la bibliothèque de gestion des fuseaux absente des dépendances ne permettrait pas de lire un `TIMESTAMPTZ`.
+[nemotron-3-nano_4b] Les horodatages sont stockés en UTC naïf, car DuckDB ne supporte pas le fuseau UTC avec TIMESTAMPTZ dans cette implémentation.
+=== Q10 Dans quel ordre la méthode evenements() relit-elle les événements stockés ?
+REF: par horodatage, puis lot, puis rang
+[haiku] Elle relit les événements par `ORDER BY horodatage, lot, rang`, c'est-à-dire par horodatage, puis par numéro de lot, puis par rang dans le lot (l'ordre d'insertion).
+[qwen3.5_4b] La méthode `evenements()` lit les événements par ordre croissant d'horodatage, puis par numéro de lot et rang dans le lot.
+[nemotron-3-nano_4b] La méthode evenements() relit les événements stockés dans l'ordre de horodatage, puis lot, puis rang.
+=== Q11 Quel mécanisme rend la création du verrou atomique, et qu'écrit-on dans le fichier ?
+REF: os.O_CREAT | os.O_EXCL ; le PID du processus (os.getpid())
+[haiku] Le verrou est atomique grâce au flag `os.O_CREAT | os.O_EXCL` passé à `os.open`, qui échoue si le fichier existe déjà. Le fichier ne contient que le PID du processus (`os.getpid()`) suivi d'un saut de ligne, encodé en ASCII.
+[qwen3.5_4b] La création du verrou est rendue atomique grâce à l'utilisation des flags `os.O_CREAT | os.O_EXCL` lors de l'appel à `os.open`, et on y écrit l'identifiant du processus (`os.getpid()`) suivi d'une ligne terminée par un caractère de nouvelle ligne.
+[nemotron-3-nano_4b] Le mécanisme rend la création du verrou atomique grâce à l'utilisation de `os.creat` avec les bits `O_CREAT | O_EXCL`, et on écrit dans le fichier le PID du processus.
+=== Q12 Que devient le fichier verrou à la sortie du bloc `with`, en cas de succès comme d'échec ?
+REF: il est supprimé (unlink, missing_ok=True)
+[haiku] Le fichier `chemin` est supprimé dans le bloc `finally` de `verrou_exclusif`, donc il disparaît à la sortie du `with`, que le bloc se termine normalement ou par une exception. La suppression est tolérante (`missing_ok=True`), donc elle ne lève pas d'erreur si le fichier a déjà été retiré.
+[qwen3.5_4b] Le fichier verrou est supprimé (`unlink`) à la sortie du bloc, que le passage ait réussi ou échoué.
+[nemotron-3-nano_4b] Le fichier verrou est supprimé à la sortie du bloc, qu'il s'agisse d'un succès ou d'un échec.
+=== Q13 Quels champs de la classe Secrets sont de type SecretStr ? Liste-les tous.
+REF: jira_token_lecture, jira_token_injection, jira_dc_pat, anthropic_api_key, mistral_api_key, usine_cle_pseudo, langfuse_secret_key
+[haiku] Les champs de type `SecretStr` sont `jira_token_lecture`, `jira_token_injection`, `jira_dc_pat`, `anthropic_api_key`, `mistral_api_key`, `usine_cle_pseudo`, `langfuse_secret_key`.
+[qwen3.5_4b] Les champs de type `SecretStr` dans la classe `Secrets` sont : `jira_token_lecture`, `jira_token_injection`, `jira_dc_pat`, `anthropic_api_key`, `mistral_api_key`, `usine_cle_pseudo` et `langfuse_secret_key`.
+[nemotron-3-nano_4b] jira_token_lecture, jira_token_injection, jira_dc_pat, anthropic_api_key, mistral_api_key, usine_cle_pseudo, langfuse_secret_key
+=== Q14 Que fait hote_ecoute() quand USINE_UI_HOTE vaut 0.0.0.0 et que le processus ne tourne pas dans un conteneur ?
+REF: lève une UsineErreur (refus)
+[haiku] Elle lève une `UsineErreur` qui nomme la variable `USINE_UI_HOTE` et indique que `0.0.0.0` est refusée hors conteneur, car elle ouvrirait l'interface sans authentification au réseau.
+[qwen3.5_4b] La fonction `hote_ecoute()` lève une exception `UsineErreur` car elle refuse explicitement la valeur `0.0.0.0` lorsqu'elle n'est pas utilisée dans un conteneur.
+[nemotron-3-nano_4b] hote_ecoute() lève une UsineErreur car 0.0.0.0 est autorisé uniquement dans un conteneur.
+=== Q15 Quelles sont les quatre valeurs de l'énumération EtatPrevision ?
+REF: prevision, risque, aucun_risque, non_calculee
+[haiku] Les quatre valeurs de `EtatPrevision` sont `prevision`, `risque`, `aucun_risque` et `non_calculee`.
+[qwen3.5_4b] Les quatre valeurs de l'énumération `EtatPrevision` sont `prevision`, `risque`, `aucun_risque` et `non_calculee`.
+[nemotron-3-nano_4b] prévision, risque, aucun_risque, non_calculee
+=== Q16 Que retourne etat_prevision pour une entité de couleur rouge dont consultation.previsions(...) est vide ?
+REF: EtatPrevision.non_calculee
+[haiku] Si `calculees` est vrai et que la couleur est rouge, mais que `consultation.previsions(date_arrete, entite)` est vide, `etat_prevision` retourne `EtatPrevision.non_calculee`, car une Entité rouge sans Prévision est classée dans ce cas.
+[qwen3.5_4b] La fonction `etat_prevision` retournera `EtatPrevision.non_calculee`.
+[nemotron-3-nano_4b] non_calculee
+=== Q17 Comment charger_yaml réagit-il à une clé dupliquée dans le fichier YAML, et que nomme le message ?
+REF: UsineErreur nommant le fichier, la clé et la ligne (clé « X » dupliquée (ligne N))
+[haiku] Dans `charger_yaml`, une clé dupliquée fait lever `_CleDupliquee` par `_ChargeurSansDoublon` pendant le parsing, ce qui est converti en `UsineErreur` nommant le fichier, la clé et la ligne : « chemin : clé « X » dupliquée (ligne N) ».
+[qwen3.5_4b] La fonction `charger_yaml` détecte les clés dupliquées en utilisant un chargeur personnalisé `_ChargeurSansDoublon` qui lève une exception `_CleDupliquee`, ce qui déclenche ensuite une `UsineErreur` contenant le nom du fichier, la clé dupliquée et sa ligne.
+[nemotron-3-nano_4b] Il lève une UsineErreur nommant la clé dupliquée et la ligne où elle apparaît.
+=== Q18 Dans verifier_modele_corpus, quelle condition déclenche l'erreur et quel garde-fou cela applique-t-il ?
+REF: le modèle de classification est identique au modele_corpus ; garde-fou AD-19
+[haiku] L'erreur est levée lorsque le modèle de classification (`modeles_par_tache.classification`, sinon `modele`, normalisé via `version_modele`) est identique au `modele_corpus` ; le garde-fou AD-19 impose que le modèle qui classe les textes soit différent de celui qui a écrit le Corpus, pour éviter une évaluation faussée par l'auto-classification.
+[qwen3.5_4b] L'erreur est déclenchée lorsque le modèle de classification est identique au `modele_corpus`, ce qui constitue un garde-fou contre la fausse évaluation en empêchant qu'un modèle classe les textes qu'il a lui-même écrits.
+[nemotron-3-nano_4b] L'erreur est déclenchée si la classification du modèle est identique à `modele_corpus`, ce qui est un garde-fou AD-19 pour éviter que le modèle ne classe les textes qu'il a lui-même écrits.
+=== Q19 Combien d'étapes DESCRIPTIONS décrit-il, et quelle est la description de l'étape prevision ?
+REF: 10 étapes ; « Prévision de fermeture des Anomalies »
+[haiku] DESCRIPTIONS décrit 10 étapes. La description de l'étape `prevision` est « Prévision de fermeture des Anomalies ».
+[qwen3.5_4b] Le dictionnaire `DESCRIPTIONS` décrit 9 étapes. La description de l'étape `prevision` est « Prévision de fermeture des Anomalies ».
+[nemotron-3-nano_4b] Il y a 10 étapes, et la description de l'étape prevision est "Prévision de fermeture des Anomalies".
+=== Q20 Dans quels trois cas GestionChaine.lancer lève-t-elle LancementRefuse ?
+REF: une Chaîne déjà en cours ; Mode repli ; racine absente/introuvable
+[haiku] Les trois cas sont : une Chaîne tourne déjà (`MOTIF_LANCEMENT_EN_COURS`), le Mode repli est actif (`LANCEMENT_REPLI`), ou la racine du projet est absente ou n'est pas un dossier (`MOTIF_RACINE`). Dans les trois cas, `lancer` lève `LancementRefuse` avec le motif correspondant.
+[qwen3.5_4b] GestionChaine.lancer lève LancementRefuse si une Chaîne est déjà en cours, si le mode de lancement demandé est repli alors qu'une Chaîne tourne, ou si la racine du projet est introuvable.
+[nemotron-3-nano_4b] GestionChaine.lancer lève LancementRefuse si une Chaîne est déjà en cours, si le mode est en repli, ou si la racine du projet est introuvable.

@@ -1,0 +1,81 @@
+{
+ "essai": "lecture1",
+ "modele": "qwen3.6:35b-a3b",
+ "realiste": false,
+ "ttft_s": 77.75955240003532,
+ "init_s": 3.337342999991961,
+ "total_s": 107.9,
+ "code": 0,
+ "timeout": false,
+ "outils": [
+  [
+   79.0,
+   "Glob",
+   "{\"pattern\": \"**/main.py\"}"
+  ],
+  [
+   81.8,
+   "Glob",
+   "{\"pattern\": \"**/main.py\"}"
+  ],
+  [
+   84.7,
+   "Glob",
+   "{\"pattern\": \"main.py\"}"
+  ],
+  [
+   88.5,
+   "Bash",
+   "{\"command\": \"ls *.py 2>/dev/null || echo \\\"No .py files found\\\"\", \"description\": \"List Python files in current directory\"}"
+  ],
+  [
+   95.1,
+   "Read",
+   "{\"file_path\": \"<user>\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-user-Documents-GitHub\\\\791fed94-a8b0-414e-8a6c-8fe967283749\\\\scratchpad\\\\t8\\\\v"
+  ]
+ ],
+ "erreurs_outils": [
+  [
+   79.0,
+   "Claude requested permissions to read from <user>\\AppData\\Local\\Temp\\claude\\C--Users-user-Documents-GitHub\\791fed94-a8b0-414e-8a6c-8fe967283749\\scratchpad\\t8\\volet2\\projet, which cont"
+  ],
+  [
+   81.8,
+   "Claude requested permissions to read from <user>\\AppData\\Local\\Temp\\claude\\C--Users-user-Documents-GitHub\\791fed94-a8b0-414e-8a6c-8fe967283749\\scratchpad\\t8\\volet2\\projet, which cont"
+  ],
+  [
+   84.7,
+   "Claude requested permissions to read from <user>\\AppData\\Local\\Temp\\claude\\C--Users-user-Documents-GitHub\\791fed94-a8b0-414e-8a6c-8fe967283749\\scratchpad\\t8\\volet2\\projet, which cont"
+  ]
+ ],
+ "ram_base_go": 12.9,
+ "ram_pic_go": 30.7,
+ "vram_base_mo": 0,
+ "vram_pic_mo": 6467,
+ "resultat": "Voici un résumé des routes de `main.py` :\n\n## Routes HTTP\n\n| Méthode | Chemin | Description |\n|---------|--------|-------------|\n| `GET` | `/` | Accueil — renvoie `{\"message\": \"bienvenue\"}` |\n| `GET` | `/items` | Liste tous les articles (données en mémoire) |\n| `GET` | `/items/{id}` | Renvoie un article par son ID (404 si introuvable) |\n| `POST` | `/items` | Crée un nouvel article (`nom` + `prix` dans le corps de la requête) |\n\n**Points clés :**\n- Framework maison minimaliste, **stdlib uniquement** — aucun dépendance externe.\n- Les routes sont enregistrées via un décorateur `@route(methode, chemin)` dans un dictionnaire `ROUTES`.\n- Les données persistent en mémoire (`ITEMS`) avec 2 articles pré-chargés (stylo à 1.5, cahier à 3.2).\n- La fonction `appeler()` simule le dispatch HTTP : elle résout les routes par correspondance de pattern et appelle la bonne fonction handler. Les segments `{id}` sont extraits par correspondance de suffixe numérique.",
+ "is_error": false,
+ "usage": {
+  "input_tokens": 15603,
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 74635,
+  "output_tokens": 655,
+  "output_tokens_details": {
+   "thinking_tokens": 0
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 0,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "",
+  "iterations": [],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "num_turns": 6,
+ "stderr": "⚠ claude.ai connectors are disabled because ANTHROPIC_API_KEY or another auth source is set and takes precedence over your claude.ai login · Unset it to load your organization's connectors\nWarning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n[claude-code:unrecognized_model] {\"model\":\"qwen3.6:35b-a3b\",\"query_source\":\"sdk\"}\n"
+}

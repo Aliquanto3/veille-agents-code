@@ -1,0 +1,92 @@
+{
+ "essai": "edition1",
+ "modele": "qwen3.6:35b-a3b",
+ "realiste": false,
+ "ttft_s": 52.02705999999307,
+ "init_s": 0.34928490000311285,
+ "total_s": 89.8,
+ "code": 0,
+ "timeout": false,
+ "outils": [
+  [
+   54.7,
+   "Read",
+   "{\"file_path\": \"<user>\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users\\\\C--Users-user-Documents-GitHub\\\\791fed94-a8b0-414e-8a6c-8fe967283749\\\\scratchpad\\\\t"
+  ],
+  [
+   57.0,
+   "Read",
+   "{\"file_path\": \"<user>\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users\\\\C--Users-user-Documents-GitHub\\\\791fed94-a8b0-414e-8a6c-8fe967283749\\\\scratchpad\\\\t"
+  ],
+  [
+   60.2,
+   "Bash",
+   "{\"command\": \"ls -la\", \"description\": \"List files in current working directory\"}"
+  ],
+  [
+   63.8,
+   "Read",
+   "{\"file_path\": \"./main.py\"}"
+  ],
+  [
+   64.5,
+   "Read",
+   "{\"file_path\": \"./test_main.py\"}"
+  ],
+  [
+   73.8,
+   "Edit",
+   "{\"replace_all\": false, \"file_path\": \"./main.py\", \"old_string\": \"@route(\\\"GET\\\", \\\"/\\\")\\ndef accueil() -> dict:\\n    return {\\\"message\\\": \\\"bienvenue\\\"}\", \"new_s"
+  ],
+  [
+   77.6,
+   "Edit",
+   "{\"replace_all\": false, \"file_path\": \"./test_main.py\", \"old_string\": \"class TestRoutes(unittest.TestCase):\\n    def test_accueil(self):\\n        self.assertEqual"
+  ],
+  [
+   85.6,
+   "Bash",
+   "{\"command\": \"uv run --no-project python -m unittest -q 2>&1\", \"description\": \"Run tests with uv\"}"
+  ]
+ ],
+ "erreurs_outils": [
+  [
+   54.8,
+   "File does not exist. Note: your current working directory is <user>\\AppData\\Local\\Temp\\claude\\C--Users-user-Documents-GitHub\\791fed94-a8b0-414e-8a6c-8fe967283749\\scratchpad\\t8\\vol"
+  ],
+  [
+   57.0,
+   "File does not exist. Note: your current working directory is <user>\\AppData\\Local\\Temp\\claude\\C--Users-user-Documents-GitHub\\791fed94-a8b0-414e-8a6c-8fe967283749\\scratchpad\\t8\\vol"
+  ]
+ ],
+ "ram_base_go": 27.6,
+ "ram_pic_go": 28.5,
+ "vram_base_mo": 6467,
+ "vram_pic_mo": 6467,
+ "resultat": "Tous les **4 tests passent** avec succès :\n\n- `test_health` — le nouveau test de la route `/health`\n- `test_accueil`\n- `test_item_existant`\n- `test_route_inconnue`\n\nRésumé des modifications :\n- **main.py** : ajout de la route `@route(\"GET\", \"/health\")` qui renvoie `{\"status\": \"ok\"}`\n- **test_main.py** : ajout du test `test_health` correspondant",
+ "is_error": false,
+ "usage": {
+  "input_tokens": 16247,
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 78029,
+  "output_tokens": 1104,
+  "output_tokens_details": {
+   "thinking_tokens": 0
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 0,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "",
+  "iterations": [],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "num_turns": 9,
+ "stderr": "⚠ claude.ai connectors are disabled because ANTHROPIC_API_KEY or another auth source is set and takes precedence over your claude.ai login · Unset it to load your organization's connectors\n[claude-code:unrecognized_model] {\"model\":\"qwen3.6:35b-a3b\",\"query_source\":\"sdk\"}\n"
+}

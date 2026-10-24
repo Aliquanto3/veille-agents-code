@@ -1,0 +1,53 @@
+{
+ "essai": "lecture4_realiste",
+ "modele": "qwen3.6:35b-a3b",
+ "realiste": true,
+ "ttft_s": 52.267234099970665,
+ "init_s": 1.0444511999958195,
+ "total_s": 72.8,
+ "code": 0,
+ "timeout": false,
+ "outils": [
+  [
+   53.5,
+   "Glob",
+   "{\"pattern\": \"**/main.py\"}"
+  ],
+  [
+   59.4,
+   "Read",
+   "{\"file_path\": \"<user>\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-user-Documents-GitHub\\\\791fed94-a8b0-414e-8a6c-8fe967283749\\\\scratchpad\\\\t8"
+  ]
+ ],
+ "erreurs_outils": [],
+ "ram_base_go": 29.6,
+ "ram_pic_go": 29.7,
+ "vram_base_mo": 6467,
+ "vram_pic_mo": 6467,
+ "resultat": "**Résumé des routes de `main.py`**\n\nApplication HTTP miniature en stdlib-only, avec un moteur de routage par décorateur (`@route(methode, chemin)`) et un dictionnaire `ROUTES`.\n\n| Méthode | Chemin | Fonction | Description |\n|---------|--------|----------|-------------|\n| `GET` | `/health` | `health()` | Vérification de santé → `{\"status\": \"ok\"}` |\n| `GET` | `/` | `accueil()` | Page d'accueil → `{\"message\": \"bienvenue\"}` |\n| `GET` | `/items` | `liste_items()` | Liste tous les items en mémoire (initialisés avec 2 entrées : stylo, cahier) |\n| `GET` | `/items/{id}` | `un_item(id)` | Récupère un item par ID ; renvoie 404 si introuvable |\n| `POST` | `/items` | `creer_item(corps)` | Crée un nouvel item depuis le corps de la requête (`nom`, `prix`) ; ID auto-incrémenté |\n\n**Points notables :**\n- Données persistées dans un dictionnaire `ITEMS` en mémoire (volatiles).\n- Résolution des routes par correspondance de modèle : les segments numériques finaux sont interprétés comme `{id}`.\n- Fonction utilitaire `appeler(methode, chemin, corps?)` pour dispatcher les requêtes internes sans serveur HTTP.",
+ "is_error": false,
+ "usage": {
+  "input_tokens": 15262,
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 29425,
+  "output_tokens": 585,
+  "output_tokens_details": {
+   "thinking_tokens": 0
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 0,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "",
+  "iterations": [],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "num_turns": 3,
+ "stderr": "⚠ claude.ai connectors are disabled because ANTHROPIC_API_KEY or another auth source is set and takes precedence over your claude.ai login · Unset it to load your organization's connectors\n[claude-code:unrecognized_model] {\"model\":\"qwen3.6:35b-a3b\",\"query_source\":\"sdk\"}\n"
+}
