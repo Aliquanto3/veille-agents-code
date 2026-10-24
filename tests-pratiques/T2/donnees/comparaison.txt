@@ -1,0 +1,29 @@
+RUN1 console
+agent    grandeur     OTel evts  OTel metr.    transcr.  ecart evts ecart metr.
+MAIN     cout           0.08522     0.08522     0.08520      +0.02%      +0.02%
+MAIN     input               10          10          10       0.00%       0.00%
+MAIN     output            1713        1713        1713       0.00%       0.00%
+MAIN     ecriture         13737       13737       13737       0.00%       0.00%
+MAIN     lecture         131195      131195      131195       0.00%       0.00%
+16b0c8a2 cout           0.04420     0.04420     0.04420      +0.00%      +0.00%
+16b0c8a2 input                6           6           6       0.00%       0.00%
+16b0c8a2 output             522         522         522       0.00%       0.00%
+16b0c8a2 ecriture         14465       14465       14465       0.00%       0.00%
+16b0c8a2 lecture          28075       28075       28075       0.00%       0.00%
+TOTAL    cout           0.12942     0.12942     0.12940      +0.02%      +0.02%
+appels : {'MAIN': (5, 5), '16b0c8a2': (3, 3)} (OTel, transcription)
+
+RUN2 otlp
+agent    grandeur     OTel evts  OTel metr.    transcr.  ecart evts ecart metr.
+MAIN     cout           0.03865     0.03865     0.03870      -0.13%      -0.13%
+MAIN     input               10          10          10       0.00%       0.00%
+MAIN     output            1246        1246        1246       0.00%       0.00%
+MAIN     ecriture          3006        3006        3006       0.00%       0.00%
+MAIN     lecture         141440      141440      141440       0.00%       0.00%
+a0bc92ce cout           0.01856     0.01856     0.01860      -0.24%      -0.24%
+a0bc92ce input                4           4           4       0.00%       0.00%
+a0bc92ce output             530         530         530       0.00%       0.00%
+a0bc92ce ecriture          4342        4342        4342       0.00%       0.00%
+a0bc92ce lecture          23925       23925       23925       0.00%       0.00%
+TOTAL    cout           0.05720     0.05720     0.05730      -0.17%      -0.17%
+appels : {'MAIN': (5, 5), 'a0bc92ce': (2, 2)} (OTel, transcription)

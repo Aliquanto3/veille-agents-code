@@ -1,0 +1,1718 @@
+{
+ "metrics": [
+  {
+   "name": "claude_code.session.count",
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "start_type": "fresh"
+   },
+   "value": 1.0,
+   "temporalite": 1
+  },
+  {
+   "name": "claude_code.cost.usage",
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "model": "claude-sonnet-5-5",
+    "query_source": "main",
+    "effort": "medium"
+   },
+   "value": 0.011956000000000001,
+   "temporalite": 1
+  },
+  {
+   "name": "claude_code.token.usage",
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "model": "claude-sonnet-5-5",
+    "query_source": "main",
+    "effort": "medium",
+    "type": "input"
+   },
+   "value": 4.0,
+   "temporalite": 1
+  },
+  {
+   "name": "claude_code.token.usage",
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "model": "claude-sonnet-5-5",
+    "query_source": "main",
+    "effort": "medium",
+    "type": "output"
+   },
+   "value": 328.0,
+   "temporalite": 1
+  },
+  {
+   "name": "claude_code.token.usage",
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "model": "claude-sonnet-5-5",
+    "query_source": "main",
+    "effort": "medium",
+    "type": "cacheRead"
+   },
+   "value": 54680.0,
+   "temporalite": 1
+  },
+  {
+   "name": "claude_code.token.usage",
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "model": "claude-sonnet-5-5",
+    "query_source": "main",
+    "effort": "medium",
+    "type": "cacheCreation"
+   },
+   "value": 800.0,
+   "temporalite": 1
+  },
+  {
+   "name": "claude_code.active_time.total",
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "type": "cli"
+   },
+   "value": 4.213,
+   "temporalite": 1
+  },
+  {
+   "name": "claude_code.cost.usage",
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "model": "claude-sonnet-5-5",
+    "query_source": "subagent",
+    "effort": "medium",
+    "agent.name": "Explore"
+   },
+   "value": 0.018555500000000003,
+   "temporalite": 1
+  },
+  {
+   "name": "claude_code.token.usage",
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "model": "claude-sonnet-5-5",
+    "query_source": "subagent",
+    "effort": "medium",
+    "agent.name": "Explore",
+    "type": "input"
+   },
+   "value": 4.0,
+   "temporalite": 1
+  },
+  {
+   "name": "claude_code.token.usage",
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "model": "claude-sonnet-5-5",
+    "query_source": "subagent",
+    "effort": "medium",
+    "agent.name": "Explore",
+    "type": "output"
+   },
+   "value": 530.0,
+   "temporalite": 1
+  },
+  {
+   "name": "claude_code.token.usage",
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "model": "claude-sonnet-5-5",
+    "query_source": "subagent",
+    "effort": "medium",
+    "agent.name": "Explore",
+    "type": "cacheRead"
+   },
+   "value": 23925.0,
+   "temporalite": 1
+  },
+  {
+   "name": "claude_code.token.usage",
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "model": "claude-sonnet-5-5",
+    "query_source": "subagent",
+    "effort": "medium",
+    "agent.name": "Explore",
+    "type": "cacheCreation"
+   },
+   "value": 4342.0,
+   "temporalite": 1
+  },
+  {
+   "name": "claude_code.lines_of_code.count",
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "type": "added",
+    "model": "claude-sonnet-5-5"
+   },
+   "value": 4.0,
+   "temporalite": 1
+  },
+  {
+   "name": "claude_code.lines_of_code.count",
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "type": "removed",
+    "model": "claude-sonnet-5-5"
+   },
+   "value": 0.0,
+   "temporalite": 1
+  },
+  {
+   "name": "claude_code.cost.usage",
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "model": "claude-sonnet-5-5",
+    "query_source": "main",
+    "effort": "medium"
+   },
+   "value": 0.0186273,
+   "temporalite": 1
+  },
+  {
+   "name": "claude_code.token.usage",
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "model": "claude-sonnet-5-5",
+    "query_source": "main",
+    "effort": "medium",
+    "type": "input"
+   },
+   "value": 4.0,
+   "temporalite": 1
+  },
+  {
+   "name": "claude_code.token.usage",
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "model": "claude-sonnet-5-5",
+    "query_source": "main",
+    "effort": "medium",
+    "type": "output"
+   },
+   "value": 727.0,
+   "temporalite": 1
+  },
+  {
+   "name": "claude_code.token.usage",
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "model": "claude-sonnet-5-5",
+    "query_source": "main",
+    "effort": "medium",
+    "type": "cacheRead"
+   },
+   "value": 57213.0,
+   "temporalite": 1
+  },
+  {
+   "name": "claude_code.token.usage",
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "model": "claude-sonnet-5-5",
+    "query_source": "main",
+    "effort": "medium",
+    "type": "cacheCreation"
+   },
+   "value": 1407.0,
+   "temporalite": 1
+  },
+  {
+   "name": "claude_code.code_edit_tool.decision",
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "decision": "accept",
+    "source": "config",
+    "tool_name": "Write",
+    "language": "Python"
+   },
+   "value": 2.0,
+   "temporalite": 1
+  },
+  {
+   "name": "claude_code.cost.usage",
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "model": "claude-sonnet-5-5",
+    "query_source": "main",
+    "effort": "medium"
+   },
+   "value": 0.008064700000000001,
+   "temporalite": 1
+  },
+  {
+   "name": "claude_code.token.usage",
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "model": "claude-sonnet-5-5",
+    "query_source": "main",
+    "effort": "medium",
+    "type": "input"
+   },
+   "value": 2.0,
+   "temporalite": 1
+  },
+  {
+   "name": "claude_code.token.usage",
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "model": "claude-sonnet-5-5",
+    "query_source": "main",
+    "effort": "medium",
+    "type": "output"
+   },
+   "value": 191.0,
+   "temporalite": 1
+  },
+  {
+   "name": "claude_code.token.usage",
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "model": "claude-sonnet-5-5",
+    "query_source": "main",
+    "effort": "medium",
+    "type": "cacheRead"
+   },
+   "value": 29547.0,
+   "temporalite": 1
+  },
+  {
+   "name": "claude_code.token.usage",
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "model": "claude-sonnet-5-5",
+    "query_source": "main",
+    "effort": "medium",
+    "type": "cacheCreation"
+   },
+   "value": 799.0,
+   "temporalite": 1
+  },
+  {
+   "name": "claude_code.active_time.total",
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "type": "cli"
+   },
+   "value": 8.021,
+   "temporalite": 1
+  }
+ ],
+ "events": [
+  {
+   "name": "claude_code.managed_settings_resolved",
+   "ts": 1792864989222000000,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "event.name": "managed_settings_resolved",
+    "event.timestamp": "2026-10-24T18:03:09.221Z",
+    "event.sequence": 0,
+    "managed_settings.trigger": "startup",
+    "managed_settings.sources": {
+     "values": []
+    },
+    "managed_settings.source_behavior": "first-wins",
+    "managed_settings.helper.state": "none",
+    "managed_settings.helper.applied": "none"
+   }
+  },
+  {
+   "name": "claude_code.plugin_loaded",
+   "ts": 1792864989363000000,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "event.name": "plugin_loaded",
+    "event.timestamp": "2026-10-24T18:03:09.363Z",
+    "event.sequence": 1,
+    "plugin.name": "agent-cost-kit",
+    "marketplace.name": "agent-cost-kit",
+    "plugin.version": "0.9.0",
+    "plugin.scope": "user-local",
+    "enabled_via": "user-install",
+    "plugin_id_hash": "46a93d37960e79f9",
+    "has_hooks": false,
+    "has_mcp": false,
+    "host_owned_mcp": false,
+    "skill_path_count": 1,
+    "command_path_count": 1,
+    "agent_path_count": 1,
+    "safe_mode": "false"
+   }
+  },
+  {
+   "name": "claude_code.plugin_loaded",
+   "ts": 1792864989364000000,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "event.name": "plugin_loaded",
+    "event.timestamp": "2026-10-24T18:03:09.364Z",
+    "event.sequence": 2,
+    "plugin.name": "pyright-lsp",
+    "marketplace.name": "claude-plugins-official",
+    "plugin.version": "1.0.0",
+    "plugin.scope": "official",
+    "enabled_via": "user-install",
+    "plugin_id_hash": "61230f6e6c9d3331",
+    "has_hooks": false,
+    "has_mcp": false,
+    "host_owned_mcp": false,
+    "skill_path_count": 0,
+    "command_path_count": 0,
+    "agent_path_count": 0,
+    "safe_mode": "false"
+   }
+  },
+  {
+   "name": "claude_code.plugin_loaded",
+   "ts": 1792864989364000000,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "event.name": "plugin_loaded",
+    "event.timestamp": "2026-10-24T18:03:09.364Z",
+    "event.sequence": 3,
+    "plugin.name": "diff-replie",
+    "marketplace.name": "claude-code-mods",
+    "plugin.version": "1.0.1",
+    "plugin.scope": "user-local",
+    "enabled_via": "user-install",
+    "plugin_id_hash": "d52ed0de192c21cc",
+    "has_hooks": true,
+    "has_mcp": false,
+    "host_owned_mcp": false,
+    "skill_path_count": 0,
+    "command_path_count": 0,
+    "agent_path_count": 0,
+    "safe_mode": "false"
+   }
+  },
+  {
+   "name": "claude_code.plugin_loaded",
+   "ts": 1792864989365000000,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "event.name": "plugin_loaded",
+    "event.timestamp": "2026-10-24T18:03:09.365Z",
+    "event.sequence": 4,
+    "plugin.name": "couts-session",
+    "marketplace.name": "agent-cost-kit",
+    "plugin.version": "0.2.0",
+    "plugin.scope": "user-local",
+    "enabled_via": "user-install",
+    "plugin_id_hash": "26c8d8ad22b2afa5",
+    "has_hooks": true,
+    "has_mcp": false,
+    "host_owned_mcp": false,
+    "skill_path_count": 0,
+    "command_path_count": 0,
+    "agent_path_count": 0,
+    "safe_mode": "false"
+   }
+  },
+  {
+   "name": "claude_code.plugin_loaded",
+   "ts": 1792864989365000000,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "event.name": "plugin_loaded",
+    "event.timestamp": "2026-10-24T18:03:09.365Z",
+    "event.sequence": 5,
+    "plugin.name": "cc-plugin-sec-default",
+    "marketplace.name": "builtin",
+    "plugin.scope": "default-bundle",
+    "enabled_via": "default-enable",
+    "plugin_id_hash": "edea695a220b6dd7",
+    "has_hooks": true,
+    "has_mcp": false,
+    "host_owned_mcp": false,
+    "skill_path_count": 0,
+    "command_path_count": 0,
+    "agent_path_count": 0,
+    "safe_mode": "false"
+   }
+  },
+  {
+   "name": "claude_code.plugin_loaded",
+   "ts": 1792864989366000000,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "event.name": "plugin_loaded",
+    "event.timestamp": "2026-10-24T18:03:09.366Z",
+    "event.sequence": 6,
+    "plugin.name": "cc-plugin-agents-md",
+    "marketplace.name": "builtin",
+    "plugin.scope": "default-bundle",
+    "enabled_via": "default-enable",
+    "plugin_id_hash": "da63145d0acbb62d",
+    "has_hooks": true,
+    "has_mcp": false,
+    "host_owned_mcp": false,
+    "skill_path_count": 0,
+    "command_path_count": 0,
+    "agent_path_count": 0,
+    "safe_mode": "false"
+   }
+  },
+  {
+   "name": "claude_code.plugin_loaded",
+   "ts": 1792864989366000000,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "event.name": "plugin_loaded",
+    "event.timestamp": "2026-10-24T18:03:09.366Z",
+    "event.sequence": 7,
+    "plugin.name": "cc-plugin-telemetry",
+    "marketplace.name": "builtin",
+    "plugin.scope": "default-bundle",
+    "enabled_via": "default-enable",
+    "plugin_id_hash": "0452636910a73fd4",
+    "has_hooks": true,
+    "has_mcp": false,
+    "host_owned_mcp": false,
+    "skill_path_count": 0,
+    "command_path_count": 0,
+    "agent_path_count": 0,
+    "safe_mode": "false"
+   }
+  },
+  {
+   "name": "claude_code.plugin_loaded",
+   "ts": 1792864989366000000,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "event.name": "plugin_loaded",
+    "event.timestamp": "2026-10-24T18:03:09.366Z",
+    "event.sequence": 8,
+    "plugin.name": "cc-plugin-plugin-authoring",
+    "marketplace.name": "builtin",
+    "plugin.scope": "default-bundle",
+    "enabled_via": "default-enable",
+    "plugin_id_hash": "559932fe5f722b82",
+    "has_hooks": true,
+    "has_mcp": false,
+    "host_owned_mcp": false,
+    "skill_path_count": 0,
+    "command_path_count": 0,
+    "agent_path_count": 0,
+    "safe_mode": "false"
+   }
+  },
+  {
+   "name": "claude_code.user_prompt",
+   "ts": 1792864989910000000,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "event.name": "user_prompt",
+    "event.timestamp": "2026-10-24T18:03:09.910Z",
+    "event.sequence": 9,
+    "prompt.id": "18e31867-c39e-4269-8a42-b343425e0826",
+    "prompt_length": "134",
+    "message.uuid": "2984b7fe-f0e5-46fb-aaa6-e5c364ad31b0"
+   }
+  },
+  {
+   "name": "claude_code.tool_decision",
+   "ts": 1792864992483000000,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "event.name": "tool_decision",
+    "event.timestamp": "2026-10-24T18:03:12.483Z",
+    "event.sequence": 10,
+    "prompt.id": "18e31867-c39e-4269-8a42-b343425e0826",
+    "decision": "accept",
+    "source": "config",
+    "tool_name": "Agent",
+    "tool_use_id": "toolu_01VYgvaBXjgT1CA1QeLYrQeu",
+    "tool_source": "builtin",
+    "permission_mode": "acceptEdits",
+    "request_id": "req_011CgMW5mcXDcDFDbzbcFZwg"
+   }
+  },
+  {
+   "name": "claude_code.tool_result",
+   "ts": 1792864992495000000,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "event.name": "tool_result",
+    "event.timestamp": "2026-10-24T18:03:12.495Z",
+    "event.sequence": 11,
+    "prompt.id": "18e31867-c39e-4269-8a42-b343425e0826",
+    "tool_name": "Agent",
+    "tool_use_id": "toolu_01VYgvaBXjgT1CA1QeLYrQeu",
+    "success": "true",
+    "duration_ms": "10",
+    "tool_input_size_bytes": "476",
+    "tool_result_size_bytes": "1236",
+    "request_id": "req_011CgMW5mcXDcDFDbzbcFZwg"
+   }
+  },
+  {
+   "name": "claude_code.api_request",
+   "ts": 1792864992541000000,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "event.name": "api_request",
+    "event.timestamp": "2026-10-24T18:03:12.541Z",
+    "event.sequence": 12,
+    "prompt.id": "18e31867-c39e-4269-8a42-b343425e0826",
+    "model": "claude-sonnet-5-5",
+    "input_tokens": 2,
+    "output_tokens": 289,
+    "cache_read_tokens": 27340,
+    "cache_creation_tokens": 0,
+    "cache_creation_5m_tokens": 0,
+    "cache_creation_1h_tokens": 0,
+    "cost_usd": 0.005628,
+    "cost_usd_micros": 5628,
+    "duration_ms": 2547,
+    "ttft_ms": 744,
+    "request_id": "req_011CgMW5mcXDcDFDbzbcFZwg",
+    "client_request_id": "1c712758-a1ac-4daa-8c77-1fa13f8bcae6",
+    "speed": "normal",
+    "query_source": "sdk",
+    "effort": "medium"
+   }
+  },
+  {
+   "name": "claude_code.api_request",
+   "ts": 1792864993986000000,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "event.name": "api_request",
+    "event.timestamp": "2026-10-24T18:03:13.986Z",
+    "event.sequence": 13,
+    "prompt.id": "18e31867-c39e-4269-8a42-b343425e0826",
+    "model": "claude-sonnet-5-5",
+    "input_tokens": 2,
+    "output_tokens": 39,
+    "cache_read_tokens": 27340,
+    "cache_creation_tokens": 800,
+    "cache_creation_5m_tokens": 0,
+    "cache_creation_1h_tokens": 800,
+    "cost_usd": 0.006328,
+    "cost_usd_micros": 6328,
+    "duration_ms": 1405,
+    "ttft_ms": 1382,
+    "request_id": "req_011CgMW5xmjk9VJT2RrSwbF6",
+    "client_request_id": "efacbc4b-b19d-4345-bedd-5ae2ac921d16",
+    "speed": "normal",
+    "query_source": "sdk",
+    "effort": "medium"
+   }
+  },
+  {
+   "name": "claude_code.assistant_response",
+   "ts": 1792864993987000000,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "event.name": "assistant_response",
+    "event.timestamp": "2026-10-24T18:03:13.987Z",
+    "event.sequence": 14,
+    "prompt.id": "18e31867-c39e-4269-8a42-b343425e0826",
+    "response_length": 83,
+    "response": "<REDACTED>",
+    "request_id": "req_011CgMW5xmjk9VJT2RrSwbF6",
+    "message.uuid": "f05fe16b-4437-4a47-94dc-da5faebc4a2c",
+    "model": "claude-sonnet-5-5",
+    "query_source": "sdk"
+   }
+  },
+  {
+   "name": "claude_code.tool_decision",
+   "ts": 1792864994496000000,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "event.name": "tool_decision",
+    "event.timestamp": "2026-10-24T18:03:14.496Z",
+    "event.sequence": 15,
+    "prompt.id": "18e31867-c39e-4269-8a42-b343425e0826",
+    "decision": "accept",
+    "source": "config",
+    "tool_name": "Grep",
+    "tool_use_id": "toolu_017ja92Ys6k5VWDv3Ed5qWPd",
+    "tool_source": "builtin",
+    "permission_mode": "acceptEdits",
+    "request_id": "req_011CgMW5xTPUi5WCjvbrRKps",
+    "agent_id": "ac47f1735a0bc92ce"
+   }
+  },
+  {
+   "name": "claude_code.api_request",
+   "ts": 1792864994518000000,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "event.name": "api_request",
+    "event.timestamp": "2026-10-24T18:03:14.518Z",
+    "event.sequence": 16,
+    "prompt.id": "18e31867-c39e-4269-8a42-b343425e0826",
+    "model": "claude-sonnet-5-5",
+    "input_tokens": 2,
+    "output_tokens": 236,
+    "cache_read_tokens": 10008,
+    "cache_creation_tokens": 3909,
+    "cache_creation_5m_tokens": 3909,
+    "cache_creation_1h_tokens": 0,
+    "cost_usd": 0.013137300000000001,
+    "cost_usd_micros": 13137,
+    "duration_ms": 1959,
+    "ttft_ms": 800,
+    "request_id": "req_011CgMW5xTPUi5WCjvbrRKps",
+    "client_request_id": "3c9827c9-213f-4523-9cc8-8d52f87f990a",
+    "speed": "normal",
+    "query_source": "agent:builtin:Explore",
+    "effort": "medium",
+    "agent.name": "Explore",
+    "agent_id": "ac47f1735a0bc92ce"
+   }
+  },
+  {
+   "name": "claude_code.tool_result",
+   "ts": 1792864994557000000,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "event.name": "tool_result",
+    "event.timestamp": "2026-10-24T18:03:14.557Z",
+    "event.sequence": 17,
+    "prompt.id": "18e31867-c39e-4269-8a42-b343425e0826",
+    "tool_name": "Grep",
+    "tool_use_id": "toolu_017ja92Ys6k5VWDv3Ed5qWPd",
+    "success": "true",
+    "duration_ms": "59",
+    "tool_input_size_bytes": "243",
+    "tool_result_size_bytes": "261",
+    "request_id": "req_011CgMW5xTPUi5WCjvbrRKps",
+    "agent_id": "ac47f1735a0bc92ce"
+   }
+  },
+  {
+   "name": "claude_code.api_request",
+   "ts": 1792864996818000000,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "event.name": "api_request",
+    "event.timestamp": "2026-10-24T18:03:16.818Z",
+    "event.sequence": 18,
+    "prompt.id": "18e31867-c39e-4269-8a42-b343425e0826",
+    "model": "claude-sonnet-5-5",
+    "input_tokens": 2,
+    "output_tokens": 294,
+    "cache_read_tokens": 13917,
+    "cache_creation_tokens": 433,
+    "cache_creation_5m_tokens": 433,
+    "cache_creation_1h_tokens": 0,
+    "cost_usd": 0.0054182,
+    "cost_usd_micros": 5418,
+    "duration_ms": 2233,
+    "ttft_ms": 2212,
+    "request_id": "req_011CgMW67BWJTFnBKVBB3eJE",
+    "client_request_id": "56e64671-1bcd-4747-a6eb-7687b4d95ac3",
+    "speed": "normal",
+    "query_source": "agent:builtin:Explore",
+    "effort": "medium",
+    "agent.name": "Explore",
+    "agent_id": "ac47f1735a0bc92ce"
+   }
+  },
+  {
+   "name": "claude_code.assistant_response",
+   "ts": 1792864996818000000,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "event.name": "assistant_response",
+    "event.timestamp": "2026-10-24T18:03:16.818Z",
+    "event.sequence": 19,
+    "prompt.id": "18e31867-c39e-4269-8a42-b343425e0826",
+    "response_length": 543,
+    "response": "<REDACTED>",
+    "request_id": "req_011CgMW67BWJTFnBKVBB3eJE",
+    "message.uuid": "b841b93a-2a73-43ac-bfdd-2fb12eecb1ed",
+    "model": "claude-sonnet-5-5",
+    "query_source": "agent:builtin:Explore",
+    "agent_id": "ac47f1735a0bc92ce"
+   }
+  },
+  {
+   "name": "claude_code.subagent_completed",
+   "ts": 1792864996822000000,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "event.name": "subagent_completed",
+    "event.timestamp": "2026-10-24T18:03:16.822Z",
+    "event.sequence": 20,
+    "prompt.id": "18e31867-c39e-4269-8a42-b343425e0826",
+    "agent_type": "Explore",
+    "agent.source": "built-in",
+    "is_built_in": true,
+    "is_async": true,
+    "total_tokens": 14646,
+    "total_tool_uses": 1,
+    "duration_ms": 4338,
+    "model": "claude-sonnet-5-5",
+    "final_model": "claude-sonnet-5-5",
+    "model_swapped": false,
+    "agent_id": "ac47f1735a0bc92ce"
+   }
+  },
+  {
+   "name": "claude_code.user_prompt",
+   "ts": 1792864996884000000,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "event.name": "user_prompt",
+    "event.timestamp": "2026-10-24T18:03:16.884Z",
+    "event.sequence": 21,
+    "prompt.id": "7b6f9d19-bb36-4bea-9ac6-aeeefc743472",
+    "prompt_length": "1385",
+    "message.uuid": "8b537788-9e82-4c27-b9eb-1ff1249332ed"
+   }
+  },
+  {
+   "name": "claude_code.tool_decision",
+   "ts": 1792864998496000000,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "event.name": "tool_decision",
+    "event.timestamp": "2026-10-24T18:03:18.496Z",
+    "event.sequence": 22,
+    "prompt.id": "7b6f9d19-bb36-4bea-9ac6-aeeefc743472",
+    "decision": "accept",
+    "source": "config",
+    "tool_name": "Read",
+    "tool_use_id": "toolu_01WAXSErbjwBXRYD2VGku8gt",
+    "tool_source": "builtin",
+    "permission_mode": "acceptEdits",
+    "request_id": "req_011CgMW6H45NpXhxjVRAF6Zi"
+   }
+  },
+  {
+   "name": "claude_code.tool_result",
+   "ts": 1792864998504000000,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "event.name": "tool_result",
+    "event.timestamp": "2026-10-24T18:03:18.504Z",
+    "event.sequence": 23,
+    "prompt.id": "7b6f9d19-bb36-4bea-9ac6-aeeefc743472",
+    "tool_name": "Read",
+    "tool_use_id": "toolu_01WAXSErbjwBXRYD2VGku8gt",
+    "success": "true",
+    "duration_ms": "6",
+    "tool_input_size_bytes": "176",
+    "tool_result_size_bytes": "80",
+    "request_id": "req_011CgMW6H45NpXhxjVRAF6Zi"
+   }
+  },
+  {
+   "name": "claude_code.tool_decision",
+   "ts": 1792864999519000000,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "event.name": "tool_decision",
+    "event.timestamp": "2026-10-24T18:03:19.519Z",
+    "event.sequence": 24,
+    "prompt.id": "7b6f9d19-bb36-4bea-9ac6-aeeefc743472",
+    "decision": "accept",
+    "source": "config",
+    "tool_name": "Read",
+    "tool_use_id": "toolu_011fxb31YYb14LSH5iDieUPS",
+    "tool_source": "builtin",
+    "permission_mode": "acceptEdits",
+    "request_id": "req_011CgMW6H45NpXhxjVRAF6Zi"
+   }
+  },
+  {
+   "name": "claude_code.tool_result",
+   "ts": 1792864999528000000,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "event.name": "tool_result",
+    "event.timestamp": "2026-10-24T18:03:19.528Z",
+    "event.sequence": 25,
+    "prompt.id": "7b6f9d19-bb36-4bea-9ac6-aeeefc743472",
+    "tool_name": "Read",
+    "tool_use_id": "toolu_011fxb31YYb14LSH5iDieUPS",
+    "success": "true",
+    "duration_ms": "7",
+    "tool_input_size_bytes": "176",
+    "tool_result_size_bytes": "103",
+    "request_id": "req_011CgMW6H45NpXhxjVRAF6Zi"
+   }
+  },
+  {
+   "name": "claude_code.api_request",
+   "ts": 1792864999537000000,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "event.name": "api_request",
+    "event.timestamp": "2026-10-24T18:03:19.537Z",
+    "event.sequence": 26,
+    "prompt.id": "7b6f9d19-bb36-4bea-9ac6-aeeefc743472",
+    "model": "claude-sonnet-5-5",
+    "input_tokens": 2,
+    "output_tokens": 268,
+    "cache_read_tokens": 28140,
+    "cache_creation_tokens": 933,
+    "cache_creation_5m_tokens": 0,
+    "cache_creation_1h_tokens": 933,
+    "cost_usd": 0.00923,
+    "cost_usd_micros": 9230,
+    "duration_ms": 2621,
+    "ttft_ms": 696,
+    "request_id": "req_011CgMW6H45NpXhxjVRAF6Zi",
+    "client_request_id": "a900d43e-f90b-41ac-bbf4-975be627039e",
+    "speed": "normal",
+    "query_source": "sdk",
+    "effort": "medium"
+   }
+  },
+  {
+   "name": "claude_code.tool_decision",
+   "ts": 1792865001569000000,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "event.name": "tool_decision",
+    "event.timestamp": "2026-10-24T18:03:21.569Z",
+    "event.sequence": 27,
+    "prompt.id": "7b6f9d19-bb36-4bea-9ac6-aeeefc743472",
+    "decision": "accept",
+    "source": "config",
+    "tool_name": "Write",
+    "tool_use_id": "toolu_01TES1CwKFi36vktohTZuZd6",
+    "tool_source": "builtin",
+    "permission_mode": "acceptEdits",
+    "request_id": "req_011CgMW6UVRHevE3Hv7s5sHi"
+   }
+  },
+  {
+   "name": "claude_code.tool_result",
+   "ts": 1792865001653000000,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "event.name": "tool_result",
+    "event.timestamp": "2026-10-24T18:03:21.653Z",
+    "event.sequence": 28,
+    "prompt.id": "7b6f9d19-bb36-4bea-9ac6-aeeefc743472",
+    "tool_name": "Write",
+    "tool_use_id": "toolu_01TES1CwKFi36vktohTZuZd6",
+    "success": "true",
+    "duration_ms": "82",
+    "tool_input_size_bytes": "354",
+    "tool_result_size_bytes": "255",
+    "request_id": "req_011CgMW6UVRHevE3Hv7s5sHi"
+   }
+  },
+  {
+   "name": "claude_code.tool_decision",
+   "ts": 1792865002813000000,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "event.name": "tool_decision",
+    "event.timestamp": "2026-10-24T18:03:22.813Z",
+    "event.sequence": 29,
+    "prompt.id": "7b6f9d19-bb36-4bea-9ac6-aeeefc743472",
+    "decision": "accept",
+    "source": "config",
+    "tool_name": "Write",
+    "tool_use_id": "toolu_01QwacKMRYVek932EyAWXCMk",
+    "tool_source": "builtin",
+    "permission_mode": "acceptEdits",
+    "request_id": "req_011CgMW6UVRHevE3Hv7s5sHi"
+   }
+  },
+  {
+   "name": "claude_code.api_request",
+   "ts": 1792865002822000000,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "event.name": "api_request",
+    "event.timestamp": "2026-10-24T18:03:22.822Z",
+    "event.sequence": 30,
+    "prompt.id": "7b6f9d19-bb36-4bea-9ac6-aeeefc743472",
+    "model": "claude-sonnet-5-5",
+    "input_tokens": 2,
+    "output_tokens": 459,
+    "cache_read_tokens": 29073,
+    "cache_creation_tokens": 474,
+    "cache_creation_5m_tokens": 0,
+    "cache_creation_1h_tokens": 474,
+    "cost_usd": 0.0093973,
+    "cost_usd_micros": 9397,
+    "duration_ms": 3251,
+    "ttft_ms": 799,
+    "request_id": "req_011CgMW6UVRHevE3Hv7s5sHi",
+    "client_request_id": "af3ea7b3-8ba3-4eeb-bdff-64062f6f856a",
+    "speed": "normal",
+    "query_source": "sdk",
+    "effort": "medium"
+   }
+  },
+  {
+   "name": "claude_code.tool_result",
+   "ts": 1792865002837000000,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "event.name": "tool_result",
+    "event.timestamp": "2026-10-24T18:03:22.837Z",
+    "event.sequence": 31,
+    "prompt.id": "7b6f9d19-bb36-4bea-9ac6-aeeefc743472",
+    "tool_name": "Write",
+    "tool_use_id": "toolu_01QwacKMRYVek932EyAWXCMk",
+    "success": "true",
+    "duration_ms": "22",
+    "tool_input_size_bytes": "435",
+    "tool_result_size_bytes": "255",
+    "request_id": "req_011CgMW6UVRHevE3Hv7s5sHi"
+   }
+  },
+  {
+   "name": "claude_code.api_request",
+   "ts": 1792865004871000000,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "event.name": "api_request",
+    "event.timestamp": "2026-10-24T18:03:24.871Z",
+    "event.sequence": 32,
+    "prompt.id": "7b6f9d19-bb36-4bea-9ac6-aeeefc743472",
+    "model": "claude-sonnet-5-5",
+    "input_tokens": 2,
+    "output_tokens": 191,
+    "cache_read_tokens": 29547,
+    "cache_creation_tokens": 799,
+    "cache_creation_5m_tokens": 0,
+    "cache_creation_1h_tokens": 799,
+    "cost_usd": 0.008064700000000001,
+    "cost_usd_micros": 8065,
+    "duration_ms": 1998,
+    "ttft_ms": 1978,
+    "request_id": "req_011CgMW6iYG9kXyGzRNwC29t",
+    "client_request_id": "3e65c9f8-a1e1-4cd7-8937-3683bbc5b514",
+    "speed": "normal",
+    "query_source": "sdk",
+    "effort": "medium"
+   }
+  },
+  {
+   "name": "claude_code.assistant_response",
+   "ts": 1792865004871000000,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "event.name": "assistant_response",
+    "event.timestamp": "2026-10-24T18:03:24.871Z",
+    "event.sequence": 33,
+    "prompt.id": "7b6f9d19-bb36-4bea-9ac6-aeeefc743472",
+    "response_length": 434,
+    "response": "<REDACTED>",
+    "request_id": "req_011CgMW6iYG9kXyGzRNwC29t",
+    "message.uuid": "de131b93-3f5b-4d07-8f54-53dd83c9bbb0",
+    "model": "claude-sonnet-5-5",
+    "query_source": "sdk"
+   }
+  }
+ ],
+ "spans": [
+  {
+   "name": "claude_code.tool.blocked_on_user",
+   "id": "11d5637203e0f5f3",
+   "parent": "564c002452c887c6",
+   "ms": 3.1275,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "gen_ai.provider.name": "anthropic",
+    "span.type": "tool.blocked_on_user",
+    "gen_ai.conversation.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "duration_ms": 3,
+    "decision": "accept",
+    "source": "config"
+   }
+  },
+  {
+   "name": "claude_code.tool.execution",
+   "id": "26f47ef01a152622",
+   "parent": "564c002452c887c6",
+   "ms": 10.3004,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "gen_ai.provider.name": "anthropic",
+    "span.type": "tool.execution",
+    "gen_ai.conversation.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "tool_use_id": "toolu_01VYgvaBXjgT1CA1QeLYrQeu",
+    "gen_ai.tool.call.id": "toolu_01VYgvaBXjgT1CA1QeLYrQeu",
+    "duration_ms": 10,
+    "success": true
+   }
+  },
+  {
+   "name": "claude_code.tool",
+   "id": "564c002452c887c6",
+   "parent": "9037aaf450f3f001",
+   "ms": 13.9863,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "gen_ai.provider.name": "anthropic",
+    "span.type": "tool",
+    "tool_name": "Agent",
+    "tool_name_safe": "Agent",
+    "gen_ai.operation.name": "execute_tool",
+    "gen_ai.tool.name": "Agent",
+    "gen_ai.conversation.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "subagent_type": "Explore",
+    "tool_use_id": "toolu_01VYgvaBXjgT1CA1QeLYrQeu",
+    "gen_ai.tool.call.id": "toolu_01VYgvaBXjgT1CA1QeLYrQeu",
+    "duration_ms": 14
+   }
+  },
+  {
+   "name": "claude_code.llm_request",
+   "id": "de3b2b2ee5b4e0d6",
+   "parent": "9037aaf450f3f001",
+   "ms": 2552.9657,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "gen_ai.provider.name": "anthropic",
+    "span.type": "llm_request",
+    "model": "claude-sonnet-5-5",
+    "gen_ai.system": "anthropic",
+    "gen_ai.request.model": "claude-sonnet-5-5",
+    "llm_request.context": "interaction",
+    "speed": "normal",
+    "gen_ai.conversation.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "query_source_safe": "sdk",
+    "duration_ms": 2552,
+    "input_tokens": 2,
+    "output_tokens": 289,
+    "cache_read_tokens": 27340,
+    "cache_creation_tokens": 0,
+    "success": true,
+    "attempt": 1,
+    "request_id": "req_011CgMW5mcXDcDFDbzbcFZwg",
+    "gen_ai.response.id": "req_011CgMW5mcXDcDFDbzbcFZwg",
+    "client_request_id": "1c712758-a1ac-4daa-8c77-1fa13f8bcae6",
+    "ttft_ms": 744,
+    "first_content_ms": 752,
+    "effort": "medium",
+    "stop_reason": "tool_use",
+    "gen_ai.response.finish_reasons": {
+     "values": [
+      {
+       "stringValue": "tool_use"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "name": "claude_code.llm_request",
+   "id": "812118c77a5140ce",
+   "parent": "9037aaf450f3f001",
+   "ms": 1408.1921,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "gen_ai.provider.name": "anthropic",
+    "span.type": "llm_request",
+    "model": "claude-sonnet-5-5",
+    "gen_ai.system": "anthropic",
+    "gen_ai.request.model": "claude-sonnet-5-5",
+    "llm_request.context": "interaction",
+    "speed": "normal",
+    "gen_ai.conversation.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "query_source_safe": "sdk",
+    "duration_ms": 1408,
+    "input_tokens": 2,
+    "output_tokens": 39,
+    "cache_read_tokens": 27340,
+    "cache_creation_tokens": 800,
+    "success": true,
+    "attempt": 1,
+    "request_id": "req_011CgMW5xmjk9VJT2RrSwbF6",
+    "gen_ai.response.id": "req_011CgMW5xmjk9VJT2RrSwbF6",
+    "client_request_id": "efacbc4b-b19d-4345-bedd-5ae2ac921d16",
+    "ttft_ms": 1382,
+    "first_content_ms": 1384,
+    "effort": "medium",
+    "stop_reason": "end_turn",
+    "gen_ai.response.finish_reasons": {
+     "values": [
+      {
+       "stringValue": "end_turn"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "name": "claude_code.interaction",
+   "id": "9037aaf450f3f001",
+   "parent": null,
+   "ms": 4212.8803,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "gen_ai.provider.name": "anthropic",
+    "span.type": "interaction",
+    "gen_ai.operation.name": "invoke_agent",
+    "gen_ai.conversation.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "user_prompt": "<REDACTED>",
+    "user_prompt_length": 134,
+    "interaction.sequence": 1,
+    "parent.source": "none",
+    "queued_sends": 0,
+    "interaction.duration_ms": 4213
+   }
+  },
+  {
+   "name": "claude_code.tool.blocked_on_user",
+   "id": "e370e4f8e8b70a55",
+   "parent": "3fc487701beaedbf",
+   "ms": 16.6415,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "gen_ai.provider.name": "anthropic",
+    "span.type": "tool.blocked_on_user",
+    "gen_ai.conversation.id": "ac47f1735a0bc92ce",
+    "duration_ms": 17,
+    "decision": "accept",
+    "source": "config"
+   }
+  },
+  {
+   "name": "claude_code.llm_request",
+   "id": "d27ab8c987b3a0b4",
+   "parent": "26f47ef01a152622",
+   "ms": 1968.8297,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "gen_ai.provider.name": "anthropic",
+    "span.type": "llm_request",
+    "model": "claude-sonnet-5-5",
+    "gen_ai.system": "anthropic",
+    "gen_ai.request.model": "claude-sonnet-5-5",
+    "llm_request.context": "tool",
+    "speed": "normal",
+    "gen_ai.conversation.id": "ac47f1735a0bc92ce",
+    "query_source_safe": "agent.builtin.Explore",
+    "agent_id": "ac47f1735a0bc92ce",
+    "duration_ms": 1969,
+    "input_tokens": 2,
+    "output_tokens": 236,
+    "cache_read_tokens": 10008,
+    "cache_creation_tokens": 3909,
+    "success": true,
+    "attempt": 1,
+    "request_id": "req_011CgMW5xTPUi5WCjvbrRKps",
+    "gen_ai.response.id": "req_011CgMW5xTPUi5WCjvbrRKps",
+    "client_request_id": "3c9827c9-213f-4523-9cc8-8d52f87f990a",
+    "ttft_ms": 800,
+    "first_content_ms": 802,
+    "effort": "medium",
+    "stop_reason": "tool_use",
+    "gen_ai.response.finish_reasons": {
+     "values": [
+      {
+       "stringValue": "tool_use"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "name": "claude_code.tool.execution",
+   "id": "7a504beb56f66fd2",
+   "parent": "3fc487701beaedbf",
+   "ms": 58.8282,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "gen_ai.provider.name": "anthropic",
+    "span.type": "tool.execution",
+    "gen_ai.conversation.id": "ac47f1735a0bc92ce",
+    "tool_use_id": "toolu_017ja92Ys6k5VWDv3Ed5qWPd",
+    "gen_ai.tool.call.id": "toolu_017ja92Ys6k5VWDv3Ed5qWPd",
+    "duration_ms": 59,
+    "success": true
+   }
+  },
+  {
+   "name": "claude_code.tool",
+   "id": "3fc487701beaedbf",
+   "parent": "26f47ef01a152622",
+   "ms": 75.9222,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "gen_ai.provider.name": "anthropic",
+    "span.type": "tool",
+    "tool_name": "Grep",
+    "tool_name_safe": "Grep",
+    "gen_ai.operation.name": "execute_tool",
+    "gen_ai.tool.name": "Grep",
+    "gen_ai.conversation.id": "ac47f1735a0bc92ce",
+    "agent_id": "ac47f1735a0bc92ce",
+    "tool_use_id": "toolu_017ja92Ys6k5VWDv3Ed5qWPd",
+    "gen_ai.tool.call.id": "toolu_017ja92Ys6k5VWDv3Ed5qWPd",
+    "duration_ms": 76
+   }
+  },
+  {
+   "name": "claude_code.llm_request",
+   "id": "b7ae087a3fdec2be",
+   "parent": "26f47ef01a152622",
+   "ms": 2235.8314,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "gen_ai.provider.name": "anthropic",
+    "span.type": "llm_request",
+    "model": "claude-sonnet-5-5",
+    "gen_ai.system": "anthropic",
+    "gen_ai.request.model": "claude-sonnet-5-5",
+    "llm_request.context": "tool",
+    "speed": "normal",
+    "gen_ai.conversation.id": "ac47f1735a0bc92ce",
+    "query_source_safe": "agent.builtin.Explore",
+    "agent_id": "ac47f1735a0bc92ce",
+    "duration_ms": 2236,
+    "input_tokens": 2,
+    "output_tokens": 294,
+    "cache_read_tokens": 13917,
+    "cache_creation_tokens": 433,
+    "success": true,
+    "attempt": 1,
+    "request_id": "req_011CgMW67BWJTFnBKVBB3eJE",
+    "gen_ai.response.id": "req_011CgMW67BWJTFnBKVBB3eJE",
+    "client_request_id": "56e64671-1bcd-4747-a6eb-7687b4d95ac3",
+    "ttft_ms": 2212,
+    "first_content_ms": 2213,
+    "effort": "medium",
+    "stop_reason": "end_turn",
+    "gen_ai.response.finish_reasons": {
+     "values": [
+      {
+       "stringValue": "end_turn"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "name": "claude_code.tool.blocked_on_user",
+   "id": "7c9289fd6f63ec0a",
+   "parent": "4d9427c169563338",
+   "ms": 10.3951,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "gen_ai.provider.name": "anthropic",
+    "span.type": "tool.blocked_on_user",
+    "gen_ai.conversation.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "duration_ms": 10,
+    "decision": "accept",
+    "source": "config"
+   }
+  },
+  {
+   "name": "claude_code.tool.execution",
+   "id": "f402f611864ad7fc",
+   "parent": "4d9427c169563338",
+   "ms": 6.8623,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "gen_ai.provider.name": "anthropic",
+    "span.type": "tool.execution",
+    "gen_ai.conversation.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "tool_use_id": "toolu_01WAXSErbjwBXRYD2VGku8gt",
+    "gen_ai.tool.call.id": "toolu_01WAXSErbjwBXRYD2VGku8gt",
+    "duration_ms": 7,
+    "success": true
+   }
+  },
+  {
+   "name": "claude_code.tool",
+   "id": "4d9427c169563338",
+   "parent": "d094624119f99cb5",
+   "ms": 17.7932,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "gen_ai.provider.name": "anthropic",
+    "span.type": "tool",
+    "tool_name": "Read",
+    "tool_name_safe": "Read",
+    "gen_ai.operation.name": "execute_tool",
+    "gen_ai.tool.name": "Read",
+    "gen_ai.conversation.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "tool_use_id": "toolu_01WAXSErbjwBXRYD2VGku8gt",
+    "gen_ai.tool.call.id": "toolu_01WAXSErbjwBXRYD2VGku8gt",
+    "duration_ms": 18
+   }
+  },
+  {
+   "name": "claude_code.tool.blocked_on_user",
+   "id": "ece56b257de24786",
+   "parent": "508224d8ccdfe53f",
+   "ms": 11.4156,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "gen_ai.provider.name": "anthropic",
+    "span.type": "tool.blocked_on_user",
+    "gen_ai.conversation.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "duration_ms": 11,
+    "decision": "accept",
+    "source": "config"
+   }
+  },
+  {
+   "name": "claude_code.tool.execution",
+   "id": "fc770b17befc8373",
+   "parent": "508224d8ccdfe53f",
+   "ms": 7.7832,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "gen_ai.provider.name": "anthropic",
+    "span.type": "tool.execution",
+    "gen_ai.conversation.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "tool_use_id": "toolu_011fxb31YYb14LSH5iDieUPS",
+    "gen_ai.tool.call.id": "toolu_011fxb31YYb14LSH5iDieUPS",
+    "duration_ms": 8,
+    "success": true
+   }
+  },
+  {
+   "name": "claude_code.tool",
+   "id": "508224d8ccdfe53f",
+   "parent": "d094624119f99cb5",
+   "ms": 19.7034,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "gen_ai.provider.name": "anthropic",
+    "span.type": "tool",
+    "tool_name": "Read",
+    "tool_name_safe": "Read",
+    "gen_ai.operation.name": "execute_tool",
+    "gen_ai.tool.name": "Read",
+    "gen_ai.conversation.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "tool_use_id": "toolu_011fxb31YYb14LSH5iDieUPS",
+    "gen_ai.tool.call.id": "toolu_011fxb31YYb14LSH5iDieUPS",
+    "duration_ms": 20
+   }
+  },
+  {
+   "name": "claude_code.llm_request",
+   "id": "6b7a29552067f420",
+   "parent": "d094624119f99cb5",
+   "ms": 2625.8298,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "gen_ai.provider.name": "anthropic",
+    "span.type": "llm_request",
+    "model": "claude-sonnet-5-5",
+    "gen_ai.system": "anthropic",
+    "gen_ai.request.model": "claude-sonnet-5-5",
+    "llm_request.context": "interaction",
+    "speed": "normal",
+    "gen_ai.conversation.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "query_source_safe": "sdk",
+    "duration_ms": 2626,
+    "input_tokens": 2,
+    "output_tokens": 268,
+    "cache_read_tokens": 28140,
+    "cache_creation_tokens": 933,
+    "success": true,
+    "attempt": 1,
+    "request_id": "req_011CgMW6H45NpXhxjVRAF6Zi",
+    "gen_ai.response.id": "req_011CgMW6H45NpXhxjVRAF6Zi",
+    "client_request_id": "a900d43e-f90b-41ac-bbf4-975be627039e",
+    "ttft_ms": 696,
+    "first_content_ms": 700,
+    "effort": "medium",
+    "stop_reason": "tool_use",
+    "gen_ai.response.finish_reasons": {
+     "values": [
+      {
+       "stringValue": "tool_use"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "name": "claude_code.tool.blocked_on_user",
+   "id": "f82220fec23c6707",
+   "parent": "8cb3474a14111bc0",
+   "ms": 7.2198,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "gen_ai.provider.name": "anthropic",
+    "span.type": "tool.blocked_on_user",
+    "gen_ai.conversation.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "duration_ms": 7,
+    "decision": "accept",
+    "source": "config"
+   }
+  },
+  {
+   "name": "claude_code.tool.execution",
+   "id": "499497671bf542e7",
+   "parent": "8cb3474a14111bc0",
+   "ms": 82.6162,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "gen_ai.provider.name": "anthropic",
+    "span.type": "tool.execution",
+    "gen_ai.conversation.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "tool_use_id": "toolu_01TES1CwKFi36vktohTZuZd6",
+    "gen_ai.tool.call.id": "toolu_01TES1CwKFi36vktohTZuZd6",
+    "duration_ms": 83,
+    "success": true
+   }
+  },
+  {
+   "name": "claude_code.tool",
+   "id": "8cb3474a14111bc0",
+   "parent": "d094624119f99cb5",
+   "ms": 90.176,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "gen_ai.provider.name": "anthropic",
+    "span.type": "tool",
+    "tool_name": "Write",
+    "tool_name_safe": "Write",
+    "gen_ai.operation.name": "execute_tool",
+    "gen_ai.tool.name": "Write",
+    "gen_ai.conversation.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "tool_use_id": "toolu_01TES1CwKFi36vktohTZuZd6",
+    "gen_ai.tool.call.id": "toolu_01TES1CwKFi36vktohTZuZd6",
+    "duration_ms": 90
+   }
+  },
+  {
+   "name": "claude_code.tool.blocked_on_user",
+   "id": "bbbacad333699c39",
+   "parent": "ed67e2a6f3193418",
+   "ms": 9.8734,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "gen_ai.provider.name": "anthropic",
+    "span.type": "tool.blocked_on_user",
+    "gen_ai.conversation.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "duration_ms": 10,
+    "decision": "accept",
+    "source": "config"
+   }
+  },
+  {
+   "name": "claude_code.llm_request",
+   "id": "fbfc2f3353f3e86d",
+   "parent": "d094624119f99cb5",
+   "ms": 3253.7902,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "gen_ai.provider.name": "anthropic",
+    "span.type": "llm_request",
+    "model": "claude-sonnet-5-5",
+    "gen_ai.system": "anthropic",
+    "gen_ai.request.model": "claude-sonnet-5-5",
+    "llm_request.context": "interaction",
+    "speed": "normal",
+    "gen_ai.conversation.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "query_source_safe": "sdk",
+    "duration_ms": 3254,
+    "input_tokens": 2,
+    "output_tokens": 459,
+    "cache_read_tokens": 29073,
+    "cache_creation_tokens": 474,
+    "success": true,
+    "attempt": 1,
+    "request_id": "req_011CgMW6UVRHevE3Hv7s5sHi",
+    "gen_ai.response.id": "req_011CgMW6UVRHevE3Hv7s5sHi",
+    "client_request_id": "af3ea7b3-8ba3-4eeb-bdff-64062f6f856a",
+    "ttft_ms": 799,
+    "first_content_ms": 800,
+    "effort": "medium",
+    "stop_reason": "tool_use",
+    "gen_ai.response.finish_reasons": {
+     "values": [
+      {
+       "stringValue": "tool_use"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "name": "claude_code.tool.execution",
+   "id": "e01026fad0154888",
+   "parent": "ed67e2a6f3193418",
+   "ms": 22.0176,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "gen_ai.provider.name": "anthropic",
+    "span.type": "tool.execution",
+    "gen_ai.conversation.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "tool_use_id": "toolu_01QwacKMRYVek932EyAWXCMk",
+    "gen_ai.tool.call.id": "toolu_01QwacKMRYVek932EyAWXCMk",
+    "duration_ms": 22,
+    "success": true
+   }
+  },
+  {
+   "name": "claude_code.tool",
+   "id": "ed67e2a6f3193418",
+   "parent": "d094624119f99cb5",
+   "ms": 32.3496,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "gen_ai.provider.name": "anthropic",
+    "span.type": "tool",
+    "tool_name": "Write",
+    "tool_name_safe": "Write",
+    "gen_ai.operation.name": "execute_tool",
+    "gen_ai.tool.name": "Write",
+    "gen_ai.conversation.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "tool_use_id": "toolu_01QwacKMRYVek932EyAWXCMk",
+    "gen_ai.tool.call.id": "toolu_01QwacKMRYVek932EyAWXCMk",
+    "duration_ms": 32
+   }
+  },
+  {
+   "name": "claude_code.llm_request",
+   "id": "6998f92144f8397a",
+   "parent": "d094624119f99cb5",
+   "ms": 2001.0281,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "gen_ai.provider.name": "anthropic",
+    "span.type": "llm_request",
+    "model": "claude-sonnet-5-5",
+    "gen_ai.system": "anthropic",
+    "gen_ai.request.model": "claude-sonnet-5-5",
+    "llm_request.context": "interaction",
+    "speed": "normal",
+    "gen_ai.conversation.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "query_source_safe": "sdk",
+    "duration_ms": 2001,
+    "input_tokens": 2,
+    "output_tokens": 191,
+    "cache_read_tokens": 29547,
+    "cache_creation_tokens": 799,
+    "success": true,
+    "attempt": 1,
+    "request_id": "req_011CgMW6iYG9kXyGzRNwC29t",
+    "gen_ai.response.id": "req_011CgMW6iYG9kXyGzRNwC29t",
+    "client_request_id": "3e65c9f8-a1e1-4cd7-8937-3683bbc5b514",
+    "ttft_ms": 1978,
+    "first_content_ms": 1979,
+    "effort": "medium",
+    "stop_reason": "end_turn",
+    "gen_ai.response.finish_reasons": {
+     "values": [
+      {
+       "stringValue": "end_turn"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "name": "claude_code.interaction",
+   "id": "d094624119f99cb5",
+   "parent": null,
+   "ms": 8021.2378,
+   "attrs": {
+    "session.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "terminal.type": "windows-terminal",
+    "gen_ai.provider.name": "anthropic",
+    "span.type": "interaction",
+    "gen_ai.operation.name": "invoke_agent",
+    "gen_ai.conversation.id": "8e297438-2267-4e98-8343-4f108acdf211",
+    "user_prompt": "<REDACTED>",
+    "user_prompt_length": 1385,
+    "interaction.sequence": 2,
+    "parent.source": "none",
+    "queued_sends": 0,
+    "interaction.duration_ms": 8021
+   }
+  }
+ ]
+}

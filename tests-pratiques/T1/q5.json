@@ -1,0 +1,148 @@
+{
+ "depots": {
+  "usine-migration-jira-demo": {
+   "fichiers_story_et_journal": 95,
+   "stories_avec_constats": 7,
+   "constats": {
+    "low|corrige": 29,
+    "low|partiel": 1,
+    "low|rejete": 18,
+    "medium|corrige": 13,
+    "medium|partiel": 1,
+    "medium|reporte": 1,
+    "rejet_motif|autre": 7,
+    "rejet_motif|deja_regle": 5,
+    "rejet_motif|faux": 1,
+    "rejet_motif|voulu": 5
+   },
+   "journal_lignes_resultat": 0,
+   "journal_constats_declares": 0
+  },
+  "wavedevsecops": {
+   "fichiers_story_et_journal": 65,
+   "stories_avec_constats": 47,
+   "constats": {
+    "high|corrige": 14,
+    "high|indetermine": 1,
+    "high|rejete": 2,
+    "high|reporte": 1,
+    "low|corrige": 110,
+    "low|indetermine": 5,
+    "low|partiel": 4,
+    "low|rejete": 83,
+    "low|reporte": 20,
+    "medium|corrige": 81,
+    "medium|partiel": 2,
+    "medium|rejete": 8,
+    "medium|reporte": 4,
+    "rejet_motif|autre": 52,
+    "rejet_motif|deja_regle": 14,
+    "rejet_motif|faux": 2,
+    "rejet_motif|voulu": 25
+   },
+   "journal_lignes_resultat": 61,
+   "journal_constats_declares": 442
+  },
+  "wavelocalai": {
+   "fichiers_story_et_journal": 61,
+   "stories_avec_constats": 51,
+   "constats": {
+    "high|corrige": 5,
+    "low|corrige": 98,
+    "low|partiel": 3,
+    "low|rejete": 98,
+    "low|reporte": 27,
+    "low|requalifie": 1,
+    "medium|corrige": 69,
+    "medium|partiel": 2,
+    "medium|rejete": 9,
+    "medium|reporte": 1,
+    "medium|requalifie": 2,
+    "rejet_motif|autre": 53,
+    "rejet_motif|deja_regle": 18,
+    "rejet_motif|faux": 1,
+    "rejet_motif|voulu": 35
+   },
+   "journal_lignes_resultat": 44,
+   "journal_constats_declares": 226
+  },
+  "wavestack": {
+   "fichiers_story_et_journal": 80,
+   "stories_avec_constats": 0,
+   "constats": {},
+   "journal_lignes_resultat": 0,
+   "journal_constats_declares": 0
+  },
+  "autre": {
+   "fichiers_story_et_journal": 194,
+   "stories_avec_constats": 88,
+   "constats": {
+    "high|corrige": 16,
+    "high|reporte": 1,
+    "low|corrige": 226,
+    "low|indetermine": 24,
+    "low|partiel": 3,
+    "low|rejete": 85,
+    "low|reporte": 33,
+    "medium|corrige": 176,
+    "medium|indetermine": 7,
+    "medium|partiel": 5,
+    "medium|rejete": 15,
+    "medium|reporte": 6,
+    "rejet_motif|autre": 53,
+    "rejet_motif|deja_regle": 15,
+    "rejet_motif|voulu": 32
+   },
+   "journal_lignes_resultat": 0,
+   "journal_constats_declares": 0
+  }
+ },
+ "agents_lances_45j": {
+  "dev-story": 350,
+  "second-avis": 297,
+  "reviewer": 299
+ },
+ "total_constats": {
+  "high|corrige": 35,
+  "high|indetermine": 1,
+  "high|rejete": 2,
+  "high|reporte": 2,
+  "low|corrige": 463,
+  "low|indetermine": 29,
+  "low|partiel": 11,
+  "low|rejete": 284,
+  "low|reporte": 80,
+  "low|requalifie": 1,
+  "medium|corrige": 339,
+  "medium|indetermine": 7,
+  "medium|partiel": 10,
+  "medium|rejete": 32,
+  "medium|reporte": 12,
+  "medium|requalifie": 2,
+  "rejet_motif|autre": 165,
+  "rejet_motif|deja_regle": 52,
+  "rejet_motif|faux": 4,
+  "rejet_motif|voulu": 97
+ },
+ "total_stories": 193,
+ "motifs_rejet": {
+  "voulu": 97,
+  "autre": 165,
+  "faux": 4,
+  "deja_regle": 52
+ },
+ "par_verdict": {
+  "reporte": 94,
+  "corrige": 837,
+  "partiel": 21,
+  "rejete": 318,
+  "indetermine": 37,
+  "requalifie": 3
+ },
+ "par_severite": {
+  "medium": 402,
+  "low": 868,
+  "high": 40
+ },
+ "note_depots_autres": 4
+}
