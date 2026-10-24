@@ -1,0 +1,8 @@
+{
+ "cumul_usd": 0.11729458,
+ "par_bras": {
+  "jev:~typesafe/jev-latest": 0.01723213,
+  "llm:openai/gpt-6-luna": 0.08308617,
+  "jev:typesafe/jev-1.13": 0.01697631
+ }
+}
