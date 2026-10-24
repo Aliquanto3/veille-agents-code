@@ -1,0 +1,34 @@
+{
+ "cout_usd": 0.285156,
+ "tours": 20,
+ "duree_api_ms": 77382,
+ "tokens_in": 14,
+ "tokens_out": 12927,
+ "cache_creation": 34755,
+ "cache_read": 168380,
+ "erreur": false,
+ "sous_type": "success",
+ "refus_permission": 1,
+ "denials": [
+  "Bash"
+ ],
+ "resultat_fin": "gauche et la liste à droite. Sur mobile, le tableau se transforme en cartes empilées, et les champs ont une hauteur de 44 px.\n- **Fichiers modifiés :** `app/main.py`, `app/templates/liste.html`, `app/static/style.css`, `app/static/app.js`, `tests/test_liste.py`.\n- **Tests :** les nouveaux tests couvrent la validation (messages, singulier/pluriel, valeurs conservées, bornes du montant) et l'ajout (303, confirmation à usage unique, nouvelle demande en tête). Les montants avec virgule sont acceptés.\n\nLe format des montants utilise des espaces ordinaires (`1 249,90 €`), pas des espaces insécables.",
+ "outils": {
+  "Skill": 1,
+  "Glob": 1,
+  "Bash": 4,
+  "Read": 7,
+  "Write": 5
+ },
+ "skills_invoquees": [
+  "impeccable"
+ ],
+ "tool_results_en_erreur": 1,
+ "statut": "ok",
+ "duree_s": 83.4,
+ "cmd": [
+  "claude",
+  "-p",
+  "..."
+ ]
+}

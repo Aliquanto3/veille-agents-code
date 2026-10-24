@@ -1,0 +1,44 @@
+{
+ "cout_usd": 0.08472250000000002,
+ "tours": 9,
+ "duree_api_ms": 13900,
+ "tokens_in": 16,
+ "tokens_out": 1116,
+ "cache_creation": 15410,
+ "cache_read": 118905,
+ "erreur": false,
+ "sous_type": "success",
+ "refus_permission": 0,
+ "denials": [],
+ "resultat_fin": "service, montant -50, motif)\"},{\"n\":4,\"ok\":true,\"constat\":\"Montant corrigé en 150,75\"},{\"n\":5,\"ok\":true,\"constat\":\"Message « Demande enregistrée. » affiché après la nouvelle validation\"},{\"n\":6,\"ok\":true,\"constat\":\"Tableau filtré sur le service Finance\"},{\"n\":7,\"ok\":true,\"constat\":\"Compteur « 2 demandes affichées », 2 lignes visibles (Test Parcours et Karim Haddad), Test Parcours y figure\"}],\"erreur_montant\":\"Le montant doit être un nombre supérieur à 0 et au plus 50 000 €.\",\"confirmation\":\"Demande enregistrée.\",\"compteur\":\"2 demandes affichées\",\"lignes_finance\":2,\"test_parcours_visible\":true}",
+ "outils": {
+  "Skill": 1,
+  "Bash": 6
+ },
+ "skills_invoquees": [
+  "agent-browser"
+ ],
+ "tool_results_en_erreur": 0,
+ "statut": "ok",
+ "duree_s": 21.9,
+ "cmd": [
+  "claude",
+  "-p",
+  "..."
+ ],
+ "score": {
+  "json_ok": true,
+  "erreur_montant_ok": true,
+  "confirmation_ok": true,
+  "compteur_ok": true,
+  "lignes_ok": true,
+  "visible_ok": true,
+  "etapes_ok": true,
+  "lignes_serveur": 7,
+  "test_parcours_occurrences": 1,
+  "montant_150_75": true,
+  "serveur_ok": true,
+  "reussite": true
+ },
+ "reponse": "{\"etapes\":[{\"n\":1,\"ok\":true,\"constat\":\"Page /demandes ouverte, le tableau contient 6 demandes\"},{\"n\":2,\"ok\":true,\"constat\":\"Formulaire rempli (Test Parcours, Finance, -50, Achat de test pour le parcours) et soumis\"},{\"n\":3,\"ok\":true,\"constat\":\"Message « Le formulaire contient 1 erreur. » en haut et message d'erreur sous le montant ; la saisie est conservée (demandeur, service, montant -50, motif)\"},{\"n\":4,\"ok\":true,\"constat\":\"Montant corrigé en 150,75\"},{\"n\":5,\"ok\":true,\"constat\":\"Message « Demande enregistrée. » affiché après la nouvelle validation\"},{\"n\":6,\"ok\":true,\"constat\":\"Tableau filtré sur le service Finance\"},{\"n\":7,\"ok\":true,\"constat\":\"Compteur « 2 demandes affichées », 2 lignes visibles (Test Parcours et Karim Haddad), Test Parcours y figure\"}],\"erreur_montant\":\"Le montant doit être un nombre supérieur à 0 et au plus 50 000 €.\",\"confirmation\":\"Demande enregistrée.\",\"compteur\":\"2 demandes affichées\",\"lignes_finance\":2,\"test_parcours_visible\":true}"
+}

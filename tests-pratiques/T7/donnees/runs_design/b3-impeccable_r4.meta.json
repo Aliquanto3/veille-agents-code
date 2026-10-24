@@ -1,0 +1,32 @@
+{
+ "cout_usd": 0.3617567,
+ "tours": 12,
+ "duree_api_ms": 101049,
+ "tokens_in": 12,
+ "tokens_out": 18766,
+ "cache_creation": 39786,
+ "cache_read": 149287,
+ "erreur": false,
+ "sous_type": "success",
+ "refus_permission": 1,
+ "denials": [
+  "Bash"
+ ],
+ "resultat_fin": "ices système (donc hors ligne) et des focus visibles. Sur mobile, chaque ligne du tableau devient une fiche empilée. Le montant est un champ texte à clavier décimal, pour conserver ce qui a été saisi quand il est invalide.\n- **Fichiers modifiés :** `app/main.py` (route POST, validation, message de confirmation par cookie à usage unique), `app/templates/liste.html`, `app/static/style.css`, `app/static/app.js`, et le nouveau `tests/test_demandes.py`.\n- **Tests :** ils couvrent la validation, les montants limites, l'ajout, le tri et le message unique ; ils restaurent `DEMANDES` après chaque test.",
+ "outils": {
+  "Skill": 1,
+  "Bash": 4,
+  "Write": 5
+ },
+ "skills_invoquees": [
+  "impeccable"
+ ],
+ "tool_results_en_erreur": 1,
+ "statut": "ok",
+ "duree_s": 108.4,
+ "cmd": [
+  "claude",
+  "-p",
+  "..."
+ ]
+}

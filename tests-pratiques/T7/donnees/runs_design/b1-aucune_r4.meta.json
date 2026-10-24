@@ -1,0 +1,29 @@
+{
+ "cout_usd": 0.26061049999999997,
+ "tours": 9,
+ "duree_api_ms": 73733,
+ "tokens_in": 8,
+ "tokens_out": 14701,
+ "cache_creation": 26865,
+ "cache_read": 61245,
+ "erreur": false,
+ "sous_type": "success",
+ "refus_permission": 1,
+ "denials": [
+  "Bash"
+ ],
+ "resultat_fin": "est saisi en texte (virgule ou point acceptés, deux décimales au plus). Le message « Demande enregistrée. » passe par `?ok=1`, que `app.js` retire de l'URL après affichage. Sous 40 rem, le tableau devient des cartes empilées. Les montants s'affichent avec une espace simple (`1 249,90 €`), pas insécable.\n- **Fichiers modifiés :** `app/main.py`, `app/templates/liste.html`, `app/static/app.js`, `app/static/style.css`, et le nouveau `tests/test_creation.py`.\n- **Tests :** 14 passent, dont 8 cas de montants limites. Un avertissement de dépréciation de `httpx` apparaît, sans effet sur les résultats.",
+ "outils": {
+  "Bash": 3,
+  "Write": 5
+ },
+ "skills_invoquees": [],
+ "tool_results_en_erreur": 1,
+ "statut": "ok",
+ "duree_s": 77.9,
+ "cmd": [
+  "claude",
+  "-p",
+  "..."
+ ]
+}

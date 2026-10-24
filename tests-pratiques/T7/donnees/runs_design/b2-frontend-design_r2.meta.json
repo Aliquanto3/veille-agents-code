@@ -1,0 +1,35 @@
+{
+ "cout_usd": 0.3022916,
+ "tours": 15,
+ "duree_api_ms": 86469,
+ "tokens_in": 12,
+ "tokens_out": 16175,
+ "cache_creation": 32174,
+ "cache_read": 118216,
+ "erreur": false,
+ "sous_type": "success",
+ "refus_permission": 2,
+ "denials": [
+  "Bash",
+  "Bash"
+ ],
+ "resultat_fin": " en empattement (police système, donc hors ligne). Le formulaire est fixe à gauche sur ordinateur. Sur mobile, chaque ligne du tableau devient une fiche étiquetée. Le focus est visible et le bandeau d'erreur reçoit le focus.\n- **Fichiers :** `app/main.py` (validation, POST, message à usage unique par cookie), `app/templates/liste.html`, `app/static/style.css`, `app/static/app.js` (filtres sans accents ni casse, compteur), `tests/test_demandes.py`.\n- **Tests :** `uv run pytest -q --tb=short` donne 14 réussis. Le filtrage JavaScript et le rendu à 390 px n'ont pas été testés, faute de navigateur.",
+ "outils": {
+  "Skill": 1,
+  "Bash": 5,
+  "Read": 1,
+  "Edit": 2,
+  "Write": 4
+ },
+ "skills_invoquees": [
+  "frontend-design"
+ ],
+ "tool_results_en_erreur": 2,
+ "statut": "ok",
+ "duree_s": 92.0,
+ "cmd": [
+  "claude",
+  "-p",
+  "..."
+ ]
+}

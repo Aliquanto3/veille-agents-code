@@ -1,0 +1,35 @@
+{
+ "cout_usd": 0.39973390000000003,
+ "tours": 21,
+ "duree_api_ms": 105872,
+ "tokens_in": 30,
+ "tokens_out": 16075,
+ "cache_creation": 46580,
+ "cache_read": 526039,
+ "erreur": false,
+ "sous_type": "success",
+ "refus_permission": 2,
+ "denials": [
+  "Bash",
+  "Bash"
+ ],
+ "resultat_fin": "nes se superposent et chaque ligne devient une fiche avec ses libellés.\n- **Fichiers modifiés** : `app/main.py` (validation, route POST, tri par date, format des montants), `app/templates/liste.html`, `app/static/style.css`, `app/static/app.js`. J'ai ajouté `tests/test_demandes.py`.\n- **Tests** : ils couvrent la validation champ par champ, les bornes, le pluriel du bandeau d'erreurs, la conservation des saisies, l'ajout en tête de liste et le message de confirmation à usage unique (`?ok=1`).\n\nUne demande valide est insérée en tête de `DEMANDES`. À date égale, la plus récente reste donc devant.",
+ "outils": {
+  "Skill": 1,
+  "Glob": 1,
+  "Bash": 10,
+  "Write": 5,
+  "Edit": 2
+ },
+ "skills_invoquees": [
+  "hallmark"
+ ],
+ "tool_results_en_erreur": 2,
+ "statut": "ok",
+ "duree_s": 112.5,
+ "cmd": [
+  "claude",
+  "-p",
+  "..."
+ ]
+}

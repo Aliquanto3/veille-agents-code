@@ -1,0 +1,34 @@
+{
+ "cout_usd": 0.34405260000000004,
+ "tours": 15,
+ "duree_api_ms": 92664,
+ "tokens_in": 14,
+ "tokens_out": 17071,
+ "cache_creation": 38750,
+ "cache_read": 183146,
+ "erreur": false,
+ "sous_type": "success",
+ "refus_permission": 1,
+ "denials": [
+  "Bash"
+ ],
+ "resultat_fin": "quetées.\n- **Fichiers :** `app/main.py` (validation, POST, confirmation à usage unique par cookie), `app/templates/liste.html`, `app/static/style.css`, `app/static/app.js` (filtres combinés, insensibles à la casse et aux accents), et le nouveau `tests/test_demandes.py`.\n- **Tests :** ils couvrent les messages d'erreur et le singulier/pluriel, les bornes du montant et du motif, l'ajout en tête avec redirection 303, la confirmation affichée une seule fois et le format des montants.\n\nUne première commande groupée a été refusée par le système de permissions, donc j'ai écrit les fichiers un par un.",
+ "outils": {
+  "Skill": 1,
+  "Bash": 5,
+  "Read": 1,
+  "Edit": 2,
+  "Write": 4
+ },
+ "skills_invoquees": [
+  "hallmark"
+ ],
+ "tool_results_en_erreur": 1,
+ "statut": "ok",
+ "duree_s": 96.7,
+ "cmd": [
+  "claude",
+  "-p",
+  "..."
+ ]
+}

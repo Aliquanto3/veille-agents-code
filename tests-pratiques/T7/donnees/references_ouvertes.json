@@ -1,0 +1,113 @@
+{
+ "b1-aucune_r1": {
+  "skill_calls": 0,
+  "references_ouvertes": [],
+  "n_refs": 0,
+  "appels_scripts_skill": 0
+ },
+ "b1-aucune_r2": {
+  "skill_calls": 0,
+  "references_ouvertes": [],
+  "n_refs": 0,
+  "appels_scripts_skill": 0
+ },
+ "b1-aucune_r3": {
+  "skill_calls": 0,
+  "references_ouvertes": [],
+  "n_refs": 0,
+  "appels_scripts_skill": 0
+ },
+ "b1-aucune_r4": {
+  "skill_calls": 0,
+  "references_ouvertes": [],
+  "n_refs": 0,
+  "appels_scripts_skill": 0
+ },
+ "b2-frontend-design_r1": {
+  "skill_calls": 1,
+  "references_ouvertes": [],
+  "n_refs": 0,
+  "appels_scripts_skill": 0
+ },
+ "b2-frontend-design_r2": {
+  "skill_calls": 1,
+  "references_ouvertes": [],
+  "n_refs": 0,
+  "appels_scripts_skill": 0
+ },
+ "b2-frontend-design_r3": {
+  "skill_calls": 1,
+  "references_ouvertes": [],
+  "n_refs": 0,
+  "appels_scripts_skill": 0
+ },
+ "b2-frontend-design_r4": {
+  "skill_calls": 1,
+  "references_ouvertes": [],
+  "n_refs": 0,
+  "appels_scripts_skill": 0
+ },
+ "b3-impeccable_r1": {
+  "skill_calls": 1,
+  "references_ouvertes": [
+   "reference/craft-floor.md"
+  ],
+  "n_refs": 1,
+  "appels_scripts_skill": 1
+ },
+ "b3-impeccable_r2": {
+  "skill_calls": 1,
+  "references_ouvertes": [
+   "reference/craft-floor.md"
+  ],
+  "n_refs": 1,
+  "appels_scripts_skill": 1
+ },
+ "b3-impeccable_r3": {
+  "skill_calls": 1,
+  "references_ouvertes": [
+   "reference/craft-floor.md"
+  ],
+  "n_refs": 1,
+  "appels_scripts_skill": 1
+ },
+ "b3-impeccable_r4": {
+  "skill_calls": 1,
+  "references_ouvertes": [
+   "reference/craft-floor.md"
+  ],
+  "n_refs": 1,
+  "appels_scripts_skill": 2
+ },
+ "b4-hallmark_r1": {
+  "skill_calls": 1,
+  "references_ouvertes": [
+   "references/themes"
+  ],
+  "n_refs": 1,
+  "appels_scripts_skill": 2
+ },
+ "b4-hallmark_r2": {
+  "skill_calls": 1,
+  "references_ouvertes": [
+   "references/themes/index.json"
+  ],
+  "n_refs": 1,
+  "appels_scripts_skill": 5
+ },
+ "b4-hallmark_r3": {
+  "skill_calls": 1,
+  "references_ouvertes": [
+   "references/gates.md",
+   "references/themes/almanac.md"
+  ],
+  "n_refs": 2,
+  "appels_scripts_skill": 4
+ },
+ "b4-hallmark_r4": {
+  "skill_calls": 1,
+  "references_ouvertes": [],
+  "n_refs": 0,
+  "appels_scripts_skill": 0
+ }
+}

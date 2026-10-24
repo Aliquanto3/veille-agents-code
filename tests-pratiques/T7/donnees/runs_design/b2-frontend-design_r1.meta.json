@@ -1,0 +1,32 @@
+{
+ "cout_usd": 0.33039810000000003,
+ "tours": 12,
+ "duree_api_ms": 88587,
+ "tokens_in": 10,
+ "tokens_out": 17033,
+ "cache_creation": 37960,
+ "cache_read": 82081,
+ "erreur": false,
+ "sous_type": "success",
+ "refus_permission": 1,
+ "denials": [
+  "Bash"
+ ],
+ "resultat_fin": "bons de commande, avec un papier gris-bleu froid, une encre marine et un bleu « tampon » pour les services. Les titres sont en serif système, sans police distante. Sur mobile, le tableau devient une pile de fiches étiquetées.\n- **Fichiers modifiés :** `app/main.py`, `app/templates/liste.html`, `app/static/style.css`, `app/static/app.js` et `tests/test_creation.py` (nouveau).\n- **Tests :** ils couvrent la validation (4 erreurs, 1 erreur, montants invalides, valeurs conservées) et l'ajout (303, ordre du tableau, message affiché une seule fois). La confirmation passe par un cookie à usage unique.",
+ "outils": {
+  "Skill": 1,
+  "Bash": 4,
+  "Write": 5
+ },
+ "skills_invoquees": [
+  "frontend-design"
+ ],
+ "tool_results_en_erreur": 1,
+ "statut": "ok",
+ "duree_s": 94.2,
+ "cmd": [
+  "claude",
+  "-p",
+  "..."
+ ]
+}

@@ -1,0 +1,15 @@
+Tu vérifies, comme le ferait un agent qui contrôle son propre travail, l'écran « Demandes d'achat » d'une application web déjà lancée à l'adresse http://127.0.0.1:8870/demandes.
+Ton seul outil pour piloter le navigateur est le serveur MCP Playwright (outils `browser_*`).
+Tu n'as aucun autre moyen d'accéder à la page. Tu ne modifies aucun fichier et tu ne cherches pas le code source : tu ne te fies qu'à ce que montre le navigateur. N'utilise que cette application (aucun autre site).
+
+Joue ce parcours en 7 étapes, dans l'ordre :
+1. Ouvrir la page `/demandes` et vérifier que le tableau contient 6 demandes.
+2. Remplir le formulaire avec une erreur : Demandeur « Test Parcours », Service « Finance », Montant « -50 », Motif « Achat de test pour le parcours », puis cliquer sur « Enregistrer la demande ».
+3. Constater le message d'erreur affiché pour le montant (recopier son texte exact) et vérifier que la saisie est conservée.
+4. Corriger le montant en « 150,75 ».
+5. Valider à nouveau le formulaire et constater le message de confirmation (recopier son texte exact).
+6. Filtrer le tableau sur le service « Finance » avec la liste « Filtrer par service ».
+7. Vérifier le résultat : lire le compteur affiché et compter les lignes visibles du tableau, puis dire si « Test Parcours » figure parmi elles.
+
+Quand tu as fini, ferme le navigateur, puis réponds uniquement par un objet JSON sur une seule ligne, sans autre texte :
+{"etapes":[{"n":1,"ok":true,"constat":"..."}, ... jusqu'à n=7],"erreur_montant":"<texte exact>","confirmation":"<texte exact>","compteur":"<texte exact du compteur>","lignes_finance":<nombre de lignes visibles>,"test_parcours_visible":true}

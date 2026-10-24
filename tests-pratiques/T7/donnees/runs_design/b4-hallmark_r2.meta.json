@@ -1,0 +1,36 @@
+{
+ "cout_usd": 0.4303910000000001,
+ "tours": 27,
+ "duree_api_ms": 114729,
+ "tokens_in": 36,
+ "tokens_out": 16798,
+ "cache_creation": 48670,
+ "cache_read": 676590,
+ "erreur": false,
+ "sous_type": "success",
+ "refus_permission": 3,
+ "denials": [
+  "Bash",
+  "Bash",
+  "Bash"
+ ],
+ "resultat_fin": "ent une pile de lignes.\n- **Fichiers** : `app/main.py`, `app/templates/liste.html`, `app/templates/base.html`, `app/static/{style,tokens,base}.css`, `app/static/app.js` et `tests/test_demandes.py`. Le fichier `.claude/skills/hallmark/scripts/sloplint.mjs` ne signale rien sur les CSS. Je n'ai pas lancé son mode `--render`, qui ouvre un navigateur.\n- **Tests** : `uv run pytest -q --tb=short` donne 18 réussis. Ils couvrent la validation, les bornes du montant et du motif, l'ajout en tête, la confirmation à usage unique (cookie) et le format des montants. Le JavaScript de filtrage n'est pas testé.",
+ "outils": {
+  "Skill": 1,
+  "Bash": 12,
+  "Write": 5,
+  "Read": 2,
+  "Edit": 5
+ },
+ "skills_invoquees": [
+  "hallmark"
+ ],
+ "tool_results_en_erreur": 4,
+ "statut": "ok",
+ "duree_s": 123.8,
+ "cmd": [
+  "claude",
+  "-p",
+  "..."
+ ]
+}

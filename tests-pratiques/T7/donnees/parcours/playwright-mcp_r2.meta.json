@@ -1,0 +1,47 @@
+{
+ "cout_usd": 0.08201720000000001,
+ "tours": 13,
+ "duree_api_ms": 15122,
+ "tokens_in": 16,
+ "tokens_out": 1414,
+ "cache_creation": 13672,
+ "cache_read": 131572,
+ "erreur": false,
+ "sous_type": "success",
+ "refus_permission": 0,
+ "denials": [],
+ "resultat_fin": "Montant corrigé en 150,75.\"},{\"n\":5,\"ok\":true,\"constat\":\"Formulaire validé, message « Demande enregistrée. », le formulaire est vidé et le tableau passe à 7 demandes.\"},{\"n\":6,\"ok\":true,\"constat\":\"Filtre « Filtrer par service » positionné sur Finance.\"},{\"n\":7,\"ok\":true,\"constat\":\"Compteur « 2 demandes affichées », 2 lignes visibles (Test Parcours et Karim Haddad), Test Parcours y figure.\"}],\"erreur_montant\":\"Le montant doit être un nombre supérieur à 0 et au plus 50 000 €.\",\"confirmation\":\"Demande enregistrée.\",\"compteur\":\"2 demandes affichées\",\"lignes_finance\":2,\"test_parcours_visible\":true}",
+ "outils": {
+  "mcp__playwright__browser_navigate": 1,
+  "mcp__playwright__browser_snapshot": 4,
+  "mcp__playwright__browser_fill_form": 2,
+  "mcp__playwright__browser_click": 2,
+  "mcp__playwright__browser_evaluate": 1,
+  "mcp__playwright__browser_select_option": 1,
+  "mcp__playwright__browser_close": 1
+ },
+ "skills_invoquees": [],
+ "tool_results_en_erreur": 0,
+ "statut": "ok",
+ "duree_s": 18.6,
+ "cmd": [
+  "claude",
+  "-p",
+  "..."
+ ],
+ "score": {
+  "json_ok": true,
+  "erreur_montant_ok": true,
+  "confirmation_ok": true,
+  "compteur_ok": true,
+  "lignes_ok": true,
+  "visible_ok": true,
+  "etapes_ok": true,
+  "lignes_serveur": 7,
+  "test_parcours_occurrences": 1,
+  "montant_150_75": true,
+  "serveur_ok": true,
+  "reussite": true
+ },
+ "reponse": "{\"etapes\":[{\"n\":1,\"ok\":true,\"constat\":\"Page ouverte, le tableau contient 6 demandes (compteur « 6 demandes affichées »).\"},{\"n\":2,\"ok\":true,\"constat\":\"Formulaire rempli (Test Parcours, Finance, -50, Achat de test pour le parcours) et soumis ; réponse HTTP 422.\"},{\"n\":3,\"ok\":true,\"constat\":\"Alerte « Le formulaire contient 1 erreur. » et message sous le montant « Le montant doit être un nombre supérieur à 0 et au plus 50 000 €. » ; la saisie est conservée (demandeur, service Finance, montant -50, motif).\"},{\"n\":4,\"ok\":true,\"constat\":\"Montant corrigé en 150,75.\"},{\"n\":5,\"ok\":true,\"constat\":\"Formulaire validé, message « Demande enregistrée. », le formulaire est vidé et le tableau passe à 7 demandes.\"},{\"n\":6,\"ok\":true,\"constat\":\"Filtre « Filtrer par service » positionné sur Finance.\"},{\"n\":7,\"ok\":true,\"constat\":\"Compteur « 2 demandes affichées », 2 lignes visibles (Test Parcours et Karim Haddad), Test Parcours y figure.\"}],\"erreur_montant\":\"Le montant doit être un nombre supérieur à 0 et au plus 50 000 €.\",\"confirmation\":\"Demande enregistrée.\",\"compteur\":\"2 demandes affichées\",\"lignes_finance\":2,\"test_parcours_visible\":true}"
+}

@@ -1,0 +1,44 @@
+{
+ "cout_usd": 0.0852922,
+ "tours": 9,
+ "duree_api_ms": 13706,
+ "tokens_in": 16,
+ "tokens_out": 1267,
+ "cache_creation": 15191,
+ "cache_read": 118262,
+ "erreur": false,
+ "sous_type": "success",
+ "refus_permission": 0,
+ "denials": [],
+ "resultat_fin": "nt corrigé en 150,75.\"},{\"n\":5,\"ok\":true,\"constat\":\"Après nouvelle validation, le message « Demande enregistrée. » s'affiche.\"},{\"n\":6,\"ok\":true,\"constat\":\"Le filtre « Filtrer par service » est réglé sur Finance.\"},{\"n\":7,\"ok\":true,\"constat\":\"Le compteur indique « 2 demandes affichées » et 2 lignes sont visibles : Test Parcours (150,75 €) et Karim Haddad. Test Parcours figure parmi elles.\"}],\"erreur_montant\":\"Le montant doit être un nombre supérieur à 0 et au plus 50 000 €.\",\"confirmation\":\"Demande enregistrée.\",\"compteur\":\"2 demandes affichées\",\"lignes_finance\":2,\"test_parcours_visible\":true}",
+ "outils": {
+  "Skill": 1,
+  "Bash": 6
+ },
+ "skills_invoquees": [
+  "agent-browser"
+ ],
+ "tool_results_en_erreur": 0,
+ "statut": "ok",
+ "duree_s": 22.4,
+ "cmd": [
+  "claude",
+  "-p",
+  "..."
+ ],
+ "score": {
+  "json_ok": true,
+  "erreur_montant_ok": true,
+  "confirmation_ok": true,
+  "compteur_ok": true,
+  "lignes_ok": true,
+  "visible_ok": true,
+  "etapes_ok": true,
+  "lignes_serveur": 7,
+  "test_parcours_occurrences": 1,
+  "montant_150_75": true,
+  "serveur_ok": true,
+  "reussite": true
+ },
+ "reponse": "{\"etapes\":[{\"n\":1,\"ok\":true,\"constat\":\"Le tableau contient 6 demandes (Lucas Petit, Emma Lefèvre, Karim Haddad, Sofia Bernard, Julien Moreau, Camille Martin).\"},{\"n\":2,\"ok\":true,\"constat\":\"Formulaire rempli avec Test Parcours, Finance, -50 et le motif demandé, puis clic sur Enregistrer la demande.\"},{\"n\":3,\"ok\":true,\"constat\":\"Le message « Le formulaire contient 1 erreur. » apparaît en haut de page. Le message d'erreur du montant s'affiche sous le champ. Les champs Demandeur, Service, Montant (-50) et Motif sont conservés.\"},{\"n\":4,\"ok\":true,\"constat\":\"Montant corrigé en 150,75.\"},{\"n\":5,\"ok\":true,\"constat\":\"Après nouvelle validation, le message « Demande enregistrée. » s'affiche.\"},{\"n\":6,\"ok\":true,\"constat\":\"Le filtre « Filtrer par service » est réglé sur Finance.\"},{\"n\":7,\"ok\":true,\"constat\":\"Le compteur indique « 2 demandes affichées » et 2 lignes sont visibles : Test Parcours (150,75 €) et Karim Haddad. Test Parcours figure parmi elles.\"}],\"erreur_montant\":\"Le montant doit être un nombre supérieur à 0 et au plus 50 000 €.\",\"confirmation\":\"Demande enregistrée.\",\"compteur\":\"2 demandes affichées\",\"lignes_finance\":2,\"test_parcours_visible\":true}"
+}

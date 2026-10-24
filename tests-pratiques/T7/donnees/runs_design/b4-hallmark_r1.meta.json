@@ -1,0 +1,34 @@
+{
+ "cout_usd": 0.3478819,
+ "tours": 20,
+ "duree_api_ms": 93683,
+ "tokens_in": 22,
+ "tokens_out": 15314,
+ "cache_creation": 40292,
+ "cache_read": 335299,
+ "erreur": false,
+ "sous_type": "success",
+ "refus_permission": 2,
+ "denials": [
+  "Bash",
+  "Bash"
+ ],
+ "resultat_fin": "ocus visible, mouvement réduit) sont appliquées à la main, faute du scaffold et du rendu `--render`. Le filtrage JS (`app/static/app.js`) n'a pas été essayé dans un navigateur.\n- **Fichiers modifiés** : `app/main.py` (validation, POST, confirmation à usage unique par cookie, tri), `app/templates/liste.html`, `app/templates/base.html`, `app/static/style.css`, `app/static/app.js`, `tests/test_liste.py`.\n- **Tests** : 17 tests, qui couvrent la validation, les messages au singulier et au pluriel, les cas limites du montant, l'ajout avec redirection 303, le message de confirmation unique et le tri.",
+ "outils": {
+  "Skill": 1,
+  "Bash": 7,
+  "Write": 5,
+  "Edit": 5
+ },
+ "skills_invoquees": [
+  "hallmark"
+ ],
+ "tool_results_en_erreur": 3,
+ "statut": "ok",
+ "duree_s": 100.9,
+ "cmd": [
+  "claude",
+  "-p",
+  "..."
+ ]
+}

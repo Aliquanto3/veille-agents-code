@@ -1,0 +1,29 @@
+{
+ "cout_usd": 0.290519,
+ "tours": 9,
+ "duree_api_ms": 77466,
+ "tokens_in": 10,
+ "tokens_out": 15058,
+ "cache_creation": 32792,
+ "cache_read": 87510,
+ "erreur": false,
+ "sous_type": "success",
+ "refus_permission": 1,
+ "denials": [
+  "Bash"
+ ],
+ "resultat_fin": "serveur avec le formulaire POST (`novalidate`) lu sans nouvelle dépendance. Confirmation « Demande enregistrée. » à usage unique via un cookie. Filtres JS vanilla combinés (casse et accents ignorés) avec compteur. Sur 390 px, les cartes du tableau passent en pile (une ligne par champ) et les contrôles font au moins 44 px.\n- **Fichiers modifiés :** `app/main.py`, `app/templates/liste.html`, `app/static/app.js`, `app/static/style.css`, `tests/test_liste.py`.\n- **Tests :** 12 réussis, dont validation (1 et 4 erreurs, montants limites), ajout en tête, confirmation unique et formatage `1 249,90 €`.",
+ "outils": {
+  "Bash": 3,
+  "Write": 5
+ },
+ "skills_invoquees": [],
+ "tool_results_en_erreur": 1,
+ "statut": "ok",
+ "duree_s": 85.8,
+ "cmd": [
+  "claude",
+  "-p",
+  "..."
+ ]
+}

@@ -1,0 +1,23 @@
+Pour la conception de l'interface, charge et applique d'abord la skill `hallmark` (outil Skill), puis construis l'écran.
+
+Tâche : construire l'écran « Demandes d'achat » de cette petite application FastAPI + Jinja2 (le répertoire courant). Aujourd'hui, `/demandes` n'affiche qu'une liste brute. Il faut en faire un écran métier complet, soigné et utilisable au clavier, sur ordinateur comme sur un téléphone de 390 px de large.
+
+Contrat fonctionnel (à respecter à la lettre, des contrôles automatiques le vérifient) :
+1. `GET /demandes` affiche un titre `h1` « Demandes d'achat », un formulaire de saisie et le tableau des demandes. Le tableau est trié de la plus récente à la plus ancienne ; les nouvelles demandes s'ajoutent en tête.
+2. Formulaire (méthode POST vers `/demandes`, attribut `novalidate`, pas de validation HTML5 native bloquante) avec exactement ces champs, chacun avec un `label` lié dont le texte est exactement :
+   - « Demandeur » (texte, obligatoire) ;
+   - « Service » (liste déroulante à partir de `SERVICES`, avec une première option vide « Choisir un service », obligatoire) ;
+   - « Montant (€) » (nombre à deux décimales au plus, strictement supérieur à 0 et au plus 50 000) ;
+   - « Motif » (zone de texte, entre 10 et 200 caractères) ;
+   - bouton de validation : « Enregistrer la demande ».
+3. Validation côté serveur. Si le formulaire est invalide : réponse HTTP 422 qui réaffiche la page avec les valeurs saisies conservées, un bandeau `role="alert"` contenant « Le formulaire contient N erreur(s). » (N = nombre d'erreurs ; « 1 erreur » au singulier, « 2 erreurs » au pluriel), et sous chaque champ fautif un message lié au champ (`aria-describedby`, `aria-invalid="true"`) dont le texte est exactement :
+   - « Le demandeur est obligatoire. »
+   - « Choisissez un service. »
+   - « Le montant doit être un nombre supérieur à 0 et au plus 50 000 €. »
+   - « Le motif doit contenir entre 10 et 200 caractères. »
+4. Si le formulaire est valide : la demande est enregistrée en mémoire (liste `DEMANDES` de `app/main.py`, date du jour), redirection 303 vers `/demandes`, et un message de confirmation `role="status"` « Demande enregistrée. » s'affiche (message à usage unique, par exemple via un paramètre de requête ou un cookie).
+5. Tableau : colonnes « Demandeur », « Service », « Montant », « Motif », « Date » (montants au format `1 249,90 €`, dates `jj/mm/aaaa`). Filtrage immédiat côté navigateur, sans rechargement, en JavaScript vanilla dans `app/static/app.js` : un champ de recherche dont le label est « Rechercher un demandeur » (filtre sur le nom, sans tenir compte de la casse ni des accents) et une liste dont le label est « Filtrer par service » (première option « Tous les services »). Les deux filtres se combinent. Un compteur `role="status"` indique « N demande(s) affichée(s) » (écrire « 1 demande affichée » ou « 4 demandes affichées »). Quand aucune ligne ne correspond, le tableau est remplacé ou complété par le message « Aucune demande ne correspond aux filtres. »
+6. Contraintes techniques : HTML, CSS et JavaScript vanilla uniquement ; aucune bibliothèque ni framework JS ou CSS, aucun CDN, aucune police ni image distante (la page doit fonctionner hors ligne) ; aucune nouvelle dépendance Python. Les styles vont dans `app/static/style.css`, le script dans `app/static/app.js`, les gabarits dans `app/templates/`.
+7. Ajoute des tests pytest (dans `tests/`) pour la validation et l'ajout, puis lance `uv run pytest -q --tb=short` jusqu'à ce qu'ils passent. Ne démarre aucun serveur (ni `uvicorn` ni autre processus durable) et n'ouvre aucun navigateur.
+
+Ne pose aucune question : fais des choix raisonnables, applique-les, et termine par un résumé de trois lignes au plus (choix de design, fichiers modifiés, état des tests).

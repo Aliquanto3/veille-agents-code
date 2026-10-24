@@ -1,0 +1,46 @@
+{
+ "cout_usd": 0.10720129999999999,
+ "tours": 10,
+ "duree_api_ms": 15997,
+ "tokens_in": 16,
+ "tokens_out": 1449,
+ "cache_creation": 19621,
+ "cache_read": 141953,
+ "erreur": false,
+ "sous_type": "success",
+ "refus_permission": 1,
+ "denials": [
+  "Bash"
+ ],
+ "resultat_fin": "nt gardé leur saisie.\"},{\"n\":4,\"ok\":true,\"constat\":\"Montant remplacé par 150,75\"},{\"n\":5,\"ok\":true,\"constat\":\"Message « Demande enregistrée. » affiché, formulaire vidé\"},{\"n\":6,\"ok\":true,\"constat\":\"Filtre « Filtrer par service » réglé sur Finance\"},{\"n\":7,\"ok\":true,\"constat\":\"Compteur « 2 demandes affichées », 2 lignes visibles (Test Parcours et Karim Haddad), Test Parcours en fait partie\"}],\"erreur_montant\":\"Le montant doit être un nombre supérieur à 0 et au plus 50 000 €.\",\"confirmation\":\"Demande enregistrée.\",\"compteur\":\"2 demandes affichées\",\"lignes_finance\":2,\"test_parcours_visible\":true}",
+ "outils": {
+  "Skill": 1,
+  "Bash": 7
+ },
+ "skills_invoquees": [
+  "playwright-cli"
+ ],
+ "tool_results_en_erreur": 1,
+ "statut": "ok",
+ "duree_s": 26.3,
+ "cmd": [
+  "claude",
+  "-p",
+  "..."
+ ],
+ "score": {
+  "json_ok": true,
+  "erreur_montant_ok": true,
+  "confirmation_ok": true,
+  "compteur_ok": true,
+  "lignes_ok": true,
+  "visible_ok": true,
+  "etapes_ok": true,
+  "lignes_serveur": 7,
+  "test_parcours_occurrences": 1,
+  "montant_150_75": true,
+  "serveur_ok": true,
+  "reussite": true
+ },
+ "reponse": "{\"etapes\":[{\"n\":1,\"ok\":true,\"constat\":\"Page ouverte, compteur « 6 demandes affichées », 6 lignes dans le tableau\"},{\"n\":2,\"ok\":true,\"constat\":\"Formulaire rempli (Test Parcours, Finance, -50, motif) et envoyé\"},{\"n\":3,\"ok\":true,\"constat\":\"Message d'erreur sous le champ Montant, et alerte « Le formulaire contient 1 erreur. ». Les quatre champs ont gardé leur saisie.\"},{\"n\":4,\"ok\":true,\"constat\":\"Montant remplacé par 150,75\"},{\"n\":5,\"ok\":true,\"constat\":\"Message « Demande enregistrée. » affiché, formulaire vidé\"},{\"n\":6,\"ok\":true,\"constat\":\"Filtre « Filtrer par service » réglé sur Finance\"},{\"n\":7,\"ok\":true,\"constat\":\"Compteur « 2 demandes affichées », 2 lignes visibles (Test Parcours et Karim Haddad), Test Parcours en fait partie\"}],\"erreur_montant\":\"Le montant doit être un nombre supérieur à 0 et au plus 50 000 €.\",\"confirmation\":\"Demande enregistrée.\",\"compteur\":\"2 demandes affichées\",\"lignes_finance\":2,\"test_parcours_visible\":true}"
+}

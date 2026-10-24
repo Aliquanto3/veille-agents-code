@@ -1,0 +1,33 @@
+{
+ "cout_usd": 0.37692510000000007,
+ "tours": 16,
+ "duree_api_ms": 103376,
+ "tokens_in": 18,
+ "tokens_out": 19088,
+ "cache_creation": 40491,
+ "cache_read": 240451,
+ "erreur": false,
+ "sous_type": "success",
+ "refus_permission": 1,
+ "denials": [
+  "Bash"
+ ],
+ "resultat_fin": "on neutre chaud avec un seul accent sarcelle, polices système (page utilisable hors ligne), focus clavier visible et erreurs en rouge. Sur mobile, chaque ligne du tableau devient un bloc empilé, sans défilement horizontal. Le message « Demande enregistrée. » passe par un cookie à usage unique.\n- **Fichiers** :\n  - modifiés : `app/main.py`, `app/templates/liste.html`, `app/static/style.css`, `app/static/app.js`.\n  - créé : `tests/test_demandes.py`.\n- **Tests** : `uv run pytest -q --tb=short` donne 16 passés. Le filtrage JavaScript (casse, accents, compteur) n'est pas testé, faute de navigateur.",
+ "outils": {
+  "Skill": 1,
+  "Bash": 6,
+  "Read": 2,
+  "Write": 5
+ },
+ "skills_invoquees": [
+  "impeccable"
+ ],
+ "tool_results_en_erreur": 1,
+ "statut": "ok",
+ "duree_s": 108.3,
+ "cmd": [
+  "claude",
+  "-p",
+  "..."
+ ]
+}

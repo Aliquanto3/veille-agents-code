@@ -1,0 +1,34 @@
+{
+ "cout_usd": 0.31218160000000006,
+ "tours": 16,
+ "duree_api_ms": 91876,
+ "tokens_in": 10,
+ "tokens_out": 17197,
+ "cache_creation": 32821,
+ "cache_read": 89076,
+ "erreur": false,
+ "sous_type": "success",
+ "refus_permission": 1,
+ "denials": [
+  "Bash"
+ ],
+ "resultat_fin": "vert-de-gris. Les titres sont en serif, le corps de texte en police système, sans aucune ressource distante. Le tableau se transforme en cartes empilées sous 760 px. La confirmation « Demande enregistrée. » passe par un cookie à usage unique.\n- **Fichiers :** modifiés `app/main.py`, `app/templates/liste.html`, `app/static/style.css` et `app/static/app.js` (nouveau contenu). Ajouté `tests/test_saisie.py`.\n- **Tests :** ils couvrent la validation (4 erreurs, 1 seule erreur, montants limites, valeurs conservées), l'ajout en tête de liste, le format du montant et le message affiché une seule fois.",
+ "outils": {
+  "Skill": 1,
+  "Glob": 1,
+  "Read": 5,
+  "Bash": 2,
+  "Write": 5
+ },
+ "skills_invoquees": [
+  "frontend-design"
+ ],
+ "tool_results_en_erreur": 1,
+ "statut": "ok",
+ "duree_s": 95.2,
+ "cmd": [
+  "claude",
+  "-p",
+  "..."
+ ]
+}

@@ -1,0 +1,122 @@
+{
+ "bras": "b1-aucune_r4",
+ "extra_390": {
+  "interactifs": 7,
+  "cibles_sous_24": 0,
+  "cibles_sous_44": 0,
+  "police_min_px": 16,
+  "police_corps_px": 16
+ },
+ "debordement_390": false,
+ "debordement_390_detail": {
+  "sw": 390,
+  "iw": 390
+ },
+ "poids": {
+  "html": 4717,
+  "css": 2869,
+  "js": 1266,
+  "autre": 0,
+  "total": 8852,
+  "requetes_externes": [],
+  "n_externes": 0,
+  "inline": {
+   "css": 0,
+   "js": 0
+  }
+ },
+ "contraste_perso": {
+  "textes": 46,
+  "ratio_min": 5.89,
+  "sous_seuil": 0,
+  "exemples": []
+ },
+ "focus": {
+  "focusables": 7,
+  "sans_indicateur": 0,
+  "liste_sans": []
+ },
+ "css_signaux": {
+  "reduced_motion": false,
+  "focus_visible": true,
+  "custom_props": 11,
+  "couleurs_litterales": 0,
+  "transition_all": false,
+  "media_queries": 1
+ },
+ "extra_1280": {
+  "interactifs": 7,
+  "cibles_sous_24": 0,
+  "cibles_sous_44": 0,
+  "police_min_px": 16,
+  "police_corps_px": 16
+ },
+ "polices": [
+  "system-ui"
+ ],
+ "axe": {
+  "violations_total": 0,
+  "noeuds_total": 0,
+  "regles_distinctes": [],
+  "par_impact": {},
+  "contraste_axe_noeuds": 0,
+  "detail": {
+   "initial_390": {
+    "v": [],
+    "inc": []
+   },
+   "initial_768": {
+    "v": [],
+    "inc": []
+   },
+   "initial_1280": {
+    "v": [],
+    "inc": []
+   },
+   "erreur_1280": {
+    "v": [],
+    "inc": []
+   }
+  }
+ },
+ "impeccable_detect": {
+  "rc": 0,
+  "n": 0,
+  "brut": [],
+  "stderr": ""
+ },
+ "fonctionnel": {
+  "h1": true,
+  "champs_labels": true,
+  "bouton": true,
+  "novalidate": true,
+  "six_lignes_initiales": true,
+  "post_422": true,
+  "bandeau_4_erreurs": true,
+  "msg_demandeur": true,
+  "msg_service": true,
+  "msg_montant": true,
+  "msg_motif": true,
+  "valeurs_conservees": true,
+  "aria_invalid": true,
+  "aria_describedby": true,
+  "bandeau_1_erreur": true,
+  "confirmation": true,
+  "ligne_en_tete": true,
+  "montant_format": true,
+  "date_format": true,
+  "sept_lignes": true,
+  "confirmation_unique": true,
+  "filtre_nom": true,
+  "compteur_singulier": true,
+  "filtre_accents": true,
+  "message_vide": true,
+  "filtre_service": true,
+  "compteur_pluriel": true,
+  "filtres_combines": true,
+  "combines_vide": true,
+  "tous_les_services": true,
+  "_reussis": 30,
+  "_total": 30
+ }
+}

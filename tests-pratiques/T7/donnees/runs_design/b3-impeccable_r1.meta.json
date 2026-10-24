@@ -1,0 +1,37 @@
+{
+ "cout_usd": 0.4365411,
+ "tours": 20,
+ "duree_api_ms": 130056,
+ "tokens_in": 24,
+ "tokens_out": 22009,
+ "cache_creation": 44408,
+ "cache_read": 387711,
+ "erreur": false,
+ "sous_type": "success",
+ "refus_permission": 3,
+ "denials": [
+  "Bash",
+  "Bash",
+  "Bash"
+ ],
+ "resultat_fin": "ai pas non plus lancé le détecteur de design de la skill `impeccable`.\n- **Fichiers :** `app/main.py`, `app/templates/liste.html`, `app/static/style.css`, `app/static/app.js` et `tests/test_liste.py`. Le montant s'écrit avec une espace normale (`1 249,90 €`), pas une espace insécable. Le message « Demande enregistrée. » passe par un cookie lu une seule fois.\n- **Tests :** `uv run pytest -q --tb=short` donne 5 passés. Ils couvrent les quatre erreurs, le singulier, les bornes du montant, l'ajout en tête et le message à usage unique. Le filtrage dans `app.js` n'est pas testé, faute de navigateur.",
+ "outils": {
+  "Skill": 1,
+  "Bash": 6,
+  "Read": 1,
+  "Write": 6,
+  "Grep": 2,
+  "Edit": 2
+ },
+ "skills_invoquees": [
+  "impeccable"
+ ],
+ "tool_results_en_erreur": 5,
+ "statut": "ok",
+ "duree_s": 135.6,
+ "cmd": [
+  "claude",
+  "-p",
+  "..."
+ ]
+}

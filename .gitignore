@@ -2,3 +2,4 @@ data/raw/
 .venv/
 __pycache__/
 contexte/
+tests-pratiques/T7/correspondance.json

@@ -1,0 +1,44 @@
+{
+ "cout_usd": 0.09912989999999999,
+ "tours": 8,
+ "duree_api_ms": 13219,
+ "tokens_in": 14,
+ "tokens_out": 1254,
+ "cache_creation": 18673,
+ "cache_read": 118699,
+ "erreur": false,
+ "sous_type": "success",
+ "refus_permission": 0,
+ "denials": [],
+ "resultat_fin": ".\"},{\"n\":5,\"ok\":true,\"constat\":\"Formulaire validé à nouveau. Le message « Demande enregistrée. » s'affiche et le compteur passe à 7 demandes.\"},{\"n\":6,\"ok\":true,\"constat\":\"Filtre « Filtrer par service » réglé sur Finance.\"},{\"n\":7,\"ok\":true,\"constat\":\"Le compteur indique 2 demandes affichées. Le tableau montre 2 lignes visibles (Test Parcours et Karim Haddad), donc Test Parcours y figure.\"}],\"erreur_montant\":\"Le montant doit être un nombre supérieur à 0 et au plus 50 000 €.\",\"confirmation\":\"Demande enregistrée.\",\"compteur\":\"2 demandes affichées\",\"lignes_finance\":2,\"test_parcours_visible\":true}",
+ "outils": {
+  "Skill": 1,
+  "Bash": 5
+ },
+ "skills_invoquees": [
+  "playwright-cli"
+ ],
+ "tool_results_en_erreur": 0,
+ "statut": "ok",
+ "duree_s": 23.5,
+ "cmd": [
+  "claude",
+  "-p",
+  "..."
+ ],
+ "score": {
+  "json_ok": true,
+  "erreur_montant_ok": true,
+  "confirmation_ok": true,
+  "compteur_ok": true,
+  "lignes_ok": true,
+  "visible_ok": true,
+  "etapes_ok": true,
+  "lignes_serveur": 7,
+  "test_parcours_occurrences": 1,
+  "montant_150_75": true,
+  "serveur_ok": true,
+  "reussite": true
+ },
+ "reponse": "{\"etapes\":[{\"n\":1,\"ok\":true,\"constat\":\"Page ouverte, le compteur affiche 6 demandes et le tableau contient 6 lignes.\"},{\"n\":2,\"ok\":true,\"constat\":\"Formulaire rempli (Test Parcours, Finance, -50, Achat de test pour le parcours) et envoyé avec Enregistrer la demande.\"},{\"n\":3,\"ok\":true,\"constat\":\"Message d'erreur affiché sous le montant, et une alerte globale « Le formulaire contient 1 erreur. ». Les quatre champs ont gardé leur saisie.\"},{\"n\":4,\"ok\":true,\"constat\":\"Montant corrigé en 150,75.\"},{\"n\":5,\"ok\":true,\"constat\":\"Formulaire validé à nouveau. Le message « Demande enregistrée. » s'affiche et le compteur passe à 7 demandes.\"},{\"n\":6,\"ok\":true,\"constat\":\"Filtre « Filtrer par service » réglé sur Finance.\"},{\"n\":7,\"ok\":true,\"constat\":\"Le compteur indique 2 demandes affichées. Le tableau montre 2 lignes visibles (Test Parcours et Karim Haddad), donc Test Parcours y figure.\"}],\"erreur_montant\":\"Le montant doit être un nombre supérieur à 0 et au plus 50 000 €.\",\"confirmation\":\"Demande enregistrée.\",\"compteur\":\"2 demandes affichées\",\"lignes_finance\":2,\"test_parcours_visible\":true}"
+}

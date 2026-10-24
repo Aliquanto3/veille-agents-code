@@ -1,0 +1,3180 @@
+{
+  "skill": {
+    "name": "impeccable",
+    "source": "<user>\\AppData\\Local\\Temp\\claude\\C--Users-user-Documents-GitHub\\791fed94-a8b0-414e-8a6c-8fe967283749\\scratchpad\\t7\\vendor\\impeccable\\plugin\\skills\\impeccable",
+    "scanned_at": "2026-10-24T20:04:24.130934+00:00"
+  },
+  "risk_assessment": {
+    "score": 100,
+    "severity": "CRITICAL",
+    "recommendation": "DO_NOT_INSTALL",
+    "max_issue_severity": "HIGH"
+  },
+  "components": [
+    {
+      "path": "SKILL.md",
+      "type": "markdown",
+      "lines": 88,
+      "executable": false,
+      "size_bytes": 12129,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/adapt.md",
+      "type": "markdown",
+      "lines": 318,
+      "executable": false,
+      "size_bytes": 11631,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/adapt.native.md",
+      "type": "markdown",
+      "lines": 58,
+      "executable": false,
+      "size_bytes": 3968,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/android.md",
+      "type": "markdown",
+      "lines": 46,
+      "executable": false,
+      "size_bytes": 4249,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/animate.md",
+      "type": "markdown",
+      "lines": 89,
+      "executable": false,
+      "size_bytes": 5325,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/audit.md",
+      "type": "markdown",
+      "lines": 139,
+      "executable": false,
+      "size_bytes": 9716,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/audit.native.md",
+      "type": "markdown",
+      "lines": 139,
+      "executable": false,
+      "size_bytes": 8465,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/bolder.md",
+      "type": "markdown",
+      "lines": 33,
+      "executable": false,
+      "size_bytes": 3530,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/clarify.md",
+      "type": "markdown",
+      "lines": 94,
+      "executable": false,
+      "size_bytes": 4684,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/colorize.md",
+      "type": "markdown",
+      "lines": 86,
+      "executable": false,
+      "size_bytes": 4623,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/component-review.md",
+      "type": "markdown",
+      "lines": 63,
+      "executable": false,
+      "size_bytes": 8017,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/craft-floor.md",
+      "type": "markdown",
+      "lines": 44,
+      "executable": false,
+      "size_bytes": 4560,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/craft.md",
+      "type": "markdown",
+      "lines": 5,
+      "executable": false,
+      "size_bytes": 560,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/critique.md",
+      "type": "markdown",
+      "lines": 819,
+      "executable": false,
+      "size_bytes": 46406,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/degraded/asset-producer.md",
+      "type": "markdown",
+      "lines": 42,
+      "executable": false,
+      "size_bytes": 8442,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/degraded/documenter.md",
+      "type": "markdown",
+      "lines": 24,
+      "executable": false,
+      "size_bytes": 3348,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/degraded/finish-reviewer.md",
+      "type": "markdown",
+      "lines": 38,
+      "executable": false,
+      "size_bytes": 15840,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/degraded/manual-edit-applier.md",
+      "type": "markdown",
+      "lines": 92,
+      "executable": false,
+      "size_bytes": 7287,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/delight.md",
+      "type": "markdown",
+      "lines": 70,
+      "executable": false,
+      "size_bytes": 3786,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/distill.md",
+      "type": "markdown",
+      "lines": 111,
+      "executable": false,
+      "size_bytes": 5640,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/doctor.md",
+      "type": "markdown",
+      "lines": 54,
+      "executable": false,
+      "size_bytes": 5657,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/document.md",
+      "type": "markdown",
+      "lines": 416,
+      "executable": false,
+      "size_bytes": 27873,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/extract.md",
+      "type": "markdown",
+      "lines": 69,
+      "executable": false,
+      "size_bytes": 3406,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/generate.md",
+      "type": "markdown",
+      "lines": 101,
+      "executable": false,
+      "size_bytes": 13211,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/harden.md",
+      "type": "markdown",
+      "lines": 362,
+      "executable": false,
+      "size_bytes": 11110,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/hooks.md",
+      "type": "markdown",
+      "lines": 113,
+      "executable": false,
+      "size_bytes": 14160,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/init.md",
+      "type": "markdown",
+      "lines": 131,
+      "executable": false,
+      "size_bytes": 11828,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/ios.md",
+      "type": "markdown",
+      "lines": 51,
+      "executable": false,
+      "size_bytes": 3863,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/layout.md",
+      "type": "markdown",
+      "lines": 84,
+      "executable": false,
+      "size_bytes": 5238,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/live-setup.md",
+      "type": "markdown",
+      "lines": 104,
+      "executable": false,
+      "size_bytes": 8283,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/live.md",
+      "type": "markdown",
+      "lines": 325,
+      "executable": false,
+      "size_bytes": 37119,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/mode-operate.md",
+      "type": "markdown",
+      "lines": 21,
+      "executable": false,
+      "size_bytes": 4737,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/mode-persuade.md",
+      "type": "markdown",
+      "lines": 19,
+      "executable": false,
+      "size_bytes": 3657,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/mode-read.md",
+      "type": "markdown",
+      "lines": 21,
+      "executable": false,
+      "size_bytes": 4417,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/new-work.md",
+      "type": "markdown",
+      "lines": 154,
+      "executable": false,
+      "size_bytes": 62618,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/onboard.md",
+      "type": "markdown",
+      "lines": 234,
+      "executable": false,
+      "size_bytes": 7922,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/operate.md",
+      "type": "markdown",
+      "lines": 61,
+      "executable": false,
+      "size_bytes": 4206,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/optimize.md",
+      "type": "markdown",
+      "lines": 257,
+      "executable": false,
+      "size_bytes": 7834,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/overdrive.md",
+      "type": "markdown",
+      "lines": 127,
+      "executable": false,
+      "size_bytes": 9137,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/polish.md",
+      "type": "markdown",
+      "lines": 105,
+      "executable": false,
+      "size_bytes": 6737,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/quieter.md",
+      "type": "markdown",
+      "lines": 99,
+      "executable": false,
+      "size_bytes": 5050,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/region-map.md",
+      "type": "markdown",
+      "lines": 26,
+      "executable": false,
+      "size_bytes": 3366,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/routing.md",
+      "type": "markdown",
+      "lines": 24,
+      "executable": false,
+      "size_bytes": 3346,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/shape.md",
+      "type": "markdown",
+      "lines": 59,
+      "executable": false,
+      "size_bytes": 3606,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/typeset.md",
+      "type": "markdown",
+      "lines": 90,
+      "executable": false,
+      "size_bytes": 6346,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "reference/visualize.md",
+      "type": "markdown",
+      "lines": 47,
+      "executable": false,
+      "size_bytes": 13996,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "scripts/VERSION",
+      "type": "other",
+      "lines": 1,
+      "executable": false,
+      "size_bytes": 8,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "scripts/command-metadata.json",
+      "type": "json",
+      "lines": 98,
+      "executable": false,
+      "size_bytes": 8416,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "scripts/data/font-index-failures.json",
+      "type": "json",
+      "lines": 121,
+      "executable": false,
+      "size_bytes": 2557,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "scripts/data/font-index.json",
+      "type": "json",
+      "lines": 1,
+      "executable": false,
+      "size_bytes": 1100013,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "scripts/impeccable",
+      "type": "other",
+      "lines": 213,
+      "executable": true,
+      "size_bytes": 9067,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "scripts/impeccable.cmd",
+      "type": "other",
+      "lines": 239,
+      "executable": true,
+      "size_bytes": 9545,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "scripts/live-browser-dom.js",
+      "type": "javascript",
+      "lines": 320,
+      "executable": true,
+      "size_bytes": 12603,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "scripts/live-browser-ignores.js",
+      "type": "javascript",
+      "lines": 246,
+      "executable": true,
+      "size_bytes": 10669,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "scripts/live-browser-session.js",
+      "type": "javascript",
+      "lines": 183,
+      "executable": true,
+      "size_bytes": 6021,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "scripts/live-browser.js",
+      "type": "javascript",
+      "lines": 13645,
+      "executable": true,
+      "size_bytes": 567266,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "scripts/modern-screenshot.umd.js",
+      "type": "javascript",
+      "lines": 14,
+      "executable": true,
+      "size_bytes": 29304,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    }
+  ],
+  "structured_summaries": [],
+  "issues": [
+    {
+      "id": "AE1",
+      "finding_id": "finding-6c5ca089216941ec903bc324695902b8",
+      "category": "analysis-evasion",
+      "pattern": "Incomplete referenced artifact analysis",
+      "severity": "HIGH",
+      "confidence": 1.0,
+      "location": {
+        "file": "SKILL.md",
+        "start_line": 58,
+        "end_line": null
+      },
+      "finding": "reference/harden.md (partial)",
+      "explanation": "Referenced artifact was not completely inspected",
+      "remediation": "Review the reported expression and analyzer's parsing limitation; correct the scanner if it misinterprets valid source, then rerun the scan. Keep required references; incomplete analysis is not proof of malicious evasion.",
+      "code_snippet": "| `harden [target]` | Refine | Production-ready: errors, i18n, edge cases | [reference/harden.md](reference/harden.md) |",
+      "intent": null,
+      "tags": [
+        "coverage",
+        "reference",
+        "target-disposition:partial"
+      ],
+      "evidence": {
+        "target_path": "reference/harden.md",
+        "target_disposition": "partial",
+        "reasons": [
+          {
+            "reason_code": "static_parse_limit",
+            "message": "A security-relevant expression exceeded a bounded static parser's span limit.",
+            "phase": "static",
+            "analyzers": [
+              "static_patterns_tool_misuse"
+            ]
+          }
+        ]
+      },
+      "match_fingerprint": "df2fbcc848ddc394ec0990db255d0b9a72832d3c42272f1e9804ebd958677fd5",
+      "occurrences": [
+        {
+          "file": "SKILL.md",
+          "start_line": 58,
+          "end_line": null
+        }
+      ]
+    },
+    {
+      "id": "AE1",
+      "finding_id": "finding-470898b719f84fb38f6f8af3a4b653fc",
+      "category": "analysis-evasion",
+      "pattern": "Incomplete referenced artifact analysis",
+      "severity": "HIGH",
+      "confidence": 1.0,
+      "location": {
+        "file": "SKILL.md",
+        "start_line": 69,
+        "end_line": null
+      },
+      "finding": "reference/live.md (partial)",
+      "explanation": "Referenced artifact was not completely inspected",
+      "remediation": "Review the reported expression and analyzer's parsing limitation; correct the scanner if it misinterprets valid source, then rerun the scan. Keep required references; incomplete analysis is not proof of malicious evasion.",
+      "code_snippet": "| `live` | Iterate | Visual variant mode: pick elements in the browser, iterate on alternatives | [reference/live.md](reference/live.md) |",
+      "intent": null,
+      "tags": [
+        "coverage",
+        "reference",
+        "target-disposition:partial"
+      ],
+      "evidence": {
+        "target_path": "reference/live.md",
+        "target_disposition": "partial",
+        "reasons": [
+          {
+            "reason_code": "static_parse_limit",
+            "message": "A security-relevant expression exceeded a bounded static parser's span limit.",
+            "phase": "static",
+            "analyzers": [
+              "static_patterns_tool_misuse"
+            ]
+          }
+        ]
+      },
+      "match_fingerprint": "bc6f6e853e8aa02669a141a8a060b5b93d54b1e52f7a8d49b2b0d2bbff7c2017",
+      "occurrences": [
+        {
+          "file": "SKILL.md",
+          "start_line": 69,
+          "end_line": null
+        }
+      ]
+    },
+    {
+      "id": "MP3",
+      "finding_id": "finding-506a8c51d2c040fb8ebc0b9d518e62b2",
+      "category": "Memory Poisoning",
+      "pattern": "Memory Manipulation",
+      "severity": "HIGH",
+      "confidence": 0.8,
+      "location": {
+        "file": "reference/colorize.md",
+        "start_line": 23,
+        "end_line": null,
+        "start_column": 5
+      },
+      "finding": "new identity is",
+      "explanation": "Skill manipulates agent memory, state, or stored context. Memory corruption can alter personality, override safety rules, or cause unpredictable behavior.",
+      "remediation": "Protect agent memory and state from modification by untrusted content. Use read-only memory for critical instructions and validate all state changes.",
+      "code_snippet": "- light/dark or data-visualization requirements;\n- whether the task asks for more color or a new identity.\n\nIf a new identity is required, use [new-work.md](new-work.md). Ask only when a binding brand decision cannot be inferred.\n\n## Choose a strategy\n",
+      "intent": null,
+      "tags": [
+        "Memory Poisoning"
+      ],
+      "evidence": {},
+      "match_fingerprint": "f5a7a9b85377e6435ac389cb041a7b9d6d560df4fcec8f3648be33f629b4e29e",
+      "occurrences": [
+        {
+          "file": "reference/colorize.md",
+          "start_line": 23,
+          "end_line": null,
+          "start_column": 5
+        }
+      ]
+    },
+    {
+      "id": "AR2",
+      "finding_id": "finding-086ea5a435664aa588c07e3c3264a72c",
+      "category": "Anti-Refusal",
+      "pattern": "Anti-Refusal Statement",
+      "severity": "HIGH",
+      "confidence": 0.85,
+      "location": {
+        "file": "reference/critique.md",
+        "start_line": 256,
+        "end_line": 256,
+        "start_column": 96,
+        "end_column": 108
+      },
+      "finding": "do not judge",
+      "explanation": "Skill instructs the agent to omit warnings, disclaimers, or ethical commentary. Stripping safety caveats hides risk from the user and is a common jailbreak preamble.",
+      "remediation": "Remove instructions that suppress warnings, disclaimers, or ethical commentary. Let the agent surface safety-relevant caveats to the user.",
+      "code_snippet": "- Every question must reference specific findings from the report. Never ask generic \"who is your audience?\" questions.\n- Keep it to 2-4 questions maximum. Respect the user's time.\n- Offer concrete options, not open-ended prompts.\n- Skipping is allowed only when the report listed **fewer than 3 Priority Issues**. Count them; do not judge the findings \"straightforward\" by feel. At 3 or more, the questions are required.\n\n**Final-question gate.** The user-visible response must either include the targeted questions or carry the literal line `Questions skipped: <reason>` naming the count that permitted the skip. Each question must include 2-3 concrete answer options tied to the actual critique findings. Do not end with only open-ended questions, and do not end with neither: stopping after the report, having asked nothing and printed no skip line, is the most common way this command fails.\n",
+      "intent": null,
+      "tags": [
+        "Anti-Refusal"
+      ],
+      "evidence": {},
+      "match_fingerprint": "e9d1d6cda5f250dc1c8956f15f57d33e22b2d750917f96d2bef83e3605446d52",
+      "occurrences": [
+        {
+          "file": "reference/critique.md",
+          "start_line": 256,
+          "end_line": 256,
+          "start_column": 96,
+          "end_column": 108
+        }
+      ]
+    },
+    {
+      "id": "AR2",
+      "finding_id": "finding-81319c8193bf494b8fac3fa0f40945df",
+      "category": "Anti-Refusal",
+      "pattern": "Anti-Refusal Statement",
+      "severity": "HIGH",
+      "confidence": 0.8,
+      "location": {
+        "file": "reference/degraded/finish-reviewer.md",
+        "start_line": 10,
+        "end_line": 10,
+        "start_column": 33,
+        "end_column": 48
+      },
+      "finding": "without warning",
+      "explanation": "Skill instructs the agent to omit warnings, disclaimers, or ethical commentary. Stripping safety caveats hides risk from the user and is a common jailbreak preamble.",
+      "remediation": "Remove instructions that suppress warnings, disclaimers, or ethical commentary. Let the agent surface safety-relevant caveats to the user.",
+      "code_snippet": "\nYou have no browser. Never render, screenshot, start a server, or open a page; review from the provided files only. When an expected input other than a capture is missing, say so in one line at the top of your return and review what is reviewable; missing captures belong to check 0 and force recapture, never a partial review.\n\nA hard turn ceiling ends the run without warning; a run that ends before its contracted sections are written (five, or the single recapture section) returns nothing. Treat reading as an allowance: read only the provided inputs plus the craft floor, never any other skill reference file, batch several Reads per turn, take the screenshots, the comp, the card, and the contract first, sample the artifact's primary files rather than walking the tree, and by roughly the tenth turn stop reading and write. Name whatever went unread in the line above the sections.\n\n## Input Contract\n",
+      "intent": null,
+      "tags": [
+        "Anti-Refusal"
+      ],
+      "evidence": {},
+      "match_fingerprint": "e1c52694e854c5bd049e3a3ae66f3efcfe098f61a8ee160655ad3b90035f67fd",
+      "occurrences": [
+        {
+          "file": "reference/degraded/finish-reviewer.md",
+          "start_line": 10,
+          "end_line": 10,
+          "start_column": 33,
+          "end_column": 48
+        }
+      ]
+    },
+    {
+      "id": "AS1",
+      "finding_id": "finding-6c6863f62d2748008db9dc1be5544041",
+      "category": "Agent Snooping",
+      "pattern": "Agent Config Directory Access",
+      "severity": "HIGH",
+      "confidence": 0.9,
+      "location": {
+        "file": "reference/hooks.md",
+        "start_line": 17,
+        "end_line": null,
+        "start_column": 94
+      },
+      "finding": "~/.claude/settings.json",
+      "explanation": "Skill reads from agent configuration directories (.claude/, .codex/, .gemini/). These directories may contain API keys, personal settings, and other credentials that the skill has no legitimate need to access.",
+      "remediation": "Remove all code or instructions that access agent configuration directories (.claude/, .codex/, .gemini/). If configuration values are needed, pass them explicitly as parameters or environment variables \u2014 never read the agent's own config files.",
+      "code_snippet": "eRules`, `detector.ignoreFiles`, `detector.ignoreValues`, and `detector.designSystem.enabled`. `hook.enabled` only controls automatic hook execution, not manual CLI scans. Use `\"<skill-base-dir>/scripts/impeccable\" detect --no-config ...` for a raw detector run that ignores project config/context. Use `\"<skill-base-dir>/scripts/impeccable\" ignores ...` for direct CLI CRUD on the same detector ignores.\n\nSupported harnesses: Claude Code (`.claude/settings.local.json` for a project-scope install; `~/.claude/settings.json` for a user-scope install; a project hook moved into shared `.claude/settings.json` is honored in place too), Codex (`.codex/hooks.json` in the project), Cursor (`.cursor/hooks.json` in the project), Grok Build (`.grok/hooks/impeccable.json` in the project; requires `/hooks-trust` or `--trust`), and GitHub Copilot (`.github/hooks/impeccable.json` in the project, a team-shared committed file that both the Copilot CLI and the cloud agent read). For the Copilot CLI, repo-lev",
+      "intent": null,
+      "tags": [
+        "Agent Snooping"
+      ],
+      "evidence": {},
+      "match_fingerprint": "5a1df888db5d4ec0b5b9acca20cfc27be4af48718ceb134b7edd155d53abdf2c",
+      "occurrences": [
+        {
+          "file": "reference/hooks.md",
+          "start_line": 17,
+          "end_line": null,
+          "start_column": 94
+        }
+      ]
+    },
+    {
+      "id": "AS1",
+      "finding_id": "finding-c393c6661c4e44ba8a92b553455d7694",
+      "category": "Agent Snooping",
+      "pattern": "Agent Config Directory Access",
+      "severity": "HIGH",
+      "confidence": 0.9,
+      "location": {
+        "file": "reference/hooks.md",
+        "start_line": 108,
+        "end_line": null,
+        "start_column": 240
+      },
+      "finding": "~/.claude/settings.json",
+      "explanation": "Skill reads from agent configuration directories (.claude/, .codex/, .gemini/). These directories may contain API keys, personal settings, and other credentials that the skill has no legitimate need to access.",
+      "remediation": "Remove all code or instructions that access agent configuration directories (.claude/, .codex/, .gemini/). If configuration values are needed, pass them explicitly as parameters or environment variables \u2014 never read the agent's own config files.",
+      "code_snippet": "ble/config.json` directly and leave the rest of the file untouched.\n- Do not edit the launcher or the binary behind `impeccable hook` and `impeccable hook-before-edit` from this flow. Those are skill plumbing.\n- The hook never blocks an edit; it emits a post-edit reminder. (A Cursor project still on the old `preToolUse` gate can block a write until its manifest is migrated.) Disabling stops the reminders.\n- The hook is bundled with the Impeccable skill. Project installs use `.claude/settings.local.json`, `.codex/hooks.json`, `.cursor/hooks.json`, `.github/hooks/impeccable.json`, and `.gemini/settings.json`; a user-scope Claude install uses `~/.claude/settings.json`. On Codex, the user must approve the hook via `/hooks` the first time. On Cursor, confirm hooks are enabled under Settings -> Hooks. On GitHub Copilot, the CLI loads `.github/hooks/impeccable.json` once it is committed to the repository's default branch, and the cloud agent reads it from the repo directly.\n\n## Failure modes\n",
+      "intent": null,
+      "tags": [
+        "Agent Snooping"
+      ],
+      "evidence": {},
+      "match_fingerprint": "5a1df888db5d4ec0b5b9acca20cfc27be4af48718ceb134b7edd155d53abdf2c",
+      "occurrences": [
+        {
+          "file": "reference/hooks.md",
+          "start_line": 108,
+          "end_line": null,
+          "start_column": 240
+        }
+      ]
+    },
+    {
+      "id": "MP3",
+      "finding_id": "finding-e12a374b10874fdf8e61b6f2fa4b5fac",
+      "category": "Memory Poisoning",
+      "pattern": "Memory Manipulation",
+      "severity": "HIGH",
+      "confidence": 0.8,
+      "location": {
+        "file": "reference/mode-operate.md",
+        "start_line": 15,
+        "end_line": null,
+        "start_column": 211
+      },
+      "finding": "clear state",
+      "explanation": "Skill manipulates agent memory, state, or stored context. Memory corruption can alter personality, override safety rules, or cause unpredictable behavior.",
+      "remediation": "Protect agent memory and state from modification by untrusted content. Use read-only memory for critical instructions and validate all state changes.",
+      "code_snippet": "\n## Comps\n\nThe comp is the product screen, in the direction's committed palette: its shell and navigation with a distinct area for each job and, where there is data, filters over what they scope and charts and tables with clear states. The world enters only through type, palette, density, and the one signature move; it never supplies the page's organisation, so a working screen never reads as a newspaper, a poster, or any other artifact of the world. Every control is a standard one the visitor already knows how to use, a web component on the web and the platform's native control in an app: buttons, tabs, inputs, selects, filters, tables with sortable headers, navigation that reads as navigation. Never a costume of the world's own interface: a terminal's function-key bar or command prompt, an instrument's bezel, ruled ledger paper standing in for a table. A comp an engineer could not build from the platform's standard components is a picture of the tool, not the tool. The finish bar is ",
+      "intent": null,
+      "tags": [
+        "Memory Poisoning"
+      ],
+      "evidence": {},
+      "match_fingerprint": "4dee4faaa7194e6cfc82288caa423040ce3c068aa01abc9dc9bf4acae0f37507",
+      "occurrences": [
+        {
+          "file": "reference/mode-operate.md",
+          "start_line": 15,
+          "end_line": null,
+          "start_column": 211
+        }
+      ]
+    },
+    {
+      "id": "AR2",
+      "finding_id": "finding-f8d68b01432c480dbee9c87e067352fa",
+      "category": "Anti-Refusal",
+      "pattern": "Anti-Refusal Statement",
+      "severity": "HIGH",
+      "confidence": 0.85,
+      "location": {
+        "file": "reference/new-work.md",
+        "start_line": 138,
+        "end_line": 138,
+        "start_column": 1497,
+        "end_column": 1508
+      },
+      "finding": "Never judge",
+      "explanation": "Skill instructs the agent to omit warnings, disclaimers, or ethical commentary. Stripping safety caveats hides risk from the user and is a common jailbreak preamble.",
+      "remediation": "Remove instructions that suppress warnings, disclaimers, or ethical commentary. Let the agent surface safety-relevant caveats to the user.",
+      "code_snippet": "ate stays open until it passes or the route it names is taken. On a comp-led build, run `\"<skill-base-dir>/scripts/impeccable\" comp-diff --comp <approved comp> --build .impeccable/review/desktop.png --spec .impeccable/build/spec.json --out-dir .impeccable/review/diff/final` and read its region rows and paired crops as the critique: the side-by-side is the view the build thread never has on its own, and a region it scores missing or contradicted is a fix whatever the page looks like from memory. Never judge fidelity from one full-page thumbnail; it hides exactly the failures that matter. On a Persuade surface, verify the mode did its job: a first-time visitor should know what this is, why it matters, and what to do within seconds, in the form's own vocabulary.\n\nA capture is evidence only when it is valid, and you validate before you send. Settle or disable entrance motion first: an element hidden by animation timing reads as a missing element and gets fixed into a regression. Capture fu",
+      "intent": null,
+      "tags": [
+        "Anti-Refusal"
+      ],
+      "evidence": {},
+      "match_fingerprint": "1364533841df85868742f5ea1f9ba350df33fbce4edbb5ed96aad411a65acb5b",
+      "occurrences": [
+        {
+          "file": "reference/new-work.md",
+          "start_line": 138,
+          "end_line": 138,
+          "start_column": 1497,
+          "end_column": 1508
+        }
+      ]
+    },
+    {
+      "id": "LP3",
+      "finding_id": "finding-45f609848ab0493083ec938cad853573",
+      "category": "MCP Least Privilege",
+      "pattern": "Skill declares no tool scope ('permissions' or 'allowed-tools') but code capabilities were detected: network, shell.",
+      "severity": "MEDIUM",
+      "confidence": 0.7,
+      "location": {
+        "file": "SKILL.md",
+        "start_line": 1,
+        "end_line": null
+      },
+      "finding": "Skill declares no tool scope ('permissions' or 'allowed-tools') but code capabilities were detected: network, shell.",
+      "explanation": "Without declared permissions the skill's intent is opaque and cannot be validated.",
+      "remediation": "Clarify the skill's intended tool scope and review how the host runtime enforces it; runtime permissions are unknown unless separately verified. For Claude Code / Agent Skills SKILL.md, 'allowed-tools' records preapproved tools, not a permission ceiling; add a tool only when it is independently approved as necessary, not to silence this finding. For MCP server manifests, use a 'permissions' list naming the required capabilities.",
+      "code_snippet": null,
+      "intent": null,
+      "tags": [
+        "ASI02"
+      ],
+      "evidence": {},
+      "match_fingerprint": null,
+      "occurrences": [
+        {
+          "file": "SKILL.md",
+          "start_line": 1,
+          "end_line": null
+        }
+      ]
+    },
+    {
+      "id": "EA2",
+      "finding_id": "finding-2a7dbe9996c947a298d5c447bc431810",
+      "category": "Excessive Agency",
+      "pattern": "Autonomous Decision Making",
+      "severity": "MEDIUM",
+      "confidence": 0.75,
+      "location": {
+        "file": "reference/audit.md",
+        "start_line": 139,
+        "end_line": null,
+        "start_column": 25
+      },
+      "finding": "without verification",
+      "explanation": "Skill enables autonomous high-impact decisions without human-in-the-loop verification. Critical operations (destructive commands, financial transactions, data deletion) should require explicit user confirmation.",
+      "remediation": "Add human-in-the-loop confirmation for destructive, irreversible, or high-impact operations. Never auto-execute commands that modify files, send data, or alter system state.",
+      "code_snippet": "- Provide generic recommendations (be specific and actionable)\n- Skip positive findings (celebrate what works)\n- Forget to prioritize (everything can't be P0)\n- Report false positives without verification",
+      "intent": null,
+      "tags": [
+        "Excessive Agency"
+      ],
+      "evidence": {},
+      "match_fingerprint": "fe5d1711651a4715ab1d9b8451c549b9733b35dcee753a00cc95b0754ef2c699",
+      "occurrences": [
+        {
+          "file": "reference/audit.md",
+          "start_line": 139,
+          "end_line": null,
+          "start_column": 25
+        }
+      ]
+    },
+    {
+      "id": "EA2",
+      "finding_id": "finding-138c4c8b9e204f40a23ec3113618d003",
+      "category": "Excessive Agency",
+      "pattern": "Autonomous Decision Making",
+      "severity": "MEDIUM",
+      "confidence": 0.75,
+      "location": {
+        "file": "reference/audit.native.md",
+        "start_line": 139,
+        "end_line": null,
+        "start_column": 25
+      },
+      "finding": "without verification",
+      "explanation": "Skill enables autonomous high-impact decisions without human-in-the-loop verification. Critical operations (destructive commands, financial transactions, data deletion) should require explicit user confirmation.",
+      "remediation": "Add human-in-the-loop confirmation for destructive, irreversible, or high-impact operations. Never auto-execute commands that modify files, send data, or alter system state.",
+      "code_snippet": "- Provide generic recommendations (be specific and actionable)\n- Skip positive findings (celebrate what works)\n- Forget to prioritize (everything can't be P0)\n- Report false positives without verification",
+      "intent": null,
+      "tags": [
+        "Excessive Agency"
+      ],
+      "evidence": {},
+      "match_fingerprint": "fe5d1711651a4715ab1d9b8451c549b9733b35dcee753a00cc95b0754ef2c699",
+      "occurrences": [
+        {
+          "file": "reference/audit.native.md",
+          "start_line": 139,
+          "end_line": null,
+          "start_column": 25
+        }
+      ]
+    },
+    {
+      "id": "EA2",
+      "finding_id": "finding-655261b3f14c47fc924088380635b964",
+      "category": "Excessive Agency",
+      "pattern": "Autonomous Decision Making",
+      "severity": "MEDIUM",
+      "confidence": 0.75,
+      "location": {
+        "file": "reference/critique.md",
+        "start_line": 700,
+        "end_line": null,
+        "start_column": 2
+      },
+      "finding": "No confirmation",
+      "explanation": "Skill enables autonomous high-impact decisions without human-in-the-loop verification. Critical operations (destructive commands, financial transactions, data deletion) should require explicit user confirmation.",
+      "remediation": "Add human-in-the-loop confirmation for destructive, irreversible, or high-impact operations. Never auto-execute commands that modify files, send data, or alter system state.",
+      "code_snippet": "- Technical jargon without explanation\n- No visible help option or guidance\n- Ambiguous next steps after completing an action\n- No confirmation that an action succeeded\n\n---\n",
+      "intent": null,
+      "tags": [
+        "Excessive Agency"
+      ],
+      "evidence": {},
+      "match_fingerprint": "afca04afeb75db76cbddc1ffb2a73598f31d2d03b5941c69a9de6af31da2733a",
+      "occurrences": [
+        {
+          "file": "reference/critique.md",
+          "start_line": 700,
+          "end_line": null,
+          "start_column": 2
+        }
+      ]
+    },
+    {
+      "id": "EA2",
+      "finding_id": "finding-c93bae3e67f84bf9ae2f7ad938a02087",
+      "category": "Excessive Agency",
+      "pattern": "Autonomous Decision Making",
+      "severity": "MEDIUM",
+      "confidence": 0.75,
+      "location": {
+        "file": "reference/degraded/finish-reviewer.md",
+        "start_line": 19,
+        "end_line": null,
+        "start_column": 1376
+      },
+      "finding": "no approval",
+      "explanation": "Skill enables autonomous high-impact decisions without human-in-the-loop verification. Critical operations (destructive commands, financial transactions, data deletion) should require explicit user confirmation.",
+      "remediation": "Add human-in-the-loop confirmation for destructive, irreversible, or high-impact operations. Never auto-execute commands that modify files, send data, or alter system state.",
+      "code_snippet": " world it is written after this review by the documenter, so its absence here is not a finding. When comp-round comps exist under `.impeccable/mocks/`, an approval record exists too: the surface brief naming the approved comp, or an `approved` flag in its sidecar. Comp-round comps with no recorded pick mean the approval point was skipped, a material finding. Files under `.impeccable/mocks/decision/` are exempt: they are the direction round's dealt hand, produced before any comp round, and imply no approval whatever the build path; a code-led build has no comp round at all.\n2. **Fidelity.** Start from the measurement, then judge what it cannot: read `.impeccable/review/diff/final/report.json` (and hero) first; every region scored `missing` or `contradicted` is a matrix row in that state unless the paired crop under `regions/` shows the score is wrong, and you say why; a region scored `match` still gets your eye for lettering character and material, which the numbers do not measure. Then",
+      "intent": null,
+      "tags": [
+        "Excessive Agency"
+      ],
+      "evidence": {},
+      "match_fingerprint": "02114119728c4c9031d411902239e1c4b76f46eb7c1932c9ae63fcbe2fd1030c",
+      "occurrences": [
+        {
+          "file": "reference/degraded/finish-reviewer.md",
+          "start_line": 19,
+          "end_line": null,
+          "start_column": 1376
+        }
+      ]
+    },
+    {
+      "id": "EA2",
+      "finding_id": "finding-21e4a40a040f41469379490bb5e7ec4d",
+      "category": "Excessive Agency",
+      "pattern": "Autonomous Decision Making",
+      "severity": "MEDIUM",
+      "confidence": 0.75,
+      "location": {
+        "file": "reference/new-work.md",
+        "start_line": 53,
+        "end_line": null,
+        "start_column": 3661
+      },
+      "finding": "no approval",
+      "explanation": "Skill enables autonomous high-impact decisions without human-in-the-loop verification. Critical operations (destructive commands, financial transactions, data deletion) should require explicit user confirmation.",
+      "remediation": "Add human-in-the-loop confirmation for destructive, irreversible, or high-impact operations. Never auto-execute commands that modify files, send data, or alter system state.",
+      "code_snippet": "l subagents, generate in the main thread after serving, same order, and let the harness's own generation display carry the progress; the wait for the answer follows the last file. The chosen card's comp is not spent by the choice: comp-led, it enters the comp round as compositional option one; code-led, it returns at the finish review as the critique reference, what the image dared that the build did not. Unchosen comps stay in `.impeccable/mocks/decision/` as the round's spent hand; they carry no approval and imply none. With no image generation, cards carry their identity in palette chips and facts, and that page is complete, not a lesser version; the page then also demotes every challenger's catalog art to a labeled thumbnail on its own, because salience must encode the verdict, never the accident of which cards have images.\n\nThe execution contract, comp-led or code-led, is never asked inside a round; the page's toggle handles the exception. An Operate or Read surface is code-led wh",
+      "intent": null,
+      "tags": [
+        "Excessive Agency"
+      ],
+      "evidence": {},
+      "match_fingerprint": "02114119728c4c9031d411902239e1c4b76f46eb7c1932c9ae63fcbe2fd1030c",
+      "occurrences": [
+        {
+          "file": "reference/new-work.md",
+          "start_line": 53,
+          "end_line": null,
+          "start_column": 3661
+        }
+      ]
+    },
+    {
+      "id": "EA2",
+      "finding_id": "finding-147bf29115a34c91b2daef7135215043",
+      "category": "Excessive Agency",
+      "pattern": "Autonomous Decision Making",
+      "severity": "MEDIUM",
+      "confidence": 0.75,
+      "location": {
+        "file": "reference/visualize.md",
+        "start_line": 31,
+        "end_line": null,
+        "start_column": 513
+      },
+      "finding": "no approval",
+      "explanation": "Skill enables autonomous high-impact decisions without human-in-the-loop verification. Critical operations (destructive commands, financial transactions, data deletion) should require explicit user confirmation.",
+      "remediation": "Add human-in-the-loop confirmation for destructive, irreversible, or high-impact operations. Never auto-execute commands that modify files, send data, or alter system state.",
+      "code_snippet": " point has no substitute and no skip condition. When the structured question tool errors, fall back to the decision page; only after both fail may you treat the choice as delegated, and a delegated pick is recorded exactly as an approval is and disclosed in your first reply, not your last. The finish reviewer treats comp-round comps with no recorded approval as a material finding; decision comps under `.impeccable/mocks/decision/` are the direction round's hand, not comp-round output, and imply no approval on their own.\n\nAfter approval, record the choice where tools can find it: the approved comp's path goes in the surface brief, and its prompt sidecar (the image's full file name plus `.json`: `a.png` gets `a.png.json`) gains `\"approved\": true` (every comp generated through `impeccable generate-image` has one; create it if a native tool didn't). The sidecar travels with the mocks folder, so the approval survives sessions and machines that never see the brief, and it is what `impeccable",
+      "intent": null,
+      "tags": [
+        "Excessive Agency"
+      ],
+      "evidence": {},
+      "match_fingerprint": "02114119728c4c9031d411902239e1c4b76f46eb7c1932c9ae63fcbe2fd1030c",
+      "occurrences": [
+        {
+          "file": "reference/visualize.md",
+          "start_line": 31,
+          "end_line": null,
+          "start_column": 513
+        }
+      ]
+    },
+    {
+      "id": "EA2",
+      "finding_id": "finding-78b1bf148c4744fd9f3f928180d0383d",
+      "category": "Excessive Agency",
+      "pattern": "Autonomous Decision Making",
+      "severity": "MEDIUM",
+      "confidence": 0.75,
+      "location": {
+        "file": "reference/degraded/finish-reviewer.md",
+        "start_line": 20,
+        "end_line": null,
+        "start_column": 933
+      },
+      "finding": "without approval",
+      "explanation": "Skill enables autonomous high-impact decisions without human-in-the-loop verification. Critical operations (destructive commands, financial transactions, data deletion) should require explicit user confirmation.",
+      "remediation": "Add human-in-the-loop confirmation for destructive, irreversible, or high-impact operations. Never auto-execute commands that modify files, send data, or alter system state.",
+      "code_snippet": "r own element inventory of the approved comp, never against the contract's summary of it: topology, reading order, focal scale, overlaps and z-order, density, signature geometry, the primary action's treatment (a CTA the comp physically works, dissolves, or stamps is a signature element; its plain-rectangle rendition is contradicted), navigation items and icons, headline levels and scale relationships. Classify every salient element: match, acceptable adaptation, missing, contradicted, or added without approval. Three rows are mandatory in every matrix. TYPE: the display lettering's character, compression, width, weight, contrast, terminals, against the comp's; a face of a different character is contradicted however the layout matches. MATERIAL: an element rendered as flat CSS or clean vector where the comp shows painted, textured, dimensional, or photographic material is contradicted regardless of placement; medium is part of the promise. GROUND: the page field's value and temperature",
+      "intent": null,
+      "tags": [
+        "Excessive Agency"
+      ],
+      "evidence": {},
+      "match_fingerprint": "7868080a35a6878aa292c53196ddb331f19d628c33953fb70850fdaf54c4191c",
+      "occurrences": [
+        {
+          "file": "reference/degraded/finish-reviewer.md",
+          "start_line": 20,
+          "end_line": null,
+          "start_column": 933
+        }
+      ]
+    },
+    {
+      "id": "EA2",
+      "finding_id": "finding-6efcf1530ac44f8c93fc8253dff614a8",
+      "category": "Excessive Agency",
+      "pattern": "Autonomous Decision Making",
+      "severity": "MEDIUM",
+      "confidence": 0.75,
+      "location": {
+        "file": "reference/degraded/finish-reviewer.md",
+        "start_line": 20,
+        "end_line": null,
+        "start_column": 3039
+      },
+      "finding": "without approval",
+      "explanation": "Skill enables autonomous high-impact decisions without human-in-the-loop verification. Critical operations (destructive commands, financial transactions, data deletion) should require explicit user confirmation.",
+      "remediation": "Add human-in-the-loop confirmation for destructive, irreversible, or high-impact operations. Never auto-execute commands that modify files, send data, or alter system state.",
+      "code_snippet": "ence comp on such a build is provocation, not spec: no element matrix, no adaptation citations, no asset obligations; its one contribution is what the image dared that the build did not, and dares worth adopting enter material_fixes as ordinary ordered fixes. An adaptation counts as intentional only when it cites the user answer, surface brief, accessibility need, or product truth that forced it; an uncited deviation is a defect. A missing signature element, a changed topology, or content added without approval fails fidelity and outranks every craft point in material_fixes. When MATERIAL is contradicted on the focal element, or contradiction is the page rather than the exception, stop ordering repairs: make the first material fix a rebuild directive naming the comp regions to re-derive and the assets to produce; a list of patches against a rejected page launders the rejection into an approval. A fix that requires producing an asset says so explicitly (\"produce: <region> as a raster as",
+      "intent": null,
+      "tags": [
+        "Excessive Agency"
+      ],
+      "evidence": {},
+      "match_fingerprint": "7868080a35a6878aa292c53196ddb331f19d628c33953fb70850fdaf54c4191c",
+      "occurrences": [
+        {
+          "file": "reference/degraded/finish-reviewer.md",
+          "start_line": 20,
+          "end_line": null,
+          "start_column": 3039
+        }
+      ]
+    },
+    {
+      "id": "EA2",
+      "finding_id": "finding-efb58b7bed0e4facb397d698626ff70b",
+      "category": "Excessive Agency",
+      "pattern": "Autonomous Decision Making",
+      "severity": "MEDIUM",
+      "confidence": 0.75,
+      "location": {
+        "file": "reference/degraded/finish-reviewer.md",
+        "start_line": 34,
+        "end_line": null,
+        "start_column": 188
+      },
+      "finding": "without approval",
+      "explanation": "Skill enables autonomous high-impact decisions without human-in-the-loop verification. Critical operations (destructive commands, financial transactions, data deletion) should require explicit user confirmation.",
+      "remediation": "Add human-in-the-loop confirmation for destructive, irreversible, or high-impact operations. Never auto-execute commands that modify files, send data, or alter system state.",
+      "code_snippet": "\n## Output Contract\n\nReturn the disposition line first, then exactly five sections: `persistence` (pass/fail with specifics), `fidelity` (the element matrix: match, adaptation, missing, contradicted, or added without approval per salient element, adaptations citing their evidence, or \"faithful\"), `ceiling` (unused native devices, or \"reached\"), `material_fixes` (ordered, most material first, fidelity failures ahead of craft, each one line tied to a check or contract promise, at most eight), and `keep` (one line naming what must not be diluted while fixing). A recapture return replaces the five sections with the single `recapture` section from check 0. Missing inputs are named in one line above the sections. No praise, no summary prose.\n\n## Verdict Pass\n",
+      "intent": null,
+      "tags": [
+        "Excessive Agency"
+      ],
+      "evidence": {},
+      "match_fingerprint": "7868080a35a6878aa292c53196ddb331f19d628c33953fb70850fdaf54c4191c",
+      "occurrences": [
+        {
+          "file": "reference/degraded/finish-reviewer.md",
+          "start_line": 34,
+          "end_line": null,
+          "start_column": 188
+        }
+      ]
+    },
+    {
+      "id": "EA2",
+      "finding_id": "finding-70889bab6acf4612962c07521e2a19b2",
+      "category": "Excessive Agency",
+      "pattern": "Autonomous Decision Making",
+      "severity": "MEDIUM",
+      "confidence": 0.75,
+      "location": {
+        "file": "reference/delight.md",
+        "start_line": 55,
+        "end_line": null,
+        "start_column": 13
+      },
+      "finding": "without consent",
+      "explanation": "Skill enables autonomous high-impact decisions without human-in-the-loop verification. Critical operations (destructive commands, financial transactions, data deletion) should require explicit user confirmation.",
+      "remediation": "Add human-in-the-loop confirmation for destructive, irreversible, or high-impact operations. Never auto-execute commands that modify files, send data, or alter system state.",
+      "code_snippet": "- delay, block, or obscure the primary task;\n- override platform conventions or accessibility;\n- add unrequested factual claims;\n- play sound without consent or ignore mute settings;\n- become mandatory, unskippable, or exhausting on repeat;\n- add a dependency or asset cost disproportionate to the moment.\n",
+      "intent": null,
+      "tags": [
+        "Excessive Agency"
+      ],
+      "evidence": {},
+      "match_fingerprint": "8f513068f50cde8c1bd5e878987a91aa2876dd293703f25117ca09675437e4d5",
+      "occurrences": [
+        {
+          "file": "reference/delight.md",
+          "start_line": 55,
+          "end_line": null,
+          "start_column": 13
+        }
+      ]
+    },
+    {
+      "id": "RP1",
+      "finding_id": "finding-2578efe363a5426ab15109e1941d7818",
+      "category": "MCP Rug Pull",
+      "pattern": "MCP server referenced without pinned version: 'npx impeccable'.",
+      "severity": "MEDIUM",
+      "confidence": 0.7,
+      "location": {
+        "file": "reference/doctor.md",
+        "start_line": 9,
+        "end_line": null
+      },
+      "finding": "npx impeccable",
+      "explanation": "npx commands without a version suffix (e.g. @1.0.0) create a rug-pull risk if the upstream server is compromised and publishes a malicious update.",
+      "remediation": "Pin the version: npx @scope/server@1.2.3",
+      "code_snippet": null,
+      "intent": null,
+      "tags": [
+        "ASI16"
+      ],
+      "evidence": {},
+      "match_fingerprint": "62b856d91f64e6c68caf518752e8fa8fe963ba0f43f6cd4f73d5297953b02cb3",
+      "occurrences": [
+        {
+          "file": "reference/doctor.md",
+          "start_line": 9,
+          "end_line": null
+        }
+      ]
+    },
+    {
+      "id": "EA2",
+      "finding_id": "finding-260b6ced07454da6919e8a15ac472682",
+      "category": "Excessive Agency",
+      "pattern": "Autonomous Decision Making",
+      "severity": "MEDIUM",
+      "confidence": 0.75,
+      "location": {
+        "file": "reference/document.md",
+        "start_line": 411,
+        "end_line": null,
+        "start_column": 40
+      },
+      "finding": "without asking",
+      "explanation": "Skill enables autonomous high-impact decisions without human-in-the-loop verification. Critical operations (destructive commands, financial transactions, data deletion) should require explicit user confirmation.",
+      "remediation": "Add human-in-the-loop confirmation for destructive, irreversible, or high-impact operations. Never auto-execute commands that modify files, send data, or alter system state.",
+      "code_snippet": "- Don't paste raw CSS class names. Translate to descriptive language.\n- Don't extract every token. Stop at what's actually reused; one-offs pollute the system.\n- Don't invent components that don't exist. If the project only has buttons and cards, only document those.\n- Don't overwrite an existing DESIGN.md without asking.\n- Don't duplicate content from PRODUCT.md. DESIGN.md is strictly visual.\n- Don't replace canonical sections with near-synonyms. Put layout and responsive behavior in `Layout`; put motion with the affected world or component.\n- Don't rename sections even slightly. \"Colors\" not \"Color Palette & Roles\". \"Typography\" not \"Typography Rules\". Tooling parsing depends on exact headers.",
+      "intent": null,
+      "tags": [
+        "Excessive Agency"
+      ],
+      "evidence": {},
+      "match_fingerprint": "8dc77d3dce9ba1f2672e813265a1b1a0c8594866ef38a4e978bf4f4451795465",
+      "occurrences": [
+        {
+          "file": "reference/document.md",
+          "start_line": 411,
+          "end_line": null,
+          "start_column": 40
+        }
+      ]
+    },
+    {
+      "id": "EA2",
+      "finding_id": "finding-a1b9ee6ddd0c44f78642d2dae13b4dae",
+      "category": "Excessive Agency",
+      "pattern": "Autonomous Decision Making",
+      "severity": "MEDIUM",
+      "confidence": 0.75,
+      "location": {
+        "file": "reference/new-work.md",
+        "start_line": 55,
+        "end_line": null,
+        "start_column": 1885
+      },
+      "finding": "without asking",
+      "explanation": "Skill enables autonomous high-impact decisions without human-in-the-loop verification. Critical operations (destructive commands, financial transactions, data deletion) should require explicit user confirmation.",
+      "remediation": "Add human-in-the-loop confirmation for destructive, irreversible, or high-impact operations. Never auto-execute commands that modify files, send data, or alter system state.",
+      "code_snippet": "answer writes `.impeccable/config.json`; the answer picks the value, never whether to record one. Yes writes the flipped value; \"no, just this once\" writes the value they flipped away from, the standing default they just confirmed by declining. Ask on the flip, never on the untouched default: a user who left the toggle alone told you nothing. A declined offer nothing writes down is an offer the next session makes again. When the user asks in words to change the standing default, update the file without asking. **Comp-led**: the chosen card's comp is law, generated before building when it does not yet exist, and the finish review audits the build against it; boldest composition on the table, fix rounds expected, and the comp is non-optional, no silent skipping. **Code-led**: no comp of this page and no apology for it; each card's HTML sketch is what the user chooses from, and the picked one is the composition the build matches and the finish review audits; the QUALITY BAR boards still c",
+      "intent": null,
+      "tags": [
+        "Excessive Agency"
+      ],
+      "evidence": {},
+      "match_fingerprint": "8dc77d3dce9ba1f2672e813265a1b1a0c8594866ef38a4e978bf4f4451795465",
+      "occurrences": [
+        {
+          "file": "reference/new-work.md",
+          "start_line": 55,
+          "end_line": null,
+          "start_column": 1885
+        }
+      ]
+    },
+    {
+      "id": "EA2",
+      "finding_id": "finding-1ac7ae98c52e4550bd418b49b5df6246",
+      "category": "Excessive Agency",
+      "pattern": "Autonomous Decision Making",
+      "severity": "MEDIUM",
+      "confidence": 0.75,
+      "location": {
+        "file": "reference/visualize.md",
+        "start_line": 37,
+        "end_line": null,
+        "start_column": 311
+      },
+      "finding": "without asking",
+      "explanation": "Skill enables autonomous high-impact decisions without human-in-the-loop verification. Critical operations (destructive commands, financial transactions, data deletion) should require explicit user confirmation.",
+      "remediation": "Add human-in-the-loop confirmation for destructive, irreversible, or high-impact operations. Never auto-execute commands that modify files, send data, or alter system state.",
+      "code_snippet": "\n## After approval: the comp becomes a spec\n\nThe approved comp is a north star for translation into semantic, responsive, accessible code, never a license to recompose: keeping the palette and mood while redrawing the topology is a second art direction. Do not rasterize core UI text or controls. Do not substitute a different visual driver after approval without asking.\n\nWhat the comp shows is measured, not remembered. new-work.md section 6 runs the build as phases (`impeccable build-phase`): the spec phase turns the comp into region boxes with sampled palettes (`impeccable comp-spec`), and the medium of every region follows from what the pixels are, never from what feels buildable: a figure, a product object, machinery, any illustration with perspective, shading, or drawing skill in it, and any texture by name (woven cloth, paper grain, fabric, leather, brushed metal) is a `plate` / `image` / `texture` region and ships as a raster; text, controls, chrome, diagrams with countable elemen",
+      "intent": null,
+      "tags": [
+        "Excessive Agency"
+      ],
+      "evidence": {},
+      "match_fingerprint": "8dc77d3dce9ba1f2672e813265a1b1a0c8594866ef38a4e978bf4f4451795465",
+      "occurrences": [
+        {
+          "file": "reference/visualize.md",
+          "start_line": 37,
+          "end_line": null,
+          "start_column": 311
+        }
+      ]
+    },
+    {
+      "id": "EA2",
+      "finding_id": "finding-f82c031dd5c94adfa1d2393bb5f52533",
+      "category": "Excessive Agency",
+      "pattern": "Autonomous Decision Making",
+      "severity": "MEDIUM",
+      "confidence": 0.75,
+      "location": {
+        "file": "reference/init.md",
+        "start_line": 112,
+        "end_line": null,
+        "start_column": 618
+      },
+      "finding": "no consent",
+      "explanation": "Skill enables autonomous high-impact decisions without human-in-the-loop verification. Critical operations (destructive commands, financial transactions, data deletion) should require explicit user confirmation.",
+      "remediation": "Add human-in-the-loop confirmation for destructive, irreversible, or high-impact operations. Never auto-execute commands that modify files, send data, or alter system state.",
+      "code_snippet": "lability means a harness-native image tool or the API fallback that `impeccable context` reports as `IMAGE_GEN_AVAILABLE`, and the first of those leaves no trace in the boot output: `impeccable context` only sees the key, so a silent boot on a harness that generates images is not evidence there is nothing to ask about. This is its own question, never a clause riding inside another one. The stack round asks what to build with; this asks how the building starts, and an answer to the first carries no consent about the second. State the trade in the question the user actually reads, because the two names mean nothing to someone meeting them for the first time: **comp-first** (an image sets the bar before any code; bolder composition, slower, and the build must match the image) or **code-first** (build directly; the ambition is written into the direction contract and audited at the finish; leaner, faster). Say in the same question what the choice covers: landing pages and showcase surfaces.",
+      "intent": null,
+      "tags": [
+        "Excessive Agency"
+      ],
+      "evidence": {},
+      "match_fingerprint": "4b9d13ac603b6b3b7223dbea83ec4db8a7d9cd4c5f75cb33027bd83f42ec46e4",
+      "occurrences": [
+        {
+          "file": "reference/init.md",
+          "start_line": 112,
+          "end_line": null,
+          "start_column": 618
+        }
+      ]
+    },
+    {
+      "id": "EA2",
+      "finding_id": "finding-2880369aaa2f40238fcb09908d2ac078",
+      "category": "Excessive Agency",
+      "pattern": "Autonomous Decision Making",
+      "severity": "MEDIUM",
+      "confidence": 0.8,
+      "location": {
+        "file": "reference/live.md",
+        "start_line": 76,
+        "end_line": null,
+        "start_column": 113
+      },
+      "finding": "never ask the user",
+      "explanation": "Skill enables autonomous high-impact decisions without human-in-the-loop verification. Critical operations (destructive commands, financial transactions, data deletion) should require explicit user confirmation.",
+      "remediation": "Add human-in-the-loop confirmation for destructive, irreversible, or high-impact operations. Never auto-execute commands that modify files, send data, or alter system state.",
+      "code_snippet": "\"<skill-base-dir>/scripts/impeccable\" live-complete --id SESSION_ID # canonical manual final acknowledgement after verified cleanup\n```\n\nServer restart rule: start `impeccable live-server` again, then poll; startup requeues unacknowledged events, so never ask the user to click Go again unless `impeccable live-resume` says no active session exists.\n\n## Handle `generate`\n",
+      "intent": null,
+      "tags": [
+        "Excessive Agency"
+      ],
+      "evidence": {},
+      "match_fingerprint": "2a644ae57a82432a9c11f5d754db924983a683a84fee66cb1a104939410d39e6",
+      "occurrences": [
+        {
+          "file": "reference/live.md",
+          "start_line": 76,
+          "end_line": null,
+          "start_column": 113
+        }
+      ]
+    },
+    {
+      "id": "MP1",
+      "finding_id": "finding-3442b2910e4347d58ded1d776940d641",
+      "category": "Memory Poisoning",
+      "pattern": "Persistent Context Injection",
+      "severity": "MEDIUM",
+      "confidence": 0.8,
+      "location": {
+        "file": "scripts/live-browser.js",
+        "start_line": 1023,
+        "end_line": null,
+        "start_column": 51
+      },
+      "finding": "lasting rule",
+      "explanation": "Skill injects content designed to persist in agent memory or context across interactions. Persistent injection can alter agent behavior long after the initial interaction.",
+      "remediation": "Do not allow untrusted input to persist in agent memory or context. Validate all content before storing and implement memory isolation between sessions.",
+      "code_snippet": "        }\n      } catch { /* cross-origin */ }\n    }\n    // The selector a mechanical bake would anchor lasting rules on, and how\n    // many elements it matches right now: the bake refuses anything but one,\n    // since its rules would restyle every match, not just this element.\n    const cssIdent = (s) => /^[A-Za-z_-][\\w-]*$/.test(s);",
+      "intent": null,
+      "tags": [
+        "Memory Poisoning"
+      ],
+      "evidence": {},
+      "match_fingerprint": "7b7b01faadf0567d939f9531fe99552d7ba12bcef026721bfa4d3c33f5879147",
+      "occurrences": [
+        {
+          "file": "scripts/live-browser.js",
+          "start_line": 1023,
+          "end_line": null,
+          "start_column": 51
+        }
+      ]
+    },
+    {
+      "id": "SSRF2",
+      "finding_id": "finding-d146cba7b75745a98e6be88c8a3c0048",
+      "category": "Server-Side Request Forgery",
+      "pattern": "Internal Network Request",
+      "severity": "MEDIUM",
+      "confidence": 0.7,
+      "location": {
+        "file": "scripts/live-browser.js",
+        "start_line": 3901,
+        "end_line": null,
+        "start_column": 24
+      },
+      "finding": "fetch('http://localhost",
+      "explanation": "Code issues a request to a loopback, link-local, or private-range host. This can reach internal services not meant to be exposed and is a common SSRF pivot.",
+      "remediation": "Avoid requests to loopback/link-local/private hosts from skill code. If internal access is intended, document it and validate the target against an allowlist.",
+      "code_snippet": "      // Token in the query string as well as the body: the URL token is what\n      // authorizes the CORS preflight when the page runs on a non-loopback\n      // dev host (ddev, Valet), since the preflight carries no request body.\n      const res = await fetch('http://localhost' + PORT + '/manual-edit-stash?token=' + encodeURIComponent(TOKEN), {\n        method: 'POST',\n        headers: { 'Content-Type': 'application/json' },\n        body: JSON.stringify({",
+      "intent": null,
+      "tags": [
+        "Server-Side Request Forgery"
+      ],
+      "evidence": {},
+      "match_fingerprint": "a204a91bf3a2640678e31ac67b8dfce18c9749344e249b6828edfda01af0a546",
+      "occurrences": [
+        {
+          "file": "scripts/live-browser.js",
+          "start_line": 3901,
+          "end_line": null,
+          "start_column": 24
+        }
+      ]
+    },
+    {
+      "id": "SSRF2",
+      "finding_id": "finding-e692a282d4cb415e8cb0b6357d01a099",
+      "category": "Server-Side Request Forgery",
+      "pattern": "Internal Network Request",
+      "severity": "MEDIUM",
+      "confidence": 0.7,
+      "location": {
+        "file": "scripts/live-browser.js",
+        "start_line": 7252,
+        "end_line": null,
+        "start_column": 4
+      },
+      "finding": "fetch('http://localhost",
+      "explanation": "Code issues a request to a loopback, link-local, or private-range host. This can reach internal services not meant to be exposed and is a common SSRF pivot.",
+      "remediation": "Avoid requests to loopback/link-local/private hosts from skill code. If internal access is intended, document it and validate the target against an allowlist.",
+      "code_snippet": "  // the agent's held-open CLI call.\n\n  function postAgentTargetResult(targetId, result) {\n    fetch('http://localhost' + PORT + '/agent-target-result?token=' + TOKEN, {\n      method: 'POST',\n      headers: { 'Content-Type': 'application/json' },\n      body: JSON.stringify({ token: TOKEN, targetId, clientId: AGENT_TARGET_CLIENT_ID, ...result }),",
+      "intent": null,
+      "tags": [
+        "Server-Side Request Forgery"
+      ],
+      "evidence": {},
+      "match_fingerprint": "a204a91bf3a2640678e31ac67b8dfce18c9749344e249b6828edfda01af0a546",
+      "occurrences": [
+        {
+          "file": "scripts/live-browser.js",
+          "start_line": 7252,
+          "end_line": null,
+          "start_column": 4
+        }
+      ]
+    },
+    {
+      "id": "SSRF2",
+      "finding_id": "finding-1446851baeb744a0b8bda232e5d0d0b5",
+      "category": "Server-Side Request Forgery",
+      "pattern": "Internal Network Request",
+      "severity": "MEDIUM",
+      "confidence": 0.7,
+      "location": {
+        "file": "scripts/live-browser.js",
+        "start_line": 7374,
+        "end_line": null,
+        "start_column": 11
+      },
+      "finding": "fetch('http://localhost",
+      "explanation": "Code issues a request to a loopback, link-local, or private-range host. This can reach internal services not meant to be exposed and is a common SSRF pivot.",
+      "remediation": "Avoid requests to loopback/link-local/private hosts from skill code. If internal access is intended, document it and validate the target against an allowlist.",
+      "code_snippet": "  }\n\n  function claimAgentTarget(targetId, report) {\n    return fetch('http://localhost' + PORT + '/agent-target-claim?token=' + TOKEN, {\n      method: 'POST',\n      headers: { 'Content-Type': 'application/json' },\n      body: JSON.stringify({ token: TOKEN, targetId, clientId: AGENT_TARGET_CLIENT_ID, ...report }),",
+      "intent": null,
+      "tags": [
+        "Server-Side Request Forgery"
+      ],
+      "evidence": {},
+      "match_fingerprint": "a204a91bf3a2640678e31ac67b8dfce18c9749344e249b6828edfda01af0a546",
+      "occurrences": [
+        {
+          "file": "scripts/live-browser.js",
+          "start_line": 7374,
+          "end_line": null,
+          "start_column": 11
+        }
+      ]
+    },
+    {
+      "id": "SSRF2",
+      "finding_id": "finding-929a436aa8d74fb08f73804b84f26c37",
+      "category": "Server-Side Request Forgery",
+      "pattern": "Internal Network Request",
+      "severity": "MEDIUM",
+      "confidence": 0.7,
+      "location": {
+        "file": "scripts/live-browser.js",
+        "start_line": 7899,
+        "end_line": null,
+        "start_column": 25
+      },
+      "finding": "fetch('http://localhost",
+      "explanation": "Code issues a request to a loopback, link-local, or private-range host. This can reach internal services not meant to be exposed and is a common SSRF pivot.",
+      "remediation": "Avoid requests to loopback/link-local/private hosts from skill code. If internal access is intended, document it and validate the target against an allowlist.",
+      "code_snippet": "    // Token in the query string as well as the body: the URL token is what\n    // authorizes the CORS preflight when the page runs on a non-loopback\n    // dev host (ddev, Valet), since the preflight carries no request body.\n    const doSend = () => fetch('http://localhost' + PORT + '/events?token=' + encodeURIComponent(TOKEN), {\n      method: 'POST',\n      headers: { 'Content-Type': 'application/json' },\n      body: JSON.stringify(msg),",
+      "intent": null,
+      "tags": [
+        "Server-Side Request Forgery"
+      ],
+      "evidence": {},
+      "match_fingerprint": "a204a91bf3a2640678e31ac67b8dfce18c9749344e249b6828edfda01af0a546",
+      "occurrences": [
+        {
+          "file": "scripts/live-browser.js",
+          "start_line": 7899,
+          "end_line": null,
+          "start_column": 25
+        }
+      ]
+    },
+    {
+      "id": "SSRF2",
+      "finding_id": "finding-5cc1e7206f054124bc774150e2b80436",
+      "category": "Server-Side Request Forgery",
+      "pattern": "Internal Network Request",
+      "severity": "MEDIUM",
+      "confidence": 0.7,
+      "location": {
+        "file": "scripts/live-browser.js",
+        "start_line": 11668,
+        "end_line": null,
+        "start_column": 4
+      },
+      "finding": "fetch('http://localhost",
+      "explanation": "Code issues a request to a loopback, link-local, or private-range host. This can reach internal services not meant to be exposed and is a common SSRF pivot.",
+      "remediation": "Avoid requests to loopback/link-local/private hosts from skill code. If internal access is intended, document it and validate the target against an allowlist.",
+      "code_snippet": "  // the agent already replied done before the reload. The helper's session\n  // record settles it; otherwise the done reply on SSE does.\n  function settleParameterStateFromHelper(sessionId) {\n    fetch('http://localhost' + PORT + '/status?token=' + TOKEN, { cache: 'no-store' })\n      .then((res) => (res.ok ? res.json() : null))\n      .then((data) => {\n        if (!data || sessionId !== currentSessionId) return;",
+      "intent": null,
+      "tags": [
+        "Server-Side Request Forgery"
+      ],
+      "evidence": {},
+      "match_fingerprint": "a204a91bf3a2640678e31ac67b8dfce18c9749344e249b6828edfda01af0a546",
+      "occurrences": [
+        {
+          "file": "scripts/live-browser.js",
+          "start_line": 11668,
+          "end_line": null,
+          "start_column": 4
+        }
+      ]
+    },
+    {
+      "id": "SSRF2",
+      "finding_id": "finding-b48665774cec4c22a0b2c872cf812331",
+      "category": "Server-Side Request Forgery",
+      "pattern": "Internal Network Request",
+      "severity": "MEDIUM",
+      "confidence": 0.7,
+      "location": {
+        "file": "scripts/live-browser.js",
+        "start_line": 11680,
+        "end_line": null,
+        "start_column": 4
+      },
+      "finding": "fetch('http://localhost",
+      "explanation": "Code issues a request to a loopback, link-local, or private-range host. This can reach internal services not meant to be exposed and is a common SSRF pivot.",
+      "remediation": "Avoid requests to loopback/link-local/private hosts from skill code. If internal access is intended, document it and validate the target against an allowlist.",
+      "code_snippet": "  }\n\n  function fetchAgentPollingStatus() {\n    fetch('http://localhost' + PORT + '/status?token=' + TOKEN, { cache: 'no-store' })\n      .then((res) => (res.ok ? res.json() : null))\n      .then((data) => {\n        if (data && typeof data.agentPolling === 'boolean') {",
+      "intent": null,
+      "tags": [
+        "Server-Side Request Forgery"
+      ],
+      "evidence": {},
+      "match_fingerprint": "a204a91bf3a2640678e31ac67b8dfce18c9749344e249b6828edfda01af0a546",
+      "occurrences": [
+        {
+          "file": "scripts/live-browser.js",
+          "start_line": 11680,
+          "end_line": null,
+          "start_column": 4
+        }
+      ]
+    },
+    {
+      "id": "SSRF2",
+      "finding_id": "finding-cabe5ddf5bca48a39faf3b79ac8d10ce",
+      "category": "Server-Side Request Forgery",
+      "pattern": "Internal Network Request",
+      "severity": "MEDIUM",
+      "confidence": 0.7,
+      "location": {
+        "file": "scripts/live-browser.js",
+        "start_line": 4217,
+        "end_line": null,
+        "start_column": 24
+      },
+      "finding": "fetch(\r\n        'http://localhost",
+      "explanation": "Code issues a request to a loopback, link-local, or private-range host. This can reach internal services not meant to be exposed and is a common SSRF pivot.",
+      "remediation": "Avoid requests to loopback/link-local/private hosts from skill code. If internal access is intended, document it and validate the target against an allowlist.",
+      "code_snippet": "\n  async function fetchPendingCount() {\n    try {\n      const res = await fetch(\n        'http://localhost' + PORT + '/manual-edit-stash?token=' + encodeURIComponent(TOKEN) + '&pageUrl=' + encodeURIComponent(location.pathname),\n      );\n      if (!res.ok) return;",
+      "intent": null,
+      "tags": [
+        "Server-Side Request Forgery"
+      ],
+      "evidence": {},
+      "match_fingerprint": "801dea231680524ed9975f2d12296627d90dbce43f5fa7e2cbc8b988b5fc0b53",
+      "occurrences": [
+        {
+          "file": "scripts/live-browser.js",
+          "start_line": 4217,
+          "end_line": null,
+          "start_column": 24
+        }
+      ]
+    },
+    {
+      "id": "SSRF2",
+      "finding_id": "finding-ec73fb62eb2b4ba7906dda66aefadc29",
+      "category": "Server-Side Request Forgery",
+      "pattern": "Internal Network Request",
+      "severity": "MEDIUM",
+      "confidence": 0.7,
+      "location": {
+        "file": "scripts/live-browser.js",
+        "start_line": 4237,
+        "end_line": null,
+        "start_column": 24
+      },
+      "finding": "fetch(\r\n        'http://localhost",
+      "explanation": "Code issues a request to a loopback, link-local, or private-range host. This can reach internal services not meant to be exposed and is a common SSRF pivot.",
+      "remediation": "Avoid requests to loopback/link-local/private hosts from skill code. If internal access is intended, document it and validate the target against an allowlist.",
+      "code_snippet": "    resetManualApplyProgress(count);\n    setPendingApplyLoading(true, count);\n    try {\n      const res = await fetch(\n        'http://localhost' + PORT + '/manual-edit-commit?token=' + encodeURIComponent(TOKEN) + '&pageUrl=' + encodeURIComponent(location.pathname) + '&async=1',\n        { method: 'POST', keepalive: true },\n      );",
+      "intent": null,
+      "tags": [
+        "Server-Side Request Forgery"
+      ],
+      "evidence": {},
+      "match_fingerprint": "801dea231680524ed9975f2d12296627d90dbce43f5fa7e2cbc8b988b5fc0b53",
+      "occurrences": [
+        {
+          "file": "scripts/live-browser.js",
+          "start_line": 4237,
+          "end_line": null,
+          "start_column": 24
+        }
+      ]
+    },
+    {
+      "id": "SSRF2",
+      "finding_id": "finding-248e6b3adf6c4ccea0761c9466776c88",
+      "category": "Server-Side Request Forgery",
+      "pattern": "Internal Network Request",
+      "severity": "MEDIUM",
+      "confidence": 0.7,
+      "location": {
+        "file": "scripts/live-browser.js",
+        "start_line": 4281,
+        "end_line": null,
+        "start_column": 24
+      },
+      "finding": "fetch(\r\n        'http://localhost",
+      "explanation": "Code issues a request to a loopback, link-local, or private-range host. This can reach internal services not meant to be exposed and is a common SSRF pivot.",
+      "remediation": "Avoid requests to loopback/link-local/private hosts from skill code. If internal access is intended, document it and validate the target against an allowlist.",
+      "code_snippet": "    const ok = confirm('Discard ' + count + ' copy edit' + (count === 1 ? '' : 's') + ' on this page?');\n    if (!ok) return;\n    try {\n      const res = await fetch(\n        'http://localhost' + PORT + '/manual-edit-discard?token=' + encodeURIComponent(TOKEN) + '&pageUrl=' + encodeURIComponent(location.pathname),\n        { method: 'POST' },\n      );",
+      "intent": null,
+      "tags": [
+        "Server-Side Request Forgery"
+      ],
+      "evidence": {},
+      "match_fingerprint": "801dea231680524ed9975f2d12296627d90dbce43f5fa7e2cbc8b988b5fc0b53",
+      "occurrences": [
+        {
+          "file": "scripts/live-browser.js",
+          "start_line": 4281,
+          "end_line": null,
+          "start_column": 24
+        }
+      ]
+    },
+    {
+      "id": "SSRF2",
+      "finding_id": "finding-2ca592d03b8343fd8d23595e3e01b748",
+      "category": "Server-Side Request Forgery",
+      "pattern": "Internal Network Request",
+      "severity": "MEDIUM",
+      "confidence": 0.7,
+      "location": {
+        "file": "scripts/live-browser.js",
+        "start_line": 4330,
+        "end_line": null,
+        "start_column": 24
+      },
+      "finding": "fetch(\r\n        'http://localhost",
+      "explanation": "Code issues a request to a loopback, link-local, or private-range host. This can reach internal services not meant to be exposed and is a common SSRF pivot.",
+      "remediation": "Avoid requests to loopback/link-local/private hosts from skill code. If internal access is intended, document it and validate the target against an allowlist.",
+      "code_snippet": "    if (count <= 0) return;\n    updateManualApplyRepairState({ attempt: 1, maxAttempts: 3 }, 'repairing');\n    try {\n      const res = await fetch(\n        'http://localhost' + PORT + '/manual-edit-commit?token=' + encodeURIComponent(TOKEN) + '&pageUrl=' + encodeURIComponent(location.pathname) + '&async=1&repair=1',\n        { method: 'POST', keepalive: true },\n      );",
+      "intent": null,
+      "tags": [
+        "Server-Side Request Forgery"
+      ],
+      "evidence": {},
+      "match_fingerprint": "801dea231680524ed9975f2d12296627d90dbce43f5fa7e2cbc8b988b5fc0b53",
+      "occurrences": [
+        {
+          "file": "scripts/live-browser.js",
+          "start_line": 4330,
+          "end_line": null,
+          "start_column": 24
+        }
+      ]
+    },
+    {
+      "id": "SSRF2",
+      "finding_id": "finding-484287f02ade4677b510517b4b46023b",
+      "category": "Server-Side Request Forgery",
+      "pattern": "Internal Network Request",
+      "severity": "MEDIUM",
+      "confidence": 0.7,
+      "location": {
+        "file": "scripts/live-browser.js",
+        "start_line": 4349,
+        "end_line": null,
+        "start_column": 24
+      },
+      "finding": "fetch(\r\n        'http://localhost",
+      "explanation": "Code issues a request to a loopback, link-local, or private-range host. This can reach internal services not meant to be exposed and is a common SSRF pivot.",
+      "remediation": "Avoid requests to loopback/link-local/private hosts from skill code. If internal access is intended, document it and validate the target against an allowlist.",
+      "code_snippet": "    const ok = confirm('Rollback source files to before this Apply and keep the edits staged?');\n    if (!ok) return;\n    try {\n      const res = await fetch(\n        'http://localhost' + PORT + '/manual-edit-repair-decision?token=' + encodeURIComponent(TOKEN) + '&pageUrl=' + encodeURIComponent(location.pathname),\n        {\n          method: 'POST',",
+      "intent": null,
+      "tags": [
+        "Server-Side Request Forgery"
+      ],
+      "evidence": {},
+      "match_fingerprint": "801dea231680524ed9975f2d12296627d90dbce43f5fa7e2cbc8b988b5fc0b53",
+      "occurrences": [
+        {
+          "file": "scripts/live-browser.js",
+          "start_line": 4349,
+          "end_line": null,
+          "start_column": 24
+        }
+      ]
+    },
+    {
+      "id": "SSRF2",
+      "finding_id": "finding-f85ed3de06e246be9d13bfe44b5caee0",
+      "category": "Server-Side Request Forgery",
+      "pattern": "Internal Network Request",
+      "severity": "MEDIUM",
+      "confidence": 0.7,
+      "location": {
+        "file": "scripts/live-browser.js",
+        "start_line": 8832,
+        "end_line": null,
+        "start_column": 32
+      },
+      "finding": "fetch(\r\n        'http://localhost",
+      "explanation": "Code issues a request to a loopback, link-local, or private-range host. This can reach internal services not meant to be exposed and is a common SSRF pivot.",
+      "remediation": "Avoid requests to loopback/link-local/private hosts from skill code. If internal access is intended, document it and validate the target against an allowlist.",
+      "code_snippet": "    // three-distinct-directions brief.\n    if (blob && hasAnnotations) {\n      try {\n        const uploadRes = await fetch(\n          'http://localhost' + PORT + '/annotation?token=' + encodeURIComponent(TOKEN) +\n          '&eventId=' + encodeURIComponent(basePayload.id),\n          { method: 'POST', headers: { 'Content-Type': 'image/png' }, body: blob },",
+      "intent": null,
+      "tags": [
+        "Server-Side Request Forgery"
+      ],
+      "evidence": {},
+      "match_fingerprint": "801dea231680524ed9975f2d12296627d90dbce43f5fa7e2cbc8b988b5fc0b53",
+      "occurrences": [
+        {
+          "file": "scripts/live-browser.js",
+          "start_line": 8832,
+          "end_line": null,
+          "start_column": 32
+        }
+      ]
+    },
+    {
+      "id": "E1",
+      "finding_id": "finding-57a4bdea8a694981bed2aa0717b3833e",
+      "category": "Data Exfiltration",
+      "pattern": "External Transmission",
+      "severity": "MEDIUM",
+      "confidence": 0.7,
+      "location": {
+        "file": "scripts/live-browser.js",
+        "start_line": 7252,
+        "end_line": null,
+        "start_column": 4
+      },
+      "finding": "fetch('http://localhost' + PORT + '/agent-target-result?token=' + TOKEN, {\r\n      method: 'POST'",
+      "explanation": "Data is being sent to an external URL. This could be legitimate telemetry or data exfiltration. Manual review is recommended.",
+      "remediation": "Verify the destination URL is trusted and necessary. Remove or replace with documented APIs. Ensure no secrets, tokens, or PII are transmitted.",
+      "code_snippet": "  // the agent's held-open CLI call.\n\n  function postAgentTargetResult(targetId, result) {\n    fetch('http://localhost' + PORT + '/agent-target-result?token=' + TOKEN, {\n      method: 'POST',\n      headers: { 'Content-Type': 'application/json' },\n      body: JSON.stringify({ token: TOKEN, targetId, clientId: AGENT_TARGET_CLIENT_ID, ...result }),",
+      "intent": null,
+      "tags": [
+        "Data Exfiltration"
+      ],
+      "evidence": {},
+      "match_fingerprint": "ce5457a97296ed38ff2c0b474a06aba0cd5842df4620ef5540b2fd95e864be29",
+      "occurrences": [
+        {
+          "file": "scripts/live-browser.js",
+          "start_line": 7252,
+          "end_line": null,
+          "start_column": 4
+        }
+      ]
+    },
+    {
+      "id": "E1",
+      "finding_id": "finding-132e60e6b8ba4875b5a60f7b748e7127",
+      "category": "Data Exfiltration",
+      "pattern": "External Transmission",
+      "severity": "MEDIUM",
+      "confidence": 0.7,
+      "location": {
+        "file": "scripts/live-browser.js",
+        "start_line": 7374,
+        "end_line": null,
+        "start_column": 11
+      },
+      "finding": "fetch('http://localhost' + PORT + '/agent-target-claim?token=' + TOKEN, {\r\n      method: 'POST'",
+      "explanation": "Data is being sent to an external URL. This could be legitimate telemetry or data exfiltration. Manual review is recommended.",
+      "remediation": "Verify the destination URL is trusted and necessary. Remove or replace with documented APIs. Ensure no secrets, tokens, or PII are transmitted.",
+      "code_snippet": "  }\n\n  function claimAgentTarget(targetId, report) {\n    return fetch('http://localhost' + PORT + '/agent-target-claim?token=' + TOKEN, {\n      method: 'POST',\n      headers: { 'Content-Type': 'application/json' },\n      body: JSON.stringify({ token: TOKEN, targetId, clientId: AGENT_TARGET_CLIENT_ID, ...report }),",
+      "intent": null,
+      "tags": [
+        "Data Exfiltration"
+      ],
+      "evidence": {},
+      "match_fingerprint": "6522d9641884dd6ef12c3cdc4c76f70dac2785574f90eb12f1ef06fc9b6410e4",
+      "occurrences": [
+        {
+          "file": "scripts/live-browser.js",
+          "start_line": 7374,
+          "end_line": null,
+          "start_column": 11
+        }
+      ]
+    }
+  ],
+  "suppressed_count": 0,
+  "suppressed": [],
+  "metadata": {
+    "has_executable_scripts": true,
+    "skillspector_version": "2.12.0",
+    "llm_requested": false,
+    "llm_available": false,
+    "meta_analysis_applied": false,
+    "inference_usage": [],
+    "llm_provenance": {
+      "schema_version": 1,
+      "provider": {
+        "configured_adapter": "unknown",
+        "resolved_adapter": "unknown",
+        "effective_adapter": "not_applicable",
+        "effective_adapters": [],
+        "service": "unknown",
+        "routing": {
+          "deployment_override": null,
+          "deployment_source": "unknown",
+          "api_version": null,
+          "api_version_source": "unknown"
+        }
+      },
+      "analyzers": [
+        {
+          "analyzer_id": "mcp_tool_poisoning",
+          "model": "z-ai/glm-5.3",
+          "model_source": "resolved_configuration",
+          "analyzer_revision": {
+            "value": "2.12.0",
+            "source": "skillspector_package",
+            "source_revision": {
+              "value": "d7338f58200a9ae2a24810cee08911ab68b107a7",
+              "source": "package_vcs_metadata"
+            }
+          }
+        },
+        {
+          "analyzer_id": "semantic_developer_intent",
+          "model": "z-ai/glm-5.3",
+          "model_source": "resolved_configuration",
+          "analyzer_revision": {
+            "value": "2.12.0",
+            "source": "skillspector_package",
+            "source_revision": {
+              "value": "d7338f58200a9ae2a24810cee08911ab68b107a7",
+              "source": "package_vcs_metadata"
+            }
+          }
+        },
+        {
+          "analyzer_id": "semantic_quality_policy",
+          "model": "z-ai/glm-5.3",
+          "model_source": "resolved_configuration",
+          "analyzer_revision": {
+            "value": "2.12.0",
+            "source": "skillspector_package",
+            "source_revision": {
+              "value": "d7338f58200a9ae2a24810cee08911ab68b107a7",
+              "source": "package_vcs_metadata"
+            }
+          }
+        },
+        {
+          "analyzer_id": "semantic_security_discovery",
+          "model": "z-ai/glm-5.3",
+          "model_source": "resolved_configuration",
+          "analyzer_revision": {
+            "value": "2.12.0",
+            "source": "skillspector_package",
+            "source_revision": {
+              "value": "d7338f58200a9ae2a24810cee08911ab68b107a7",
+              "source": "package_vcs_metadata"
+            }
+          }
+        },
+        {
+          "analyzer_id": "meta_analyzer",
+          "model": "z-ai/glm-5.3",
+          "model_source": "resolved_configuration",
+          "analyzer_revision": {
+            "value": "2.12.0",
+            "source": "skillspector_package",
+            "source_revision": {
+              "value": "d7338f58200a9ae2a24810cee08911ab68b107a7",
+              "source": "package_vcs_metadata"
+            }
+          }
+        }
+      ],
+      "sampling": {
+        "temperature": {
+          "requested": null,
+          "source": "provider_default",
+          "forwarded_to_client": null,
+          "adapter_support": false,
+          "provider_support": "unknown"
+        },
+        "seed": {
+          "requested": null,
+          "source": "unset",
+          "forwarded_to_client": null,
+          "adapter_support": false,
+          "provider_support": "unknown"
+        },
+        "reasoning_effort": {
+          "requested": null,
+          "source": "provider_default",
+          "forwarded_to_client": null,
+          "adapter_support": false,
+          "provider_support": "unknown"
+        }
+      },
+      "determinism": {
+        "classification": "not_applicable",
+        "control_status": "not_applied",
+        "provider_guarantee": false,
+        "reason": "LLM analysis was not executed for this scan."
+      }
+    },
+    "filtering_mode": "heuristic"
+  },
+  "execution_successful": true,
+  "analysis_completeness": {
+    "total_components": 57,
+    "scanned_components": 50,
+    "coverage_percent": 87.7,
+    "is_complete": false,
+    "status": "partial",
+    "execution_successful": true,
+    "fully_inspected_files": 50,
+    "partially_inspected_files": 7,
+    "entirely_uninspected_files": 0,
+    "ledger_exceptions": [
+      {
+        "outcome": "partial",
+        "phase": "static",
+        "reason_code": "static_parse_limit",
+        "message": "A security-relevant expression exceeded a bounded static parser's span limit.",
+        "path": "reference/harden.md",
+        "start_line": null,
+        "end_line": null,
+        "fatal": false,
+        "analyzers": [
+          "static_patterns_tool_misuse"
+        ]
+      },
+      {
+        "outcome": "partial",
+        "phase": "static",
+        "reason_code": "static_parse_limit",
+        "message": "A security-relevant expression exceeded a bounded static parser's span limit.",
+        "path": "reference/live-setup.md",
+        "start_line": null,
+        "end_line": null,
+        "fatal": false,
+        "analyzers": [
+          "static_patterns_tool_misuse"
+        ]
+      },
+      {
+        "outcome": "partial",
+        "phase": "static",
+        "reason_code": "static_parse_limit",
+        "message": "A security-relevant expression exceeded a bounded static parser's span limit.",
+        "path": "reference/live.md",
+        "start_line": null,
+        "end_line": null,
+        "fatal": false,
+        "analyzers": [
+          "static_patterns_tool_misuse"
+        ]
+      },
+      {
+        "outcome": "partial",
+        "phase": "static",
+        "reason_code": "static_parse_limit",
+        "message": "A security-relevant expression exceeded a bounded static parser's span limit.",
+        "path": "scripts/data/font-index.json",
+        "start_line": null,
+        "end_line": null,
+        "fatal": false,
+        "analyzers": [
+          "static_patterns_tool_misuse"
+        ]
+      },
+      {
+        "outcome": "partial",
+        "phase": "static",
+        "reason_code": "static_parse_limit",
+        "message": "A security-relevant expression exceeded a bounded static parser's span limit.",
+        "path": "scripts/live-browser-ignores.js",
+        "start_line": null,
+        "end_line": null,
+        "fatal": false,
+        "analyzers": [
+          "static_patterns_tool_misuse"
+        ]
+      },
+      {
+        "outcome": "partial",
+        "phase": "static",
+        "reason_code": "obfuscated_instruction_text",
+        "message": "Obfuscated instruction text could not be fully evaluated by the deterministic layer.",
+        "path": "scripts/live-browser.js",
+        "start_line": null,
+        "end_line": null,
+        "fatal": false,
+        "analyzers": [
+          "static_patterns_agent_snooping",
+          "static_patterns_anti_refusal",
+          "static_patterns_deserialization",
+          "static_patterns_excessive_agency",
+          "static_patterns_harmful_content",
+          "static_patterns_memory_poisoning",
+          "static_patterns_privilege_escalation",
+          "static_patterns_prompt_injection",
+          "static_patterns_rogue_agent",
+          "static_patterns_ssrf",
+          "static_patterns_supply_chain",
+          "static_patterns_system_prompt_leakage"
+        ]
+      },
+      {
+        "outcome": "partial",
+        "phase": "static",
+        "reason_code": "static_parse_limit",
+        "message": "A security-relevant expression exceeded a bounded static parser's span limit.",
+        "path": "scripts/live-browser.js",
+        "start_line": null,
+        "end_line": null,
+        "fatal": false,
+        "analyzers": [
+          "static_patterns_tool_misuse"
+        ]
+      },
+      {
+        "outcome": "partial",
+        "phase": "static",
+        "reason_code": "obfuscated_instruction_text",
+        "message": "Obfuscated instruction text could not be fully evaluated by the deterministic layer.",
+        "path": "scripts/modern-screenshot.umd.js",
+        "start_line": null,
+        "end_line": null,
+        "fatal": false,
+        "analyzers": [
+          "static_patterns_agent_snooping",
+          "static_patterns_anti_refusal",
+          "static_patterns_deserialization",
+          "static_patterns_excessive_agency",
+          "static_patterns_harmful_content",
+          "static_patterns_memory_poisoning",
+          "static_patterns_privilege_escalation",
+          "static_patterns_prompt_injection",
+          "static_patterns_rogue_agent",
+          "static_patterns_ssrf",
+          "static_patterns_supply_chain",
+          "static_patterns_system_prompt_leakage"
+        ]
+      },
+      {
+        "outcome": "partial",
+        "phase": "static",
+        "reason_code": "static_parse_limit",
+        "message": "A security-relevant expression exceeded a bounded static parser's span limit.",
+        "path": "scripts/modern-screenshot.umd.js",
+        "start_line": null,
+        "end_line": null,
+        "fatal": false,
+        "analyzers": [
+          "static_patterns_tool_misuse"
+        ]
+      }
+    ],
+    "scope_exclusions": [],
+    "analyzer_statuses": [
+      {
+        "analyzer_id": "artifact_integrity",
+        "status": "completed",
+        "planned_work": 57,
+        "completed": 57,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "behavioral_ast",
+        "status": "not_applicable",
+        "planned_work": 0,
+        "completed": 0,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0,
+        "reason_code": "no_applicable_files",
+        "message": "No files matched this analyzer's applicability contract."
+      },
+      {
+        "analyzer_id": "behavioral_taint_tracking",
+        "status": "not_applicable",
+        "planned_work": 0,
+        "completed": 0,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0,
+        "reason_code": "no_applicable_files",
+        "message": "No files matched this analyzer's applicability contract."
+      },
+      {
+        "analyzer_id": "bundled_execution_surface",
+        "status": "not_applicable",
+        "planned_work": 0,
+        "completed": 0,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0,
+        "reason_code": "no_applicable_files",
+        "message": "No files matched this analyzer's applicability contract."
+      },
+      {
+        "analyzer_id": "mcp_least_privilege",
+        "status": "completed",
+        "planned_work": 8,
+        "completed": 8,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "mcp_rug_pull",
+        "status": "completed",
+        "planned_work": 57,
+        "completed": 57,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "mcp_tool_poisoning",
+        "status": "completed",
+        "planned_work": 1,
+        "completed": 1,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "meta_analyzer",
+        "status": "disabled",
+        "planned_work": 0,
+        "completed": 0,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0,
+        "reason_code": "disabled_by_configuration",
+        "message": "Analyzer was disabled by the requested configuration."
+      },
+      {
+        "analyzer_id": "reference_coverage",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "semantic_developer_intent",
+        "status": "disabled",
+        "planned_work": 0,
+        "completed": 0,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0,
+        "reason_code": "disabled_by_configuration",
+        "message": "Analyzer was disabled by the requested configuration."
+      },
+      {
+        "analyzer_id": "semantic_quality_policy",
+        "status": "disabled",
+        "planned_work": 0,
+        "completed": 0,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0,
+        "reason_code": "disabled_by_configuration",
+        "message": "Analyzer was disabled by the requested configuration."
+      },
+      {
+        "analyzer_id": "semantic_security_discovery",
+        "status": "disabled",
+        "planned_work": 0,
+        "completed": 0,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0,
+        "reason_code": "disabled_by_configuration",
+        "message": "Analyzer was disabled by the requested configuration."
+      },
+      {
+        "analyzer_id": "static_patterns_agent_snooping",
+        "status": "degraded",
+        "planned_work": 57,
+        "completed": 55,
+        "partial": 2,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_anti_refusal",
+        "status": "degraded",
+        "planned_work": 57,
+        "completed": 55,
+        "partial": 2,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_data_exfiltration",
+        "status": "completed",
+        "planned_work": 57,
+        "completed": 57,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_deserialization",
+        "status": "degraded",
+        "planned_work": 57,
+        "completed": 55,
+        "partial": 2,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_excessive_agency",
+        "status": "degraded",
+        "planned_work": 57,
+        "completed": 55,
+        "partial": 2,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_harmful_content",
+        "status": "degraded",
+        "planned_work": 57,
+        "completed": 55,
+        "partial": 2,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_memory_poisoning",
+        "status": "degraded",
+        "planned_work": 57,
+        "completed": 55,
+        "partial": 2,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_output_handling",
+        "status": "completed",
+        "planned_work": 57,
+        "completed": 57,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_privilege_escalation",
+        "status": "degraded",
+        "planned_work": 57,
+        "completed": 55,
+        "partial": 2,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_prompt_injection",
+        "status": "degraded",
+        "planned_work": 57,
+        "completed": 55,
+        "partial": 2,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_rogue_agent",
+        "status": "degraded",
+        "planned_work": 57,
+        "completed": 55,
+        "partial": 2,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_ssrf",
+        "status": "degraded",
+        "planned_work": 57,
+        "completed": 55,
+        "partial": 2,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_supply_chain",
+        "status": "degraded",
+        "planned_work": 57,
+        "completed": 55,
+        "partial": 2,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_system_prompt_leakage",
+        "status": "degraded",
+        "planned_work": 57,
+        "completed": 55,
+        "partial": 2,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_tool_misuse",
+        "status": "degraded",
+        "planned_work": 57,
+        "completed": 50,
+        "partial": 7,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_yara",
+        "status": "completed",
+        "planned_work": 57,
+        "completed": 57,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      }
+    ],
+    "references": [
+      {
+        "source_path": "SKILL.md",
+        "line": 20,
+        "column": 126,
+        "evidence": "table reference for an explicit/implied sub-command, or [reference/new-work.md](reference/new-work.md) for a new surface or replacement visual world. Inspect ta",
+        "target_path": "reference/new-work.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "markdown_link"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 20,
+        "column": 103,
+        "evidence": "playbook: its Commands-table reference for an explicit/implied sub-command, or [reference/new-work.md](reference/new-work.md) for a new surface or replacement v",
+        "target_path": "reference/new-work.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "plain_path"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 21,
+        "column": 76,
+        "evidence": "3. After resolving analysis and direction, read [reference/craft-floor.md](reference/craft-floor.md) immediately before any UI edit, including small refinements",
+        "target_path": "reference/craft-floor.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "markdown_link"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 21,
+        "column": 50,
+        "evidence": "3. After resolving analysis and direction, read [reference/craft-floor.md](reference/craft-floor.md) immediately before any UI edit, including small refinements",
+        "target_path": "reference/craft-floor.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "plain_path"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 23,
+        "column": 338,
+        "evidence": "text, follow applicable steps 2\u20133, including reading [reference/craft-floor.md](reference/craft-floor.md) immediately before any UI edit, and continue through p",
+        "target_path": "reference/craft-floor.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "markdown_link"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 23,
+        "column": 312,
+        "evidence": "hout inventing missing context, follow applicable steps 2\u20133, including reading [reference/craft-floor.md](reference/craft-floor.md) immediately before any UI ed",
+        "target_path": "reference/craft-floor.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "plain_path"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 41,
+        "column": 247,
+        "evidence": "umentation is still Read; a docs index is Read, not Persuade. See [new-work.md](reference/new-work.md) for new surfaces and [operate.md](reference/operate.md) f",
+        "target_path": "reference/new-work.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "markdown_link"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 41,
+        "column": 304,
+        "evidence": "ade. See [new-work.md](reference/new-work.md) for new surfaces and [operate.md](reference/operate.md) for deeper Operate/Read guidance.",
+        "target_path": "reference/operate.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "markdown_link"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 47,
+        "column": 104,
+        "evidence": "| `craft [feature]` | Build | Deprecated alias for an ordinary new-work request | [reference/craft.md](reference/craft.md) |",
+        "target_path": "reference/craft.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "markdown_link"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 47,
+        "column": 84,
+        "evidence": "| `craft [feature]` | Build | Deprecated alias for an ordinary new-work request | [reference/craft.md](reference/craft.md) |",
+        "target_path": "reference/craft.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "plain_path"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 48,
+        "column": 85,
+        "evidence": "| `shape [feature]` | Build | Plan UX/UI before writing code | [reference/shape.md](reference/shape.md) |",
+        "target_path": "reference/shape.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "markdown_link"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 48,
+        "column": 65,
+        "evidence": "| `shape [feature]` | Build | Plan UX/UI before writing code | [reference/shape.md](reference/shape.md) |",
+        "target_path": "reference/shape.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "plain_path"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 49,
+        "column": 88,
+        "evidence": "| `init` | Build | Capture durable product context in PRODUCT.md | [reference/init.md](reference/init.md) |",
+        "target_path": "reference/init.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "markdown_link"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 49,
+        "column": 69,
+        "evidence": "| `init` | Build | Capture durable product context in PRODUCT.md | [reference/init.md](reference/init.md) |",
+        "target_path": "reference/init.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "plain_path"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 50,
+        "column": 96,
+        "evidence": "| `document` | Build | Generate DESIGN.md from existing project code | [reference/document.md](reference/document.md) |",
+        "target_path": "reference/document.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "markdown_link"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 50,
+        "column": 73,
+        "evidence": "| `document` | Build | Generate DESIGN.md from existing project code | [reference/document.md](reference/document.md) |",
+        "target_path": "reference/document.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "plain_path"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 51,
+        "column": 112,
+        "evidence": "| `extract [target]` | Build | Pull reusable tokens and components into design system | [reference/extract.md](reference/extract.md) |",
+        "target_path": "reference/extract.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "markdown_link"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 51,
+        "column": 90,
+        "evidence": "| `extract [target]` | Build | Pull reusable tokens and components into design system | [reference/extract.md](reference/extract.md) |",
+        "target_path": "reference/extract.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "plain_path"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 52,
+        "column": 102,
+        "evidence": "| `critique [target]` | Evaluate | UX design review with heuristic scoring | [reference/critique.md](reference/critique.md) |",
+        "target_path": "reference/critique.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "markdown_link"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 52,
+        "column": 79,
+        "evidence": "| `critique [target]` | Evaluate | UX design review with heuristic scoring | [reference/critique.md](reference/critique.md) |",
+        "target_path": "reference/critique.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "plain_path"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 53,
+        "column": 106,
+        "evidence": "uate | Technical quality checks (a11y, perf, responsive) | [reference/audit.md](reference/audit.md) \u00b7 native: [reference/audit.native.md](reference/audit.native",
+        "target_path": "reference/audit.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "markdown_link"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 53,
+        "column": 86,
+        "evidence": "dit [target]` | Evaluate | Technical quality checks (a11y, perf, responsive) | [reference/audit.md](reference/audit.md) \u00b7 native: [reference/audit.native.md](re",
+        "target_path": "reference/audit.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "plain_path"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 53,
+        "column": 164,
+        "evidence": " [reference/audit.md](reference/audit.md) \u00b7 native: [reference/audit.native.md](reference/audit.native.md) |",
+        "target_path": "reference/audit.native.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "markdown_link"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 53,
+        "column": 137,
+        "evidence": " (a11y, perf, responsive) | [reference/audit.md](reference/audit.md) \u00b7 native: [reference/audit.native.md](reference/audit.native.md) |",
+        "target_path": "reference/audit.native.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "plain_path"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 54,
+        "column": 91,
+        "evidence": "| `polish [target]` | Refine | Final quality pass before shipping | [reference/polish.md](reference/polish.md) |",
+        "target_path": "reference/polish.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "markdown_link"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 54,
+        "column": 70,
+        "evidence": "| `polish [target]` | Refine | Final quality pass before shipping | [reference/polish.md](reference/polish.md) |",
+        "target_path": "reference/polish.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "plain_path"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 55,
+        "column": 86,
+        "evidence": "| `bolder [target]` | Refine | Amplify safe or bland designs | [reference/bolder.md](reference/bolder.md) |",
+        "target_path": "reference/bolder.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "markdown_link"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 55,
+        "column": 65,
+        "evidence": "| `bolder [target]` | Refine | Amplify safe or bland designs | [reference/bolder.md](reference/bolder.md) |",
+        "target_path": "reference/bolder.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "plain_path"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 56,
+        "column": 106,
+        "evidence": "| `quieter [target]` | Refine | Tone down aggressive or overstimulating designs | [reference/quieter.md](reference/quieter.md) |",
+        "target_path": "reference/quieter.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "markdown_link"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 56,
+        "column": 84,
+        "evidence": "| `quieter [target]` | Refine | Tone down aggressive or overstimulating designs | [reference/quieter.md](reference/quieter.md) |",
+        "target_path": "reference/quieter.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "plain_path"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 57,
+        "column": 94,
+        "evidence": "| `distill [target]` | Refine | Strip to essence, remove complexity | [reference/distill.md](reference/distill.md) |",
+        "target_path": "reference/distill.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "markdown_link"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 57,
+        "column": 72,
+        "evidence": "| `distill [target]` | Refine | Strip to essence, remove complexity | [reference/distill.md](reference/distill.md) |",
+        "target_path": "reference/distill.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "plain_path"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 58,
+        "column": 99,
+        "evidence": "| `harden [target]` | Refine | Production-ready: errors, i18n, edge cases | [reference/harden.md](reference/harden.md) |",
+        "target_path": "reference/harden.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "markdown_link"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 58,
+        "column": 78,
+        "evidence": "| `harden [target]` | Refine | Production-ready: errors, i18n, edge cases | [reference/harden.md](reference/harden.md) |",
+        "target_path": "reference/harden.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "plain_path"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 59,
+        "column": 107,
+        "evidence": "| `onboard [target]` | Refine | Design first-run flows, empty states, activation | [reference/onboard.md](reference/onboard.md) |",
+        "target_path": "reference/onboard.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "markdown_link"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 59,
+        "column": 85,
+        "evidence": "| `onboard [target]` | Refine | Design first-run flows, empty states, activation | [reference/onboard.md](reference/onboard.md) |",
+        "target_path": "reference/onboard.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "plain_path"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 60,
+        "column": 96,
+        "evidence": "| `animate [target]` | Enhance | Add purposeful animations and motion | [reference/animate.md](reference/animate.md) |",
+        "target_path": "reference/animate.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "markdown_link"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 60,
+        "column": 74,
+        "evidence": "| `animate [target]` | Enhance | Add purposeful animations and motion | [reference/animate.md](reference/animate.md) |",
+        "target_path": "reference/animate.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "plain_path"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 61,
+        "column": 102,
+        "evidence": "| `colorize [target]` | Enhance | Add strategic color to monochromatic UIs | [reference/colorize.md](reference/colorize.md) |",
+        "target_path": "reference/colorize.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "markdown_link"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 61,
+        "column": 79,
+        "evidence": "| `colorize [target]` | Enhance | Add strategic color to monochromatic UIs | [reference/colorize.md](reference/colorize.md) |",
+        "target_path": "reference/colorize.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "plain_path"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 62,
+        "column": 98,
+        "evidence": "| `typeset [target]` | Enhance | Improve typography hierarchy and fonts | [reference/typeset.md](reference/typeset.md) |",
+        "target_path": "reference/typeset.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "markdown_link"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 62,
+        "column": 76,
+        "evidence": "| `typeset [target]` | Enhance | Improve typography hierarchy and fonts | [reference/typeset.md](reference/typeset.md) |",
+        "target_path": "reference/typeset.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "plain_path"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 63,
+        "column": 99,
+        "evidence": "| `layout [target]` | Enhance | Fix spacing, rhythm, and visual hierarchy | [reference/layout.md](reference/layout.md) |",
+        "target_path": "reference/layout.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "markdown_link"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 63,
+        "column": 78,
+        "evidence": "| `layout [target]` | Enhance | Fix spacing, rhythm, and visual hierarchy | [reference/layout.md](reference/layout.md) |",
+        "target_path": "reference/layout.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "plain_path"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 64,
+        "column": 97,
+        "evidence": "| `delight [target]` | Enhance | Add personality and memorable touches | [reference/delight.md](reference/delight.md) |",
+        "target_path": "reference/delight.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "markdown_link"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 64,
+        "column": 75,
+        "evidence": "| `delight [target]` | Enhance | Add personality and memorable touches | [reference/delight.md](reference/delight.md) |",
+        "target_path": "reference/delight.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "plain_path"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 65,
+        "column": 93,
+        "evidence": "| `overdrive [target]` | Enhance | Push past conventional limits | [reference/overdrive.md](reference/overdrive.md) |",
+        "target_path": "reference/overdrive.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "markdown_link"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 65,
+        "column": 69,
+        "evidence": "| `overdrive [target]` | Enhance | Push past conventional limits | [reference/overdrive.md](reference/overdrive.md) |",
+        "target_path": "reference/overdrive.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "plain_path"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 66,
+        "column": 99,
+        "evidence": "| `clarify [target]` | Fix | Improve UX copy, labels, and error messages | [reference/clarify.md](reference/clarify.md) |",
+        "target_path": "reference/clarify.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "markdown_link"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 66,
+        "column": 77,
+        "evidence": "| `clarify [target]` | Fix | Improve UX copy, labels, and error messages | [reference/clarify.md](reference/clarify.md) |",
+        "target_path": "reference/clarify.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "plain_path"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 67,
+        "column": 96,
+        "evidence": "t]` | Fix | Adapt for different devices and screen sizes | [reference/adapt.md](reference/adapt.md) \u00b7 native: [reference/adapt.native.md](reference/adapt.native",
+        "target_path": "reference/adapt.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "markdown_link"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 67,
+        "column": 76,
+        "evidence": "| `adapt [target]` | Fix | Adapt for different devices and screen sizes | [reference/adapt.md](reference/adapt.md) \u00b7 native: [reference/adapt.native.md](referen",
+        "target_path": "reference/adapt.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "plain_path"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 67,
+        "column": 154,
+        "evidence": " [reference/adapt.md](reference/adapt.md) \u00b7 native: [reference/adapt.native.md](reference/adapt.native.md) |",
+        "target_path": "reference/adapt.native.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "markdown_link"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 67,
+        "column": 127,
+        "evidence": " devices and screen sizes | [reference/adapt.md](reference/adapt.md) \u00b7 native: [reference/adapt.native.md](reference/adapt.native.md) |",
+        "target_path": "reference/adapt.native.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "plain_path"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 68,
+        "column": 89,
+        "evidence": "| `optimize [target]` | Fix | Diagnose and fix UI performance | [reference/optimize.md](reference/optimize.md) |",
+        "target_path": "reference/optimize.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "markdown_link"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 68,
+        "column": 66,
+        "evidence": "| `optimize [target]` | Fix | Diagnose and fix UI performance | [reference/optimize.md](reference/optimize.md) |",
+        "target_path": "reference/optimize.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "plain_path"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 69,
+        "column": 119,
+        "evidence": "| `live` | Iterate | Visual variant mode: pick elements in the browser, iterate on alternatives | [reference/live.md](reference/live.md) |",
+        "target_path": "reference/live.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "markdown_link"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 69,
+        "column": 100,
+        "evidence": "| `live` | Iterate | Visual variant mode: pick elements in the browser, iterate on alternatives | [reference/live.md](reference/live.md) |",
+        "target_path": "reference/live.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "plain_path"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 70,
+        "column": 184,
+        "evidence": "to choose from in the live browser; no manual picking | [reference/generate.md](reference/generate.md) |",
+        "target_path": "reference/generate.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "markdown_link"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 70,
+        "column": 161,
+        "evidence": "ves of a named element to choose from in the live browser; no manual picking | [reference/generate.md](reference/generate.md) |",
+        "target_path": "reference/generate.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "plain_path"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 74,
+        "column": 38,
+        "evidence": "- **No argument:** read [routing.md](reference/routing.md) and present its context-aware menu; never auto-run a command.",
+        "target_path": "reference/routing.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "markdown_link"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 76,
+        "column": 73,
+        "evidence": "- **Workflow or command-selection question:** read [Workflow questions](reference/routing.md#workflow-questions).",
+        "target_path": "reference/routing.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "markdown_link"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 84,
+        "column": 235,
+        "evidence": " detector after UI file edits and surfaces findings). Load [reference/hooks.md](reference/hooks.md) when the user invokes it with any argument.",
+        "target_path": "reference/hooks.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "markdown_link"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 84,
+        "column": 215,
+        "evidence": "oject (auto-runs the detector after UI file edits and surfaces findings). Load [reference/hooks.md](reference/hooks.md) when the user invokes it with any argume",
+        "target_path": "reference/hooks.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "plain_path"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 86,
+        "column": 234,
+        "evidence": "rface briefs, the hook) and what this version reads. Load [reference/doctor.md](reference/doctor.md) when the user invokes it, or when they ask what is out of d",
+        "target_path": "reference/doctor.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "markdown_link"
+      },
+      {
+        "source_path": "SKILL.md",
+        "line": 86,
+        "column": 213,
+        "evidence": "s sidecar, config, surface briefs, the hook) and what this version reads. Load [reference/doctor.md](reference/doctor.md) when the user invokes it, or when they",
+        "target_path": "reference/doctor.md",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "plain_path"
+      }
+    ],
+    "limitations": [
+      "Analyzer static_patterns_agent_snooping status: degraded.",
+      "Analyzer static_patterns_anti_refusal status: degraded.",
+      "Analyzer static_patterns_deserialization status: degraded.",
+      "Analyzer static_patterns_excessive_agency status: degraded.",
+      "Analyzer static_patterns_harmful_content status: degraded.",
+      "Analyzer static_patterns_memory_poisoning status: degraded.",
+      "Analyzer static_patterns_privilege_escalation status: degraded.",
+      "Analyzer static_patterns_prompt_injection status: degraded.",
+      "Analyzer static_patterns_rogue_agent status: degraded.",
+      "Analyzer static_patterns_ssrf status: degraded.",
+      "Analyzer static_patterns_supply_chain status: degraded.",
+      "Analyzer static_patterns_system_prompt_leakage status: degraded.",
+      "Analyzer static_patterns_tool_misuse status: degraded."
+    ],
+    "findings_before_filtering": 41,
+    "findings_after_filtering": 41
+  }
+}
