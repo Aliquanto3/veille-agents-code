@@ -24,3 +24,4 @@ Fichier d'état relisible après `/clear`. Protocoles d'origine : section 7 de `
 - 2026-10-24 : réglages sans regret 1, 2 et 6 dans `~/.claude/CLAUDE.md` (section « Plugins, skills et serveurs MCP tiers ») ; 3 et 4 dans agent-cost-kit v0.10.0 (PR #22).
 - 2026-10-24 : `skillOverrides` `bmad-build` et `bmad-build-auto` en `user-invocable-only` (`~/.claude/settings.json`) et ligne du CLAUDE.md racine (implémentation et revue par la chaîne agent-cost-kit).
 - En cours : agent-cost-kit 0.11.0 (listes `tools:` explicites, alerte de dérapage dans mesurer-couts) ; recherche complémentaire `decision-routage` (Jev, routeurs appris, Ollama).
+- 2026-10-24 : Anaël autorise à relancer aussitôt une version élargie (échantillon plus grand : 6 dépôts publics, toutes les transcriptions, bancs publics comme GTFOBins/LOLBAS, Martian code-review-benchmark, FEA-Bench, NoCode-bench, défauts semés par mutation) de tout test dont la première exécution ne permet pas de conclure.
