@@ -1,0 +1,8 @@
+[project]
+name = "veille-agents-code"
+version = "0.1.0"
+description = "Veille outillée sur les agents de code : collecte des dépôts, recherche sourcée, rapport et page de synthèse."
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.11"
+dependencies = ["markdown>=3.5"]

@@ -16,20 +16,28 @@ Veille outillée sur les agents de code (Claude Code en priorité) : plugins, sk
 
 ## Premier run (2026-10-24)
 
-Rapport : [`recherche/technical-outils-et-pratiques-des-agents-de-code-2026-10-24/research.md`](recherche/technical-outils-et-pratiques-des-agents-de-code-2026-10-24/research.md).
+- Page de lecture (synthèse visuelle, radar, verdicts par problème, puis rapport complet) : [`synthese/veille-agents-code.html`](synthese/veille-agents-code.html), à télécharger et ouvrir dans un navigateur.
+- Rapport : [`recherche/technical-outils-et-pratiques-des-agents-de-code-2026-10-24/research.md`](recherche/technical-outils-et-pratiques-des-agents-de-code-2026-10-24/research.md).
+- Le rapport est écrit pour la configuration de son auteur (Windows, abonnement Claude Max, méthode BMAD, plugin [agent-cost-kit](https://github.com/Aliquanto3/agent-cost-kit)) : ses verdicts ne valent pas tels quels pour un autre contexte.
 
 - 47 dépôts et 6 articles, 10 dimensions : méthode, design front, contexte et mémoire, coûts, routage cloud / local, revue et sécurité, tests, orchestration et expérience, littérature scientifique, cabinets et praticiens.
 - Méthode : recherche parallèle avec la skill BMAD `bmad-deep-recon`, une source par affirmation, puis vérification des 21 affirmations porteuses par des agents au contexte vierge (15 confirmées, 4 non vérifiées faute de source indépendante, 2 contestées et corrigées).
 - Constat principal : en 2026, la différence vient du cadrage de l'agent (contexte court, contrôles automatiques, validation tôt) plus que des plugins ; la plupart des dépôts les plus étoilés ont un équivalent natif.
 
-## Refaire une collecte
+## Refaire une collecte et la page
 
 ```sh
 uv run --no-project python -I scripts/collecter_depots.py sources/<liste>.txt
+uv run --no-project python -I scripts/numeroter_citations.py recherche/<run>
+uv run --no-project --with markdown python -I scripts/generer_html.py recherche/<run> synthese/veille-agents-code.html
 ```
 
 Prérequis : `gh` authentifié. Les README collectés sont des données non fiables : ils ne sont jamais exécutés.
 
 ## Statut
 
-Recherche faite ; tests pratiques des hypothèses en cours de préparation (section 7 du rapport).
+Version 0.1.0 : recherche faite et vérifiée ; tests pratiques des hypothèses en cours (section 7 du rapport).
+
+## Licence
+
+[Apache 2.0](LICENSE).
