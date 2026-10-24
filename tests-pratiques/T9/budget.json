@@ -1,0 +1,9 @@
+{
+ "cumul_usd": 0.39092149,
+ "par_bras": {
+  "jev:~typesafe/jev-latest": 0.00711797,
+  "jev:typesafe/jev-1.13": 0.00711797,
+  "llm:openai/gpt-6-luna": 0.0558278,
+  "llm:xiaomi/mimo-v2.6-pro": 0.3208578
+ }
+}
