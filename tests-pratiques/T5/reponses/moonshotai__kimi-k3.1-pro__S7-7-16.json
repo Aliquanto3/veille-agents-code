@@ -1,0 +1,40 @@
+{
+ "modele": "moonshotai/kimi-k3.1-pro",
+ "story": "S7-7-16",
+ "latence_s": 612.7,
+ "usage": {
+  "prompt_tokens": 20789,
+  "completion_tokens": 29316,
+  "total_tokens": 50105,
+  "cost": 0.3333556,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 768,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.3333556,
+   "upstream_inference_prompt_cost": 0.0401956,
+   "upstream_inference_completions_cost": 0.29316
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 28948,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.3333556,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 29316,
+   "cout_usd": 0.3333556,
+   "latence_s": 612.7
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/usine/ui/ecrans.py\",\"ligne\":152,\"severite\":\"Important\",\"description\":\"Le cas de refus n’est pas normalisé : `hors_perimetre` est détecté à partir du texte, mais `outils_appeles` est toujours recopié. Avec une réponse valide dont le texte est `SANS_REPONSE` et dont les outils valent `(\\\"get_meteo\\\",)`, la vue associe donc le badge « Hors périmètre » à `outils == [\\\"get_meteo\\\"]` au lieu du cas « outils : aucun » prévu par la matrice. Le test existant masque ce cas en imposant un tuple d’outils vide.\",\"test_pytest\":\"from usine.contrats.llm import ReponseAgent, StatutControle\\nfrom usine.ui.ecrans import vue_reponse_agent\\n\\n\\ndef test_refus_hors_perimetre_ne_declare_aucun_outil() -> None:\\n    reponse = ReponseAgent(\\n        question=\\\"Budget ?\\\",\\n        texte=\\\"SANS_REPONSE\\\",\\n        outils_appeles=(\\\"get_meteo\\\",),\\n        statut_controle=StatutControle.conforme,\\n    )\\n\\n    vue = vue_reponse_agent(reponse, \\\"SANS_REPONSE\\\")\\n\\n    assert vue.badge_code == \\\"hors_perimetre\\\"\\n    assert vue.outils == []\\n    assert vue.aucun_outil == \\\"aucun\\\"\\n\"}]}"
+}

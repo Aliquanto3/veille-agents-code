@@ -1,0 +1,1147 @@
+diff --git a/src/usine/__main__.py b/src/usine/__main__.py
+new file mode 100644
+index 0000000..4eb3c2e
+--- /dev/null
++++ b/src/usine/__main__.py
+@@ -0,0 +1,6 @@
++"""`python -m usine` : même point d'entrée que le script `usine` (lancement depuis l'UI)."""
++
++from usine.cli import main
++
++if __name__ == "__main__":
++    main()
+diff --git a/src/usine/ui/cli.py b/src/usine/ui/cli.py
+index 4e0bd80..4d0cd09 100644
+--- a/src/usine/ui/cli.py
++++ b/src/usine/ui/cli.py
+@@ -1,2 +1,6 @@
+-"""Sous-application `usine ui` : Interface de démo Streamlit."""
++"""Sous-application `usine ui` : démarre l'interface de démo Streamlit."""
++
++import subprocess
++import sys
++from pathlib import Path
+ 
+@@ -4,7 +8,23 @@ import typer
+ 
+-app = typer.Typer(help="Interface de démo Streamlit.", no_args_is_help=True)
++CHEMIN_APP = Path(__file__).resolve().with_name("app.py")
++"""Page Streamlit lancée par `usine ui`."""
++
++app = typer.Typer(help="Interface de démo Streamlit.")
++
++
++def commande_streamlit() -> list[str]:
++    """`python -m streamlit run <usine/ui/app.py>` avec l'interpréteur courant."""
++    return [sys.executable, "-m", "streamlit", "run", str(CHEMIN_APP)]
+ 
+ 
+-@app.callback()
+-def principal() -> None:
+-    """Interface de démo Streamlit."""
++@app.callback(invoke_without_command=True)
++def ui() -> None:
++    """Démarre la page Streamlit ; la racine est le répertoire courant (ou `USINE_RACINE`)."""
++    try:
++        code = subprocess.run(commande_streamlit(), check=False).returncode
++    except KeyboardInterrupt:
++        code = 0
++    except OSError as exc:
++        typer.echo(f"Erreur : lancement de Streamlit impossible ({exc})", err=True)
++        code = 1
++    raise typer.Exit(code)
+diff --git a/src/usine/composition.py b/src/usine/composition.py
+index 55ae642..db171ac 100644
+--- a/src/usine/composition.py
++++ b/src/usine/composition.py
+@@ -20,2 +20,4 @@ from types import MappingProxyType
+ 
++from pydantic import ValidationError
++
+ from usine.adaptateurs.journal import SourceJournal
+@@ -289,2 +291,34 @@ def lancer_rapport(
+ 
++def mode_repli(racine: Path) -> bool:
++    """Mode repli demandé par `USINE_MODE_REPLI` (environnement ou `racine/.env`), jamais déduit."""
++    try:
++        return Secrets(_env_file=racine / ".env").usine_mode_repli
++    except ValidationError as exc:
++        raise UsineErreur(
++            f"variable d'environnement USINE_MODE_REPLI illisible (attendu : 0 ou 1) : {exc}"
++        ) from exc
++
++
++def consultation_dernier_passage(racine: Path) -> Consultation | None:
++    """`Consultation` du dernier Passage publié sous `racine/sorties/passages/`, ou `None`.
++
++    L'URL Jira vient de `config/jira.yaml` s'il existe, sauf en Mode repli.
++    """
++    racine_passages = racine / REPERTOIRE_SORTIES / "passages"
++    lecteur = ConsultationPassage(racine_passages, racine_passages=racine_passages)
++    manifeste = lecteur.dernier_passage()
++    if manifeste is None:
++        return None
++    chemin_jira = racine / "config" / "jira.yaml"
++    url_jira = None
++    if not mode_repli(racine) and chemin_jira.exists():
++        url_jira = charger_yaml(chemin_jira, ConfigJira).url_site
++    return ConsultationPassage(
++        racine_passages / manifeste.date_arrete.isoformat() / manifeste.passage_id,
++        racine_passages=racine_passages,
++        url_jira=url_jira,
++        date_arrete=manifeste.date_arrete,
++    )
++
++
+ def generer_journal(
+diff --git a/src/usine/ui/carte.py b/src/usine/ui/carte.py
+new file mode 100644
+index 0000000..251fb39
+--- /dev/null
++++ b/src/usine/ui/carte.py
+@@ -0,0 +1,55 @@
++"""Carte météo du dernier Passage, sans Streamlit : lignes à afficher, lues via `Consultation`."""
++
++from collections.abc import Mapping
++from datetime import date
++from types import MappingProxyType
++from typing import Protocol
++
++from usine.contrats.format import formater_date
++from usine.contrats.meteo import Couleur, MeteoEntite
++from usine.contrats.passage import ManifestePassage
++
++LIBELLES_COULEURS: Mapping[Couleur, str] = MappingProxyType(
++    {
++        Couleur.vert: "Vert",
++        Couleur.jaune: "Jaune",
++        Couleur.orange: "Orange",
++        Couleur.rouge: "Rouge",
++    }
++)
++"""Libellé français de chaque couleur de Météo."""
++
++PASTILLES: Mapping[Couleur, str] = MappingProxyType(
++    {Couleur.vert: "🟢", Couleur.jaune: "🟡", Couleur.orange: "🟠", Couleur.rouge: "🔴"}
++)
++"""Pastille affichée devant chaque couleur."""
++
++
++class LectureMeteo(Protocol):
++    """Lectures de la `Consultation` dont la carte a besoin."""
++
++    def manifeste(self) -> ManifestePassage:
++        """Manifeste du Passage lu."""
++        ...
++
++    def meteo(
++        self, date_arrete: date | None = None, entite: str | None = None
++    ) -> tuple[MeteoEntite, ...]:
++        """Météo par Entité à la date (Date d'arrêté du Passage par défaut)."""
++        ...
++
++
++def date_carte(consultation: LectureMeteo) -> str:
++    """Date d'arrêté du Passage, au format `JJ/MM/AAAA`."""
++    return formater_date(consultation.manifeste().date_arrete)
++
++
++def lignes_carte(consultation: LectureMeteo) -> list[dict[str, str]]:
++    """Une ligne par Entité : son code et le libellé français de sa couleur."""
++    return [
++        {
++            "Entité": meteo.entite,
++            "Météo": f"{PASTILLES[meteo.couleur]} {LIBELLES_COULEURS[meteo.couleur]}",
++        }
++        for meteo in consultation.meteo()
++    ]
+diff --git a/src/usine/ui/lancement.py b/src/usine/ui/lancement.py
+new file mode 100644
+index 0000000..9a05109
+--- /dev/null
++++ b/src/usine/ui/lancement.py
+@@ -0,0 +1,54 @@
++"""Lancement de la Chaîne depuis l'UI : `usine rapport` dans un sous-processus non bloquant."""
++
++import subprocess
++import sys
++import tempfile
++from collections.abc import Callable
++from datetime import date
++from pathlib import Path
++from typing import IO
++
++Lanceur = Callable[..., "subprocess.Popen[bytes]"]
++"""Signature de `subprocess.Popen`, injectable en test."""
++
++
++def commande_rapport(date_arrete: date | None = None) -> list[str]:
++    """`python -m usine rapport [--date-arrete AAAA-MM-JJ]` avec l'interpréteur courant."""
++    commande = [sys.executable, "-m", "usine", "rapport"]
++    if date_arrete is not None:
++        commande += ["--date-arrete", date_arrete.isoformat()]
++    return commande
++
++
++def lancer_chaine(
++    racine: Path,
++    date_arrete: date | None = None,
++    popen: Lanceur = subprocess.Popen,
++    erreurs: IO[bytes] | None = None,
++) -> "subprocess.Popen[bytes]":
++    """Démarre `usine rapport` dans `racine` et rend la main aussitôt.
++
++    La sortie standard est ignorée ; l'erreur standard va dans `erreurs` (fichier temporaire
++    lu après la fin du processus, jamais un tube qui pourrait se remplir et le bloquer).
++    """
++    return popen(
++        commande_rapport(date_arrete),
++        cwd=racine,
++        stdin=subprocess.DEVNULL,
++        stdout=subprocess.DEVNULL,
++        stderr=subprocess.DEVNULL if erreurs is None else erreurs,
++    )
++
++
++def fichier_erreurs() -> IO[bytes]:
++    """Fichier temporaire anonyme qui reçoit l'erreur standard de la Chaîne."""
++    return tempfile.TemporaryFile()
++
++
++def lire_erreurs(erreurs: IO[bytes]) -> str:
++    """Contenu du fichier d'erreurs, puis fermeture (le fichier temporaire disparaît)."""
++    try:
++        erreurs.seek(0)
++        return erreurs.read().decode("utf-8", errors="replace").strip()
++    finally:
++        erreurs.close()
+diff --git a/src/usine/ui/progression.py b/src/usine/ui/progression.py
+new file mode 100644
+index 0000000..b9aef14
+--- /dev/null
++++ b/src/usine/ui/progression.py
+@@ -0,0 +1,76 @@
++"""Suivi de la progression d'un Passage lancé depuis l'UI, sans Streamlit (fonctions pures).
++
++Le fichier `sorties/progression/<passage_id>.jsonl` est lu en ouvrir-lire-fermer à chaque
++sondage ; une dernière ligne incomplète (sans saut de ligne) attend le sondage suivant.
++"""
++
++from collections.abc import Iterable, Mapping
++from pathlib import Path
++from types import MappingProxyType
++
++from pydantic import ValidationError
++
++from usine.contrats.erreurs import UsineErreur
++from usine.contrats.passage import Etape, EvenementProgression, StatutEtape
++
++REPERTOIRE_PROGRESSION = Path("sorties") / "progression"
++"""Répertoire des fichiers de progression, relatif à la racine."""
++
++EN_ATTENTE = "en_attente"
++"""État d'une étape sans événement de progression."""
++
++LIBELLES_ETATS: Mapping[str, str] = MappingProxyType(
++    {
++        EN_ATTENTE: "En attente",
++        StatutEtape.en_cours: "En cours",
++        StatutEtape.reussie: "Réussie",
++        StatutEtape.sautee: "Sautée",
++        StatutEtape.echouee: "Échec",
++    }
++)
++"""Libellé français de chaque état d'étape affiché."""
++
++
++def fichiers_progression(racine: Path) -> frozenset[Path]:
++    """Fichiers `*.jsonl` présents dans `racine/sorties/progression/` (vide sans répertoire)."""
++    repertoire = racine / REPERTOIRE_PROGRESSION
++    if not repertoire.is_dir():
++        return frozenset()
++    return frozenset(chemin for chemin in repertoire.glob("*.jsonl") if chemin.is_file())
++
++
++def fichier_nouveau(avant: Iterable[Path], racine: Path) -> Path | None:
++    """Premier fichier de progression apparu depuis `avant`, ou `None`.
++
++    Le nom commence par l'horodatage UTC du Passage : le plus petit nom est le premier lancé.
++    """
++    nouveaux = fichiers_progression(racine) - frozenset(avant)
++    return min(nouveaux, key=lambda chemin: chemin.name) if nouveaux else None
++
++
++def lire_progression(chemin: Path) -> tuple[EvenementProgression, ...]:
++    """Événements des lignes complètes de `chemin`, validés ; dernière ligne partielle ignorée."""
++    try:
++        octets = chemin.read_bytes()
++    except FileNotFoundError:
++        return ()
++    except OSError as exc:
++        raise UsineErreur(f"{chemin} : progression illisible ({exc.strerror or exc})") from exc
++    lignes = octets.split(b"\n")[:-1]  # le dernier segment n'est pas terminé par un saut de ligne
++    evenements: list[EvenementProgression] = []
++    for numero, ligne in enumerate(lignes, start=1):
++        if not ligne.strip():
++            continue
++        try:
++            evenements.append(EvenementProgression.model_validate_json(ligne))
++        except ValidationError as exc:
++            raise UsineErreur(f"{chemin}, ligne {numero} : progression invalide ({exc})") from exc
++    return tuple(evenements)
++
++
++def etat_des_etapes(evenements: Iterable[EvenementProgression]) -> list[tuple[Etape, str]]:
++    """Pour chaque `Etape` dans l'ordre d'AD-8, son dernier statut ou `en_attente`."""
++    derniers: dict[Etape, str] = {}
++    for evenement in evenements:
++        derniers[evenement.etape] = evenement.statut.value
++    return [(etape, derniers.get(etape, EN_ATTENTE)) for etape in Etape]
+diff --git a/src/usine/ui/app.py b/src/usine/ui/app.py
+new file mode 100644
+index 0000000..56835de
+--- /dev/null
++++ b/src/usine/ui/app.py
+@@ -0,0 +1,190 @@
++"""Page Streamlit minimale : bandeau Mode repli, carte météo, lancement et suivi de la Chaîne.
++
++La page lit le dernier Passage publié via `Consultation` seulement, et la progression d'un
++Passage lancé dans `sorties/progression/`. Elle n'écrit rien sous `sorties/` et n'exécute
++jamais la Chaîne dans son propre processus : `usine rapport` tourne dans un sous-processus.
++La racine est `USINE_RACINE` si elle est définie, sinon le répertoire courant.
++"""
++
++import os
++import subprocess
++from pathlib import Path
++from typing import IO
++
++import streamlit as st
++
++from usine import composition
++from usine.contrats.erreurs import UsineErreur
++from usine.ui import carte, lancement, progression
++
++# Pas de chaîne isolée au niveau du module : la « magie » Streamlit l'afficherait.
++INTERVALLE_SONDAGE = 1.0  # secondes entre deux lectures de la progression, Chaîne en cours
++LIGNES_ERREUR_MAX = 20  # dernières lignes de l'erreur standard affichées en cas d'échec
++
++_PROCESSUS = "processus"
++_AVANT = "fichiers_avant"
++_FICHIER = "fichier_progression"
++_RACINE = "racine_lancement"
++_ERREUR = "erreur_chaine"
++_FIN_VUE = "fin_vue"
++_FICHIER_ERREURS = "fichier_erreurs"
++_ECHEC_LANCEMENT = "echec_lancement"
++
++
++def racine_courante() -> Path:
++    """`USINE_RACINE` si elle est définie et non vide, sinon le répertoire courant."""
++    racine = os.environ.get("USINE_RACINE", "").strip()
++    return Path(racine) if racine else Path.cwd()
++
++
++def afficher_bandeau(racine: Path) -> None:
++    """Bandeau permanent en tête de page quand `USINE_MODE_REPLI=1` (jamais automatique)."""
++    try:
++        repli = composition.mode_repli(racine)
++    except UsineErreur as exc:
++        st.error(str(exc))
++        return
++    if repli:
++        st.warning(
++            "**Mode repli** : la démo tourne sans Jira ni LLM réels ; aucun lien Jira n'est"
++            " proposé.",
++            icon="⚠️",
++        )
++
++
++def afficher_carte(racine: Path) -> None:
++    """Carte météo du dernier Passage publié, ou message explicite sans Passage."""
++    st.subheader("Carte météo du dernier Passage")
++    if not racine.is_dir():
++        st.error(
++            f"Racine introuvable : {racine} (variable USINE_RACINE ou répertoire courant) ;"
++            " aucun Passage ne peut être lu ni lancé"
++        )
++        return
++    try:
++        consultation = composition.consultation_dernier_passage(racine)
++        if consultation is None:
++            st.info("Aucun Passage publié : lancer la Chaîne pour produire une carte météo.")
++            return
++        date_arrete = carte.date_carte(consultation)
++        lignes = carte.lignes_carte(consultation)
++    except UsineErreur as exc:
++        st.error(f"Lecture du dernier Passage impossible : {exc}")
++        return
++    st.caption(f"Date d'arrêté : {date_arrete}")
++    if lignes:
++        st.table(lignes)
++    else:
++        st.info("Ce Passage ne contient aucune Météo.")
++
++
++def _en_cours() -> bool:
++    """Vrai si un processus de la Chaîne lancé par cette session tourne encore."""
++    processus: subprocess.Popen[bytes] | None = st.session_state.get(_PROCESSUS)
++    return processus is not None and processus.poll() is None
++
++
++def _lancer(racine: Path) -> None:
++    """Rappel du bouton : note les fichiers de progression présents, puis lance la Chaîne.
++
++    Ne relance rien si la Chaîne tourne déjà (onglet périmé, double clic).
++    """
++    if _en_cours():
++        return
++    ancien: IO[bytes] | None = st.session_state.get(_FICHIER_ERREURS)
++    if ancien is not None:
++        ancien.close()
++    st.session_state[_FICHIER_ERREURS] = None
++    st.session_state[_AVANT] = progression.fichiers_progression(racine)
++    st.session_state[_FICHIER] = None
++    st.session_state[_RACINE] = racine
++    st.session_state[_ERREUR] = None
++    st.session_state[_FIN_VUE] = False
++    st.session_state[_ECHEC_LANCEMENT] = None
++    erreurs: IO[bytes] | None = None
++    try:
++        erreurs = lancement.fichier_erreurs()
++        processus = lancement.lancer_chaine(racine, erreurs=erreurs)
++    except OSError as exc:
++        if erreurs is not None:
++            erreurs.close()
++        st.session_state[_PROCESSUS] = None
++        st.session_state[_ECHEC_LANCEMENT] = f"Lancement de la Chaîne impossible : {exc}"
++        return
++    st.session_state[_FICHIER_ERREURS] = erreurs
++    st.session_state[_PROCESSUS] = processus
++
++
++def _erreur() -> str:
++    """Erreur standard du sous-processus terminé, lue une seule fois (fichier alors fermé)."""
++    if st.session_state.get(_ERREUR) is None:
++        erreurs: IO[bytes] | None = st.session_state.get(_FICHIER_ERREURS)
++        st.session_state[_FICHIER_ERREURS] = None
++        st.session_state[_ERREUR] = "" if erreurs is None else lancement.lire_erreurs(erreurs)
++    texte: str = st.session_state[_ERREUR]
++    return texte
++
++
++def _suivre() -> None:
++    """État de chaque étape du Passage lancé, relu à chaque sondage."""
++    processus: subprocess.Popen[bytes] = st.session_state[_PROCESSUS]
++    racine: Path = st.session_state[_RACINE]
++    code = processus.poll()
++    fichier: Path | None = st.session_state.get(_FICHIER)
++    if fichier is None:
++        fichier = progression.fichier_nouveau(st.session_state[_AVANT], racine)
++        st.session_state[_FICHIER] = fichier
++    try:
++        evenements = progression.lire_progression(fichier) if fichier is not None else ()
++    except UsineErreur as exc:
++        st.error(str(exc))
++        evenements = ()
++    st.markdown(
++        "\n".join(
++            f"- **{etape.value}** : {progression.LIBELLES_ETATS[etat]}"
++            for etape, etat in progression.etat_des_etapes(evenements)
++        )
++    )
++    if code is None:
++        st.info("Chaîne en cours…")
++        return
++    message = _erreur() or "aucun message"  # lu et fermé dans les deux issues
++    if code == 0:
++        st.success("Chaîne terminée : Passage publié.")
++    else:
++        fin = "\n".join(message.splitlines()[-LIGNES_ERREUR_MAX:])
++        st.error(f"Échec de la Chaîne (code {code}) : {fin}")
++    if not st.session_state.get(_FIN_VUE):
++        st.session_state[_FIN_VUE] = True
++        st.rerun()  # la page entière relit la carte et cesse de sonder
++
++
++def afficher_lancement(racine: Path) -> None:
++    """Bouton de lancement et suivi de la progression, sans bloquer la page."""
++    st.subheader("Chaîne de reporting")
++    en_cours = _en_cours()
++    st.button(
++        "Lancer la Chaîne",
++        on_click=_lancer,
++        args=(racine,),
++        disabled=en_cours or not racine.is_dir(),
++    )
++    echec = st.session_state.get(_ECHEC_LANCEMENT)
++    if echec:
++        st.error(echec)
++    if st.session_state.get(_PROCESSUS) is None:
++        return
++    st.fragment(run_every=INTERVALLE_SONDAGE if en_cours else None)(_suivre)()
++
++
++def principal() -> None:
++    """Page entière ; le bandeau Mode repli vient en premier, à chaque exécution."""
++    st.set_page_config(page_title="Usine de migration", layout="wide")
++    racine = racine_courante()
++    afficher_bandeau(racine)
++    st.title("Usine de migration")
++    afficher_carte(racine)
++    afficher_lancement(racine)
++
++
++principal()
+diff --git a/tests/unit/ui/__init__.py b/tests/unit/ui/__init__.py
+new file mode 100644
+index 0000000..e69de29
+diff --git a/tests/unit/ui/conftest.py b/tests/unit/ui/conftest.py
+new file mode 100644
+index 0000000..4ec56b2
+--- /dev/null
++++ b/tests/unit/ui/conftest.py
+@@ -0,0 +1,26 @@
++"""Racine d'essai partagée par les tests de l'UI : un Passage publié (graine 42, 2026-10-09)."""
++
++from pathlib import Path
++
++import pytest
++
++from tests.unit.chaine.environnement import DATE_ARRETE, horloge_figee, preparer_racine
++from usine.composition import lancer_rapport
++
++
++@pytest.fixture(scope="module")
++def racine_publiee(tmp_path_factory: pytest.TempPathFactory) -> Path:
++    """Racine où un Passage a été publié à la Date d'arrêté du 09/10/2026."""
++    with pytest.MonkeyPatch.context() as environnement:
++        environnement.delenv("USINE_MODE_REPLI", raising=False)
++        environnement.delenv("USINE_RACINE", raising=False)
++        racine = preparer_racine(tmp_path_factory.mktemp("ui"))
++        lancer_rapport(racine, DATE_ARRETE, horloge_figee(), lambda: "aaaaaa")
++    return racine
++
++
++@pytest.fixture(autouse=True)
++def _sans_mode_repli(monkeypatch: pytest.MonkeyPatch) -> None:
++    """Ni Mode repli ni racine imposés par l'environnement du poste."""
++    monkeypatch.delenv("USINE_MODE_REPLI", raising=False)
++    monkeypatch.delenv("USINE_RACINE", raising=False)
+diff --git a/tests/unit/ui/test_cli.py b/tests/unit/ui/test_cli.py
+new file mode 100644
+index 0000000..f7979e6
+--- /dev/null
++++ b/tests/unit/ui/test_cli.py
+@@ -0,0 +1,48 @@
++"""Commande `usine ui` : démarre `streamlit run` sur la page de l'UI."""
++
++import subprocess
++import sys
++from typing import Any
++
++import pytest
++from typer.testing import CliRunner
++
++from usine.cli import app
++from usine.ui import cli as cli_ui
++
++
++def test_aide() -> None:
++    resultat = CliRunner().invoke(app, ["ui", "--help"])
++    assert resultat.exit_code == 0, resultat.output
++
++
++def test_lance_streamlit(monkeypatch: pytest.MonkeyPatch) -> None:
++    appels: list[list[str]] = []
++
++    def executer(commande: list[str], **_options: Any) -> subprocess.CompletedProcess[bytes]:
++        appels.append(commande)
++        return subprocess.CompletedProcess(commande, 3)
++
++    monkeypatch.setattr(subprocess, "run", executer)
++    resultat = CliRunner().invoke(app, ["ui"])
++    assert resultat.exit_code == 3
++    assert appels == [[sys.executable, "-m", "streamlit", "run", str(cli_ui.CHEMIN_APP)]]
++    assert cli_ui.CHEMIN_APP.is_file()
++
++
++def test_interruption(monkeypatch: pytest.MonkeyPatch) -> None:
++    def interrompre(commande: list[str], **_options: Any) -> subprocess.CompletedProcess[bytes]:
++        raise KeyboardInterrupt
++
++    monkeypatch.setattr(subprocess, "run", interrompre)
++    assert CliRunner().invoke(app, ["ui"]).exit_code == 0
++
++
++def test_streamlit_introuvable(monkeypatch: pytest.MonkeyPatch) -> None:
++    def echouer(commande: list[str], **_options: Any) -> subprocess.CompletedProcess[bytes]:
++        raise FileNotFoundError(2, "introuvable", commande[0])
++
++    monkeypatch.setattr(subprocess, "run", echouer)
++    resultat = CliRunner().invoke(app, ["ui"])
++    assert resultat.exit_code == 1
++    assert "lancement de Streamlit impossible" in resultat.stderr
+diff --git a/tests/unit/ui/test_lancement.py b/tests/unit/ui/test_lancement.py
+new file mode 100644
+index 0000000..3fcc7cd
+--- /dev/null
++++ b/tests/unit/ui/test_lancement.py
+@@ -0,0 +1,75 @@
++"""Lancement de `usine rapport` en sous-processus, sans bloquer."""
++
++import subprocess
++import sys
++from datetime import date
++from pathlib import Path
++from typing import Any
++
++from typer.testing import CliRunner
++
++from usine.cli import app
++from usine.ui.lancement import commande_rapport, fichier_erreurs, lancer_chaine, lire_erreurs
++
++
++class _PopenEspion:
++    def __init__(self) -> None:
++        self.appels: list[tuple[list[str], dict[str, Any]]] = []
++
++    def __call__(self, commande: list[str], **options: Any) -> Any:
++        self.appels.append((commande, options))
++        return "processus"
++
++
++def test_commande_et_racine(tmp_path: Path) -> None:
++    espion = _PopenEspion()
++    processus: object = lancer_chaine(tmp_path, popen=espion)
++    assert processus == "processus"
++    ((commande, options),) = espion.appels
++    assert commande == [sys.executable, "-m", "usine", "rapport"]
++    assert options["cwd"] == tmp_path
++    assert options["stdout"] == subprocess.DEVNULL
++
++
++def test_date_arrete_transmise() -> None:
++    assert commande_rapport(date(2026, 10, 9))[-2:] == ["--date-arrete", "2026-10-09"]
++
++
++def test_python_m_usine(tmp_path: Path) -> None:
++    resultat = subprocess.run(
++        [sys.executable, "-m", "usine", "ui", "--help"],
++        cwd=tmp_path,
++        capture_output=True,
++        check=False,
++    )
++    assert resultat.returncode == 0, resultat.stderr
++    assert b"Streamlit" in resultat.stdout
++
++
++def test_erreurs_dans_un_fichier_temporaire(tmp_path: Path) -> None:
++    espion = _PopenEspion()
++    erreurs = fichier_erreurs()
++    lancer_chaine(tmp_path, popen=espion, erreurs=erreurs)
++    assert espion.appels[0][1]["stderr"] is erreurs
++    erreurs.write("Erreur : échec\n".encode())
++    assert lire_erreurs(erreurs) == "Erreur : échec"
++    assert erreurs.closed
++
++
++def test_vrai_processus_erreurs_volumineuses(tmp_path: Path) -> None:
++    script = "import sys; sys.stderr.write('x' * 200_000); sys.exit(2)"
++
++    def popen(commande: list[str], **options: Any) -> "subprocess.Popen[bytes]":
++        return subprocess.Popen([sys.executable, "-c", script], **options)
++
++    erreurs = fichier_erreurs()
++    processus = lancer_chaine(tmp_path, popen=popen, erreurs=erreurs)
++    assert processus.wait(timeout=60) == 2
++    assert lire_erreurs(erreurs) == "x" * 200_000
++    assert erreurs.closed
++
++
++def test_option_date_arrete_de_la_cli() -> None:
++    resultat = CliRunner().invoke(app, ["rapport", "--help"])
++    assert resultat.exit_code == 0
++    assert commande_rapport(date(2026, 10, 9))[-2] in resultat.output
+diff --git a/tests/unit/ui/test_carte.py b/tests/unit/ui/test_carte.py
+new file mode 100644
+index 0000000..b870f68
+--- /dev/null
++++ b/tests/unit/ui/test_carte.py
+@@ -0,0 +1,85 @@
++"""Carte météo : une ligne par Entité, couleur de `Consultation.meteo()` et Date d'arrêté."""
++
++from datetime import UTC, date, datetime
++from decimal import Decimal
++from pathlib import Path
++
++import pytest
++
++from usine.composition import consultation_dernier_passage, mode_repli
++from usine.config import charger_yaml
++from usine.contrats.config import ConfigJira
++from usine.contrats.erreurs import UsineErreur
++from usine.contrats.meteo import Couleur, MeteoEntite
++from usine.contrats.passage import ManifestePassage
++from usine.ui.carte import LIBELLES_COULEURS, date_carte, lignes_carte
++
++
++def test_carte_du_passage_publie(racine_publiee: Path) -> None:
++    consultation = consultation_dernier_passage(racine_publiee)
++    assert consultation is not None
++    lignes = lignes_carte(consultation)
++    assert [ligne["Entité"] for ligne in lignes] == ["ENT-A", "ENT-B"]
++    for ligne, meteo in zip(lignes, consultation.meteo(), strict=True):
++        assert ligne["Météo"].endswith(LIBELLES_COULEURS[meteo.couleur])
++    assert date_carte(consultation) == "09/10/2026"
++
++
++def test_url_jira(racine_publiee: Path, monkeypatch: pytest.MonkeyPatch) -> None:
++    url = charger_yaml(racine_publiee / "config" / "jira.yaml", ConfigJira).url_site.rstrip("/")
++    consultation = consultation_dernier_passage(racine_publiee)
++    assert consultation is not None
++    assert consultation.url_ticket("DEMO-1") == f"{url}/browse/DEMO-1"
++    monkeypatch.setenv("USINE_MODE_REPLI", "1")
++    en_repli = consultation_dernier_passage(racine_publiee)
++    assert en_repli is not None
++    assert en_repli.url_ticket("DEMO-1") is None
++
++
++def test_mode_repli_illisible(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
++    monkeypatch.setenv("USINE_MODE_REPLI", "peut-etre")
++    with pytest.raises(UsineErreur, match="USINE_MODE_REPLI"):
++        mode_repli(tmp_path)
++
++
++def test_sans_passage(tmp_path: Path) -> None:
++    assert consultation_dernier_passage(tmp_path) is None
++
++
++class _ConsultationFigee:
++    def manifeste(self) -> ManifestePassage:
++        instant = datetime(2026, 10, 12, 7, 30, tzinfo=UTC)
++        return ManifestePassage(
++            passage_id="20261012T073000Z-aaaaaa",
++            date_arrete=date(2026, 10, 9),
++            palier=1,
++            source="journal",
++            horodatage_debut=instant,
++            horodatage_fin=instant,
++            version_grille="abc",
++            version_donnees="def",
++            cout_llm_eur=Decimal(0),
++            nb_alignements=0,
++            nb_tickets=0,
++            etapes=(),
++        )
++
++    def meteo(
++        self, date_arrete: date | None = None, entite: str | None = None
++    ) -> tuple[MeteoEntite, ...]:
++        return (
++            MeteoEntite(
++                date_arrete=date(2026, 10, 9),
++                entite="ENT-A",
++                couleur=Couleur.vert,
++                regles=(),
++                version_grille="abc",
++            ),
++        )
++
++
++def test_libelles_francais() -> None:
++    consultation = _ConsultationFigee()
++    assert lignes_carte(consultation) == [{"Entité": "ENT-A", "Météo": "🟢 Vert"}]
++    assert date_carte(consultation) == "09/10/2026"
++    assert set(LIBELLES_COULEURS) == set(Couleur)
+diff --git a/tests/unit/ui/test_progression.py b/tests/unit/ui/test_progression.py
+new file mode 100644
+index 0000000..7684315
+--- /dev/null
++++ b/tests/unit/ui/test_progression.py
+@@ -0,0 +1,105 @@
++"""Suivi de la progression : choix du fichier, lecture ouvrir-lire-fermer, état par étape."""
++
++from datetime import UTC, datetime
++from pathlib import Path
++
++import pytest
++
++from usine.contrats.erreurs import UsineErreur
++from usine.contrats.passage import Etape, EvenementProgression, StatutEtape
++from usine.ui.progression import (
++    EN_ATTENTE,
++    LIBELLES_ETATS,
++    etat_des_etapes,
++    fichier_nouveau,
++    fichiers_progression,
++    lire_progression,
++)
++
++PASSAGE = "20261012T073000Z-aaaaaa"
++INSTANT = datetime(2026, 10, 12, 7, 30, tzinfo=UTC)
++
++
++def _evenement(etape: Etape, statut: StatutEtape) -> EvenementProgression:
++    return EvenementProgression(passage_id=PASSAGE, etape=etape, statut=statut, horodatage=INSTANT)
++
++
++def _ligne(etape: Etape, statut: StatutEtape) -> str:
++    return _evenement(etape, statut).model_dump_json() + "\n"
++
++
++def _repertoire(racine: Path) -> Path:
++    repertoire = racine / "sorties" / "progression"
++    repertoire.mkdir(parents=True, exist_ok=True)
++    return repertoire
++
++
++def test_sans_repertoire_aucun_fichier(tmp_path: Path) -> None:
++    assert fichiers_progression(tmp_path) == frozenset()
++    assert fichier_nouveau(frozenset(), tmp_path) is None
++
++
++def test_le_nouveau_fichier_est_suivi(tmp_path: Path) -> None:
++    repertoire = _repertoire(tmp_path)
++    for nom in ("20261008T070000Z-111111.jsonl", "20261009T070000Z-222222.jsonl"):
++        (repertoire / nom).write_text("", encoding="utf-8")
++    (repertoire / "notes.txt").write_text("", encoding="utf-8")
++    avant = fichiers_progression(tmp_path)
++    assert len(avant) == 2
++    assert fichier_nouveau(avant, tmp_path) is None
++    nouveau = repertoire / "20261012T073000Z-aaaaaa.jsonl"
++    nouveau.write_text("", encoding="utf-8")
++    assert fichier_nouveau(avant, tmp_path) == nouveau
++    (repertoire / "20261012T080000Z-bbbbbb.jsonl").write_text("", encoding="utf-8")
++    assert fichier_nouveau(avant, tmp_path) == nouveau
++
++
++def test_progression_par_etape(tmp_path: Path) -> None:
++    chemin = _repertoire(tmp_path) / f"{PASSAGE}.jsonl"
++    chemin.write_text(
++        _ligne(Etape.extraction, StatutEtape.en_cours)
++        + _ligne(Etape.extraction, StatutEtape.reussie)
++        + _ligne(Etape.instantanes, StatutEtape.en_cours),
++        encoding="utf-8",
++    )
++    etats = dict(etat_des_etapes(lire_progression(chemin)))
++    assert list(etats) == list(Etape)
++    assert etats[Etape.extraction] == StatutEtape.reussie
++    assert etats[Etape.instantanes] == StatutEtape.en_cours
++    assert all(etats[e] == EN_ATTENTE for e in list(Etape)[2:])
++    assert LIBELLES_ETATS[etats[Etape.extraction]] == "Réussie"
++    assert LIBELLES_ETATS[etats[Etape.kpi]] == "En attente"
++
++
++def test_ligne_partielle_ignoree(tmp_path: Path) -> None:
++    chemin = tmp_path / f"{PASSAGE}.jsonl"
++    complete = _ligne(Etape.extraction, StatutEtape.reussie)
++    suivante = _ligne(Etape.instantanes, StatutEtape.en_cours)
++    chemin.write_text(complete + "\n" + suivante[:25], encoding="utf-8")
++    assert lire_progression(chemin) == (_evenement(Etape.extraction, StatutEtape.reussie),)
++    with chemin.open("a", encoding="utf-8") as fichier:
++        fichier.write(suivante[25:])
++    assert len(lire_progression(chemin)) == 2
++
++
++def test_echec_affiche(tmp_path: Path) -> None:
++    chemin = tmp_path / f"{PASSAGE}.jsonl"
++    chemin.write_text(
++        _ligne(Etape.kpi, StatutEtape.en_cours) + _ligne(Etape.kpi, StatutEtape.echouee),
++        encoding="utf-8",
++    )
++    etats = dict(etat_des_etapes(lire_progression(chemin)))
++    assert etats[Etape.kpi] == StatutEtape.echouee
++    assert LIBELLES_ETATS[etats[Etape.kpi]] == "Échec"
++
++
++def test_fichier_absent_et_ligne_invalide(tmp_path: Path) -> None:
++    chemin = tmp_path / f"{PASSAGE}.jsonl"
++    assert lire_progression(chemin) == ()
++    chemin.write_text('{"etape": "inconnue"}\n', encoding="utf-8")
++    with pytest.raises(UsineErreur, match="ligne 1"):
++        lire_progression(chemin)
++
++
++def test_libelles_de_tous_les_etats() -> None:
++    assert set(LIBELLES_ETATS) == {*StatutEtape, EN_ATTENTE}
+diff --git a/tests/unit/ui/test_app.py b/tests/unit/ui/test_app.py
+new file mode 100644
+index 0000000..5dcf4e0
+--- /dev/null
++++ b/tests/unit/ui/test_app.py
+@@ -0,0 +1,274 @@
++"""Page Streamlit (`AppTest`) : bandeau Mode repli, carte météo, lancement et progression."""
++
++import shutil
++from datetime import UTC, datetime
++from functools import partial
++from pathlib import Path
++from typing import IO, Any, cast
++
++import pytest
++import streamlit
++from streamlit.testing.v1 import AppTest
++
++from usine.composition import consultation_dernier_passage, mode_repli
++from usine.contrats.passage import Etape, EvenementProgression, StatutEtape
++from usine.ui import lancement
++from usine.ui.carte import LIBELLES_COULEURS
++
++REPERTOIRE_UI = Path(lancement.__file__).parent
++APP = REPERTOIRE_UI / "app.py"
++
++
++def _page() -> AppTest:
++    return AppTest.from_file(str(APP), default_timeout=60).run()
++
++
++def _textes(page: AppTest) -> str:
++    return "\n".join(str(m.value) for m in page.markdown)
++
++
++def test_carte_meteo(racine_publiee: Path, monkeypatch: pytest.MonkeyPatch) -> None:
++    monkeypatch.chdir(racine_publiee)
++    page = _page()
++    assert not page.exception
++    assert not page.warning
++    consultation = consultation_dernier_passage(racine_publiee)
++    assert consultation is not None
++    table = page.table[0].value
++    assert list(table["Entité"]) == [m.entite for m in consultation.meteo()]
++    for libelle, meteo in zip(table["Météo"], consultation.meteo(), strict=True):
++        assert libelle.endswith(LIBELLES_COULEURS[meteo.couleur])
++    assert "09/10/2026" in page.caption[0].value
++
++
++def test_racine_introuvable(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
++    absente = tmp_path / "absente"
++    monkeypatch.setenv("USINE_RACINE", str(absente))
++    page = _page()
++    assert not page.exception
++    assert any(str(absente) in erreur.value for erreur in page.error)
++    assert not page.info
++    assert page.button[0].disabled
++
++
++def test_sans_passage(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
++    monkeypatch.chdir(tmp_path)
++    page = _page()
++    assert not page.exception
++    assert "Aucun Passage publié" in page.info[0].value
++    assert not page.table
++
++
++def test_mode_repli(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
++    monkeypatch.chdir(tmp_path)
++    monkeypatch.setenv("USINE_MODE_REPLI", "1")
++    assert mode_repli(tmp_path)
++    page = _page()
++    assert "Mode repli" in page.warning[0].value
++    premier = page.main.children[0]
++    assert getattr(premier, "type", None) == "warning"
++
++
++def test_racine_par_variable(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
++    (tmp_path / ".env").write_text("USINE_MODE_REPLI=1\n", encoding="utf-8")
++    monkeypatch.setenv("USINE_RACINE", str(tmp_path))
++    page = _page()
++    assert "Mode repli" in page.warning[0].value
++
++
++def test_mode_repli_illisible(racine_publiee: Path, monkeypatch: pytest.MonkeyPatch) -> None:
++    monkeypatch.chdir(racine_publiee)
++    monkeypatch.setenv("USINE_MODE_REPLI", "peut-etre")
++    page = _page()
++    assert not page.exception
++    assert not page.warning
++    assert any("USINE_MODE_REPLI" in erreur.value for erreur in page.error)
++
++
++def test_passage_illisible(
++    racine_publiee: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    shutil.copytree(racine_publiee / "sorties" / "passages", tmp_path / "sorties" / "passages")
++    for meteo in (tmp_path / "sorties" / "passages").glob("*/*/meteo.json"):
++        meteo.write_text("{illisible", encoding="utf-8")
++    monkeypatch.chdir(tmp_path)
++    page = _page()
++    assert not page.exception
++    assert "Lecture du dernier Passage impossible" in page.error[0].value
++    assert not page.table
++
++
++class _ProcessusFactice:
++    def __init__(self) -> None:
++        self.code: int | None = None
++
++    def poll(self) -> int | None:
++        return self.code
++
++
++class _Lanceur:
++    """`Popen` factice : note chaque appel et écrit `message` dans l'erreur standard reçue."""
++
++    def __init__(self, message: str = "") -> None:
++        self.processus = _ProcessusFactice()
++        self.appels: list[tuple[list[str], dict[str, Any]]] = []
++        self.message = message
++
++    def __call__(self, commande: list[str], **options: Any) -> _ProcessusFactice:
++        self.appels.append((commande, options))
++        erreurs: IO[bytes] = options["stderr"]
++        erreurs.write(self.message.encode("utf-8"))
++        return self.processus
++
++    @property
++    def erreurs(self) -> IO[bytes]:
++        fichier: IO[bytes] = self.appels[-1][1]["stderr"]
++        return fichier
++
++
++def _installer(monkeypatch: pytest.MonkeyPatch, lanceur: Any) -> None:
++    monkeypatch.setattr(
++        lancement,
++        "lancer_chaine",
++        partial(lancement.lancer_chaine, popen=cast(lancement.Lanceur, lanceur)),
++    )
++
++
++def _ligne(etape: Etape, statut: StatutEtape) -> str:
++    instant = datetime(2026, 10, 12, 7, 30, tzinfo=UTC)
++    evenement = EvenementProgression(
++        passage_id="20261012T073000Z-aaaaaa", etape=etape, statut=statut, horodatage=instant
++    )
++    return evenement.model_dump_json() + "\n"
++
++
++def test_lancement_et_progression(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
++    monkeypatch.chdir(tmp_path)
++    lanceur = _Lanceur("Erreur : étape kpi en échec")
++    _installer(monkeypatch, lanceur)
++    ancien = tmp_path / "sorties" / "progression" / "20261008T070000Z-111111.jsonl"
++    ancien.parent.mkdir(parents=True)
++    ancien.write_text(_ligne(Etape.extraction, StatutEtape.echouee), encoding="utf-8")
++
++    page = _page()
++    page.button[0].click().run()
++    assert not page.exception
++    ((commande, options),) = lanceur.appels
++    assert commande[1:] == ["-m", "usine", "rapport"]
++    assert options["cwd"] == tmp_path
++    assert page.button[0].disabled
++    assert "**extraction** : En attente" in _textes(page)
++
++    nouveau = ancien.with_name("20261012T073000Z-aaaaaa.jsonl")
++    nouveau.write_text(
++        _ligne(Etape.extraction, StatutEtape.en_cours)
++        + _ligne(Etape.extraction, StatutEtape.reussie)
++        + _ligne(Etape.instantanes, StatutEtape.en_cours)
++        + '{"partielle',
++        encoding="utf-8",
++    )
++    page.run()
++    textes = _textes(page)
++    assert "**extraction** : Réussie" in textes
++    assert "**instantanes** : En cours" in textes
++    assert "**kpi** : En attente" in textes
++
++    lanceur.processus.code = 1
++    page.run()
++    assert not page.exception
++    assert "étape kpi en échec" in page.error[0].value
++    assert not page.button[0].disabled
++    assert lanceur.erreurs.closed
++
++
++def test_lancement_succes(racine_publiee: Path, monkeypatch: pytest.MonkeyPatch) -> None:
++    monkeypatch.chdir(racine_publiee)
++    lanceur = _Lanceur()
++    lanceur.processus.code = 0
++    _installer(monkeypatch, lanceur)
++    page = _page()
++    page.button[0].click().run()
++    assert not page.exception
++    assert "Chaîne terminée" in page.success[0].value
++    assert list(page.table[0].value["Entité"]) == ["ENT-A", "ENT-B"]
++    assert lanceur.erreurs.closed
++    page.run()
++    assert not page.exception
++    assert len(lanceur.appels) == 1
++
++
++def test_rerun_unique_en_fin_de_chaine(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
++    monkeypatch.chdir(tmp_path)
++    lanceur = _Lanceur()
++    _installer(monkeypatch, lanceur)
++    page = _page()
++    page.button[0].click().run()
++    assert "Chaîne en cours" in page.info[-1].value
++    relances: list[object] = []
++    monkeypatch.setattr(streamlit, "rerun", lambda *args, **kwargs: relances.append(args))
++    lanceur.processus.code = 0
++    page.run()
++    assert len(relances) == 1
++    page.run()
++    assert len(relances) == 1
++
++
++def test_erreur_tronquee(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
++    monkeypatch.chdir(tmp_path)
++    lanceur = _Lanceur("".join(f"trace {n:02d}\n" for n in range(30)))
++    lanceur.processus.code = 1
++    _installer(monkeypatch, lanceur)
++    page = _page()
++    page.button[0].click().run()
++    message = page.error[0].value
++    assert "trace 29" in message
++    assert "trace 10" in message
++    assert "trace 09" not in message
++
++
++def test_progression_invalide(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
++    monkeypatch.chdir(tmp_path)
++    lanceur = _Lanceur()
++    _installer(monkeypatch, lanceur)
++    page = _page()
++    page.button[0].click().run()
++    fichier = tmp_path / "sorties" / "progression" / "20261012T073000Z-aaaaaa.jsonl"
++    fichier.parent.mkdir(parents=True)
++    fichier.write_text('{"etape": "inconnue"}\n', encoding="utf-8")
++    page.run()
++    assert not page.exception
++    assert any(fichier.name in erreur.value and "ligne 1" in erreur.value for erreur in page.error)
++
++
++def test_pas_de_second_lancement(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
++    monkeypatch.chdir(tmp_path)
++    lanceur = _Lanceur()
++    _installer(monkeypatch, lanceur)
++    page = _page()  # bouton encore actif dans cet onglet périmé
++    page.session_state["processus"] = _ProcessusFactice()  # Chaîne déjà en cours
++    page.session_state["racine_lancement"] = tmp_path
++    page.session_state["fichiers_avant"] = frozenset()
++    page.button[0].click().run()
++    assert not page.exception
++    assert lanceur.appels == []
++
++
++def test_lancement_impossible(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
++    monkeypatch.chdir(tmp_path)
++
++    def popen(commande: list[str], **_options: Any) -> Any:
++        raise FileNotFoundError(2, "répertoire introuvable", str(tmp_path / "absent"))
++
++    _installer(monkeypatch, popen)
++    page = _page()
++    page.button[0].click().run()
++    assert not page.exception
++    assert "Lancement de la Chaîne impossible" in page.error[0].value
++    assert not page.button[0].disabled
++
++
++def test_ui_sans_acces_interdit() -> None:
++    interdits = ("entrepot.duckdb", ".en-cours", "duckdb")
++    for chemin in sorted(REPERTOIRE_UI.glob("*.py")):
++        texte = chemin.read_text(encoding="utf-8")
++        assert [m for m in interdits if m in texte] == [], chemin.name

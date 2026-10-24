@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "S2-E0-8",
+ "latence_s": 20.7,
+ "usage": {
+  "prompt_tokens": 15291,
+  "completion_tokens": 875,
+  "total_tokens": 16166,
+  "cost": 0.046976,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 15288,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.046976,
+   "upstream_inference_prompt_cost": 0.038226,
+   "upstream_inference_completions_cost": 0.00875
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 516,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.046976,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 875,
+   "cout_usd": 0.046976,
+   "latence_s": 20.7
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/usine/ui/progression.py\",\"ligne\":50,\"severite\":\"Important\",\"description\":\"Le premier fichier apparu est choisi selon l'ordre lexicographique des identifiants, et non selon son apparition. Deux Passages démarrés dans la même seconde ont le même préfixe horodaté : leur suffixe ne représente pas leur ordre de création. Si le premier fichier porte le suffixe ffffff et le suivant aaaaaa avant le premier sondage, l'UI suit le second Passage, contrairement à la règle de sélection de la spec.\",\"test_pytest\":\"import os\\n\\nfrom usine.ui.progression import fichier_nouveau, fichiers_progression\\n\\n\\ndef test_premier_fichier_apparu_dans_la_meme_seconde(tmp_path):\\n    repertoire = tmp_path / \\\"sorties\\\" / \\\"progression\\\"\\n    repertoire.mkdir(parents=True)\\n    avant = fichiers_progression(tmp_path)\\n\\n    premier = repertoire / \\\"20261012T073000Z-ffffff.jsonl\\\"\\n    premier.write_text(\\\"\\\", encoding=\\\"utf-8\\\")\\n    os.utime(premier, ns=(1791790200100000000, 1791790200100000000))\\n\\n    second = repertoire / \\\"20261012T073000Z-aaaaaa.jsonl\\\"\\n    second.write_text(\\\"\\\", encoding=\\\"utf-8\\\")\\n    os.utime(second, ns=(1791790200200000000, 1791790200200000000))\\n\\n    assert fichier_nouveau(avant, tmp_path) == premier\\n\"}]}"
+}

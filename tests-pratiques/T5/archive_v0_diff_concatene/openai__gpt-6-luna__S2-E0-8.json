@@ -1,0 +1,31 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "S2-E0-8",
+ "latence_s": 45.5,
+ "usage": {
+  "prompt_tokens": 16411,
+  "completion_tokens": 4284,
+  "total_tokens": 20695,
+  "cost": 0.0041933,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 16408,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0041933,
+   "upstream_inference_prompt_cost": 0.0020513,
+   "upstream_inference_completions_cost": 0.002142
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 3987,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.0041933,
+ "finish_reason": "stop",
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/usine/ui/progression.py\",\"ligne\":42,\"severite\":\"Important\",\"description\":\"Quand plusieurs fichiers apparaissent depuis le lancement (par exemple deux Chaînes lancées concurremment), `fichier_nouveau` choisit le nom lexicographiquement minimal, pas le premier fichier apparu. L’horodatage du nom ne garantit pas l’ordre de création du fichier de progression : l’UI peut donc suivre la progression d’une autre Chaîne.\",\"test_pytest\":\"from pathlib import Path\\nimport time\\n\\nfrom usine.ui.progression import fichier_nouveau, fichiers_progression\\n\\n\\ndef test_suit_le_premier_fichier_apparu(tmp_path: Path) -> None:\\n    repertoire = tmp_path / \\\"sorties\\\" / \\\"progression\\\"\\n    repertoire.mkdir(parents=True)\\n    avant = fichiers_progression(tmp_path)\\n\\n    premier = repertoire / \\\"20261013T070000Z-aaaaaa.jsonl\\\"\\n    premier.touch()\\n    time.sleep(0.05)\\n    second = repertoire / \\\"20261012T070000Z-bbbbbb.jsonl\\\"\\n    second.touch()\\n    assert premier.stat().st_ctime_ns < second.stat().st_ctime_ns\\n\\n    assert fichier_nouveau(avant, tmp_path) == premier\\n\"}]}"
+}

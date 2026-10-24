@@ -1,0 +1,40 @@
+{
+ "modele": "xiaomi/mimo-v2.6-pro",
+ "story": "S2-E0-8",
+ "latence_s": 506.2,
+ "usage": {
+  "prompt_tokens": 16136,
+  "completion_tokens": 29776,
+  "total_tokens": 45912,
+  "cost": 0.03292428,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.03292428,
+   "upstream_inference_prompt_cost": 0.00701916,
+   "upstream_inference_completions_cost": 0.02590512
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 28779,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.03292428,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 29776,
+   "cout_usd": 0.03292428,
+   "latence_s": 506.2
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/usine/ui/progression.py\",\"ligne\":21,\"severite\":\"Nit\",\"description\":\"`LIBELLES_ETATS` est annoté `Mapping[str, str]` mais ses clés sont des membres `StatutEtape`, alors que `etat_des_etapes` renvoie `evenement.statut.value` (un `str` nu) et que `app._suivre` fait `LIBELLES_ETATS[etat]`. La résolution ne fonctionne que parce que `StatutEtape` est un enum dérivé de `str` (hash/eq identiques). Si `StatutEtape` devenait un `Enum` simple, `LIBELLES_ETATS[\\\"reussie\\\"]` lèverait `KeyError` et toute l'affichage de progression casserait, sans qu'aucun type ne l'ait signalé. C'est de la robustesse/coherence de typage, pas un defaut demonstrable aujourd'hui.\",\"test_pytest\":null},{\"id\":\"C2\",\"fichier\":\"src/usine/ui/carte.py\",\"ligne\":12,\"severite\":\"Nit\",\"description\":\"`LIBELLES_COULEURS` est un dictionnaire local (\\\"Vert\\\", \\\"Jaune\\\", \\\"Orange\\\", \\\"Rouge\\\") alors que la spec demande explicitement de reprendre `contrats.tickets.LIBELLES` (ou l'equivalent de `rendu`) quand les couleurs y figurent, et n'autorise le dictionnaire local qu'en dernier recours. Rien dans le diff ne documente pourquoi la source partagee n'a pas ete utilisee : risque de derive de vocabulaire entre la carte et le reste du rendu.\",\"test_pytest\":null},{\"id\":\"C3\",\"fichier\":\"tests/unit/ui/test_carte.py\",\"ligne\":24,\"severite\":\"Nit\",\"description\":\"Oracle tautologique : `assert ligne[\\\"Météo\\\"].endswith(LIBELLES_COULEURS[meteo.couleur])` recalcule la valeur attendue avec exactement le meme dictionnaire que `lignes_carte` utilise pour produire la chaine. Ce test ne detecterait jamais un libelle errone. Seul `test_libelles_francais` fige reellement les textes (\\\"🟢 Vert\\\"), et uniquement pour `Couleur.vert`.\",\"test_pytest\":null},{\"id\":\"C4\",\"fichier\":\"src/usine/ui/app.py\",\"ligne\":109,\"severite\":\"Nit\",\"description\":\"`_lancer` ne protege l'appel que par `except OSError`. Le fichier temporaire d'erreurs vient d'etre cree juste avant (`lancement.fichier_erreurs()`) ; si `Popen` (ou la doublure injectee) leve autre chose qu'un `OSError`, `erreurs` reste ouvert (fuite de descripteur) et l'exception remonte en `page.exception`, ce que la page s'efforce ailleurs d'eviter. Un `finally`/`except Exception` fermerait le fichier.\",\"test_pytest\":null},{\"id\":\"C5\",\"fichier\":\"src/usine/composition.py\",\"ligne\":315,\"severite\":\"Nit\",\"description\":\"`consultation_dernier_passage` appelle `mode_repli(racine)`, qui peut lever `UsineErreur` (variable illisible). Cote UI, `afficher_carte` attrape cette erreur et affiche « Lecture du dernier Passage impossible : ... », alors qu'aucun Passage n'est en cause et que le probleme est deja montre par le bandeau. Deux messages d'erreur pour une seule cause, dont un mensonger.\",\"test_pytest\":null},{\"id\":\"C6\",\"fichier\":\"src/usine/ui/progression.py\",\"ligne\":57,\"severite\":\"Nit\",\"description\":\"`fichier_nouveau` choisit `min(nouveaux, key=lambda c: c.name)`, c'est-a-dire le plus petit nom, alors que la spec dit « le premier fichier apparu apres le lancement, absent de la liste prise juste avant ». Avec deux fichiers apparus entre deux sondages (deux sessions qui lancent la Chaine, ou un fichier residuel d'une course), le fichier suivi peut ne pas etre celui du Passage lance. Le cas I/O de la matrice n'a qu'un seul nouveau fichier, donc rien de demonstrable dans les scenarios couverts.\",\"test_pytest\":null}]}"
+}

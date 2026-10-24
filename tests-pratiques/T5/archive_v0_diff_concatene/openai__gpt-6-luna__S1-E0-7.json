@@ -1,0 +1,31 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "S1-E0-7",
+ "latence_s": 53.8,
+ "usage": {
+  "prompt_tokens": 21858,
+  "completion_tokens": 5477,
+  "total_tokens": 27335,
+  "cost": 0.005470675,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 21855,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.005470675,
+   "upstream_inference_prompt_cost": 0.002732175,
+   "upstream_inference_completions_cost": 0.0027385
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 4535,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.005470675,
+ "finish_reason": "stop",
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/usine/ia/controles.py\",\"ligne\":49,\"severite\":\"Important\",\"description\":\"`citations` ignore toute clé dont le projet n'est pas celui d'un ticket autorisé. Ainsi, avec `DEMO-1` autorisé, une phrase qui cite `DEMO-1` et `AUTRE-2` n'est pas rejetée : `AUTRE-2` n'entre jamais dans `cles`. La spec impose pourtant de retirer toute phrase citant une clé absente des tickets autorisés.\",\"test_pytest\":\"from usine.ia.controles import controler_citations\\n\\n\\ndef test_retire_une_phrase_citant_aussi_un_ticket_non_autorise() -> None:\\n    resultat = controler_citations(\\n        \\\"Le ticket DEMO-1 est ouvert avec AUTRE-2.\\\", {\\\"DEMO-1\\\"}\\n    )\\n\\n    assert resultat.texte == \\\"\\\"\\n    assert resultat.phrases_retirees == 1\\n\"},{\"id\":\"C2\",\"fichier\":\"src/usine/ia/passerelle.py\",\"ligne\":250,\"severite\":\"Important\",\"description\":\"La trace sérialise la sortie contrôlée avant ré-identification, mais cette sortie n'est jamais pseudonymisée. Si le fournisseur renvoie une donnée en clair (y compris une donnée présente dans l'entrée), elle est donc écrite en clair dans `EntreeTrace.sortie`, contrairement à l'exigence que la trace ne contienne que des textes pseudonymisés.\",\"test_pytest\":\"import json\\nfrom datetime import UTC, date, datetime\\nfrom types import SimpleNamespace\\n\\nfrom pydantic import BaseModel\\n\\nfrom usine.contrats.llm import ParametresAppel, StatutControle, Tache\\nfrom usine.ia.passerelle import ContexteAppel, Controle, Passerelle\\n\\n\\nCOMPTE = \\\"FR76 3000 6000 0112 3456 7890 189\\\"\\nJETON = \\\"COMPTE_abcdef\\\"\\n\\n\\nclass Sortie(BaseModel):\\n    texte: str\\n\\n\\nclass Pseudonymiseur:\\n    def pseudonymiser(self, texte: str) -> str:\\n        return texte.replace(COMPTE, JETON)\\n\\n    def reidentifier(self, texte: str) -> str:\\n        return texte.replace(JETON, COMPTE)\\n\\n\\nclass Cache:\\n    def lire(self, cle: str) -> str | None:\\n        return None\\n\\n    def ecrire(self, cle: str, brut: str) -> None:\\n        pass\\n\\n\\nclass Fournisseur:\\n    version_modele = \\\"factice:v1\\\"\\n\\n    def generer_structure(self, entree, schema, parametres):\\n        brut = json.dumps({\\\"texte\\\": COMPTE})\\n        return SimpleNamespace(\\n            sortie=schema.model_validate_json(brut),\\n            brut=brut,\\n            jetons_entree=1,\\n            jetons_sortie=1,\\n            version_modele=self.version_modele,\\n        )\\n\\n\\ndef test_trace_ne_contient_pas_une_donnee_en_clair_retournee_par_le_fournisseur() -> None:\\n    passerelle = Passerelle(\\n        Fournisseur(), Pseudonymiseur(), Cache(), lambda: datetime(2025, 1, 1, tzinfo=UTC)\\n    )\\n    contexte = ContexteAppel(\\n        passage_id=\\\"passage-1\\\",\\n        date_arrete=date(2025, 1, 1),\\n        cible=\\\"ENT-1\\\",\\n        version_prompt=\\\"prompt-v1\\\",\\n        version_grille=\\\"grille-v1\\\",\\n        version_donnees=\\\"donnees-v1\\\",\\n        entite=\\\"ENT-1\\\",\\n    )\\n\\n    resultat = passerelle.executer_structure(\\n        f\\\"Compte {COMPTE}\\\",\\n        Sortie,\\n        ParametresAppel(tache=Tache.explication, max_jetons_sortie=10, tentative=0),\\n        contexte,\\n        lambda reponse: Controle(reponse, StatutControle.conforme),\\n    )\\n\\n    assert COMPTE not in resultat.trace.model_dump_json()\\n\"}]}"
+}

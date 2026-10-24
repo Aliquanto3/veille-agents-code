@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "S6-7-15",
+ "latence_s": 47.7,
+ "usage": {
+  "prompt_tokens": 20480,
+  "completion_tokens": 4572,
+  "total_tokens": 25052,
+  "cost": 0.004845925,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 20477,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.004845925,
+   "upstream_inference_prompt_cost": 0.002559925,
+   "upstream_inference_completions_cost": 0.002286
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 4081,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.004845925,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 4572,
+   "cout_usd": 0.004845925,
+   "latence_s": 47.7
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/usine/ui/chaine.py\",\"ligne\":149,\"severite\":\"Important\",\"description\":\"Avant tout lancement, `_avant` vaut une collection vide. `_evenements()` passe donc les fichiers de progression déjà présents à `fichier_nouveau` comme s’ils venaient de la Chaîne courante. Sur une racine avec un historique, `/api/chaine` peut afficher des étapes terminées et un journal périmés dès l’état initial, au lieu d’une progression vide.\",\"test_pytest\":\"from datetime import UTC, datetime\\nfrom pathlib import Path\\n\\nfrom usine.contrats.passage import Etape, EvenementProgression, StatutEtape\\nfrom usine.ui.chaine import GestionChaine\\n\\n\\ndef test_ne_pas_afficher_la_progression_d_un_lancement_anterieur(tmp_path: Path) -> None:\\n    repertoire = tmp_path / \\\"sorties\\\" / \\\"progression\\\"\\n    repertoire.mkdir(parents=True)\\n    evenement = EvenementProgression(\\n        passage_id=\\\"20261012T073000Z-aaaaaa\\\",\\n        etape=Etape.extraction,\\n        statut=StatutEtape.reussie,\\n        horodatage=datetime(2026, 10, 12, 7, 30, tzinfo=UTC),\\n    )\\n    (repertoire / \\\"20261012T073000Z-aaaaaa.jsonl\\\").write_text(\\n        evenement.model_dump_json() + \\\"\\\\n\\\", encoding=\\\"utf-8\\\"\\n    )\\n\\n    vue = GestionChaine(tmp_path).vue(False, None)\\n\\n    assert vue.statut == \\\"attente\\\"\\n    assert vue.terminees == 0\\n    assert vue.journal == []\"},{\"id\":\"C2\",\"fichier\":\"src/usine/ui/chaine.py\",\"ligne\":259,\"severite\":\"Nit\",\"description\":\"Quand le processus vient de démarrer et qu’aucun événement de progression n’est encore disponible, `_annonce` renvoie « Chaîne en cours… ». La spec réserve la région `status` aux changements d’étape, à la fin et à l’échec ; ce message supplémentaire est annoncé au lancement.\" ,\"test_pytest\":null}]}"
+}

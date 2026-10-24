@@ -1,0 +1,15 @@
+openai/gpt-6.1-sol S2-E0-8 : 0.047 $ 21 s, 1 tentative(s), 875 jetons sortis, total 0.05 $
+openai/gpt-6.1-sol S1-E0-7 : 0.062 $ 21 s, 1 tentative(s), 729 jetons sortis, total 0.11 $
+openai/gpt-6-luna S1-E0-7 : 0.004 $ 26 s, 1 tentative(s), 2270 jetons sortis, total 0.11 $
+openai/gpt-6-luna S2-E0-8 : 0.003 $ 32 s, 1 tentative(s), 2919 jetons sortis, total 0.12 $
+openai/gpt-6.1-sol S6-7-15 : 0.060 $ 20 s, 1 tentative(s), 855 jetons sortis, total 0.18 $
+openai/gpt-6-luna S4-7-7 : 0.003 $ 26 s, 1 tentative(s), 2292 jetons sortis, total 0.18 $
+openai/gpt-6.1-sol S7-7-16 : 0.064 $ 41 s, 1 tentative(s), 1519 jetons sortis, total 0.24 $
+openai/gpt-6-luna S3-6-10 : 0.003 $ 38 s, 1 tentative(s), 3387 jetons sortis, total 0.25 $
+openai/gpt-6.1-sol S5-7-10 : 0.056 $ 25 s, 1 tentative(s), 722 jetons sortis, total 0.30 $
+openai/gpt-6.1-sol S4-7-7 : 0.042 $ 12 s, 1 tentative(s), 326 jetons sortis, total 0.34 $
+openai/gpt-6.1-sol S3-6-10 : 0.041 $ 25 s, 1 tentative(s), 952 jetons sortis, total 0.39 $
+openai/gpt-6-luna S6-7-15 : 0.004 $ 38 s, 1 tentative(s), 3373 jetons sortis, total 0.39 $
+openai/gpt-6-luna S5-7-10 : 0.005 $ 48 s, 1 tentative(s), 4195 jetons sortis, total 0.39 $
+openai/gpt-6-luna S7-7-16 : 0.004 $ 38 s, 1 tentative(s), 3708 jetons sortis, total 0.40 $
+total 0.398 $

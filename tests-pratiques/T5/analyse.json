@@ -1,0 +1,264 @@
+{
+ "openai/gpt-6-luna|r1": {
+  "reponses": 7,
+  "reponses_vides": 0,
+  "reponses_tronquees_salvees": 0,
+  "stories_vides": [],
+  "stories_tronquees": [],
+  "cout_usd": 0.028,
+  "latence_totale_s": 275,
+  "latence_moyenne_s": 39,
+  "jetons_entree": 124684,
+  "jetons_sortie": 25714,
+  "reprises_effort_bas": 0,
+  "important": 3,
+  "nit": 2,
+  "classes": {
+   "chaine": 1,
+   "rien": 1,
+   "confirme": 1
+  },
+  "tests": {
+   "echoue_assertion": 3
+  },
+  "porte_validee": 3,
+  "corriges_plus_tard_sur_main": [],
+  "defauts_connus_retrouves": [],
+  "stories_avec_important": [
+   "S1-E0-7",
+   "S3-6-10",
+   "S6-7-15"
+  ]
+ },
+ "xiaomi/mimo-v2.6-pro|r1": {
+  "reponses": 7,
+  "reponses_vides": 5,
+  "reponses_tronquees_salvees": 1,
+  "stories_vides": [
+   "S1-E0-7",
+   "S4-7-7",
+   "S5-7-10",
+   "S6-7-15",
+   "S7-7-16"
+  ],
+  "stories_tronquees": [
+   "S3-6-10"
+  ],
+  "cout_usd": 0.427,
+  "latence_totale_s": 7657,
+  "latence_moyenne_s": 1094,
+  "jetons_entree": 132161,
+  "jetons_sortie": 221776,
+  "reprises_effort_bas": 6,
+  "important": 1,
+  "nit": 7,
+  "classes": {
+   "chaine": 1
+  },
+  "tests": {
+   "echoue_exception": 1
+  },
+  "porte_validee": 1,
+  "corriges_plus_tard_sur_main": [],
+  "defauts_connus_retrouves": [],
+  "stories_avec_important": [
+   "S3-6-10"
+  ]
+ },
+ "openai/gpt-6.1-sol|r1": {
+  "reponses": 7,
+  "reponses_vides": 0,
+  "reponses_tronquees_salvees": 0,
+  "stories_vides": [],
+  "stories_tronquees": [],
+  "cout_usd": 0.37,
+  "latence_totale_s": 142,
+  "latence_moyenne_s": 20,
+  "jetons_entree": 124684,
+  "jetons_sortie": 5861,
+  "reprises_effort_bas": 0,
+  "important": 6,
+  "nit": 0,
+  "classes": {
+   "chaine": 2,
+   "discutable": 3,
+   "confirme": 1
+  },
+  "tests": {
+   "echoue_assertion": 6
+  },
+  "porte_validee": 6,
+  "corriges_plus_tard_sur_main": [],
+  "defauts_connus_retrouves": [],
+  "stories_avec_important": [
+   "S1-E0-7",
+   "S2-E0-8",
+   "S3-6-10",
+   "S6-7-15",
+   "S7-7-16"
+  ]
+ },
+ "moonshotai/kimi-k3.1-pro|r1": {
+  "reponses": 7,
+  "reponses_vides": 0,
+  "reponses_tronquees_salvees": 0,
+  "stories_vides": [],
+  "stories_tronquees": [],
+  "cout_usd": 2.5,
+  "latence_totale_s": 4724,
+  "latence_moyenne_s": 675,
+  "jetons_entree": 134544,
+  "jetons_sortie": 154275,
+  "reprises_effort_bas": 2,
+  "important": 4,
+  "nit": 2,
+  "classes": {
+   "chaine": 2,
+   "confirme": 1,
+   "discutable": 1
+  },
+  "tests": {
+   "echoue_assertion": 4
+  },
+  "porte_validee": 4,
+  "corriges_plus_tard_sur_main": [
+   "moonshotai__kimi-k3.1-pro__S3-6-10__C2"
+  ],
+  "defauts_connus_retrouves": [
+   "S3-6-10:D1"
+  ],
+  "stories_avec_important": [
+   "S1-E0-7",
+   "S3-6-10",
+   "S7-7-16"
+  ]
+ },
+ "openai/gpt-6-luna|r2": {
+  "reponses": 7,
+  "reponses_vides": 0,
+  "reponses_tronquees_salvees": 0,
+  "stories_vides": [],
+  "stories_tronquees": [],
+  "cout_usd": 0.027,
+  "latence_totale_s": 247,
+  "latence_moyenne_s": 35,
+  "jetons_entree": 124684,
+  "jetons_sortie": 22144,
+  "reprises_effort_bas": 0,
+  "important": 4,
+  "nit": 1,
+  "classes": {
+   "chaine": 3,
+   "discutable": 1
+  },
+  "tests": {
+   "echoue_assertion": 2,
+   "echoue_exception": 2
+  },
+  "porte_validee": 4,
+  "corriges_plus_tard_sur_main": [],
+  "defauts_connus_retrouves": [],
+  "stories_avec_important": [
+   "S1-E0-7",
+   "S2-E0-8",
+   "S3-6-10",
+   "S7-7-16"
+  ]
+ },
+ "openai/gpt-6.1-sol|r2": {
+  "reponses": 7,
+  "reponses_vides": 0,
+  "reponses_tronquees_salvees": 0,
+  "stories_vides": [],
+  "stories_tronquees": [],
+  "cout_usd": 0.371,
+  "latence_totale_s": 165,
+  "latence_moyenne_s": 24,
+  "jetons_entree": 124684,
+  "jetons_sortie": 5978,
+  "reprises_effort_bas": 0,
+  "important": 5,
+  "nit": 0,
+  "classes": {
+   "chaine": 2,
+   "rien": 1,
+   "confirme": 1,
+   "discutable": 1
+  },
+  "tests": {
+   "echoue_assertion": 5
+  },
+  "porte_validee": 5,
+  "corriges_plus_tard_sur_main": [],
+  "defauts_connus_retrouves": [],
+  "stories_avec_important": [
+   "S1-E0-7",
+   "S2-E0-8",
+   "S3-6-10",
+   "S6-7-15",
+   "S7-7-16"
+  ]
+ },
+ "exploratoire_v0": {
+  "openai__gpt-6-luna__S1-E0-7__v0_C1": {
+   "merge": "echoue_assertion",
+   "tete": "echoue_assertion",
+   "description": "`citations` ignore toute clé dont le projet n'est pas celui d'un ticket autorisé. Ainsi, avec `DEMO-1` autorisé, une phrase qui cite `DEMO-1` et `AUTRE-2` n'est pas rejetée : `AUTRE-2` n'entre jamais dans `cles`. La spec impose pourtant de retirer toute phrase citant une clé absente des tickets auto"
+  },
+  "openai__gpt-6-luna__S1-E0-7__v0_C2": {
+   "merge": "echoue_exception",
+   "tete": "echoue_exception",
+   "description": "La trace sérialise la sortie contrôlée avant ré-identification, mais cette sortie n'est jamais pseudonymisée. Si le fournisseur renvoie une donnée en clair (y compris une donnée présente dans l'entrée), elle est donc écrite en clair dans `EntreeTrace.sortie`, contrairement à l'exigence que la trace "
+  },
+  "openai__gpt-6-luna__S2-E0-8__v0_C1": {
+   "merge": "echoue_assertion",
+   "tete": "echoue_assertion",
+   "description": "Quand plusieurs fichiers apparaissent depuis le lancement (par exemple deux Chaînes lancées concurremment), `fichier_nouveau` choisit le nom lexicographiquement minimal, pas le premier fichier apparu. L’horodatage du nom ne garantit pas l’ordre de création du fichier de progression : l’UI peut donc "
+  },
+  "openai__gpt-6-luna__S3-6-10__v0_C1": {
+   "merge": "echoue_exception",
+   "tete": "echoue_exception",
+   "description": "Un fichier d’identifiants contenant une valeur vide passe la validation de `charger_identifiants`. `balayer` retire ensuite cette valeur de `par_valeur`, mais construit quand même une expression régulière qui matche la chaîne vide ; l’accès `par_valeur[\"\"]` lève alors `KeyError`, non interceptée par"
+  },
+  "openai__gpt-6-luna__S4-7-7__v0_C1": {
+   "merge": "echoue_assertion",
+   "tete": "ne_s_execute_pas",
+   "description": "Le chemin `rejete` renvoie le texte échappé directement et ignore `explication.citations`. Une clé citée dans le texte de remplacement reste donc du texte simple, sans passer par `lien_ticket` et `url_ticket`, contrairement à la contrainte « Always »."
+  },
+  "openai__gpt-6.1-sol__S1-E0-7__v0_C1": {
+   "merge": "echoue_assertion",
+   "tete": "echoue_assertion",
+   "description": "Le filtrage des citations ignore toutes les clés dont le projet n'apparaît pas dans les tickets autorisés. Avec DEMO-1 autorisé, une phrase citant DEMO-1 et AUTRE-2 est donc conservée et déclarée conforme. La spec impose pourtant de retirer toute phrase citant un ticket non autorisé ; seules les exc"
+  },
+  "openai__gpt-6.1-sol__S1-E0-7__v0_C2": {
+   "merge": "echoue_assertion",
+   "tete": "echoue_assertion",
+   "description": "La ré-identification ne reconnaît pas certains jetons pourtant produits par pseudonymiser. Un préfixe majuscule directement adjacent est absorbé dans le type (IBANCOMPTE_<empreinte>), et un suffixe commençant par a–f ou un chiffre empêche entièrement la reconnaissance. Par exemple, un compte précédé"
+  },
+  "openai__gpt-6.1-sol__S2-E0-8__v0_C1": {
+   "merge": "echoue_assertion",
+   "tete": "echoue_assertion",
+   "description": "Le premier fichier apparu est sélectionné par ordre lexicographique du nom, et non par ordre d'apparition. Si deux Passages démarrent dans la même seconde entre deux sondages, leur suffixe départage arbitrairement les fichiers : un fichier « …-aaaaaa.jsonl » apparu après « …-bbbbbb.jsonl » sera suiv"
+  },
+  "openai__gpt-6.1-sol__S3-6-10__v0_C1": {
+   "merge": "echoue_assertion",
+   "tete": "echoue_assertion",
+   "description": "Les traces JSONL sont balayées sous leur forme sérialisée, sans décodage JSON. Un IBAN contenant des espaces insécables ou des tabulations apparaît donc avec des séquences « \\u00a0 » ou « \\t », que compacter ne retire pas. Le balayage renvoie alors 0 malgré une fuite réelle, contrairement au comport"
+  },
+  "openai__gpt-6.1-sol__S6-7-15__v0_C1": {
+   "merge": "echoue_assertion",
+   "tete": "echoue_assertion",
+   "description": "Avant tout lancement, `_avant` est vide et `_evenements()` recherche déjà un fichier nouveau. Sur une racine contenant la progression d'un ancien Passage, l'écran en statut `attente` affiche donc ses étapes et son journal, éventuellement une étape « En cours » alors qu'aucun processus ne tourne. Il "
+  },
+  "openai__gpt-6.1-sol__S6-7-15__v0_C2": {
+   "merge": "echoue_assertion",
+   "tete": "echoue_assertion",
+   "description": "Une sortie non nulle pendant une étape, sans événement final `echouee` (par exemple un processus tué), donne bien un bandeau d'échec mais laisse cette étape « En cours ». La construction des étapes repose exclusivement sur les événements et ne tient pas compte de la fin du processus. Le scénario d'é"
+  },
+  "openai__gpt-6.1-sol__S7-7-16__v0_C1": {
+   "merge": "echoue_assertion",
+   "tete": "echoue_assertion",
+   "description": "Le refus hors périmètre change le badge, mais conserve systématiquement `reponse.outils_appeles`. Une réponse dont le texte vaut `SANS_REPONSE` et qui contient un outil donne donc une liste non vide au navigateur, contrairement au comportement « outils aucun » exigé pour ce scénario. Le test existan"
+  }
+ }
+}

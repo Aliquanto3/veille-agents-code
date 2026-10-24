@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "S3-6-10",
+ "latence_s": 22.1,
+ "usage": {
+  "prompt_tokens": 12458,
+  "completion_tokens": 1071,
+  "total_tokens": 13529,
+  "cost": 0.0418535,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 12455,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0418535,
+   "upstream_inference_prompt_cost": 0.0311435,
+   "upstream_inference_completions_cost": 0.01071
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 493,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.0418535,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 1071,
+   "cout_usd": 0.0418535,
+   "latence_s": 22.1
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"outils/balayer_sm7.py\",\"ligne\":91,\"severite\":\"Important\",\"description\":\"Le balayage cherche les identifiants dans le JSON sérialisé sans décoder ses chaînes, aussi bien pour les traces que pour les réponses du cache. Un IBAN contenant des espaces insécables sérialisés en « \\\\u00a0 », ou des sauts de ligne sérialisés en « \\\\n », n'est donc pas détecté : compacter retire les blancs réels, pas leurs séquences d'échappement JSON. L'outil renvoie ainsi 0 malgré une fuite, contrairement au balayage exigé quels que soient les blancs. Les tests actuels vérifient ces variantes seulement sur du texte non sérialisé. Il faut également balayer les valeurs décodées des documents JSON.\",\"test_pytest\":\"import json\\nimport sqlite3\\n\\nimport pytest\\n\\nfrom outils.balayer_sm7 import CHEMIN_TRACES_LLM, main\\n\\n\\n@pytest.mark.parametrize(\\\"source\\\", [\\\"trace\\\", \\\"cache\\\"])\\n@pytest.mark.parametrize(\\\"separateur\\\", [\\\"\\\\u00a0\\\", \\\"\\\\n\\\"])\\ndef test_iban_echappe_dans_json_detecte(tmp_path, source, separateur):\\n    iban = \\\"FR46 9999 9143 2694 4104 2320 086\\\"\\n    identifiants = tmp_path / \\\"identifiants.json\\\"\\n    identifiants.write_text(\\n        json.dumps([{\\\"type\\\": \\\"COMPTE\\\", \\\"valeur\\\": iban}]),\\n        encoding=\\\"utf-8\\\",\\n    )\\n    passage = tmp_path / \\\"passage\\\"\\n    traces = passage / CHEMIN_TRACES_LLM\\n    traces.parent.mkdir(parents=True)\\n    contenu = json.dumps({\\\"entree_pseudonymisee\\\": iban.replace(\\\" \\\", separateur)})\\n    traces.write_text((contenu if source == \\\"trace\\\" else \\\"{}\\\") + \\\"\\\\n\\\", encoding=\\\"utf-8\\\")\\n    arguments = [\\\"--passage\\\", str(passage), \\\"--identifiants\\\", str(identifiants)]\\n    if source == \\\"cache\\\":\\n        cache = tmp_path / \\\"cache.sqlite\\\"\\n        with sqlite3.connect(cache) as connexion:\\n            connexion.execute(\\\"CREATE TABLE cache_llm (cle TEXT PRIMARY KEY, brut TEXT NOT NULL)\\\")\\n            connexion.execute(\\\"INSERT INTO cache_llm VALUES (?, ?)\\\", (\\\"test\\\", contenu))\\n        arguments += [\\\"--cache\\\", str(cache)]\\n    assert main(arguments) == 1\\n\"}]}"
+}

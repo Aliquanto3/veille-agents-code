@@ -1,0 +1,47 @@
+{
+ "modele": "xiaomi/mimo-v2.6-pro",
+ "story": "S1-E0-7",
+ "latence_s": 1301.6,
+ "usage": {
+  "prompt_tokens": 23170,
+  "completion_tokens": 32000,
+  "total_tokens": 55170,
+  "cost": 0.0279242748,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 23168,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0279242748,
+   "upstream_inference_prompt_cost": 8.42748e-05,
+   "upstream_inference_completions_cost": 0.02784
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 31999,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.0558485496,
+ "finish_reason": "length",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "length",
+   "jetons_sortis": 32000,
+   "cout_usd": 0.0279242748,
+   "latence_s": 644.5
+  },
+  {
+   "effort": "low",
+   "finish_reason": "length",
+   "jetons_sortis": 32000,
+   "cout_usd": 0.0279242748,
+   "latence_s": 657.1
+  }
+ ],
+ "contenu": ""
+}

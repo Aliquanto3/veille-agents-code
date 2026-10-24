@@ -1,0 +1,31 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "S7-7-16",
+ "latence_s": 33.2,
+ "usage": {
+  "prompt_tokens": 19435,
+  "completion_tokens": 1241,
+  "total_tokens": 20676,
+  "cost": 0.0143592,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 19432,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0143592,
+   "upstream_inference_prompt_cost": 0.0019492,
+   "upstream_inference_completions_cost": 0.01241
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 801,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.0143592,
+ "finish_reason": "stop",
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/usine/ui/ecrans.py\",\"ligne\":158,\"severite\":\"Important\",\"description\":\"Le refus hors périmètre change le badge, mais conserve systématiquement `reponse.outils_appeles`. Une réponse dont le texte vaut `SANS_REPONSE` et qui contient un outil donne donc une liste non vide au navigateur, contrairement au comportement « outils aucun » exigé pour ce scénario. Le test existant ne couvre que le cas où la liste d'outils est déjà vide.\",\"test_pytest\":\"from usine.contrats.llm import ReponseAgent, StatutControle\\nfrom usine.ia.agent.session import SANS_REPONSE\\nfrom usine.ui.ecrans import vue_reponse_agent\\n\\n\\ndef test_refus_hors_perimetre_affiche_aucun_outil():\\n    reponse = ReponseAgent(\\n        question=\\\"Quel est le budget ?\\\",\\n        texte=SANS_REPONSE,\\n        outils_appeles=(\\\"get_meteo\\\",),\\n        statut_controle=StatutControle.conforme,\\n    )\\n\\n    vue = vue_reponse_agent(reponse, SANS_REPONSE)\\n\\n    assert vue.badge_code == \\\"hors_perimetre\\\"\\n    assert vue.outils == []\\n    assert vue.aucun_outil == \\\"aucun\\\"\\n\"},{\"id\":\"C2\",\"fichier\":\"tests/unit/ui/test_ecrans_web.py\",\"ligne\":223,\"severite\":\"Nit\",\"description\":\"`test_agent_indisponible_et_reponse_impossible` attend encore le détail exact « Réponse de l'Agent impossible : fournisseur muet ». Le correctif final de `serveur.py` renvoie désormais volontairement `REPONSE_IMPOSSIBLE`, sans exposer l'exception au navigateur : cette assertion échoue sur l'état fusionné. Actualiser l'attendu et vérifier que « fournisseur muet » est absent du corps HTTP pour préserver la protection ajoutée.\",\"test_pytest\":null}]}"
+}

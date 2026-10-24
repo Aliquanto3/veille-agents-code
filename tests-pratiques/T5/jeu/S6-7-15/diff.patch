@@ -1,0 +1,1413 @@
+diff --git a/src/usine/ui/cli.py b/src/usine/ui/cli.py
+index ece3380..69df185 100644
+--- a/src/usine/ui/cli.py
++++ b/src/usine/ui/cli.py
+@@ -31,2 +31,3 @@ from usine.ports.consultation import Consultation
+ from usine.ui.avant_apres import FICHIER_CONFIG
++from usine.ui.chaine import GestionChaine
+ from usine.ui.serveur import HOTE, LireConsultation, LireManifeste, creer_application
+@@ -192,2 +193,3 @@ def application_web(racine: Path, repli: bool) -> FastAPI:
+         lire_consultation=lecture_consultation(racine),
++        chaine=GestionChaine(racine),
+     )
+diff --git a/src/usine/ui/textes.py b/src/usine/ui/textes.py
+index e6ca68b..0539746 100644
+--- a/src/usine/ui/textes.py
++++ b/src/usine/ui/textes.py
+@@ -33 +33,13 @@ REPLI_ABSENT = (
+ )
++
++# Écran Lancement en Mode repli : bouton visible mais bloqué.
++LANCEMENT_REPLI = (
++    "Mode repli : le lancement de la Chaîne est désactivé. L'UI lit le Passage enregistré"
++    f" `{DOSSIER_REPLI}` ; désactiver le Mode repli pour lancer la Chaîne."
++)
++
++INTERVALLE_SONDAGE = 1.0
++"""Secondes entre deux lectures de la progression, Chaîne en cours."""
++
++LIGNES_ERREUR_MAX = 20
++"""Dernières lignes de l'erreur standard affichées en cas d'échec."""
+diff --git a/src/usine/ui/app.py b/src/usine/ui/app.py
+index f029c1c..ae6b8e2 100644
+--- a/src/usine/ui/app.py
++++ b/src/usine/ui/app.py
+@@ -59,7 +59,18 @@ from usine.ui.liens import echapper_markdown, lien_ticket
+ from usine.ui.navigation import Ecran
+-from usine.ui.textes import BANDEAU_REPLI, DOSSIER_REPLI, REPLI_ABSENT
+-
+-# Pas de chaîne isolée au niveau du module : la « magie » Streamlit l'afficherait.
+-INTERVALLE_SONDAGE = 1.0  # secondes entre deux lectures de la progression, Chaîne en cours
+-LIGNES_ERREUR_MAX = 20  # dernières lignes de l'erreur standard affichées en cas d'échec
++from usine.ui.textes import (
++    BANDEAU_REPLI,
++    DOSSIER_REPLI,
++)
++from usine.ui.textes import (
++    INTERVALLE_SONDAGE as INTERVALLE_SONDAGE,
++)
++from usine.ui.textes import (
++    LANCEMENT_REPLI as LANCEMENT_REPLI,
++)
++from usine.ui.textes import (
++    LIGNES_ERREUR_MAX as LIGNES_ERREUR_MAX,
++)
++from usine.ui.textes import (
++    REPLI_ABSENT as REPLI_ABSENT,
++)
+ 
+@@ -83,8 +94,2 @@ AIDE_REPLI = (
+ 
+-# Écran Lancement en Mode repli : bouton visible mais désactivé.
+-LANCEMENT_REPLI = (
+-    "Mode repli : le lancement de la Chaîne est désactivé. L'UI lit le Passage enregistré"
+-    f" `{_DOSSIER_REPLI}` ; désactiver le Mode repli pour lancer la Chaîne."
+-)
+-
+ 
+diff --git a/src/usine/ui/vues.py b/src/usine/ui/vues.py
+index 6f71e65..f95db91 100644
+--- a/src/usine/ui/vues.py
++++ b/src/usine/ui/vues.py
+@@ -260 +260,86 @@ class VueDetail(_Vue):
+     """Contenu d'une cellule sans valeur (aucun ticket)."""
++
++
++# --- Lancement de la Chaîne et bouton de mode (Story 7.15) ---
++
++EtatEtape = Literal["en_attente", "en_cours", "reussie", "sautee", "echouee"]
++StatutChaine = Literal["attente", "en_cours", "terminee", "echec"]
++
++
++class VueEtape(_Vue):
++    """Une des 10 étapes de la Chaîne et son état."""
++
++    numero: int
++    nom: str
++    description: str
++    etat: EtatEtape
++    libelle_etat: str
++    duree: str | None
++    """Durée de l'étape terminée, déjà formatée (« 0,3 s »)."""
++
++
++class VueBouton(_Vue):
++    """Bouton de l'écran : libellé, blocage (`aria-disabled`) et motif visible sous lui."""
++
++    libelle: str
++    bloque: bool
++    motif: str | None
++
++
++class VueBandeauChaine(_Vue):
++    """Résultat de la dernière Chaîne : succès (`status`) ou échec (`alert`)."""
++
++    variante: Literal["succes", "erreur"]
++    texte: str
++    lignes: list[str]
++    """Au plus `LIGNES_ERREUR_MAX` dernières lignes de l'erreur standard (échec seulement)."""
++    complement: str | None
++    lien: VueLien | None
++
++
++class VueLigneJournal(_Vue):
++    """Ligne horodatée du journal de progression (la plus récente en premier)."""
++
++    horodatage: str
++    texte: str
++
++
++class VueDernierPassage(_Vue):
++    """Encart « Dernier Passage », lu dans le manifeste du Passage affiché."""
++
++    lignes: list[str]
++
++
++class VueChaine(_Vue):
++    """Ce que l'écran Lancement de la Chaîne affiche à chaque sondage."""
++
++    statut: StatutChaine
++    en_cours: bool
++    """Vrai tant que le sondage doit continuer."""
++    intervalle_ms: int
++    bouton_lancement: VueBouton
++    bouton_mode: VueBouton
++    mode_cible: Literal["reel", "repli"]
++    """Mode que le bouton de mode demande."""
++    etapes: list[VueEtape]
++    terminees: int
++    """Étapes terminées (réussies, sautées ou en échec) : `aria-valuenow` de la barre."""
++    total: int
++    compteur: str
++    annonce: str
++    """Texte de la région `status` ; vide quand rien de nouveau n'est à annoncer."""
++    journal: list[VueLigneJournal]
++    journal_vide: str
++    bandeau: VueBandeauChaine | None
++    erreur: str | None
++    """Progression illisible ou lancement impossible (bandeau d'erreur, sondage maintenu)."""
++    dernier_passage: VueDernierPassage | None
++    message_dernier_passage: str
++
++
++class DemandeMode(BaseModel):
++    """Corps de `POST /api/mode` : le mode demandé (jamais déduit, AD-19)."""
++
++    model_config = ConfigDict(frozen=True, extra="forbid")
++
++    mode: Literal["reel", "repli"]
+diff --git a/src/usine/ui/serveur.py b/src/usine/ui/serveur.py
+index 68455f6..bb221c7 100644
+--- a/src/usine/ui/serveur.py
++++ b/src/usine/ui/serveur.py
+@@ -9,3 +9,4 @@ servis ici : aucune requête ne sort (NFR-12). Le serveur n'écoute que `127.0.0
+ Le mode vit dans le processus serveur et ne change jamais seul (AD-19) : il est fixé au
+-démarrage par `USINE_MODE_REPLI`.
++démarrage par `USINE_MODE_REPLI` et ne change que par `POST /api/mode`, sur clic du Pilote.
++Seules deux routes `POST` changent un état (Chaîne, mode) ; aucune ne touche un Passage ni Jira.
+ """
+@@ -13,2 +14,3 @@ démarrage par `USINE_MODE_REPLI`.
+ import html
++import threading
+ from collections.abc import Callable
+@@ -16,4 +18,6 @@ from pathlib import Path
+ from typing import Protocol, get_args
++from urllib.parse import urlsplit
+ 
+-from fastapi import FastAPI, HTTPException
++from fastapi import FastAPI, HTTPException, Request
++from fastapi.middleware.trustedhost import TrustedHostMiddleware
+ from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse, Response
+@@ -34,4 +38,6 @@ from usine.ui.carte import (
+ )
++from usine.ui.chaine import MOTIF_MODE_EN_COURS, GestionChaine, LancementRefuse
+ from usine.ui.detail import LectureDetail, vue_detail, vue_detail_erreur, vue_detail_message
+ from usine.ui.vues import (
++    DemandeMode,
+     NomLivrable,
+@@ -39,2 +45,3 @@ from usine.ui.vues import (
+     VueCarte,
++    VueChaine,
+     VueDetail,
+@@ -50,2 +57,6 @@ HOTE = "127.0.0.1"
+ 
++HOTES_AUTORISES = (HOTE, "localhost")
++"""Seuls en-têtes `Host` acceptés (quel que soit le port) : une page tierce qui ferait pointer
++son nom de domaine sur `127.0.0.1` (DNS rebinding) reçoit 400 sur toutes les routes."""
++
+ PAGES: dict[str, str] = {
+@@ -78,6 +89,35 @@ LIEN_CHAINE = VueLien(libelle="Lancer la Chaîne", url="/chaine")
+ 
++class _Mode:
++    """Mode courant du processus serveur : fixé au démarrage, changé par `POST /api/mode` seul."""
++
++    def __init__(self, repli: bool) -> None:
++        self.repli = repli
++
++
++def _meme_origine(request: Request) -> None:
++    """Refuse une écriture venue d'une autre origine (une page web tierce ouverte sur le poste).
++
++    Le `Host` est déjà limité à `HOTES_AUTORISES` ; un `Origin` présent doit nommer ce même
++    hôte et ce même port (`null`, autre port ou autre nom : 403).
++    """
++    origine = request.headers.get("origin")
++    if origine is None:
++        return
++    parties = urlsplit(origine)
++    if parties.hostname not in HOTES_AUTORISES or parties.netloc != request.headers.get("host"):
++        raise HTTPException(status_code=403, detail="Origine refusée.")
++
++
+ def creer_application(
+-    *, repli: bool, lire_manifeste: LireManifeste, lire_consultation: LireConsultation
++    *,
++    repli: bool,
++    lire_manifeste: LireManifeste,
++    lire_consultation: LireConsultation,
++    chaine: GestionChaine | None = None,
+ ) -> FastAPI:
+-    """Application des sept écrans ; `repli` est le mode imposé au démarrage (AD-19)."""
++    """Application des sept écrans ; `repli` est le mode imposé au démarrage (AD-19).
++
++    `chaine` gère le lancement de `usine rapport` (fourni par `ui/cli.py`) ; sans elle, la
++    Chaîne ne peut pas être lancée (racine absente).
++    """
+     application = FastAPI(
+@@ -85,5 +125,10 @@ def creer_application(
+     )
++    application.add_middleware(TrustedHostMiddleware, allowed_hosts=list(HOTES_AUTORISES))
+     application.mount("/statique", StaticFiles(directory=REPERTOIRE_STATIQUE), name="statique")
++    mode = _Mode(repli)
++    ecriture = threading.Lock()  # bascule du mode et lancement : jamais l'un pendant l'autre
++    gestion = chaine if chaine is not None else GestionChaine(None)
+ 
+     def cadre() -> VueCadre:
++        repli = mode.repli
+         try:
+@@ -98,4 +143,38 @@ def creer_application(
+ 
++    def changer_mode(demande: DemandeMode, request: Request) -> VueCadre:
++        """Bascule explicite du mode (AD-19) ; refusée tant qu'une Chaîne tourne."""
++        _meme_origine(request)
++        with ecriture:
++            if gestion.en_cours():
++                raise HTTPException(status_code=409, detail=MOTIF_MODE_EN_COURS)
++            mode.repli = demande.mode == "repli"
++        return cadre()
++
++    application.add_api_route("/api/mode", changer_mode, methods=["POST"], response_model=VueCadre)
++
++    def vue_chaine() -> VueChaine:
++        try:
++            manifeste = lire_manifeste(mode.repli)
++        except (UsineErreur, OSError):  # le bandeau d'erreur du cadre nomme la cause
++            manifeste = None
++        return gestion.vue(mode.repli, manifeste)
++
++    application.add_api_route("/api/chaine", vue_chaine, response_model=VueChaine)
++
++    def lancer_chaine(request: Request) -> VueChaine:
++        """Démarre `usine rapport` ; une Chaîne à la fois (409 sinon)."""
++        _meme_origine(request)
++        with ecriture:
++            try:
++                gestion.lancer(mode.repli)
++            except LancementRefuse as exc:
++                raise HTTPException(status_code=409, detail=str(exc)) from exc
++        return vue_chaine()
++
++    application.add_api_route(
++        "/api/chaine", lancer_chaine, methods=["POST"], response_model=VueChaine, status_code=202
++    )
++
+     def lire() -> LectureEcrans | None:
+-        return lire_consultation(repli)
++        return lire_consultation(mode.repli)
+ 
+diff --git a/src/usine/ui/chaine.py b/src/usine/ui/chaine.py
+new file mode 100644
+index 0000000..b45a7a3
+--- /dev/null
++++ b/src/usine/ui/chaine.py
+@@ -0,0 +1,305 @@
++"""Lancement de la Chaîne et suivi de sa progression pour l'UI web (Story 7.15, AD-8, AD-25).
++
++`GestionChaine` vit dans le processus serveur : elle démarre `usine rapport` en sous-processus
++(une Chaîne à la fois), retient le processus et le fichier d'erreurs, et construit la vue
++`VueChaine` à chaque sondage du navigateur. La progression se lit dans
++`sorties/progression/<passage_id>.jsonl` en ouvrir-lire-fermer (`progression.lire_progression`) ;
++aucun fichier ne reste ouvert entre deux sondages. Elle ne touche ni Passage ni Jira : c'est
++`usine rapport` qui publie.
++"""
++
++import subprocess
++import threading
++from datetime import UTC
++from pathlib import Path
++from typing import IO
++
++from usine.contrats.erreurs import UsineErreur
++from usine.contrats.format import formater_date, formater_entier
++from usine.contrats.passage import Etape, EvenementProgression, ManifestePassage, StatutEtape
++from usine.ui import lancement, progression
++from usine.ui.lancement import Lanceur
++from usine.ui.textes import INTERVALLE_SONDAGE, LANCEMENT_REPLI, LIGNES_ERREUR_MAX
++from usine.ui.vues import (
++    EtatEtape,
++    StatutChaine,
++    VueBandeauChaine,
++    VueBouton,
++    VueChaine,
++    VueDernierPassage,
++    VueEtape,
++    VueLien,
++    VueLigneJournal,
++)
++
++DESCRIPTIONS: dict[Etape, str] = {
++    Etape.extraction: "Lecture des tickets du projet",
++    Etape.instantanes: "Instantanés quotidiens des états de tickets",
++    Etape.kpi: "Calcul des KPI de chaque Entité",
++    Etape.meteo: "Météo de chaque Entité, d'après les Règles déclenchantes",
++    Etape.prevision: "Prévision de fermeture des Anomalies",
++    Etape.classification: "Classification des Anomalies",
++    Etape.repartition_causes: "Répartition des causes",
++    Etape.explications: "Explications citées de la Météo",
++    Etape.narration: "Narration du Rapport",
++    Etape.rendu: "Rapport quotidien et Comité de pilotage",
++}
++"""Description de chaque étape, affichée en légende (DESIGN.md, Lancement de la Chaîne)."""
++
++LIBELLE_LANCER = "Lancer la Chaîne"
++LIBELLE_EN_COURS = "Chaîne en cours…"
++LIBELLE_RELANCER = "Relancer la Chaîne"
++LIBELLE_PASSER_REPLI = "Passer en Mode repli"
++LIBELLE_REVENIR_REEL = "Revenir au Mode réel"
++MOTIF_LANCEMENT_EN_COURS = "Une Chaîne est en cours : le lancement redevient possible à sa fin."
++MOTIF_MODE_EN_COURS = "Le mode ne peut pas changer tant qu'une Chaîne tourne."
++MOTIF_RACINE = "La racine du projet est introuvable : la Chaîne ne peut pas être lancée."
++MESSAGE_SUCCES = "Chaîne terminée : Passage publié."
++JOURNAL_ATTENTE = "En attente d'un lancement."
++JOURNAL_VIDE = "Aucun événement de progression pour l'instant."
++AUCUN_PASSAGE_LANCE = "Aucun Passage affiché : lancer la Chaîne pour en publier un."
++AUCUN_PASSAGE_REPLI = "Aucun Passage enregistré à afficher en Mode repli."
++
++_TERMINES = frozenset(
++    {StatutEtape.reussie.value, StatutEtape.sautee.value, StatutEtape.echouee.value}
++)
++_ETATS: dict[str, EtatEtape] = {
++    StatutEtape.en_cours.value: "en_cours",
++    StatutEtape.reussie.value: "reussie",
++    StatutEtape.sautee.value: "sautee",
++    StatutEtape.echouee.value: "echouee",
++}
++
++
++class LancementRefuse(UsineErreur):
++    """Lancement impossible : Chaîne déjà en cours, Mode repli ou racine absente."""
++
++
++def _sans_marques(texte: str) -> str:
++    """Texte de constante Markdown (`code`) affiché tel quel dans une page sans Markdown."""
++    return texte.replace("`", "")
++
++
++class GestionChaine:
++    """Une Chaîne à la fois, lancée depuis le serveur ; l'état vit dans ce processus."""
++
++    def __init__(self, racine: Path | None, popen: Lanceur = subprocess.Popen) -> None:
++        self._racine = racine
++        self._popen = popen
++        self._verrou = threading.Lock()
++        self._processus: subprocess.Popen[bytes] | None = None
++        self._erreurs: IO[bytes] | None = None
++        self._texte_erreur: str | None = None
++        self._avant: frozenset[Path] = frozenset()
++        self._fichier: Path | None = None
++        self._echec_lancement: str | None = None
++
++    # --- état ---
++
++    def _en_cours(self) -> bool:
++        return self._processus is not None and self._processus.poll() is None
++
++    def en_cours(self) -> bool:
++        """Vrai si la Chaîne lancée par ce serveur tourne encore."""
++        with self._verrou:
++            return self._en_cours()
++
++    def _motif_lancement(self, repli: bool) -> str | None:
++        if self._en_cours():
++            return MOTIF_LANCEMENT_EN_COURS
++        if repli:
++            return _sans_marques(LANCEMENT_REPLI)
++        if self._racine is None or not self._racine.is_dir():
++            return MOTIF_RACINE
++        return None
++
++    # --- action ---
++
++    def lancer(self, repli: bool) -> None:
++        """Démarre `usine rapport`.
++
++        `LancementRefuse` si une Chaîne tourne, en Mode repli ou sans racine. Un démarrage qui
++        échoue (`OSError`) est consigné et affiché par la vue, sans lever.
++        """
++        with self._verrou:
++            motif = self._motif_lancement(repli)
++            if motif is not None or self._racine is None:
++                raise LancementRefuse(motif or MOTIF_RACINE)
++            if self._erreurs is not None:
++                self._erreurs.close()
++                self._erreurs = None
++            self._fichier = None
++            self._texte_erreur = None
++            self._echec_lancement = None
++            erreurs: IO[bytes] | None = None
++            try:
++                self._avant = progression.fichiers_progression(self._racine)
++                erreurs = lancement.fichier_erreurs()
++                self._processus = lancement.lancer_chaine(
++                    self._racine, popen=self._popen, erreurs=erreurs
++                )
++            except OSError as exc:
++                if erreurs is not None:
++                    erreurs.close()
++                self._processus = None
++                self._echec_lancement = f"Lancement de la Chaîne impossible : {exc}"
++                return
++            self._erreurs = erreurs
++
++    # --- vue ---
++
++    def _evenements(self) -> tuple[EvenementProgression, ...]:
++        if self._fichier is None and self._racine is not None:
++            self._fichier = progression.fichier_nouveau(self._avant, self._racine)
++        return progression.lire_progression(self._fichier) if self._fichier is not None else ()
++
++    def _erreur_standard(self) -> str:
++        """Erreur standard du sous-processus terminé, lue une seule fois (fichier alors fermé)."""
++        if self._texte_erreur is None:
++            erreurs, self._erreurs = self._erreurs, None
++            self._texte_erreur = "" if erreurs is None else lancement.lire_erreurs(erreurs)
++        return self._texte_erreur
++
++    def vue(self, repli: bool, manifeste: ManifestePassage | None) -> VueChaine:
++        """Vue de l'écran pour le mode courant et le Passage affiché `manifeste`."""
++        with self._verrou:
++            return self._vue(repli, manifeste)
++
++    def _vue(self, repli: bool, manifeste: ManifestePassage | None) -> VueChaine:
++        code = None if self._processus is None else self._processus.poll()
++        statut: StatutChaine = "attente"
++        if self._processus is not None:
++            statut = "en_cours" if code is None else ("terminee" if code == 0 else "echec")
++        erreur = self._echec_lancement
++        try:
++            evenements = self._evenements()
++        except (UsineErreur, OSError) as exc:  # progression illisible : signalée, sondage maintenu
++            erreur = str(exc)
++            evenements = ()
++        suivis = progression.suivi_des_etapes(evenements)
++        etapes = [
++            VueEtape(
++                numero=rang,
++                nom=suivi.etape.value,
++                description=DESCRIPTIONS[suivi.etape],
++                etat=_ETATS.get(suivi.etat, "en_attente"),
++                libelle_etat=progression.LIBELLES_ETATS[suivi.etat],
++                duree=None if suivi.duree is None else progression.texte_duree(suivi.duree),
++            )
++            for rang, suivi in enumerate(suivis, start=1)
++        ]
++        terminees = sum(1 for suivi in suivis if suivi.etat in _TERMINES)
++        motif_lancement = self._motif_lancement(repli)
++        en_cours = statut == "en_cours"
++        if en_cours:
++            libelle_lancement = LIBELLE_EN_COURS
++        elif statut in ("terminee", "echec"):
++            libelle_lancement = LIBELLE_RELANCER
++        else:
++            libelle_lancement = LIBELLE_LANCER
++        return VueChaine(
++            statut=statut,
++            en_cours=en_cours,
++            intervalle_ms=round(INTERVALLE_SONDAGE * 1000),
++            bouton_lancement=VueBouton(
++                libelle=libelle_lancement,
++                bloque=motif_lancement is not None,
++                motif=motif_lancement,
++            ),
++            bouton_mode=VueBouton(
++                libelle=LIBELLE_REVENIR_REEL if repli else LIBELLE_PASSER_REPLI,
++                bloque=en_cours,
++                motif=MOTIF_MODE_EN_COURS if en_cours else None,
++            ),
++            mode_cible="reel" if repli else "repli",
++            etapes=etapes,
++            terminees=terminees,
++            total=len(etapes),
++            compteur=f"{terminees} / {len(etapes)}",
++            annonce=_annonce(statut, evenements),
++            journal=_journal(evenements),
++            journal_vide=JOURNAL_ATTENTE if statut == "attente" else JOURNAL_VIDE,
++            bandeau=self._bandeau(code, evenements),
++            erreur=erreur,
++            dernier_passage=None if manifeste is None else vue_dernier_passage(manifeste),
++            message_dernier_passage=AUCUN_PASSAGE_REPLI if repli else AUCUN_PASSAGE_LANCE,
++        )
++
++    def _bandeau(
++        self, code: int | None, evenements: tuple[EvenementProgression, ...]
++    ) -> VueBandeauChaine | None:
++        if code is None:
++            return None
++        message = self._erreur_standard()  # lu et fermé dans les deux issues
++        if code == 0:
++            return VueBandeauChaine(
++                variante="succes",
++                texte=MESSAGE_SUCCES,
++                lignes=[],
++                complement=None,
++                lien=VueLien(libelle="Voir la carte météo", url="/"),
++            )
++        lignes = message.splitlines()[-LIGNES_ERREUR_MAX:] or ["aucun message"]
++        return VueBandeauChaine(
++            variante="erreur",
++            texte=f"Échec de la Chaîne {_lieu_echec(evenements)} (code {code}).",
++            lignes=lignes,
++            complement=progression.AUCUN_RAPPORT,
++            lien=None,
++        )
++
++
++def _annonce(statut: StatutChaine, evenements: tuple[EvenementProgression, ...]) -> str:
++    """Texte de la région `status` : étape courante, fin ou échec, sinon rien."""
++    if statut == "terminee":
++        return MESSAGE_SUCCES
++    if statut == "echec":
++        return f"Échec de la Chaîne {_lieu_echec(evenements)}."
++    if statut == "attente":
++        return ""
++    courante = _etape_courante(evenements)
++    if courante is not None:
++        rang = list(Etape).index(courante) + 1
++        return f"Étape {rang} sur {len(Etape)} : {courante.value}"
++    return "" if evenements else LIBELLE_EN_COURS
++
++
++def _etape_courante(evenements: tuple[EvenementProgression, ...]) -> Etape | None:
++    """Dernière étape `en_cours` non encore terminée."""
++    courante: Etape | None = None
++    for evenement in evenements:
++        if evenement.statut is StatutEtape.en_cours:
++            courante = evenement.etape
++        elif evenement.etape is courante:
++            courante = None
++    return courante
++
++
++def _lieu_echec(evenements: tuple[EvenementProgression, ...]) -> str:
++    """`à l'étape « X »` ou `hors d'une étape`, selon la progression."""
++    etape = progression.etape_en_echec(evenements)
++    return "hors d'une étape" if etape is None else f"à l'étape « {etape.value} »"
++
++
++def _journal(evenements: tuple[EvenementProgression, ...]) -> list[VueLigneJournal]:
++    """Lignes horodatées (UTC), la plus récente en premier."""
++    lignes: list[VueLigneJournal] = []
++    for evenement in reversed(evenements):
++        texte = f"{evenement.etape.value} : {progression.LIBELLES_ETATS[evenement.statut]}"
++        if evenement.message:
++            texte += f" · {evenement.message}"
++        horodatage = f"{evenement.horodatage.astimezone(UTC):%H:%M:%S}"
++        lignes.append(VueLigneJournal(horodatage=horodatage, texte=texte))
++    return lignes
++
++
++def vue_dernier_passage(manifeste: ManifestePassage) -> VueDernierPassage:
++    """Encart « Dernier Passage » : date, durée, tickets extraits et identifiant, du manifeste."""
++    duree = progression.texte_duree(manifeste.horodatage_fin - manifeste.horodatage_debut)
++    return VueDernierPassage(
++        lignes=[
++            f"Date d'arrêté {formater_date(manifeste.date_arrete)} · durée {duree}",
++            f"{formater_entier(manifeste.nb_tickets)} tickets extraits",
++            f"Passage {manifeste.passage_id}",
++        ]
++    )
+diff --git a/tests/unit/ui/test_cli.py b/tests/unit/ui/test_cli.py
+index 5e8be4d..9d2deb4 100644
+--- a/tests/unit/ui/test_cli.py
++++ b/tests/unit/ui/test_cli.py
+@@ -18,2 +18,3 @@ from usine.contrats.erreurs import UsineErreur
+ from usine.ui import cli as cli_ui
++from usine.ui.serveur import HOTE
+ 
+@@ -88,3 +89,3 @@ def test_ui_port_et_mode_repli(tmp_path: Path, monkeypatch: pytest.MonkeyPatch)
+     assert "(Mode repli)" in resultat.output
+-    vue = TestClient(appels[0]["application"]).get("/api/cadre").json()
++    vue = TestClient(appels[0]["application"], base_url=f"http://{HOTE}").get("/api/cadre").json()
+     assert vue["mode"] == "repli"
+diff --git a/tests/unit/ui/test_serveur.py b/tests/unit/ui/test_serveur.py
+index b03901d..3b0b8be 100644
+--- a/tests/unit/ui/test_serveur.py
++++ b/tests/unit/ui/test_serveur.py
+@@ -172,3 +172,6 @@ def test_cadre_lecture_impossible() -> None:
+     vue = (
+-        TestClient(creer_application(repli=False, lire_manifeste=lire, lire_consultation=_aucune))
++        TestClient(
++            creer_application(repli=False, lire_manifeste=lire, lire_consultation=_aucune),
++            base_url=f"http://{HOTE}",
++        )
+         .get("/api/cadre")
+@@ -189,3 +192,4 @@ def test_le_mode_ne_change_jamais_seul() -> None:
+     http = TestClient(
+-        creer_application(repli=False, lire_manifeste=lire, lire_consultation=_aucune)
++        creer_application(repli=False, lire_manifeste=lire, lire_consultation=_aucune),
++        base_url=f"http://{HOTE}",
+     )
+@@ -231,3 +235,3 @@ def test_lecture_repli_absent(tmp_path: Path) -> None:
+     )
+-    vue = TestClient(application).get("/api/cadre").json()
++    vue = TestClient(application, base_url=f"http://{HOTE}").get("/api/cadre").json()
+     assert vue["erreur"] == REPLI_ABSENT
+@@ -241,3 +245,4 @@ def test_cadre_repertoire_illisible() -> None:
+     reponse = TestClient(
+-        creer_application(repli=False, lire_manifeste=lire, lire_consultation=_aucune)
++        creer_application(repli=False, lire_manifeste=lire, lire_consultation=_aucune),
++        base_url=f"http://{HOTE}",
+     ).get("/api/cadre")
+diff --git a/tests/unit/ui/test_vues_ecrans.py b/tests/unit/ui/test_vues_ecrans.py
+index cbdeef3..7a8a374 100644
+--- a/tests/unit/ui/test_vues_ecrans.py
++++ b/tests/unit/ui/test_vues_ecrans.py
+@@ -257,3 +257,6 @@ def test_carte_sans_passage_et_erreurs() -> None:
+ 
+-    http = TestClient(creer_application(repli=False, lire_manifeste=aucun, lire_consultation=aucun))
++    http = TestClient(
++        creer_application(repli=False, lire_manifeste=aucun, lire_consultation=aucun),
++        base_url=f"http://{HOTE}",
++    )
+     vue = http.get("/api/carte").json()
+@@ -270,3 +273,3 @@ def test_carte_sans_passage_et_erreurs() -> None:
+         application = creer_application(repli=False, lire_manifeste=aucun, lire_consultation=lire)
+-        reponse = TestClient(application).get("/api/carte")
++        reponse = TestClient(application, base_url=f"http://{HOTE}").get("/api/carte")
+         assert reponse.status_code == 200
+@@ -404,3 +407,6 @@ def test_detail_sans_passage_ni_meteo_et_erreur() -> None:
+ 
+-    http = TestClient(creer_application(repli=False, lire_manifeste=aucun, lire_consultation=aucun))
++    http = TestClient(
++        creer_application(repli=False, lire_manifeste=aucun, lire_consultation=aucun),
++        base_url=f"http://{HOTE}",
++    )
+     vue = http.get("/api/entites/ENT-A").json()
+@@ -415,3 +421,4 @@ def test_detail_sans_passage_ni_meteo_et_erreur() -> None:
+     erreur = TestClient(
+-        creer_application(repli=False, lire_manifeste=aucun, lire_consultation=casse)
++        creer_application(repli=False, lire_manifeste=aucun, lire_consultation=casse),
++        base_url=f"http://{HOTE}",
+     ).get("/api/entites/ENT-A")
+@@ -439,3 +446,6 @@ def test_navigation_detail_sans_passage_retourne_a_la_carte() -> None:
+ 
+-    http = TestClient(creer_application(repli=False, lire_manifeste=aucun, lire_consultation=aucun))
++    http = TestClient(
++        creer_application(repli=False, lire_manifeste=aucun, lire_consultation=aucun),
++        base_url=f"http://{HOTE}",
++    )
+     assert http.get("/entites", follow_redirects=False).headers["location"] == "/"
+@@ -446,3 +456,4 @@ def test_navigation_detail_sans_passage_retourne_a_la_carte() -> None:
+     cassee = TestClient(
+-        creer_application(repli=False, lire_manifeste=aucun, lire_consultation=casse)
++        creer_application(repli=False, lire_manifeste=aucun, lire_consultation=casse),
++        base_url=f"http://{HOTE}",
+     )
+@@ -492,3 +503,6 @@ def test_livrable_sans_passage_et_lecture_impossible() -> None:
+ 
+-    http = TestClient(creer_application(repli=False, lire_manifeste=aucun, lire_consultation=aucun))
++    http = TestClient(
++        creer_application(repli=False, lire_manifeste=aucun, lire_consultation=aucun),
++        base_url=f"http://{HOTE}",
++    )
+     reponse = http.get("/livrables/rapport_xlsx")
+diff --git a/tests/unit/ui/test_chaine.py b/tests/unit/ui/test_chaine.py
+new file mode 100644
+index 0000000..7e4c513
+--- /dev/null
++++ b/tests/unit/ui/test_chaine.py
+@@ -0,0 +1,556 @@
++"""Lancement de la Chaîne et bouton de mode de l'UI web (Story 7.15, AD-8, AD-19, AD-25).
++
++Aucune vraie Chaîne ni Jira : le sous-processus est une doublure injectée (`popen`) et la
++progression un fichier synthétique de `sorties/progression/`.
++"""
++
++import re
++import sys
++import threading
++from datetime import UTC, datetime, timedelta
++from pathlib import Path
++from typing import Any, cast
++
++import pytest
++from fastapi.testclient import TestClient
++
++from tests.unit.ui.test_avant_apres import manifeste
++from usine.contrats.passage import Etape, EvenementProgression, ManifestePassage, StatutEtape
++from usine.ui import app, progression, textes
++from usine.ui.chaine import (
++    MOTIF_LANCEMENT_EN_COURS,
++    MOTIF_MODE_EN_COURS,
++    MOTIF_RACINE,
++    GestionChaine,
++)
++from usine.ui.cli import lecture_manifeste
++from usine.ui.progression import AUCUN_RAPPORT
++from usine.ui.serveur import HOTE, REPERTOIRE_STATIQUE, creer_application
++from usine.ui.textes import LIGNES_ERREUR_MAX, REPLI_ABSENT
++
++PASSAGE = "20261012T073000Z-aaaaaa"
++INSTANT = datetime(2026, 10, 12, 7, 30, tzinfo=UTC)
++
++
++class Processus:
++    """Doublure de `subprocess.Popen` : tourne tant que `code` est `None`."""
++
++    def __init__(self, stderr: Any, sortie_erreur: bytes) -> None:
++        self.code: int | None = None
++        stderr.write(sortie_erreur)
++        stderr.flush()
++
++    def poll(self) -> int | None:
++        return self.code
++
++
++class Lanceur:
++    """Doublure de `subprocess.Popen` injectée dans `GestionChaine`."""
++
++    def __init__(self) -> None:
++        self.appels: list[tuple[list[str], dict[str, Any]]] = []
++        self.processus: Processus | None = None
++        self.sortie_erreur = b""
++
++    def __call__(self, commande: list[str], **options: Any) -> Processus:
++        self.appels.append((commande, options))
++        self.processus = Processus(options["stderr"], self.sortie_erreur)
++        return self.processus
++
++    def finir(self, code: int) -> None:
++        assert self.processus is not None
++        self.processus.code = code
++
++
++def _evenement(etape: Etape, statut: StatutEtape, secondes: float = 0.0) -> str:
++    instant = INSTANT + timedelta(seconds=secondes)
++    return EvenementProgression(
++        passage_id=PASSAGE, etape=etape, statut=statut, horodatage=instant
++    ).model_dump_json()
++
++
++def ecrire_progression(racine: Path, *lignes: str, partielle: str = "") -> Path:
++    repertoire = racine / "sorties" / "progression"
++    repertoire.mkdir(parents=True, exist_ok=True)
++    chemin = repertoire / f"{PASSAGE}.jsonl"
++    chemin.write_text("".join(f"{ligne}\n" for ligne in lignes) + partielle, encoding="utf-8")
++    return chemin
++
++
++class Banc:
++    """Application, doublure de lanceur et racine d'essai."""
++
++    def __init__(
++        self,
++        racine: Path | None,
++        *,
++        repli: bool = False,
++        passage: ManifestePassage | None = None,
++        lecteur: Any = None,
++        gestion: type[GestionChaine] = GestionChaine,
++    ) -> None:
++        self.lanceur = Lanceur()
++        self.lectures: list[bool] = []
++
++        def lire_manifeste(mode_repli: bool) -> ManifestePassage | None:
++            self.lectures.append(mode_repli)
++            return lecteur(mode_repli) if lecteur is not None else passage
++
++        self.application = creer_application(
++            repli=repli,
++            lire_manifeste=lire_manifeste,
++            lire_consultation=lambda _repli: None,
++            chaine=gestion(racine, popen=cast(Any, self.lanceur)),
++        )
++        self.http = TestClient(self.application, base_url=f"http://{HOTE}")
++
++    def etat(self) -> dict[str, Any]:
++        reponse = self.http.get("/api/chaine")
++        assert reponse.status_code == 200
++        donnees: dict[str, Any] = reponse.json()
++        return donnees
++
++    def lancer(self) -> Any:
++        return self.http.post("/api/chaine")
++
++    def mode(self, mode: str) -> Any:
++        return self.http.post("/api/mode", json={"mode": mode})
++
++
++@pytest.fixture
++def racine(tmp_path: Path) -> Path:
++    return tmp_path
++
++
++def test_etat_initial(racine: Path) -> None:
++    vue = Banc(racine, passage=manifeste()).etat()
++    assert vue["statut"] == "attente"
++    assert vue["en_cours"] is False
++    assert [etape["nom"] for etape in vue["etapes"]] == [etape.value for etape in Etape]
++    assert {etape["etat"] for etape in vue["etapes"]} == {"en_attente"}
++    assert vue["compteur"] == "0 / 10"
++    assert vue["terminees"] == 0
++    assert vue["annonce"] == ""
++    assert vue["intervalle_ms"] == round(textes.INTERVALLE_SONDAGE * 1000)
++    assert vue["bouton_lancement"] == {
++        "libelle": "Lancer la Chaîne",
++        "bloque": False,
++        "motif": None,
++    }
++    assert vue["bouton_mode"]["libelle"] == "Passer en Mode repli"
++    assert vue["bouton_mode"]["bloque"] is False
++    assert vue["mode_cible"] == "repli"
++    assert vue["journal"] == []
++    assert vue["bandeau"] is None
++    assert vue["dernier_passage"]["lignes"][-1] == f"Passage {manifeste().passage_id}"
++
++
++def test_dernier_passage_absent(racine: Path) -> None:
++    vue = Banc(racine).etat()
++    assert vue["dernier_passage"] is None
++    assert vue["message_dernier_passage"]
++
++
++def test_lancement_demarre_usine_rapport_en_sous_processus(racine: Path) -> None:
++    banc = Banc(racine)
++    reponse = banc.lancer()
++    assert reponse.status_code == 202
++    ((commande, options),) = banc.lanceur.appels
++    assert commande == [sys.executable, "-m", "usine", "rapport"]
++    assert options["cwd"] == racine
++    vue = reponse.json()
++    assert vue["statut"] == "en_cours"
++    assert vue["en_cours"] is True
++    assert vue["bouton_lancement"] == {
++        "libelle": "Chaîne en cours…",
++        "bloque": True,
++        "motif": MOTIF_LANCEMENT_EN_COURS,
++    }
++    assert vue["bouton_mode"]["bloque"] is True
++    assert vue["bouton_mode"]["motif"] == MOTIF_MODE_EN_COURS
++    assert vue["annonce"] == "Chaîne en cours…"
++
++
++def test_une_chaine_a_la_fois(racine: Path) -> None:
++    banc = Banc(racine)
++    assert banc.lancer().status_code == 202
++    second = banc.lancer()
++    assert second.status_code == 409
++    assert second.json()["detail"] == MOTIF_LANCEMENT_EN_COURS
++    assert len(banc.lanceur.appels) == 1
++    assert banc.etat()["en_cours"] is True
++
++
++def test_reprise_du_suivi_en_revenant_sur_la_page(racine: Path) -> None:
++    banc = Banc(racine)
++    banc.lancer()
++    ecrire_progression(racine, _evenement(Etape.extraction, StatutEtape.en_cours))
++    # « Quitter puis rouvrir /chaine » : un nouvel appel retrouve l'état, boutons bloqués.
++    vue = banc.etat()
++    assert vue["statut"] == "en_cours"
++    assert vue["bouton_lancement"]["bloque"] is True
++    assert vue["bouton_mode"]["bloque"] is True
++    assert vue["etapes"][0]["etat"] == "en_cours"
++
++
++def test_progression_etapes_barre_annonce_et_journal(racine: Path) -> None:
++    banc = Banc(racine)
++    banc.lancer()
++    ecrire_progression(
++        racine,
++        _evenement(Etape.extraction, StatutEtape.en_cours, 0),
++        _evenement(Etape.extraction, StatutEtape.reussie, 0.5),
++        _evenement(Etape.instantanes, StatutEtape.en_cours, 0.6),
++        partielle='{"passage_id": "tronqu',  # ligne en cours d'écriture : ignorée
++    )
++    vue = banc.etat()
++    assert [etape["etat"] for etape in vue["etapes"][:3]] == ["reussie", "en_cours", "en_attente"]
++    assert vue["etapes"][0]["libelle_etat"] == "Réussie"
++    assert vue["etapes"][0]["duree"] == "0,5 s"
++    assert vue["etapes"][1]["duree"] is None
++    assert vue["terminees"] == 1
++    assert vue["compteur"] == "1 / 10"
++    assert vue["total"] == 10
++    assert vue["annonce"] == "Étape 2 sur 10 : instantanes"
++    assert [ligne["texte"] for ligne in vue["journal"]] == [
++        "instantanes : En cours",
++        "extraction : Réussie",
++        "extraction : En cours",
++    ]
++    assert vue["journal"][0]["horodatage"] == "07:30:00"
++    # Même progression au sondage suivant : même annonce (le script ne la répète pas).
++    assert banc.etat()["annonce"] == vue["annonce"]
++
++
++def test_entre_deux_etapes_rien_a_annoncer(racine: Path) -> None:
++    banc = Banc(racine)
++    banc.lancer()
++    ecrire_progression(
++        racine,
++        _evenement(Etape.extraction, StatutEtape.en_cours),
++        _evenement(Etape.extraction, StatutEtape.reussie, 1),
++    )
++    assert banc.etat()["annonce"] == ""
++
++
++def test_fin_de_chaine_reussie(racine: Path) -> None:
++    banc = Banc(racine)
++    banc.lancer()
++    ecrire_progression(
++        racine,
++        *[
++            ligne
++            for rang, etape in enumerate(Etape)
++            for ligne in (
++                _evenement(etape, StatutEtape.en_cours, rang),
++                _evenement(etape, StatutEtape.reussie, rang + 0.5),
++            )
++        ],
++    )
++    banc.lanceur.finir(0)
++    vue = banc.etat()
++    assert vue["statut"] == "terminee"
++    assert vue["en_cours"] is False
++    assert vue["terminees"] == 10
++    assert vue["annonce"] == "Chaîne terminée : Passage publié."
++    assert vue["bandeau"]["variante"] == "succes"
++    assert vue["bandeau"]["texte"] == "Chaîne terminée : Passage publié."
++    assert vue["bandeau"]["lien"] == {"libelle": "Voir la carte météo", "url": "/"}
++    assert vue["bouton_lancement"] == {
++        "libelle": "Relancer la Chaîne",
++        "bloque": False,
++        "motif": None,
++    }
++    assert vue["bouton_mode"]["bloque"] is False
++
++
++def test_echec_etape_code_et_vingt_lignes(racine: Path) -> None:
++    banc = Banc(racine, passage=manifeste())
++    banc.lanceur.sortie_erreur = "\n".join(f"ligne {n}" for n in range(1, 31)).encode()
++    banc.lancer()
++    ecrire_progression(
++        racine,
++        _evenement(Etape.extraction, StatutEtape.en_cours),
++        _evenement(Etape.extraction, StatutEtape.echouee, 1),
++    )
++    cadre_avant = banc.http.get("/api/cadre").json()
++    banc.lanceur.finir(3)
++    vue = banc.etat()
++    assert vue["statut"] == "echec"
++    assert vue["etapes"][0]["etat"] == "echouee"
++    assert vue["etapes"][0]["libelle_etat"] == "Échec"
++    bandeau = vue["bandeau"]
++    assert bandeau["variante"] == "erreur"
++    assert bandeau["texte"] == "Échec de la Chaîne à l'étape « extraction » (code 3)."
++    assert len(bandeau["lignes"]) == LIGNES_ERREUR_MAX == 20
++    assert bandeau["lignes"][0] == "ligne 11"
++    assert bandeau["lignes"][-1] == "ligne 30"
++    assert bandeau["complement"] == AUCUN_RAPPORT
++    assert vue["annonce"] == "Échec de la Chaîne à l'étape « extraction »."
++    assert vue["bouton_lancement"]["libelle"] == "Relancer la Chaîne"
++    # Le Passage affiché ailleurs ne change pas.
++    assert banc.http.get("/api/cadre").json() == cadre_avant
++    # La lecture est unique : un second sondage donne le même bandeau.
++    assert banc.etat()["bandeau"] == bandeau
++
++
++def test_echec_hors_etape_sans_message(racine: Path) -> None:
++    banc = Banc(racine)
++    banc.lancer()
++    banc.lanceur.finir(1)
++    bandeau = banc.etat()["bandeau"]
++    assert bandeau["texte"] == "Échec de la Chaîne hors d'une étape (code 1)."
++    assert bandeau["lignes"] == ["aucun message"]
++
++
++def test_relancer_apres_la_fin(racine: Path) -> None:
++    banc = Banc(racine)
++    banc.lancer()
++    banc.lanceur.finir(1)
++    assert banc.etat()["statut"] == "echec"
++    assert banc.lancer().status_code == 202
++    assert len(banc.lanceur.appels) == 2
++    vue = banc.etat()
++    assert vue["statut"] == "en_cours"
++    assert vue["bandeau"] is None
++
++
++def test_progression_illisible_signalee_sans_arret(racine: Path) -> None:
++    banc = Banc(racine)
++    banc.lancer()
++    ecrire_progression(racine, "pas du json")
++    vue = banc.etat()
++    assert vue["en_cours"] is True
++    assert "progression invalide" in vue["erreur"]
++    assert {etape["etat"] for etape in vue["etapes"]} == {"en_attente"}
++
++
++def test_demarrage_impossible(racine: Path) -> None:
++
++    def echec(*_args: Any, **_options: Any) -> Processus:
++        raise OSError("introuvable")
++
++    gestion = GestionChaine(racine, popen=cast(Any, echec))
++    gestion.lancer(False)
++    vue = gestion.vue(False, None)
++    assert vue.statut == "attente"
++    assert vue.erreur == "Lancement de la Chaîne impossible : introuvable"
++    assert vue.bouton_lancement.bloque is False
++
++
++def test_racine_absente_bloque_le_lancement(tmp_path: Path) -> None:
++    for racine_absente in (None, tmp_path / "absente"):
++        banc = Banc(racine_absente)
++        vue = banc.etat()
++        assert vue["bouton_lancement"]["bloque"] is True
++        assert vue["bouton_lancement"]["motif"] == MOTIF_RACINE
++        assert banc.lancer().status_code == 409
++        assert banc.lanceur.appels == []
++
++
++def test_lancement_refuse_en_mode_repli(racine: Path) -> None:
++    banc = Banc(racine, repli=True)
++    vue = banc.etat()
++    assert vue["bouton_lancement"]["bloque"] is True
++    assert vue["bouton_lancement"]["motif"] == textes.LANCEMENT_REPLI.replace("`", "")
++    assert vue["bouton_mode"] == {"libelle": "Revenir au Mode réel", "bloque": False, "motif": None}
++    assert vue["mode_cible"] == "reel"
++    assert banc.lancer().status_code == 409
++    assert banc.lanceur.appels == []
++
++
++# --- bouton de mode ---
++
++
++def test_bascule_repli_reel_repli(racine: Path) -> None:
++    banc = Banc(racine, passage=manifeste())
++    assert banc.http.get("/api/cadre").json()["mode"] == "reel"
++    repli = banc.mode("repli")
++    assert repli.status_code == 200
++    assert repli.json()["mode"] == "repli"
++    assert repli.json()["bandeau_repli_html"]
++    assert banc.http.get("/api/cadre").json()["mode"] == "repli"
++    assert banc.lectures[-1] is True  # tous les écrans lisent maintenant le Passage enregistré
++    assert banc.etat()["bouton_mode"]["libelle"] == "Revenir au Mode réel"
++    reel = banc.mode("reel")
++    assert reel.json()["mode"] == "reel"
++    assert reel.json()["bandeau_repli_html"] is None
++    assert banc.lectures[-1] is False
++    assert banc.mode("repli").json()["mode"] == "repli"
++
++
++def test_bascule_est_idempotente_et_jamais_automatique(racine: Path) -> None:
++    banc = Banc(racine)
++    banc.http.get("/api/chaine")
++    banc.http.get("/api/cadre")
++    assert set(banc.lectures) == {False}
++    assert banc.mode("reel").json()["mode"] == "reel"
++    assert banc.mode("reel").json()["mode"] == "reel"
++
++
++def test_bascule_refusee_pendant_une_chaine(racine: Path) -> None:
++    banc = Banc(racine)
++    banc.lancer()
++    reponse = banc.mode("repli")
++    assert reponse.status_code == 409
++    assert reponse.json()["detail"] == MOTIF_MODE_EN_COURS
++    assert banc.http.get("/api/cadre").json()["mode"] == "reel"
++    banc.lanceur.finir(0)
++    assert banc.mode("repli").status_code == 200
++
++
++@pytest.mark.parametrize("corps", [{"mode": "autre"}, {}, {"mode": "repli", "x": 1}])
++def test_bascule_corps_invalide(racine: Path, corps: dict[str, Any]) -> None:
++    banc = Banc(racine)
++    assert banc.http.post("/api/mode", json=corps).status_code == 422
++    assert banc.http.post("/api/mode").status_code == 422
++    assert banc.http.get("/api/cadre").json()["mode"] == "reel"
++
++
++def test_repli_absent_affiche_la_cause(tmp_path: Path) -> None:
++    http = TestClient(
++        creer_application(
++            repli=False,
++            lire_manifeste=lecture_manifeste(tmp_path),
++            lire_consultation=lambda _repli: None,
++            chaine=GestionChaine(tmp_path),
++        ),
++        base_url=f"http://{HOTE}",
++    )
++    cadre = http.post("/api/mode", json={"mode": "repli"}).json()
++    assert cadre["mode"] == "repli"
++    assert cadre["erreur"] == REPLI_ABSENT
++    assert cadre["passage_publie"] is None
++    # Le bouton de mode reste accessible pour revenir au Mode réel.
++    vue = http.get("/api/chaine").json()
++    assert vue["bouton_mode"]["bloque"] is False
++    assert http.post("/api/mode", json={"mode": "reel"}).json()["erreur"] is None
++
++
++def test_ecritures_refusees_depuis_une_autre_origine(racine: Path) -> None:
++    banc = Banc(racine)
++    etranger = {"Origin": "http://exemple.invalid"}
++    assert banc.http.post("/api/chaine", headers=etranger).status_code == 403
++    assert banc.http.post("/api/mode", json={"mode": "repli"}, headers=etranger).status_code == 403
++    local = {"Origin": f"http://{HOTE}"}
++    assert banc.http.post("/api/mode", json={"mode": "repli"}, headers=local).status_code == 200
++    assert banc.lanceur.appels == []
++
++
++def test_host_etranger_refuse_partout(racine: Path) -> None:
++    """DNS rebinding : un nom tiers résolu en 127.0.0.1 ne passe sur aucune route."""
++    banc = Banc(racine)
++    tiers = {"Host": "evil.test:8765", "Origin": "http://evil.test:8765"}
++    assert banc.http.post("/api/mode", json={"mode": "repli"}, headers=tiers).status_code == 400
++    assert banc.http.post("/api/chaine", headers=tiers).status_code == 400
++    assert banc.http.get("/api/chaine", headers={"Host": "evil.test"}).status_code == 400
++    assert banc.http.get("/api/cadre", headers={"Host": "localhost:8765"}).status_code == 200
++    assert banc.lanceur.appels == []
++    assert banc.etat()["mode_cible"] == "repli"  # le mode n'a pas bougé
++
++
++@pytest.mark.parametrize(
++    "origine", ["null", f"http://{HOTE}:9999", "http://localhost", f"https://{HOTE}.evil.test"]
++)
++def test_origine_autre_port_ou_opaque_refusee(racine: Path, origine: str) -> None:
++    banc = Banc(racine)
++    reponse = banc.http.post("/api/mode", json={"mode": "repli"}, headers={"Origin": origine})
++    assert reponse.status_code == 403
++
++
++def test_ecriture_sans_origin_acceptee(racine: Path) -> None:
++    banc = Banc(racine)
++    assert "origin" not in {cle.lower() for cle in banc.http.headers}
++    assert banc.mode("repli").status_code == 200
++
++
++def test_bascule_attend_un_lancement_en_cours(racine: Path) -> None:
++    """Bascule reçue entre la lecture du mode et le démarrage : 409, jamais un mode changé."""
++    dans_lancer, reprendre = threading.Event(), threading.Event()
++
++    class GestionLente(GestionChaine):
++        def lancer(self, repli: bool) -> None:  # fenêtre avant le verrou de `GestionChaine`
++            dans_lancer.set()
++            assert reprendre.wait(5)
++            super().lancer(repli)
++
++    banc = Banc(racine, gestion=GestionLente)
++    autre = TestClient(banc.application, base_url=f"http://{HOTE}")
++    resultats: dict[str, int] = {}
++
++    def lancer() -> None:
++        resultats["chaine"] = banc.lancer().status_code
++
++    def basculer() -> None:
++        resultats["mode"] = autre.post("/api/mode", json={"mode": "repli"}).status_code
++
++    fil_lancement = threading.Thread(target=lancer)
++    fil_lancement.start()
++    assert dans_lancer.wait(5)
++    fil_mode = threading.Thread(target=basculer)
++    fil_mode.start()
++    fil_mode.join(0.3)
++    assert fil_mode.is_alive()  # la bascule attend la fin du lancement
++    reprendre.set()
++    fil_lancement.join(5)
++    fil_mode.join(5)
++    assert resultats == {"chaine": 202, "mode": 409}
++    assert banc.etat()["mode_cible"] == "repli"  # toujours en Mode réel
++
++
++def test_progression_inaccessible_sans_erreur_500(
++    racine: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    banc = Banc(racine)
++    banc.lancer()
++
++    def refus(_racine: Path) -> frozenset[Path]:
++        raise PermissionError("accès refusé")
++
++    monkeypatch.setattr(progression, "fichiers_progression", refus)
++    vue = banc.etat()
++    assert vue["en_cours"] is True
++    assert "accès refusé" in vue["erreur"]
++
++
++def test_repli_sans_passage_n_invite_pas_a_lancer(racine: Path) -> None:
++    assert "Mode repli" in Banc(racine, repli=True).etat()["message_dernier_passage"]
++
++
++def test_seules_deux_routes_post_changent_un_etat(racine: Path) -> None:
++    application = Banc(racine).application
++    ecritures = {
++        (getattr(route, "path", ""), methode)
++        for route in application.routes
++        for methode in getattr(route, "methods", None) or ()
++        if methode not in ("GET", "HEAD")
++    }
++    assert ecritures == {("/api/chaine", "POST"), ("/api/mode", "POST")}
++
++
++# --- page, constantes ---
++
++
++def test_page_chaine_boutons_barre_et_region_status() -> None:
++    page = (REPERTOIRE_STATIQUE / "chaine.html").read_text(encoding="utf-8")
++    assert re.search(r'<button[^>]*id="bouton-lancement"', page)
++    assert re.search(r'<button[^>]*id="bouton-mode"', page)
++    assert 'role="progressbar"' in page
++    assert 'aria-valuemax="10"' in page
++    assert 'id="annonce" role="status"' in page
++    assert "/statique/chaine.js" in page
++    assert "http://" not in page and "https://" not in page
++
++
++def test_script_sans_innerhtml_ni_ressource_externe() -> None:
++    script = (REPERTOIRE_STATIQUE / "chaine.js").read_text(encoding="utf-8")
++    assert "innerHTML" not in script
++    assert "http://" not in script and "https://" not in script
++    assert "aria-describedby" in script and "aria-disabled" in script
++
++
++def test_constantes_communes_avec_streamlit() -> None:
++    assert app.INTERVALLE_SONDAGE is textes.INTERVALLE_SONDAGE
++    assert app.LIGNES_ERREUR_MAX is textes.LIGNES_ERREUR_MAX
++    assert app.LANCEMENT_REPLI is textes.LANCEMENT_REPLI
++    assert app.REPLI_ABSENT is textes.REPLI_ABSENT
+diff --git a/src/usine/ui/statique/cadre.js b/src/usine/ui/statique/cadre.js
+index bbbf923..9e6fc4a 100644
+--- a/src/usine/ui/statique/cadre.js
++++ b/src/usine/ui/statique/cadre.js
+@@ -61,2 +61,28 @@
+ 
++  // Écriture (POST JSON) : rend { statut, donnees } pour toute réponse du serveur, y compris un
++  // refus (409) dont `donnees.detail` porte le motif ; `null` si le serveur ne répond pas.
++  function envoyer(chemin, corps) {
++    var options = { method: "POST", headers: { Accept: "application/json" } };
++    if (corps !== undefined) {
++      options.headers["Content-Type"] = "application/json";
++      options.body = JSON.stringify(corps);
++    }
++    return fetch(chemin, options)
++      .then(function (reponse) {
++        retirerBandeau("injoignable");
++        return reponse.json().then(
++          function (donnees) {
++            return { statut: reponse.status, donnees: donnees };
++          },
++          function () {
++            return { statut: reponse.status, donnees: {} };
++          }
++        );
++      })
++      .catch(function () {
++        signalerServeurInjoignable();
++        return null;
++      });
++  }
++
+   function afficherCadre(vue) {
+@@ -150,2 +176,4 @@
+     appeler: appeler,
++    envoyer: envoyer,
++    rafraichirCadre: chargerCadre,
+     creer: creer,
+diff --git a/src/usine/ui/statique/chaine.html b/src/usine/ui/statique/chaine.html
+index c124652..54eb93c 100644
+--- a/src/usine/ui/statique/chaine.html
++++ b/src/usine/ui/statique/chaine.html
+@@ -9,2 +9,3 @@
+   <script src="/statique/cadre.js" defer></script>
++  <script src="/statique/chaine.js" defer></script>
+ </head>
+@@ -45,6 +46,36 @@
+       <div id="bandeaux"></div>
+-      <section class="carte" aria-labelledby="titre-contenu">
+-        <h2 id="titre-contenu">Contenu de l'écran</h2>
+-        <p class="legende">Le contenu de cet écran arrive avec la prochaine livraison de l'interface.</p>
+-      </section>
++      <div class="colonne-chaine">
++        <div class="bandeau-resultat" id="bandeau-resultat"></div>
++        <section class="carte" aria-labelledby="titre-lancement">
++          <h2 id="titre-lancement">Chaîne de reporting</h2>
++          <div class="actions-chaine">
++            <div class="action-chaine">
++              <button type="button" class="bouton-primaire" id="bouton-lancement">Lancer la Chaîne</button>
++              <p class="legende" id="motif-lancement" hidden></p>
++            </div>
++            <div class="action-chaine">
++              <button type="button" class="bouton-secondaire" id="bouton-mode">Passer en Mode repli</button>
++              <p class="legende" id="motif-mode" hidden></p>
++            </div>
++          </div>
++          <p class="bandeau bandeau--erreur" id="erreur-chaine" role="alert" hidden></p>
++        </section>
++        <section class="carte" aria-labelledby="titre-progression">
++          <h2 id="titre-progression">Progression</h2>
++          <p class="compteur" id="compteur">0 / 10</p>
++          <div class="barre" id="barre" role="progressbar" aria-label="Étapes terminées" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0">
++            <div class="barre-remplissage" id="barre-remplissage"></div>
++          </div>
++          <p class="visuellement-cache" id="annonce" role="status"></p>
++          <ol class="etapes" id="etapes" aria-label="Étapes de la Chaîne"></ol>
++        </section>
++        <section class="carte" aria-labelledby="titre-journal">
++          <h2 id="titre-journal">Journal de progression</h2>
++          <ul class="journal" id="journal" tabindex="0" aria-label="Journal de progression"></ul>
++        </section>
++        <section class="carte" aria-labelledby="titre-dernier">
++          <h2 id="titre-dernier">Dernier Passage</h2>
++          <div id="dernier-passage"></div>
++        </section>
++      </div>
+     </main>
+diff --git a/docs/tests-manuels.md b/docs/tests-manuels.md
+index 1529ca8..417c53d 100644
+--- a/docs/tests-manuels.md
++++ b/docs/tests-manuels.md
+@@ -115,2 +115,17 @@ Lancer `uv run usine ui` (Mode réel, après un Passage publié) puis, pour les
+ 
++### 3.8 Lancement de la Chaîne et bouton de mode (Story 7.15)
++
++Lancer `uv run usine ui` en Mode réel, depuis une racine configurée (`.env`, secrets Jira) : l'essai de vraie Chaîne du point 8 écrit un Passage dans `sorties/passages/`. Pour les autres points, rien n'est écrit.
++
++1. Écran `/chaine` : le bouton « Lancer la Chaîne » (primaire) et le bouton « Passer en Mode repli » (secondaire) ; la barre de progression à « 0 / 10 », les 10 étapes en « En attente » avec leur description, le journal « En attente d'un lancement. » et l'encart « Dernier Passage ». Le bouton « Lancer la Chaîne » de l'en-tête est absent de cet écran.
++2. Mode repli : cliquer sur « Passer en Mode repli ». La pastille devient « Mode repli », le bandeau s'affiche, l'encart « Dernier Passage » lit `demo/repli/passage/`. Le bouton de lancement est inactif (`aria-disabled="true"`, toujours focalisable au clavier) avec son motif visible dessous ; l'inspecteur d'accessibilité montre `aria-describedby` vers ce motif. Ouvrir `/` : la carte lit le Passage enregistré. Le bouton devient « Revenir au Mode réel » ; un clic ramène au dernier Passage réel (pastille « Mode réel », bandeau retiré).
++3. Copie du repli absente : renommer temporairement `demo/repli/passage/`, cliquer sur « Passer en Mode repli » : le bandeau d'erreur « Mode repli : Passage enregistré introuvable… » s'affiche sur tous les écrans, et le bouton « Revenir au Mode réel » reste utilisable. Remettre le dossier.
++4. Aucune bascule seule : relancer avec `$env:USINE_MODE_REPLI = "1"; uv run usine ui` : le mode de départ est « Mode repli » ; recharger la page ne change rien tant qu'on ne clique pas.
++5. Terminal, sans navigateur : `curl.exe -X POST -H "Content-Type: application/json" -d '{\"mode\":\"repli\"}' http://127.0.0.1:8000/api/mode` rend l'état du cadre en mode repli (puis `reel`) ; un corps invalide rend 422. Hors du navigateur, `curl.exe -X POST -H "Origin: http://exemple.invalid" http://127.0.0.1:8000/api/chaine` rend 403.
++6. Une Chaîne à la fois : pendant la Chaîne du point 8, un second `curl.exe -X POST http://127.0.0.1:8000/api/chaine` rend 409 avec le motif, sans second processus (Gestionnaire des tâches : un seul `python -m usine rapport`).
++7. Pendant la Chaîne du point 8 : le bouton passe à « Chaîne en cours… » et reste inactif ainsi que le bouton de mode, chacun avec son motif ; le focus reste sur le bouton cliqué ; le journal (le plus récent en haut) et les étapes avancent chaque seconde ; la barre suit les étapes terminées (`aria-valuenow`, compteur « n / 10 »). Un lecteur d'écran annonce « Étape n sur 10 : … » à chaque changement d'étape, puis la fin, mais pas chaque seconde. Quitter `/chaine` (ouvrir `/`), attendre, revenir : le suivi reprend et les deux boutons sont toujours inactifs.
++8. Vraie Chaîne (pour Anaël, quelques minutes, Jira réel, hors Mode repli) : cliquer sur « Lancer la Chaîne ». À la fin, le bandeau « Chaîne terminée : Passage publié. » et le lien « Voir la carte météo » s'affichent, le bouton devient « Relancer la Chaîne », la pastille de l'en-tête prend l'heure du nouveau Passage et la carte montre la nouvelle Date d'arrêté.
++9. Échec : couper le réseau ou invalider le jeton Jira (`.env`) puis lancer la Chaîne. L'étape fautive affiche « Échec », le bandeau d'erreur nomme l'étape, le code de sortie et au plus 20 lignes d'erreur, avec « Aucun rapport publié par ce lancement… » ; la pastille de l'en-tête et la carte restent sur le Passage précédent. Remettre la configuration.
++10. Serveur arrêté pendant le suivi (Ctrl+C) : le bandeau « L'interface ne joint plus le serveur. » apparaît une seule fois ; après un redémarrage, le serveur ne retrouve pas une Chaîne lancée par l'ancien processus (l'écran affiche « En attente »).
++
+ ## 4. À ne pas faire sans précaution
+diff --git a/src/usine/ui/statique/cadre.css b/src/usine/ui/statique/cadre.css
+index f47eaf4..a53768d 100644
+--- a/src/usine/ui/statique/cadre.css
++++ b/src/usine/ui/statique/cadre.css
+@@ -367 +367,103 @@ a.ticket::after { content: " ↗"; font-weight: 400; }
+ .page-erreur { max-width: 720px; margin: 48px auto; padding: 0 var(--gouttiere); }
++
++/* Lancement de la Chaîne (Story 7.15) */
++.bouton-primaire {
++  min-height: var(--cible-min);
++  padding: 0 20px;
++  border: 1px solid var(--primaire);
++  border-radius: 14px;
++  background: var(--primaire);
++  color: var(--blanc);
++  font: 700 15px/1 var(--police-corps);
++  cursor: pointer;
++}
++.bouton-primaire:hover { background: var(--violet-2); }
++.bouton-primaire[aria-disabled="true"],
++.bouton-secondaire[aria-disabled="true"] {
++  border-color: var(--bordure-champ);
++  background: var(--fond);
++  color: var(--encre-secondaire);
++  cursor: not-allowed;
++}
++.actions-chaine { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
++.action-chaine { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; max-width: 360px; }
++.action-chaine .legende { margin: 0; }
++.visuellement-cache {
++  position: absolute;
++  width: 1px;
++  height: 1px;
++  overflow: hidden;
++  clip: rect(0 0 0 0);
++  white-space: nowrap;
++}
++.compteur { text-align: right; font: 400 14px/1.4 var(--police-code); color: var(--nuit); }
++.barre { height: 10px; margin: 6px 0 16px; border-radius: 9999px; background: var(--lavande); overflow: hidden; }
++.barre-remplissage { height: 100%; width: 0; background: var(--primaire); transition: width 0.3s; }
++.etapes { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
++.etape {
++  display: flex;
++  align-items: center;
++  gap: 12px;
++  padding: 10px 14px;
++  border: 1px solid var(--bordure);
++  border-radius: 14
+[... diff tronque a 60 000 caracteres ...]

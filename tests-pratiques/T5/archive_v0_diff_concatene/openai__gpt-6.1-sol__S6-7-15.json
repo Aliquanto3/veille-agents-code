@@ -1,0 +1,31 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "S6-7-15",
+ "latence_s": 39.1,
+ "usage": {
+  "prompt_tokens": 20333,
+  "completion_tokens": 1911,
+  "total_tokens": 22244,
+  "cost": 0.021149,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 20330,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.021149,
+   "upstream_inference_prompt_cost": 0.002039,
+   "upstream_inference_completions_cost": 0.01911
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 909,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.021149,
+ "finish_reason": "stop",
+ "contenu": "{\n  \"constats\": [\n    {\n      \"id\": \"C1\",\n      \"fichier\": \"src/usine/ui/chaine.py\",\n      \"ligne\": 154,\n      \"severite\": \"Important\",\n      \"description\": \"Avant tout lancement, `_avant` est vide et `_evenements()` recherche déjà un fichier nouveau. Sur une racine contenant la progression d'un ancien Passage, l'écran en statut `attente` affiche donc ses étapes et son journal, éventuellement une étape « En cours » alors qu'aucun processus ne tourne. Il faut réserver la recherche de progression à une Chaîne effectivement lancée par cette gestion.\",\n      \"test_pytest\": \"from datetime import UTC, datetime\\n\\nfrom usine.contrats.passage import Etape, EvenementProgression, StatutEtape\\nfrom usine.ui.chaine import GestionChaine\\n\\n\\ndef test_attente_ne_reprend_pas_une_ancienne_progression(tmp_path):\\n    dossier = tmp_path / 'sorties' / 'progression'\\n    dossier.mkdir(parents=True)\\n    evenement = EvenementProgression(\\n        passage_id='20261012T073000Z-aaaaaa',\\n        etape=Etape.extraction,\\n        statut=StatutEtape.en_cours,\\n        horodatage=datetime(2026, 10, 12, 7, 30, tzinfo=UTC),\\n    )\\n    (dossier / '20261012T073000Z-aaaaaa.jsonl').write_text(\\n        evenement.model_dump_json() + '\\\\n', encoding='utf-8'\\n    )\\n\\n    vue = GestionChaine(tmp_path).vue(False, None)\\n\\n    assert vue.statut == 'attente'\\n    assert all(etape.etat == 'en_attente' for etape in vue.etapes)\\n    assert vue.journal == []\\n\"\n    },\n    {\n      \"id\": \"C2\",\n      \"fichier\": \"src/usine/ui/chaine.py\",\n      \"ligne\": 180,\n      \"severite\": \"Important\",\n      \"description\": \"Une sortie non nulle pendant une étape, sans événement final `echouee` (par exemple un processus tué), donne bien un bandeau d'échec mais laisse cette étape « En cours ». La construction des étapes repose exclusivement sur les événements et ne tient pas compte de la fin du processus. Le scénario d'échec exige pourtant que l'étape soit affichée « Échec » ; les tests fusionnés ne couvrent que le cas où le sous-processus a pu écrire lui-même cet événement.\",\n      \"test_pytest\": \"from datetime import UTC, datetime\\nfrom io import BytesIO\\n\\nfrom usine.contrats.passage import Etape, EvenementProgression, StatutEtape\\nfrom usine.ui import lancement\\nfrom usine.ui.chaine import GestionChaine\\n\\n\\nclass Processus:\\n    def __init__(self):\\n        self.code = None\\n\\n    def poll(self):\\n        return self.code\\n\\n\\ndef test_sortie_anormale_marque_l_etape_interrompue_en_echec(tmp_path, monkeypatch):\\n    processus = Processus()\\n    monkeypatch.setattr(lancement, 'fichier_erreurs', lambda: BytesIO())\\n    monkeypatch.setattr(lancement, 'lancer_chaine', lambda *args, **kwargs: processus)\\n    monkeypatch.setattr(lancement, 'lire_erreurs', lambda fichier: '')\\n    gestion = GestionChaine(tmp_path)\\n    gestion.lancer(False)\\n\\n    dossier = tmp_path / 'sorties' / 'progression'\\n    dossier.mkdir(parents=True, exist_ok=True)\\n    evenement = EvenementProgression(\\n        passage_id='20261012T073000Z-aaaaaa',\\n        etape=Etape.extraction,\\n        statut=StatutEtape.en_cours,\\n        horodatage=datetime(2026, 10, 12, 7, 30, tzinfo=UTC),\\n    )\\n    (dossier / '20261012T073000Z-aaaaaa.jsonl').write_text(\\n        evenement.model_dump_json() + '\\\\n', encoding='utf-8'\\n    )\\n    processus.code = -9\\n\\n    vue = gestion.vue(False, None)\\n\\n    assert vue.statut == 'echec'\\n    assert vue.etapes[0].etat == 'echouee'\\n    assert vue.etapes[0].libelle_etat == 'Échec'\\n\"\n    }\n  ]\n}"
+}

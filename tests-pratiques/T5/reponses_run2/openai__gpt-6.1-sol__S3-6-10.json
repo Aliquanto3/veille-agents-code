@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "S3-6-10",
+ "latence_s": 25.0,
+ "usage": {
+  "prompt_tokens": 12458,
+  "completion_tokens": 952,
+  "total_tokens": 13410,
+  "cost": 0.0406635,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 12455,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0406635,
+   "upstream_inference_prompt_cost": 0.0311435,
+   "upstream_inference_completions_cost": 0.00952
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 516,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.0406635,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 952,
+   "cout_usd": 0.0406635,
+   "latence_s": 25.0
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"outils/balayer_sm7.py\",\"ligne\":90,\"severite\":\"Important\",\"description\":\"Les traces JSONL sont balayées sous leur forme sérialisée, sans décodage JSON. Les échappements JSON masquent donc des identifiants réellement présents : un IBAN avec des espaces insécables sérialisés en « \\\\u00a0 » n'est pas détecté, car compacter ne supprime pas ces séquences littérales. Les noms comportant des caractères accentués échappés présentent le même problème. Le contrôle SM-7 peut ainsi retourner 0 malgré une fuite. Il faut balayer les valeurs décodées, y compris les réponses JSON du cache lorsqu'elles sont sérialisées.\",\"test_pytest\":\"import json\\n\\nfrom outils.balayer_sm7 import CHEMIN_TRACES_LLM, main\\n\\n\\ndef test_iban_avec_blancs_echappes_dans_trace_json(tmp_path):\\n    iban = \\\"FR46 9999 9143 2694 4104 2320 086\\\"\\n    identifiants = tmp_path / \\\"identifiants.json\\\"\\n    identifiants.write_text(\\n        json.dumps([{\\\"type\\\": \\\"COMPTE\\\", \\\"valeur\\\": iban}]),\\n        encoding=\\\"utf-8\\\",\\n    )\\n    passage = tmp_path / \\\"passage\\\"\\n    trace = passage / CHEMIN_TRACES_LLM\\n    trace.parent.mkdir(parents=True)\\n    trace.write_text(\\n        json.dumps(\\n            {\\\"entree_pseudonymisee\\\": iban.replace(\\\" \\\", \\\"\\\\u00a0\\\")},\\n            ensure_ascii=True,\\n        ) + \\\"\\\\n\\\",\\n        encoding=\\\"utf-8\\\",\\n    )\\n\\n    assert main([\\n        \\\"--passage\\\", str(passage),\\n        \\\"--identifiants\\\", str(identifiants),\\n    ]) == 1\\n\"}]}"
+}

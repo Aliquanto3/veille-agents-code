@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "S1-E0-7",
+ "latence_s": 26.3,
+ "usage": {
+  "prompt_tokens": 21912,
+  "completion_tokens": 2270,
+  "total_tokens": 24182,
+  "cost": 0.003873925,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 21909,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.003873925,
+   "upstream_inference_prompt_cost": 0.002738925,
+   "upstream_inference_completions_cost": 0.001135
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 2022,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.003873925,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 2270,
+   "cout_usd": 0.003873925,
+   "latence_s": 26.3
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/usine/ia/controles.py\",\"ligne\":52,\"severite\":\"Important\",\"description\":\"`citations()` ignore toute clé dont le projet n’est pas celui d’un ticket autorisé. Ainsi, avec `DEMO-1` autorisé, la phrase « Voir DEMO-1 et AUTRE-2. » est conservée : `AUTRE-2` disparaît du contrôle au lieu de faire retirer la phrase. La spec exige de retirer toute phrase qui cite une clé absente de `tickets_autorises` (hors codes d’indicateur et d’Entité).\",\"test_pytest\":\"from usine.ia.controles import controler_citations\\n\\n\\ndef test_retire_une_phrase_citant_un_ticket_non_autorise() -> None:\\n    resultat = controler_citations(\\\"Voir DEMO-1 et AUTRE-2.\\\", [\\\"DEMO-1\\\"])\\n\\n    assert resultat.texte == \\\"\\\"\\n    assert resultat.citations == ()\\n    assert resultat.phrases_retirees == 1\\n\"}]}"
+}

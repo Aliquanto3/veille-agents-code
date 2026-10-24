@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "S6-7-15",
+ "latence_s": 20.4,
+ "usage": {
+  "prompt_tokens": 20480,
+  "completion_tokens": 855,
+  "total_tokens": 21335,
+  "cost": 0.0597485,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 20477,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0597485,
+   "upstream_inference_prompt_cost": 0.0511985,
+   "upstream_inference_completions_cost": 0.00855
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 416,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.0597485,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 855,
+   "cout_usd": 0.0597485,
+   "latence_s": 20.4
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/usine/ui/chaine.py\",\"ligne\":153,\"severite\":\"Important\",\"description\":\"Avant tout lancement, `_avant` est vide et `_vue()` appelle déjà `_evenements()`. Les fichiers de progression présents au démarrage sont donc considérés comme nouveaux : ouvrir `/chaine` après un ancien Passage affiche ses étapes et son journal, tout en indiquant `attente`. Cela contredit l'état initial attendu (10 étapes en attente, compteur 0 / 10) et la distinction entre le dernier Passage et la Chaîne suivie par ce serveur. Ne rechercher une progression qu'après un lancement effectué par cette instance.\",\"test_pytest\":\"from datetime import UTC, datetime\\n\\nfrom usine.contrats.passage import Etape, EvenementProgression, StatutEtape\\nfrom usine.ui.chaine import GestionChaine\\n\\n\\ndef test_aucune_progression_historique_avant_un_lancement(tmp_path):\\n    passage_id = \\\"20261012T073000Z-aaaaaa\\\"\\n    repertoire = tmp_path / \\\"sorties\\\" / \\\"progression\\\"\\n    repertoire.mkdir(parents=True)\\n    evenement = EvenementProgression(\\n        passage_id=passage_id,\\n        etape=Etape.extraction,\\n        statut=StatutEtape.reussie,\\n        horodatage=datetime(2026, 10, 12, 7, 30, tzinfo=UTC),\\n    )\\n    (repertoire / f\\\"{passage_id}.jsonl\\\").write_text(\\n        evenement.model_dump_json() + \\\"\\\\n\\\", encoding=\\\"utf-8\\\"\\n    )\\n\\n    vue = GestionChaine(tmp_path).vue(False, None)\\n\\n    assert vue.statut == \\\"attente\\\"\\n    assert vue.terminees == 0\\n    assert all(etape.etat == \\\"en_attente\\\" for etape in vue.etapes)\\n    assert vue.journal == []\\n\"}]}"
+}

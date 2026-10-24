@@ -1,0 +1,31 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "S1-E0-7",
+ "latence_s": 35.0,
+ "usage": {
+  "prompt_tokens": 21858,
+  "completion_tokens": 1485,
+  "total_tokens": 23343,
+  "cost": 0.0694935,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 21855,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0694935,
+   "upstream_inference_prompt_cost": 0.0546435,
+   "upstream_inference_completions_cost": 0.01485
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 716,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.0694935,
+ "finish_reason": "stop",
+ "contenu": "{\n  \"constats\": [\n    {\n      \"id\": \"C1\",\n      \"fichier\": \"src/usine/ia/controles.py\",\n      \"ligne\": 47,\n      \"severite\": \"Important\",\n      \"description\": \"Le filtrage des citations ignore toutes les clés dont le projet n'apparaît pas dans les tickets autorisés. Avec DEMO-1 autorisé, une phrase citant DEMO-1 et AUTRE-2 est donc conservée et déclarée conforme. La spec impose pourtant de retirer toute phrase citant un ticket non autorisé ; seules les exclusions explicites (codes d'indicateur et d'Entité) doivent être ignorées, pas les autres projets. Ce défaut laisse publier des explications appuyées sur des tickets hors cause.\",\n      \"test_pytest\": \"from usine.ia.controles import controler_citations\\n\\n\\ndef test_retire_phrase_citant_un_ticket_d_un_autre_projet():\\n    resultat = controler_citations(\\n        'DEMO-1 dépend du ticket AUTRE-2.',\\n        ('DEMO-1',),\\n    )\\n    assert resultat.texte == ''\\n    assert resultat.citations == ()\\n    assert resultat.phrases_retirees == 1\\n    assert resultat.phrases_total == 1\\n\"\n    },\n    {\n      \"id\": \"C2\",\n      \"fichier\": \"src/usine/adaptateurs/pseudonymisation/__init__.py\",\n      \"ligne\": 205,\n      \"severite\": \"Important\",\n      \"description\": \"La ré-identification ne reconnaît pas certains jetons pourtant produits par pseudonymiser. Un préfixe majuscule directement adjacent est absorbé dans le type (IBANCOMPTE_<empreinte>), et un suffixe commençant par a–f ou un chiffre empêche entièrement la reconnaissance. Par exemple, un compte précédé directement de « IBAN » reste pseudonymisé dans la sortie finale, alors que le motif a correctement reconnu le compte à l'entrée. Le remplacement doit permettre de retrouver les jetons générés sans imposer aux textes des séparateurs que pseudonymiser ne vérifie pas.\",\n      \"test_pytest\": \"import pytest\\n\\nfrom usine.adaptateurs.pseudonymisation import MOTIFS_PAR_DEFAUT, PseudonymiseurHmac\\n\\n\\nclass TableMemoire:\\n    def __init__(self):\\n        self.valeurs = {}\\n\\n    def enregistrer(self, correspondances):\\n        self.valeurs.update(correspondances)\\n\\n    def lire(self, jetons):\\n        return {jeton: self.valeurs[jeton] for jeton in jetons if jeton in self.valeurs}\\n\\n\\n@pytest.mark.parametrize('prefixe,suffixe', [('IBAN', ''), ('', 'abc')])\\ndef test_reidentifier_jeton_genere_sans_separateur(prefixe, suffixe):\\n    compte = 'FR76 3000 6000 0112 3456 7890 189'\\n    texte = prefixe + compte + suffixe\\n    pseudo = PseudonymiseurHmac(\\n        b'cle-fictive-de-test-assez-longue',\\n        MOTIFS_PAR_DEFAUT,\\n        TableMemoire(),\\n    )\\n    pseudonymise = pseudo.pseudonymiser(texte)\\n    assert compte not in pseudonymise\\n    assert pseudo.reidentifier(pseudonymise) == texte\\n\"\n    }\n  ]\n}"
+}

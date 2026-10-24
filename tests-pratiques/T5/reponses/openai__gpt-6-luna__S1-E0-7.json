@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "S1-E0-7",
+ "latence_s": 40.3,
+ "usage": {
+  "prompt_tokens": 21912,
+  "completion_tokens": 3827,
+  "total_tokens": 25739,
+  "cost": 0.004652425,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 21909,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.004652425,
+   "upstream_inference_prompt_cost": 0.002738925,
+   "upstream_inference_completions_cost": 0.0019135
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 3601,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.004652425,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 3827,
+   "cout_usd": 0.004652425,
+   "latence_s": 40.3
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/usine/ia/controles.py\",\"ligne\":57,\"severite\":\"Important\",\"description\":\"Le contrôle ignore les clés dont le projet diffère de celui des tickets autorisés avant de vérifier leur autorisation. Ainsi, avec `DEMO-1` autorisé, une phrase citant `DEMO-1` et `AUTRE-2` est conservée : elle cite pourtant une clé de ticket absente de `tickets_autorises`, en violation du contrôle exigé.\",\"test_pytest\":\"from usine.ia.controles import controler_citations\\n\\n\\ndef test_retire_une_phrase_citant_un_ticket_d_un_autre_projet() -> None:\\n    resultat = controler_citations(\\\"Voir DEMO-1 et AUTRE-2.\\\", [\\\"DEMO-1\\\"])\\n\\n    assert resultat.texte == \\\"\\\"\\n    assert resultat.citations == ()\\n    assert resultat.phrases_retirees == 1\\n\"}]}"
+}

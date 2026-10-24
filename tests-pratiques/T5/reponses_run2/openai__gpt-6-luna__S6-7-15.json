@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "S6-7-15",
+ "latence_s": 38.5,
+ "usage": {
+  "prompt_tokens": 20480,
+  "completion_tokens": 3373,
+  "total_tokens": 23853,
+  "cost": 0.004246425,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 20477,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.004246425,
+   "upstream_inference_prompt_cost": 0.002559925,
+   "upstream_inference_completions_cost": 0.0016865
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 3271,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.004246425,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 3373,
+   "cout_usd": 0.004246425,
+   "latence_s": 38.5
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/usine/ui/chaine.py\",\"ligne\":266,\"severite\":\"Nit\",\"description\":\"Au lancement, avant tout événement de progression, `_annonce` renvoie « Chaîne en cours… ». La spec limite les annonces aux changements d’étape, à la fin et à l’échec ; ce message produit donc une annonce supplémentaire au démarrage.\",\"test_pytest\":null}]}"
+}

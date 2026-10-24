@@ -1,0 +1,31 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "S4-7-7",
+ "latence_s": 32.7,
+ "usage": {
+  "prompt_tokens": 15490,
+  "completion_tokens": 2957,
+  "total_tokens": 18447,
+  "cost": 0.003414675,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 15487,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.003414675,
+   "upstream_inference_prompt_cost": 0.001936175,
+   "upstream_inference_completions_cost": 0.0014785
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 2630,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.003414675,
+ "finish_reason": "stop",
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/usine/ui/detail.py\",\"ligne\":324,\"severite\":\"Important\",\"description\":\"Le chemin `rejete` renvoie le texte échappé directement et ignore `explication.citations`. Une clé citée dans le texte de remplacement reste donc du texte simple, sans passer par `lien_ticket` et `url_ticket`, contrairement à la contrainte « Always ».\",\"test_pytest\":\"from datetime import date\\n\\nfrom usine.contrats.llm import SortieExplication, StatutControle\\nfrom usine.ui.detail import texte_explication\\nfrom usine.ui.liens import lien_ticket\\n\\n\\ndef test_citation_d_une_explication_rejetee_reste_un_lien() -> None:\\n    url = \\\"https://jira.example/browse/DEMO-1\\\"\\n    sortie = SortieExplication(\\n        date_arrete=date(2026, 10, 9),\\n        entite=\\\"ENT-A\\\",\\n        texte=\\\"Remplacement pour DEMO-1.\\\",\\n        citations=(\\\"DEMO-1\\\",),\\n        brouillon_commentaire=\\\"\\\",\\n        phrases_retirees=0,\\n        statut_controle=StatutControle.rejete,\\n    )\\n\\n    texte = texte_explication(2, (sortie,), lambda cle: url if cle == \\\"DEMO-1\\\" else None)\\n\\n    assert lien_ticket(\\\"DEMO-1\\\", url) in texte\"}]}"
+}

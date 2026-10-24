@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "S7-7-16",
+ "latence_s": 21.7,
+ "usage": {
+  "prompt_tokens": 19469,
+  "completion_tokens": 1026,
+  "total_tokens": 20495,
+  "cost": 0.058931,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 19466,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.058931,
+   "upstream_inference_prompt_cost": 0.048671,
+   "upstream_inference_completions_cost": 0.01026
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 451,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.058931,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 1026,
+   "cout_usd": 0.058931,
+   "latence_s": 21.7
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/usine/ui/ecrans.py\",\"ligne\":155,\"severite\":\"Important\",\"description\":\"Un refus dont le texte vaut SANS_REPONSE conserve les outils appelés dans la vue. Avec une réponse de refus contenant outils_appeles=(\\\"get_meteo\\\",), le navigateur affichera cet outil au lieu de « aucun », contrairement au scénario Refus de la spec. Le test existant ne couvre que le cas où la réponse possède déjà une liste vide.\",\"test_pytest\":\"from usine.contrats.llm import ReponseAgent, StatutControle\\nfrom usine.ia.agent.session import SANS_REPONSE\\nfrom usine.ui.ecrans import vue_reponse_agent\\n\\n\\ndef test_refus_affiche_aucun_outil():\\n    reponse = ReponseAgent(\\n        question=\\\"Quel est le budget ?\\\",\\n        texte=SANS_REPONSE,\\n        outils_appeles=(\\\"get_meteo\\\",),\\n        statut_controle=StatutControle.conforme,\\n    )\\n\\n    vue = vue_reponse_agent(reponse, SANS_REPONSE)\\n\\n    assert vue.badge_code == \\\"hors_perimetre\\\"\\n    assert vue.outils == []\\n    assert vue.aucun_outil == \\\"aucun\\\"\\n\"},{\"id\":\"C2\",\"fichier\":\"src/usine/ui/outillage.py\",\"ligne\":98,\"severite\":\"Important\",\"description\":\"Désactiver le HTML brut ne bloque pas les images Markdown distantes. Une fiche contenant ![illustration](https://externe.example/image.png) produit un élément img avec cette URL ; son insertion par outillage.js déclenche automatiquement une requête du navigateur hors du poste. Cela viole la contrainte « aucune sortie du poste ». Il faut neutraliser les ressources distantes dans le rendu, pas seulement le HTML brut.\",\"test_pytest\":\"from html.parser import HTMLParser\\n\\nfrom usine.ui.outillage import rendre_fiche\\n\\n\\nclass Images(HTMLParser):\\n    def __init__(self):\\n        super().__init__()\\n        self.sources = []\\n\\n    def handle_starttag(self, tag, attrs):\\n        if tag == \\\"img\\\":\\n            self.sources.append(dict(attrs).get(\\\"src\\\"))\\n\\n\\ndef test_fiche_ne_charge_pas_image_distante():\\n    url = \\\"https://externe.example/image.png\\\"\\n    analyse = Images()\\n    analyse.feed(rendre_fiche(f\\\"## Illustration\\\\n\\\\n![illustration]({url})\\\\n\\\"))\\n\\n    assert url not in analyse.sources\\n\"}]}"
+}

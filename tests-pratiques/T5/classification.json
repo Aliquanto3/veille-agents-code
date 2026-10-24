@@ -1,0 +1,95 @@
+{
+ "moonshotai__kimi-k3.1-pro__S1-E0-7__C1": {
+  "classe": "chaine",
+  "note": "Cle d'un autre projet ignoree par le controle des citations : rejete par la revue (un seul projet Jira en E0)"
+ },
+ "moonshotai__kimi-k3.1-pro__S3-6-10__C1": {
+  "classe": "confirme",
+  "note": "Identifiant separe par tabulations ou sauts de ligne, echappes en \t \n dans la trace JSONL : la revue disait les tabulations couvertes (en texte decode seulement) ; non corrige sur main"
+ },
+ "moonshotai__kimi-k3.1-pro__S3-6-10__C2": {
+  "classe": "chaine",
+  "note": "Appel en echec absent des traces et du bilan : constat reporte par la revue de 6.10, corrige en 6.10-b (le test passe sur main)",
+  "defaut": "D1"
+ },
+ "moonshotai__kimi-k3.1-pro__S7-7-16__C1": {
+  "classe": "discutable",
+  "note": "Ecart litteral a la matrice de la spec (outils aucun au refus) : la liste des outils appeles est aussi une information, jamais corrige ensuite"
+ },
+ "openai__gpt-6-luna__S1-E0-7__C1": {
+  "classe": "chaine",
+  "note": "Cle d'un autre projet ignoree par le controle des citations : rejete par la revue (un seul projet Jira en E0)"
+ },
+ "openai__gpt-6-luna__S3-6-10__C1": {
+  "classe": "rien",
+  "note": "Declenche par l'echappement   de json.dumps(ensure_ascii=True) : le depot ecrit ensure_ascii=False, donc non representatif"
+ },
+ "openai__gpt-6-luna__S6-7-15__C1": {
+  "classe": "confirme",
+  "note": "Progression d'un ancien lancement affichee en statut attente : non consigne par la chaine, jamais corrige ensuite"
+ },
+ "openai__gpt-6.1-sol__S1-E0-7__C1": {
+  "classe": "chaine",
+  "note": "Cle d'un autre projet ignoree par le controle des citations : rejete par la revue (un seul projet Jira en E0)"
+ },
+ "openai__gpt-6.1-sol__S2-E0-8__C1": {
+  "classe": "chaine",
+  "note": "Fichier de progression choisi par nom le plus petit : rejete par la revue (egalite de seconde, carried)"
+ },
+ "openai__gpt-6.1-sol__S3-6-10__C1": {
+  "classe": "discutable",
+  "note": "Le test echoue d'abord sur le cas   (non representatif) ; la meme faille est reelle pour \n (cf. kimi)"
+ },
+ "openai__gpt-6.1-sol__S6-7-15__C1": {
+  "classe": "confirme",
+  "note": "Progression d'un ancien lancement affichee en statut attente : non consigne par la chaine, jamais corrige ensuite"
+ },
+ "openai__gpt-6.1-sol__S7-7-16__C1": {
+  "classe": "discutable",
+  "note": "Ecart litteral a la matrice de la spec (outils aucun au refus) : la liste des outils appeles est aussi une information, jamais corrige ensuite"
+ },
+ "openai__gpt-6.1-sol__S7-7-16__C2": {
+  "classe": "discutable",
+  "note": "Image Markdown distante non neutralisee dans la fiche outillage : durcissement, la fiche du depot n'en contient pas"
+ },
+ "xiaomi__mimo-v2.6-pro__S3-6-10__C1": {
+  "classe": "chaine",
+  "note": "Contredit la matrice I/O mais correspond au plafond MAX_ECHECS_PASSAGE (20 echecs au total) ajoute par la revue pour corriger un high : decision explicite de la chaine ; le test est valide (UsineErreur levee par le code apres 20 echecs non consecutifs)"
+ },
+ "openai__gpt-6-luna__S1-E0-7__C1__r2": {
+  "classe": "chaine",
+  "note": "Cle d'un autre projet ignoree par le controle des citations : rejete par la revue (un seul projet Jira en E0)"
+ },
+ "openai__gpt-6-luna__S2-E0-8__C1__r2": {
+  "classe": "chaine",
+  "note": "Fichier de progression choisi par nom le plus petit : rejete par la revue (egalite de seconde, carried)"
+ },
+ "openai__gpt-6-luna__S3-6-10__C1__r2": {
+  "classe": "chaine",
+  "note": "Contredit la matrice I/O mais correspond au plafond MAX_ECHECS_PASSAGE (20 echecs au total) ajoute par la revue pour corriger un high : decision explicite de la chaine ; le test est valide (UsineErreur levee par le code apres 20 echecs non consecutifs)"
+ },
+ "openai__gpt-6-luna__S7-7-16__C1__r2": {
+  "classe": "discutable",
+  "note": "Exception inattendue de la fabrique de session renvoyee en 502 generique et non en 503 : echec reel du test (RuntimeError non convertie), gravite faible"
+ },
+ "openai__gpt-6.1-sol__S1-E0-7__C1__r2": {
+  "classe": "chaine",
+  "note": "Cle d'un autre projet ignoree par le controle des citations : rejete par la revue (un seul projet Jira en E0)"
+ },
+ "openai__gpt-6.1-sol__S2-E0-8__C1__r2": {
+  "classe": "chaine",
+  "note": "Fichier de progression choisi par nom le plus petit : rejete par la revue (egalite de seconde, carried)"
+ },
+ "openai__gpt-6.1-sol__S3-6-10__C1__r2": {
+  "classe": "rien",
+  "note": "Declenche par l'echappement   de json.dumps(ensure_ascii=True) : le depot ecrit ensure_ascii=False, donc non representatif (le test impose ensure_ascii=True)"
+ },
+ "openai__gpt-6.1-sol__S6-7-15__C1__r2": {
+  "classe": "confirme",
+  "note": "Progression d'un ancien lancement affichee en statut attente : non consigne par la chaine, jamais corrige ensuite"
+ },
+ "openai__gpt-6.1-sol__S7-7-16__C1__r2": {
+  "classe": "discutable",
+  "note": "Ecart litteral a la matrice de la spec (outils aucun au refus) : la liste des outils appeles est aussi une information, jamais corrige ensuite"
+ }
+}

@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "S1-E0-7",
+ "latence_s": 20.9,
+ "usage": {
+  "prompt_tokens": 21912,
+  "completion_tokens": 729,
+  "total_tokens": 22641,
+  "cost": 0.0620685,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 21909,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0620685,
+   "upstream_inference_prompt_cost": 0.0547785,
+   "upstream_inference_completions_cost": 0.00729
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 439,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.0620685,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 729,
+   "cout_usd": 0.0620685,
+   "latence_s": 20.9
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/usine/ia/controles.py\",\"ligne\":48,\"severite\":\"Important\",\"description\":\"Le filtre des citations ignore toutes les clés dont le projet ne figure pas parmi les tickets autorisés, alors que la spécification n'exclut que les codes d'indicateur et d'Entité. Avec tickets_autorises = ['DEMO-1'], la phrase « DEMO-1 dépend de AUTRE-99. » est donc conservée et déclarée conforme : AUTRE-99 disparaît du contrôle. Il faut reconnaître aussi les clés des autres projets afin de retirer toute phrase citant un ticket hors cause. Ce défaut empêche également la régénération lorsque la majorité des phrases contient de telles références.\",\"test_pytest\":\"from usine.ia.controles import controler_citations\\n\\n\\ndef test_citation_d_un_autre_projet_est_refusee():\\n    controle = controler_citations(\\n        \\\"DEMO-1 dépend de AUTRE-99.\\\",\\n        (\\\"DEMO-1\\\",),\\n    )\\n    assert controle.texte == \\\"\\\"\\n    assert controle.citations == ()\\n    assert controle.phrases_retirees == 1\\n    assert controle.phrases_total == 1\\n\"}]}"
+}

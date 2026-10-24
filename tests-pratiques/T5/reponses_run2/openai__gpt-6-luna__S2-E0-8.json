@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "S2-E0-8",
+ "latence_s": 32.5,
+ "usage": {
+  "prompt_tokens": 15291,
+  "completion_tokens": 2919,
+  "total_tokens": 18210,
+  "cost": 0.0033708,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 15288,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0033708,
+   "upstream_inference_prompt_cost": 0.0019113,
+   "upstream_inference_completions_cost": 0.0014595
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 2588,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.0033708,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 2919,
+   "cout_usd": 0.0033708,
+   "latence_s": 32.5
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/usine/ui/progression.py\",\"ligne\":48,\"severite\":\"Important\",\"description\":\"Quand plusieurs fichiers de progression apparaissent après le lancement — par exemple si un autre rapport démarre en parallèle — le code choisit le nom lexicalement minimal, pas le premier fichier apparu. Il peut donc suivre la progression d'un autre Passage. La sélection doit respecter l'ordre d'apparition prévu par la story.\",\"test_pytest\":\"from pathlib import Path\\nimport os\\n\\nfrom usine.ui.progression import fichier_nouveau, fichiers_progression\\n\\n\\ndef test_suit_le_premier_fichier_apparu(tmp_path: Path) -> None:\\n    repertoire = tmp_path / \\\"sorties\\\" / \\\"progression\\\"\\n    repertoire.mkdir(parents=True)\\n    avant = fichiers_progression(tmp_path)\\n\\n    premier = repertoire / \\\"20261012T080000Z-aaaaaa.jsonl\\\"\\n    second = repertoire / \\\"20261012T070000Z-bbbbbb.jsonl\\\"\\n    premier.write_text(\\\"\\\", encoding=\\\"utf-8\\\")\\n    second.write_text(\\\"\\\", encoding=\\\"utf-8\\\")\\n    os.utime(premier, ns=(1_000_000_000, 1_000_000_000))\\n    os.utime(second, ns=(2_000_000_000, 2_000_000_000))\\n\\n    assert fichier_nouveau(avant, tmp_path) == premier\"}]}"
+}

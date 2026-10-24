@@ -1,0 +1,784 @@
+diff --git a/src/usine/adaptateurs/llm/registre.py b/src/usine/adaptateurs/llm/registre.py
+index 307168b..a7f539d 100644
+--- a/src/usine/adaptateurs/llm/registre.py
++++ b/src/usine/adaptateurs/llm/registre.py
+@@ -46,5 +46,6 @@ def _usd(entree: str, sortie: str) -> tuple[Decimal, Decimal]:
+ 
+-_SONNET = _usd("3", "15")
++# Tarifs publics relevés sur platform.claude.com/docs/en/about-claude/pricing le 13/10/2026.
++_SONNET = _usd("2", "10")
+ _HAIKU = _usd("1", "5")
+-_OPUS = _usd("5", "25")
++_OPUS = _usd("4", "20")
+ 
+diff --git a/src/usine/ia/passerelle.py b/src/usine/ia/passerelle.py
+index 1fef53d..6333dd5 100644
+--- a/src/usine/ia/passerelle.py
++++ b/src/usine/ia/passerelle.py
+@@ -60,2 +60,11 @@ def tarif_nul(version_modele: str, jetons_entree: int, jetons_sortie: int) -> De
+ 
++ECHEC_FACTEUR_TENTATIVES = 3
++"""Requêtes supposées facturées pour un appel structuré en échec (tentative et relances de
++sortie de Pydantic AI) : majoration du coût imputé au plafond."""
++
++ECHEC_CARACTERES_PAR_JETON = 2
++"""Caractères par jeton d'entrée supposés pour un appel en échec (majorant : le français
++compte plutôt 3 à 4 caractères par jeton)."""
++
++
+ class PlafondCoutAtteint(UsineErreur):
+@@ -316,3 +325,20 @@ class Passerelle:
+             cumul = self._verifier_plafond(contexte, parametres, plafond_eur)
+-            appel = fournisseur.generer_structure(entree, schema, parametres)
++            try:
++                appel = fournisseur.generer_structure(entree, schema, parametres)
++            except UsineErreur:
++                # Un échec (UnexpectedModelBehavior après relances de sortie) a pu être
++                # facturé : coût majoré imputé au Passage pour que le plafond le compte.
++                majore = self._tarif(
++                    version_modele,
++                    ECHEC_FACTEUR_TENTATIVES * len(entree) // ECHEC_CARACTERES_PAR_JETON,
++                    ECHEC_FACTEUR_TENTATIVES * parametres.max_jetons_sortie,
++                )
++                self._cumul[contexte.passage_id] = cumul + majore
++                journal.warning(
++                    "appel en échec pour %s : %s € estimés imputés au Passage %s",
++                    contexte.cible,
++                    majore,
++                    contexte.passage_id,
++                )
++                raise
+             enveloppe = EnveloppeCache(brut=appel.brut, version_modele=appel.version_modele)
+diff --git a/outils/prechauffer_cache.py b/outils/prechauffer_cache.py
+new file mode 100644
+index 0000000..1dab5ca
+--- /dev/null
++++ b/outils/prechauffer_cache.py
+@@ -0,0 +1,50 @@
++"""Préchauffage du cache de classification (Story 6.10) : « cache de classification initialisé ».
++
++La première classification du stock (environ 3 100 Anomalies, un appel chacune, débit de
++50 requêtes par minute) dure plus d'une heure : elle se fait hors Passage, par tranches
++bornées dans le temps et relançables, avant le Passage Palier 2 mesuré. Chaque tranche
++reprend où la précédente s'est arrêtée (les Anomalies déjà classées sont servies par le
++cache, sans appel). Exige `palier: 2` dans `config/chaine.yaml` de la racine.
++
++Usage : `uv run python outils/prechauffer_cache.py --date-arrete AAAA-MM-JJ
++[--duree-max 540] [--racine .]`. Code de sortie : 0 stock couvert, 3 stock restant
++(relancer), 2 erreur.
++"""
++
++import argparse
++import sys
++from collections.abc import Sequence
++from datetime import date
++from pathlib import Path
++
++from usine.composition import prechauffer_classification
++from usine.contrats.erreurs import UsineErreur
++
++
++def _analyseur() -> argparse.ArgumentParser:
++    analyseur = argparse.ArgumentParser(
++        prog="prechauffer_cache", description="Préchauffage du cache de classification."
++    )
++    analyseur.add_argument("--date-arrete", type=date.fromisoformat, required=True)
++    analyseur.add_argument("--duree-max", type=float, default=540.0, help="secondes")
++    analyseur.add_argument("--racine", type=Path, default=Path("."))
++    return analyseur
++
++
++def main(arguments: Sequence[str] | None = None) -> int:
++    """Point d'entrée ; code de sortie 0, 2 ou 3."""
++    args = _analyseur().parse_args(arguments)
++    try:
++        bilan = prechauffer_classification(args.racine, args.date_arrete, args.duree_max)
++    except UsineErreur as exc:
++        print(f"Erreur : {exc}", file=sys.stderr)
++        return 2
++    print(
++        f"Classées : {bilan.classees}/{bilan.anomalies} Anomalies ; {bilan.appels} appels frais,"
++        f" coût estimé {bilan.cout_eur:.4f} €"
++    )
++    return 0 if bilan.classees >= bilan.anomalies else 3
++
++
++if __name__ == "__main__":
++    sys.exit(main())
+diff --git a/src/usine/composition.py b/src/usine/composition.py
+index 6bf72ba..a55d521 100644
+--- a/src/usine/composition.py
++++ b/src/usine/composition.py
+@@ -62,2 +62,3 @@ import json
+ import secrets
++import time
+ from collections.abc import Callable, Iterable, Mapping, Sequence
+@@ -137,2 +138,3 @@ from usine.contrats.passage import (
+ )
++from usine.contrats.tickets import TypeTicket
+ from usine.contrats.trace import EntreeTrace
+@@ -140,2 +142,3 @@ from usine.contrats.versions import version_donnees, version_grille
+ from usine.domaine.causes.repartition import repartition
++from usine.domaine.instantanes import tickets_textes
+ from usine.domaine.meteo import verifier_grille
+@@ -580,3 +583,5 @@ class Classificateur:
+         jour = date_arrete if date_arrete is not None else _maintenant().date()
+-        return classer(self.passerelle, textes, jour, self.contexte)
++        # Sans tolérance : la suite gère elle-même les échecs (rejeu strict, mode réel
++        # Anomalie par Anomalie avec `erreurs_fournisseur`).
++        return classer(self.passerelle, textes, jour, self.contexte, tolerer_echecs=False)
+ 
+@@ -1054,2 +1059,66 @@ _RACINE_DEPOT = Path(__file__).resolve().parents[2]
+ 
++@dataclass(frozen=True)
++class BilanPrechauffage:
++    """Bilan d'un préchauffage du cache de classification."""
++
++    anomalies: int
++    """Anomalies du Journal à la Date d'arrêté."""
++    classees: int
++    """Anomalies classées par ce préchauffage (cache ou appel frais)."""
++    appels: int
++    """Appels frais au fournisseur."""
++    cout_eur: Decimal
++    """Coût estimé des appels frais."""
++
++
++def prechauffer_classification(
++    racine: Path,
++    date_arrete: date,
++    duree_max_s: float,
++    chrono: Callable[[], float] = time.monotonic,
++    fournisseur: FournisseurLLM | None = None,
++    pseudonymiseur: Pseudonymiseur | None = None,
++) -> BilanPrechauffage:
++    """Remplit le cache de classification de production (`donnees/cache_llm.sqlite`) hors
++    Passage, pendant au plus `duree_max_s` secondes ; relançable jusqu'à couvrir le stock.
++
++    Exige le Palier 2. Mêmes passerelle, Pseudonymisation, gabarit et part de plafond qu'un
++    Passage (la Date d'arrêté n'entre pas dans la clé de cache d'une classification). Les
++    textes viennent du Journal (aux clés Jira si le manifeste d'injection existe) : en source
++    `composite`, les tickets créés dans Jira après l'injection sont classés par le Passage.
++    Verrou du Passage tenu pendant le préchauffage. `fournisseur` et `pseudonymiseur` : comme
++    `construire_rapport` (doublures des tests).
++    """
++    verifier_date_arrete(date_arrete)
++    debut = chrono()
++    with verrou_exclusif(racine / CHEMIN_VERROU):
++        rapport = construire_rapport(racine, fournisseur, pseudonymiseur)
++        try:
++            etape = rapport.registre[Etape.classification]
++            if not isinstance(etape, EtapeClassification):
++                raise UsineErreur(
++                    "config/chaine.yaml, clé « palier » : le préchauffage du cache de"
++                    " classification exige le palier 2"
++                )
++            chemin_manifeste = racine / CHEMIN_MANIFESTE_INJECTION
++            manifeste = charger_manifeste(chemin_manifeste) if chemin_manifeste.exists() else None
++            source = SourceJournal(racine / CHEMIN_JOURNAL, manifeste)
++            textes = tickets_textes(source.evenements(), date_arrete)
++            sorties, traces = etape.prechauffer(
++                textes,
++                date_arrete,
++                f"{_maintenant():%Y%m%dT%H%M%SZ}-{_suffixe()}",
++                lambda: chrono() - debut >= duree_max_s,
++            )
++        finally:
++            rapport.fermer()
++    fraiches = [trace for trace in traces if not trace.depuis_cache]
++    return BilanPrechauffage(
++        anomalies=textes.filter(pl.col("type_ticket") == TypeTicket.anomalie.value).height,
++        classees=len(sorties),
++        appels=len(fraiches),
++        cout_eur=sum((trace.cout_estime_eur for trace in fraiches), Decimal(0)),
++    )
++
++
+ def generer_journal(
+diff --git a/src/usine/ia/classification.py b/src/usine/ia/classification.py
+index 4f42c61..3594aa9 100644
+--- a/src/usine/ia/classification.py
++++ b/src/usine/ia/classification.py
+@@ -11,4 +11,7 @@ justification toute phrase citant une autre clé de ticket (`corrige`) ; sinon `
+ Plafond de coût du Passage atteint (`PlafondCoutAtteint`) : l'Anomalie reste sans suggestion
+-(absente de la sortie), sans faire échouer le Passage. La Cause racine proposée n'est qu'une
+-suggestion : elle n'est jamais écrite dans Jira.
++(absente de la sortie), sans faire échouer le Passage. Un échec isolé du fournisseur (réponse
++inexploitable, `UnexpectedModelBehavior` par exemple, déjà converti en `UsineErreur` par
++l'adaptateur) laisse de même l'Anomalie sans suggestion, consignée au journal ; seuls
++`MAX_ECHECS_CONSECUTIFS` échecs d'affilée (fournisseur injoignable) font échouer l'étape. La
++Cause racine proposée n'est qu'une suggestion : elle n'est jamais écrite dans Jira.
+ """
+@@ -17,3 +20,3 @@ import logging
+ import re
+-from collections.abc import Mapping
++from collections.abc import Callable, Mapping
+ from dataclasses import dataclass
+@@ -47,2 +50,10 @@ suivants."""
+ 
++MAX_ECHECS_CONSECUTIFS = 3
++"""Échecs du fournisseur d'affilée au-delà desquels la classification échoue (panne franche,
++fournisseur injoignable) ; en deçà, chaque Anomalie en échec reste sans suggestion."""
++
++MAX_ECHECS_PASSAGE = 20
++"""Échecs du fournisseur au total au-delà desquels la classification échoue, même non
++consécutifs (une alternance échec/succès ne doit pas répéter des appels facturés sans fin)."""
++
+ MAX_JETONS_SORTIE = 512
+@@ -147,2 +158,5 @@ def classer(
+     plafond_eur: Decimal | None = None,
++    *,
++    tolerer_echecs: bool = True,
++    arreter: Callable[[], bool] | None = None,
+ ) -> tuple[tuple[SortieClassification, ...], tuple[EntreeTrace, ...]]:
+@@ -151,3 +165,9 @@ def classer(
+     Une Anomalie refusée par le plafond de coût du Passage, ou par la part `plafond_eur` qui
+-    revient à la classification, est absente de la sortie.
++    revient à la classification, est absente de la sortie, comme une Anomalie dont l'appel
++    échoue (`UsineErreur`, consignée au journal). `MAX_ECHECS_CONSECUTIFS` échecs d'affilée,
++    ou `MAX_ECHECS_PASSAGE` au total, lèvent une `UsineErreur` qui nomme la tâche et le
++    dernier échec ; le coût majoré de chaque échec est imputé au plafond par la passerelle.
++    `tolerer_echecs=False` (suite d'évaluation) : le premier échec est propagé tel quel.
++    `arreter`, consulté avant chaque Anomalie, interrompt la boucle (préchauffage du cache
++    borné dans le temps) : les Anomalies restantes sont absentes de la sortie.
+     """
+@@ -155,4 +175,12 @@ def classer(
+     traces: list[EntreeTrace] = []
++    echecs: list[str] = []
++    consecutifs = 0
+     parametres = ParametresAppel(tache=Tache.classification, max_jetons_sortie=MAX_JETONS_SORTIE)
+-    for ligne in anomalies(textes):
++    lignes = anomalies(textes)
++    for rang, ligne in enumerate(lignes):
++        if arreter is not None and arreter():
++            journal.info(
++                "classification interrompue : %d Anomalie(s) restante(s)", len(lignes) - rang
++            )
++            break
+         cle = ligne["cle_ticket"]
+@@ -183,4 +211,23 @@ def classer(
+             continue
++        except UsineErreur as exc:
++            if not tolerer_echecs:
++                raise
++            consecutifs += 1
++            echecs.append(cle)
++            if consecutifs >= MAX_ECHECS_CONSECUTIFS or len(echecs) >= MAX_ECHECS_PASSAGE:
++                raise UsineErreur(
++                    f"classification : {consecutifs} échecs consécutifs et {len(echecs)} au"
++                    f" total du fournisseur LLM (dernier sur {cle} : {exc})"
++                ) from exc
++            journal.warning("classification de %s en échec, sans suggestion : %s", cle, exc)
++            continue
++        consecutifs = 0
+         sorties.append(resultat.sortie)
+         traces.append(resultat.trace)
++    if echecs:
++        journal.warning(
++            "%d Anomalie(s) sans suggestion après un échec du fournisseur : %s",
++            len(echecs),
++            ", ".join(echecs),
++        )
+     return tuple(sorties), tuple(traces)
+@@ -227 +274,24 @@ class EtapeClassification:
+         return ResultatEtape(StatutEtape.reussie, {"classification": sorties}, traces)
++
++    def prechauffer(
++        self,
++        textes: pl.DataFrame,
++        date_arrete: date,
++        passage_id: str,
++        arreter: Callable[[], bool],
++    ) -> tuple[tuple[SortieClassification, ...], tuple[EntreeTrace, ...]]:
++        """Classe les Anomalies de `textes` hors Passage, jusqu'à ce qu'`arreter` le demande.
++
++        Même passerelle, même gabarit et même part de plafond qu'`executer` : les réponses
++        remplissent le cache de production, servi ensuite aux Passages ("cache de
++        classification initialisé", Story 6.10). `passage_id` porte le cumul de coût.
++        """
++        contexte = ContexteClassification(
++            passage_id=passage_id,
++            version_donnees=self._version_donnees,
++            version_grille=self._version_grille,
++            gabarit=self._gabarit,
++        )
++        return classer(
++            self._passerelle, textes, date_arrete, contexte, self._plafond_eur, arreter=arreter
++        )
+diff --git a/outils/balayer_sm7.py b/outils/balayer_sm7.py
+new file mode 100644
+index 0000000..7754024
+--- /dev/null
++++ b/outils/balayer_sm7.py
+@@ -0,0 +1,156 @@
++"""Balayage SM-7 : aucun identifiant fictif injecté ne part vers le fournisseur LLM.
++
++Cherche chaque identifiant de `identifiants_injectes.json` (écrit par `usine donnees generer`
++à côté du Journal), quels que soient ses blancs (IBAN compacté, espace insécable), dans :
++
++- les traces LLM d'un Passage (`trace/llm.jsonl` : entrées pseudonymisées, donc les requêtes
++  émises vers le fournisseur, et sorties avant ré-identification) ;
++- le cache LLM (`donnees/cache_llm.sqlite` : réponses brutes du fournisseur), s'il est donné.
++
++Le Rapport lui-même n'est pas balayé : la ré-identification locale y remet légitimement les
++valeurs. Le balayage compte aussi les jetons de Pseudonymisation trouvés, preuve que des
++identifiants ont bien été remplacés.
++
++Usage : `uv run python outils/balayer_sm7.py --passage <répertoire du Passage>
++--identifiants <identifiants_injectes.json> [--cache <cache_llm.sqlite>]`.
++Code de sortie : 0 aucun identifiant trouvé, 1 fuite, 2 usage ou fichier illisible.
++"""
++
++import argparse
++import json
++import re
++import sqlite3
++import sys
++from collections.abc import Iterable, Iterator, Sequence
++from dataclasses import dataclass
++from pathlib import Path
++
++from usine.contrats.llm import CANDIDAT_JETON
++
++CHEMIN_TRACES_LLM = Path("trace") / "llm.jsonl"
++"""Traces LLM d'un Passage, relatives à son répertoire."""
++
++
++class FichierIllisible(Exception):
++    """Fichier d'entrée absent ou mal formé."""
++
++
++@dataclass(frozen=True)
++class Fuite:
++    """Identifiant injecté retrouvé dans une source balayée."""
++
++    source: str
++    type: str
++    valeur: str
++
++
++@dataclass(frozen=True)
++class Bilan:
++    """Résultat du balayage."""
++
++    textes: int
++    identifiants: int
++    jetons: int
++    fuites: tuple[Fuite, ...]
++
++
++def charger_identifiants(chemin: Path) -> list[tuple[str, str]]:
++    """Paires `(type, valeur)` de `identifiants_injectes.json`."""
++    try:
++        donnees = json.loads(chemin.read_text(encoding="utf-8"))
++        paires = [(str(i["type"]), str(i["valeur"])) for i in donnees]
++    except (OSError, UnicodeDecodeError, json.JSONDecodeError, TypeError, KeyError) as exc:
++        raise FichierIllisible(f"{chemin} : liste d'identifiants illisible ({exc})") from None
++    if not paires:
++        raise FichierIllisible(f"{chemin} : aucun identifiant injecté")
++    return paires
++
++
++_BLANCS = re.compile(r"\s+")
++
++
++def compacter(texte: str) -> str:
++    """Texte sans aucun blanc (espaces, insécables, fines, tabulations, sauts de ligne) : un
++    identifiant est cherché quels que soient ses blancs (IBAN compacté ou recopié)."""
++    return _BLANCS.sub("", texte)
++
++
++def textes_traces(passage: Path) -> Iterator[tuple[str, str]]:
++    """`(source, texte)` de chaque ligne des traces LLM du Passage."""
++    chemin = passage / CHEMIN_TRACES_LLM
++    try:
++        lignes = chemin.read_text(encoding="utf-8").splitlines()
++    except (OSError, UnicodeDecodeError) as exc:
++        raise FichierIllisible(f"{chemin} : traces LLM illisibles ({exc})") from None
++    if not any(ligne.strip() for ligne in lignes):
++        raise FichierIllisible(f"{chemin} : aucune trace LLM (rien à balayer)")
++    for numero, ligne in enumerate(lignes, start=1):
++        if ligne.strip():
++            yield f"{chemin}:{numero}", ligne
++
++
++def textes_cache(chemin: Path) -> Iterator[tuple[str, str]]:
++    """`(source, texte)` de chaque réponse du cache LLM SQLite, ouvert en lecture seule."""
++    if not chemin.is_file():
++        raise FichierIllisible(f"{chemin} : cache LLM absent")
++    try:
++        with sqlite3.connect(f"{chemin.resolve().as_uri()}?mode=ro", uri=True) as connexion:
++            lignes = connexion.execute("SELECT cle, brut FROM cache_llm").fetchall()
++    except sqlite3.Error as exc:
++        raise FichierIllisible(f"{chemin} : cache LLM illisible ({exc})") from None
++    for cle, brut in lignes:
++        yield f"{chemin}#{cle}", str(brut)
++
++
++def balayer(textes: Iterable[tuple[str, str]], identifiants: Sequence[tuple[str, str]]) -> Bilan:
++    """Cherche chaque identifiant, insensible aux blancs, dans chaque texte."""
++    # Une seule alternative sur les textes compactés, valeurs les plus longues d'abord ;
++    # `lookahead` pour les chevauchements (une valeur contenue dans une autre est cherchée).
++    par_valeur = {compacter(valeur): (type_, valeur) for type_, valeur in identifiants}
++    par_valeur.pop("", None)
++    motif = re.compile(
++        "(?=(" + "|".join(re.escape(v) for v in sorted(par_valeur, key=len, reverse=True)) + "))"
++    )
++    fuites: list[Fuite] = []
++    nb_textes = jetons = 0
++    for source, texte in textes:
++        nb_textes += 1
++        jetons += len(CANDIDAT_JETON.findall(texte))
++        for trouve in motif.finditer(compacter(texte)):
++            fuites.append(Fuite(source, *par_valeur[trouve.group(1)]))
++    return Bilan(nb_textes, len(identifiants), jetons, tuple(dict.fromkeys(fuites)))
++
++
++def _analyseur() -> argparse.ArgumentParser:
++    analyseur = argparse.ArgumentParser(
++        prog="balayer_sm7", description="Balayage SM-7 des traces et du cache LLM."
++    )
++    analyseur.add_argument("--passage", type=Path, required=True)
++    analyseur.add_argument("--identifiants", type=Path, required=True)
++    analyseur.add_argument("--cache", type=Path)
++    return analyseur
++
++
++def main(arguments: Sequence[str] | None = None) -> int:
++    """Point d'entrée ; code de sortie 0, 1 ou 2."""
++    args = _analyseur().parse_args(arguments)
++    try:
++        identifiants = charger_identifiants(args.identifiants)
++        textes = list(textes_traces(args.passage))
++        if args.cache is not None:
++            textes += textes_cache(args.cache)
++    except FichierIllisible as exc:
++        print(f"Erreur : {exc}", file=sys.stderr)
++        return 2
++    bilan = balayer(textes, identifiants)
++    print(
++        f"SM-7 : {bilan.textes} textes balayés, {bilan.identifiants} identifiants injectés,"
++        f" {bilan.jetons} jetons de Pseudonymisation, {len(bilan.fuites)} fuite(s)"
++    )
++    for fuite in bilan.fuites:
++        print(f"  FUITE {fuite.type} dans {fuite.source}")
++    return 1 if bilan.fuites else 0
++
++
++if __name__ == "__main__":
++    sys.exit(main())
+diff --git a/tests/unit/outils/test_prechauffer_cache.py b/tests/unit/outils/test_prechauffer_cache.py
+new file mode 100644
+index 0000000..630fcd2
+--- /dev/null
++++ b/tests/unit/outils/test_prechauffer_cache.py
+@@ -0,0 +1,30 @@
++"""Outil de préchauffage du cache de classification (Story 6.10)."""
++
++from decimal import Decimal
++from pathlib import Path
++
++import pytest
++
++from outils import prechauffer_cache
++from tests.unit.chaine.environnement import preparer_racine
++from usine.composition import BilanPrechauffage
++
++
++def test_palier_1_refuse(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
++    racine = preparer_racine(tmp_path)
++    code = prechauffer_cache.main(["--date-arrete", "2026-10-12", "--racine", str(racine)])
++    assert code == 2
++    assert "exige le palier 2" in capsys.readouterr().err
++
++
++@pytest.mark.parametrize(("classees", "attendu"), [(10, 0), (7, 3)])
++def test_code_de_sortie_selon_le_stock(
++    monkeypatch: pytest.MonkeyPatch,
++    capsys: pytest.CaptureFixture[str],
++    classees: int,
++    attendu: int,
++) -> None:
++    bilan = BilanPrechauffage(anomalies=10, classees=classees, appels=4, cout_eur=Decimal("0.001"))
++    monkeypatch.setattr(prechauffer_cache, "prechauffer_classification", lambda *_: bilan)
++    assert prechauffer_cache.main(["--date-arrete", "2026-10-12", "--duree-max", "5"]) == attendu
++    assert f"Classées : {classees}/10 Anomalies ; 4 appels frais" in capsys.readouterr().out
+diff --git a/tests/unit/chaine/test_execution.py b/tests/unit/chaine/test_execution.py
+index d7990af..0f639a5 100644
+--- a/tests/unit/chaine/test_execution.py
++++ b/tests/unit/chaine/test_execution.py
+@@ -1261 +1261,63 @@ def test_moteur_de_pseudonymisation_inconnu_refuse(
+     assert not (racine / "donnees" / "pseudonymes.sqlite").exists()
++
++
++# --- Story 6.10 : préchauffage du cache de classification ---
++
++
++def test_prechauffage_puis_passage_sans_appel_de_classification(
++    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    a_expliquer = _meteos_a_expliquer(preparer_racine(tmp_path / "p1"))
++    monkeypatch.setenv("USINE_CLE_PSEUDO", "cle-de-test-fictive")
++    racine = preparer_racine(tmp_path / "p2")
++    _passer_en_palier_2(racine)
++    prechauffe = FournisseurPalier2()
++    bilan = composition.prechauffer_classification(racine, DATE_ARRETE, 1e9, fournisseur=prechauffe)
++    assert bilan.anomalies > 0
++    assert bilan.classees == bilan.appels == bilan.anomalies
++    assert len(_appels(prechauffe, Tache.classification)) == bilan.anomalies
++    assert {a.parametres.tache for a in prechauffe.appels} == {Tache.classification}
++    assert not (racine / "sorties" / "passages").exists()
++
++    # Passage suivant : toute la classification vient du cache, seules les explications partent.
++    fournisseur = FournisseurPalier2(_reponses(a_expliquer))
++    lance = lancer_rapport(racine, DATE_ARRETE, horloge_figee(), lambda: "abc123", fournisseur)
++    assert _appels(fournisseur, Tache.classification) == []
++    traces = ConsultationPassage(lance.repertoire).traces()
++    classification = [t for t in traces if t.tache is Tache.classification]
++    assert len(classification) == bilan.anomalies
++    assert all(t.depuis_cache for t in classification)
++
++    # Relancé sur un stock couvert : aucun appel frais.
++    encore = composition.prechauffer_classification(
++        racine, DATE_ARRETE, 1e9, fournisseur=FournisseurPalier2()
++    )
++    assert (encore.classees, encore.appels, encore.cout_eur) == (bilan.anomalies, 0, Decimal(0))
++
++
++def test_prechauffage_borne_dans_le_temps_puis_repris(
++    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    monkeypatch.setenv("USINE_CLE_PSEUDO", "cle-de-test-fictive")
++    racine = preparer_racine(tmp_path)
++    _passer_en_palier_2(racine)
++    secondes = iter(range(1_000_000))
++    bilan = composition.prechauffer_classification(
++        racine,
++        DATE_ARRETE,
++        3,
++        chrono=lambda: float(next(secondes)),
++        fournisseur=FournisseurPalier2(),
++    )
++    # Le chrono avance d'une seconde par lecture : départ, puis une lecture par Anomalie.
++    assert bilan.classees == bilan.appels == 2 < bilan.anomalies
++    suite = FournisseurPalier2()
++    reprise = composition.prechauffer_classification(racine, DATE_ARRETE, 1e9, fournisseur=suite)
++    assert reprise.classees == bilan.anomalies
++    assert reprise.appels == bilan.anomalies - 2
++
++
++def test_prechauffage_exige_le_palier_2(tmp_path: Path) -> None:
++    racine = preparer_racine(tmp_path)
++    with pytest.raises(UsineErreur, match="exige le palier 2"):
++        composition.prechauffer_classification(racine, DATE_ARRETE, 10)
+diff --git a/tests/unit/outils/test_balayer_sm7.py b/tests/unit/outils/test_balayer_sm7.py
+new file mode 100644
+index 0000000..bccaa8c
+--- /dev/null
++++ b/tests/unit/outils/test_balayer_sm7.py
+@@ -0,0 +1,102 @@
++"""Balayage SM-7 des traces et du cache LLM (Story 6.10)."""
++
++import json
++import sqlite3
++from pathlib import Path
++
++import pytest
++
++from outils.balayer_sm7 import (
++    CHEMIN_TRACES_LLM,
++    FichierIllisible,
++    balayer,
++    charger_identifiants,
++    main,
++)
++
++IBAN = "FR46 9999 9143 2694 4104 2320 086"
++IDENTIFIANTS = [
++    {"cle_ticket": "DEMO-4", "type": "CLIENT", "valeur": "M. Fictivia EXEMPLON"},
++    {"cle_ticket": "DEMO-4", "type": "COMPTE", "valeur": IBAN},
++]
++JETON = "CLIENT_0a1b2c"
++
++
++def _depot(
++    tmp_path: Path, traces: list[str], cache: dict[str, str] | None = None
++) -> tuple[Path, Path, Path]:
++    passage = tmp_path / "passage"
++    (passage / CHEMIN_TRACES_LLM).parent.mkdir(parents=True)
++    (passage / CHEMIN_TRACES_LLM).write_text("\n".join(traces) + "\n", encoding="utf-8")
++    identifiants = tmp_path / "identifiants_injectes.json"
++    identifiants.write_text(json.dumps(IDENTIFIANTS), encoding="utf-8")
++    chemin_cache = tmp_path / "cache_llm.sqlite"
++    with sqlite3.connect(chemin_cache) as connexion:
++        connexion.execute("CREATE TABLE cache_llm (cle TEXT PRIMARY KEY, brut TEXT NOT NULL)")
++        connexion.executemany("INSERT INTO cache_llm VALUES (?, ?)", (cache or {}).items())
++    return passage, identifiants, chemin_cache
++
++
++def _arguments(passage: Path, identifiants: Path, cache: Path | None = None) -> list[str]:
++    args = ["--passage", str(passage), "--identifiants", str(identifiants)]
++    return args + (["--cache", str(cache)] if cache is not None else [])
++
++
++@pytest.mark.parametrize(
++    "texte",
++    [IBAN, IBAN.replace(" ", ""), IBAN.replace(" ", " "), IBAN.replace(" ", " 	")],
++    ids=["tel-quel", "compacte", "insecable", "fine-et-tabulation"],
++)
++def test_iban_trouve_quels_que_soient_les_blancs(texte: str) -> None:
++    bilan = balayer([("s", f"compte {texte} débité")], [("COMPTE", IBAN)])
++    assert [f.type for f in bilan.fuites] == ["COMPTE"]
++
++
++def test_traces_et_cache_pseudonymises_conformes(
++    tmp_path: Path, capsys: pytest.CaptureFixture[str]
++) -> None:
++    passage, identifiants, cache = _depot(
++        tmp_path, [json.dumps({"entree_pseudonymisee": f"Client {JETON} mécontent"})], {"k": JETON}
++    )
++    assert main(_arguments(passage, identifiants, cache)) == 0
++    sortie = capsys.readouterr().out
++    assert "2 textes balayés, 2 identifiants injectés, 2 jetons" in sortie
++    assert "0 fuite(s)" in sortie
++
++
++def test_fuite_dans_une_trace_signalee(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
++    trace = json.dumps({"entree_pseudonymisee": "Client M. Fictivia EXEMPLON mécontent"})
++    passage, identifiants, _ = _depot(tmp_path, [trace])
++    assert main(_arguments(passage, identifiants)) == 1
++    sortie = capsys.readouterr().out
++    assert "1 fuite(s)" in sortie
++    assert "FUITE CLIENT" in sortie and "llm.jsonl:1" in sortie
++
++
++def test_fuite_iban_compacte_dans_le_cache(tmp_path: Path) -> None:
++    passage, identifiants, cache = _depot(tmp_path, ["{}"], {"cle": IBAN.replace(" ", "")})
++    bilan = balayer(
++        [("cache", IBAN.replace(" ", ""))],
++        [(i["type"], i["valeur"]) for i in IDENTIFIANTS],
++    )
++    assert [(f.source, f.type) for f in bilan.fuites] == [("cache", "COMPTE")]
++    assert main(_arguments(passage, identifiants, cache)) == 1
++
++
++def test_fichiers_illisibles(tmp_path: Path) -> None:
++    passage, identifiants, _ = _depot(tmp_path, ["{}"])
++    assert main(_arguments(tmp_path / "absent", identifiants)) == 2
++    assert main(_arguments(passage, identifiants, tmp_path / "absent.sqlite")) == 2
++    vide = tmp_path / "vide.json"
++    vide.write_text("[]", encoding="utf-8")
++    with pytest.raises(FichierIllisible, match="aucun identifiant"):
++        charger_identifiants(vide)
++    mal_forme = tmp_path / "mal_forme.json"
++    mal_forme.write_text('[{"type": "CLIENT"}]', encoding="utf-8")
++    with pytest.raises(FichierIllisible, match="illisible"):
++        charger_identifiants(mal_forme)
++
++
++def test_trace_vide_refusee(tmp_path: Path) -> None:
++    passage, identifiants, _ = _depot(tmp_path, [""])
++    assert main(_arguments(passage, identifiants)) == 2
+diff --git a/tests/unit/ia/test_classification.py b/tests/unit/ia/test_classification.py
+index 9936de2..8fd83d8 100644
+--- a/tests/unit/ia/test_classification.py
++++ b/tests/unit/ia/test_classification.py
+@@ -42,2 +42,3 @@ from usine.contrats.versions import version_prompt
+ from usine.ia.classification import (
++    MAX_ECHECS_PASSAGE,
+     PART_PLAFOND_CLASSIFICATION,
+@@ -231,3 +232,6 @@ def test_justification_citant_la_cible_conforme() -> None:
+ def test_fournisseur_en_erreur_propage() -> None:
+-    with pytest.raises(UsineErreur, match="plus de réponse"):
++    """Trois échecs d'affilée (panne franche) : l'étape échoue en nommant la tâche."""
++    with pytest.raises(
++        UsineErreur, match=r"classification : 3 échecs consécutifs.*plus de réponse"
++    ):
+         _classer(FournisseurFactice())
+@@ -235,2 +239,57 @@ def test_fournisseur_en_erreur_propage() -> None:
+ 
++class FournisseurEchouantSur(FournisseurFactice):
++    """Échoue (comme un `UnexpectedModelBehavior` converti) aux appels de rang donné."""
++
++    def __init__(self, rangs: set[int], reponses: list[ReponseClassification]) -> None:
++        super().__init__(reponses)
++        self._rangs = rangs
++        self._rang = 0
++
++    @property
++    def tentatives(self) -> int:
++        """Appels reçus, échecs compris."""
++        return self._rang
++
++    def generer_structure(self, prompt, schema, parametres):  # type: ignore[no-untyped-def]
++        rang, self._rang = self._rang, self._rang + 1
++        if rang in self._rangs:
++            raise UsineErreur(
++                "anthropic:claude-haiku-5-5 : appel en échec (UnexpectedModelBehavior)"
++            )
++        return super().generer_structure(prompt, schema, parametres)
++
++
++def test_echec_isole_anomalie_sans_suggestion_passage_poursuivi(
++    caplog: pytest.LogCaptureFixture,
++) -> None:
++    """Report de la 6.9 : un échec isolé du fournisseur n'arrête plus la classification."""
++    factice = FournisseurEchouantSur({1}, [_reponse(), _reponse()])
++    with caplog.at_level(logging.WARNING, logger="usine.ia.classification"):
++        sorties, traces = _classer(factice)
++    assert [s.cle_ticket for s in sorties] == ["DEMO-1", "DEMO-10"]
++    assert [t.cible for t in traces] == ["DEMO-1", "DEMO-10"]
++    messages = [r.getMessage() for r in caplog.records if r.name == "usine.ia.classification"]
++    assert any("DEMO-2" in m and "UnexpectedModelBehavior" in m for m in messages)
++    assert any(m.startswith("1 Anomalie(s) sans suggestion") and "DEMO-2" in m for m in messages)
++
++
++def test_echecs_non_consecutifs_toleres() -> None:
++    """Le compteur d'échecs d'affilée repart à zéro après un succès."""
++    cles = {f"DEMO-{n}": ("Titre", "Description.") for n in range(1, 6)}
++    factice = FournisseurEchouantSur({0, 1, 3, 4}, [_reponse()])
++    sorties, _ = _classer(factice, textes(cles))
++    assert [s.cle_ticket for s in sorties] == ["DEMO-3"]
++
++
++def test_echec_puis_cache_rejoue_l_anomalie() -> None:
++    """Une Anomalie en échec n'est pas mise en cache : le Passage suivant la redemande."""
++    cache = CacheMemoire()
++    _classer(FournisseurEchouantSur({0}, [_reponse(), _reponse()]), cache=cache)
++    factice = FournisseurFactice([_reponse()])
++    sorties, traces = _classer(factice, cache=cache)
++    assert len(sorties) == 3
++    assert len(factice.appels) == 1
++    assert [t.depuis_cache for t in traces] == [False, True, True]
++
++
+ def test_pseudonymisation_de_l_entree() -> None:
+@@ -394 +453,28 @@ def test_explications_appelees_apres_classification_arretee_a_sa_part() -> None:
+     ]
++
++
++def test_sans_tolerance_premier_echec_propage() -> None:
++    """Suite d'évaluation : le premier échec remonte tel quel."""
++    passerelle = _passerelle(FournisseurEchouantSur({0}, [_reponse(), _reponse()]))
++    with pytest.raises(UsineErreur, match="UnexpectedModelBehavior"):
++        classer(passerelle, TEXTES, DATE_ARRETE, _contexte(), tolerer_echecs=False)
++
++
++def test_cout_d_un_echec_impute_au_plafond() -> None:
++    """Revue 6.10 (high) : un échec a pu être facturé ; son coût majoré compte au plafond."""
++    factice = FournisseurEchouantSur({0}, [_reponse(), _reponse()])
++    passerelle = _passerelle(factice, plafond=Decimal("0.5"))
++    sorties, traces = classer(passerelle, TEXTES, DATE_ARRETE, _contexte())
++    assert (sorties, traces) == ((), ())
++    assert factice.tentatives == 1
++    assert passerelle.cout_cumule_eur(PASSAGE_ID) == Decimal(1)
++
++
++def test_echecs_alternes_plafonnes_au_total() -> None:
++    """Une alternance échec/succès s'arrête à `MAX_ECHECS_PASSAGE` échecs au total."""
++    cles = {f"DEMO-{n}": ("Titre", "Description.") for n in range(1, 2 * MAX_ECHECS_PASSAGE + 2)}
++    echecs = set(range(0, 2 * MAX_ECHECS_PASSAGE, 2))
++    factice = FournisseurEchouantSur(echecs, [_reponse()] * MAX_ECHECS_PASSAGE)
++    with pytest.raises(UsineErreur, match=rf"{MAX_ECHECS_PASSAGE} au total"):
++        _classer(factice, textes(cles))
++    assert factice.tentatives == 2 * MAX_ECHECS_PASSAGE - 1

@@ -1,0 +1,31 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "S3-6-10",
+ "latence_s": 30.3,
+ "usage": {
+  "prompt_tokens": 14227,
+  "completion_tokens": 1059,
+  "total_tokens": 15286,
+  "cost": 0.0120184,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 14224,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0120184,
+   "upstream_inference_prompt_cost": 0.0014284,
+   "upstream_inference_completions_cost": 0.01059
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 618,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.0120184,
+ "finish_reason": "stop",
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"outils/balayer_sm7.py\",\"ligne\":90,\"severite\":\"Important\",\"description\":\"Les traces JSONL sont balayées sous leur forme sérialisée, sans décodage JSON. Un IBAN contenant des espaces insécables ou des tabulations apparaît donc avec des séquences « \\\\u00a0 » ou « \\\\t », que compacter ne retire pas. Le balayage renvoie alors 0 malgré une fuite réelle, contrairement au comportement annoncé pour les blancs. Les identifiants comportant des caractères Unicode échappés sont également concernés. Il faut rechercher dans les valeurs décodées des traces, et traiter de même les réponses JSON du cache.\",\"test_pytest\":\"import json\\n\\nimport pytest\\n\\nfrom outils.balayer_sm7 import CHEMIN_TRACES_LLM, main\\n\\n\\n@pytest.mark.parametrize('separateur', ['\\\\u00a0', '\\\\t'])\\ndef test_fuite_iban_dans_une_trace_json_avec_blancs_echappes(tmp_path, separateur):\\n    iban = 'FR46 9999 9143 2694 4104 2320 086'\\n    passage = tmp_path / 'passage'\\n    trace = passage / CHEMIN_TRACES_LLM\\n    trace.parent.mkdir(parents=True)\\n    trace.write_text(\\n        json.dumps({'entree_pseudonymisee': iban.replace(' ', separateur)}, ensure_ascii=True) + '\\\\n',\\n        encoding='utf-8',\\n    )\\n    identifiants = tmp_path / 'identifiants_injectes.json'\\n    identifiants.write_text(\\n        json.dumps([{'type': 'COMPTE', 'valeur': iban}]),\\n        encoding='utf-8',\\n    )\\n\\n    assert main([\\n        '--passage', str(passage),\\n        '--identifiants', str(identifiants),\\n    ]) == 1\\n\"}]}"
+}

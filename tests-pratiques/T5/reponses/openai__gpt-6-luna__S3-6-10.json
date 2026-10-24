@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "S3-6-10",
+ "latence_s": 39.8,
+ "usage": {
+  "prompt_tokens": 12458,
+  "completion_tokens": 3824,
+  "total_tokens": 16282,
+  "cost": 0.003469175,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 12455,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.003469175,
+   "upstream_inference_prompt_cost": 0.001557175,
+   "upstream_inference_completions_cost": 0.001912
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 3539,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.003469175,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 3824,
+   "cout_usd": 0.003469175,
+   "latence_s": 39.8
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"outils/balayer_sm7.py\",\"ligne\":110,\"severite\":\"Important\",\"description\":\"Le balayage cherche les identifiants dans le texte brut des lignes JSONL, sans décoder leur contenu JSON. Une valeur contenant des caractères non ASCII peut donc être sérialisée sous forme d’échappements (`\\\\uXXXX`) et échapper au contrôle SM-7 alors qu’elle est présente dans la trace. Le cache peut présenter le même problème si `brut` contient du JSON échappé.\",\"test_pytest\":\"import json\\n\\nfrom outils.balayer_sm7 import balayer\\n\\n\\ndef test_balayage_detecte_un_identifiant_echappe_dans_une_trace_jsonl() -> None:\\n    valeur = \\\"Élodie Fictivia\\\"\\n    ligne_jsonl = json.dumps({\\\"texte\\\": valeur})  # json.dumps échappe É par défaut\\n\\n    bilan = balayer([(\\\"trace/llm.jsonl:1\\\", ligne_jsonl)], [(\\\"CLIENT\\\", valeur)])\\n\\n    assert [(f.source, f.type, f.valeur) for f in bilan.fuites] == [\\n        (\\\"trace/llm.jsonl:1\\\", \\\"CLIENT\\\", valeur)\\n    ]\"}]}"
+}

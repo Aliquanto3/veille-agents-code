@@ -1,0 +1,31 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "S7-7-16",
+ "latence_s": 43.7,
+ "usage": {
+  "prompt_tokens": 19435,
+  "completion_tokens": 4035,
+  "total_tokens": 23470,
+  "cost": 0.00221212,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 19432,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00221212,
+   "upstream_inference_prompt_cost": 0.00019462,
+   "upstream_inference_completions_cost": 0.0020175
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 3907,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.00221212,
+ "finish_reason": "stop",
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"tests/unit/ui/test_ecrans_web.py\",\"ligne\":220,\"severite\":\"Nit\",\"description\":\"Le test attend encore l’ancien détail HTTP (« fournisseur muet »), alors que `poser_question` renvoie désormais volontairement un message générique pour ne pas exposer le message du fournisseur. `test_agent_indisponible_et_reponse_impossible` échoue donc avec le code fusionné ; actualiser son attente pour vérifier le détail générique et l’absence de fuite.\",\"test_pytest\":null}]}"
+}

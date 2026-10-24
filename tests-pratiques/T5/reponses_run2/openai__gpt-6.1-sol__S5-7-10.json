@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "S5-7-10",
+ "latence_s": 24.7,
+ "usage": {
+  "prompt_tokens": 19578,
+  "completion_tokens": 722,
+  "total_tokens": 20300,
+  "cost": 0.0561635,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 19575,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0561635,
+   "upstream_inference_prompt_cost": 0.0489435,
+   "upstream_inference_completions_cost": 0.00722
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 707,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.0561635,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 722,
+   "cout_usd": 0.0561635,
+   "latence_s": 24.7
+  }
+ ],
+ "contenu": "{\"constats\": []}"
+}

@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "S2-E0-8",
+ "latence_s": 47.0,
+ "usage": {
+  "prompt_tokens": 15291,
+  "completion_tokens": 4192,
+  "total_tokens": 19483,
+  "cost": 0.0040073,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 15288,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0040073,
+   "upstream_inference_prompt_cost": 0.0019113,
+   "upstream_inference_completions_cost": 0.002096
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 4082,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.0040073,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 4192,
+   "cout_usd": 0.0040073,
+   "latence_s": 47.0
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/usine/ui/progression.py\",\"ligne\":47,\"severite\":\"Nit\",\"description\":\"Si plusieurs fichiers de progression apparaissent entre deux sondages, le code choisit le nom lexicographiquement le plus petit, pas le premier fichier apparu comme le demande la spec. Un lancement dont l’écriture de progression est retardée peut donc être remplacé par un autre fichier nouvellement créé.\",\"test_pytest\":null}]}"
+}

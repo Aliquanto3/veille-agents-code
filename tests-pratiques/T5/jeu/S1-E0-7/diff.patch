@@ -1,0 +1,1437 @@
+diff --git a/src/usine/chaine/etapes.py b/src/usine/chaine/etapes.py
+index e1a4ed6..bdd38b8 100644
+--- a/src/usine/chaine/etapes.py
++++ b/src/usine/chaine/etapes.py
+@@ -17,3 +17,3 @@ from usine.contrats.meteo import MeteoEntite
+ from usine.contrats.passage import ContextePassage, ResultatEtape, StatutEtape
+-from usine.domaine.instantanes import instantane, tickets_etats
++from usine.domaine.instantanes import instantane, tickets_etats, tickets_textes
+ from usine.domaine.meteo import indicateurs, meteo
+@@ -41,8 +41,13 @@ class EtapeInstantanes:
+     def executer(self, ctx: ContextePassage[Consultation]) -> ResultatEtape:
+-        """Sorties `tickets_etats` et `instantanes`."""
++        """Sorties `tickets_etats`, `instantanes` et `tickets_textes` (à la Date d'arrêté)."""
+         dates = jours_du_passage(self._premier_jour, ctx.date_arrete)
+-        etats = tickets_etats(self._source.evenements(), dates)
++        evenements = list(self._source.evenements())
++        etats = tickets_etats(evenements, dates)
+         return ResultatEtape(
+             StatutEtape.reussie,
+-            {"tickets_etats": etats, "instantanes": instantane(etats)},
++            {
++                "tickets_etats": etats,
++                "instantanes": instantane(etats),
++                "tickets_textes": tickets_textes(evenements, ctx.date_arrete),
++            },
+         )
+diff --git a/src/usine/domaine/instantanes.py b/src/usine/domaine/instantanes.py
+index 9d271ca..f3b52da 100644
+--- a/src/usine/domaine/instantanes.py
++++ b/src/usine/domaine/instantanes.py
+@@ -18,2 +18,3 @@ from usine.contrats.tickets import (
+     SCHEMA_TICKET_ETAT,
++    SCHEMA_TICKET_TEXTE,
+     STATUTS_FERMES,
+@@ -116,2 +117,40 @@ def tickets_etats(evenements: Iterable[Evenement], dates: Sequence[date]) -> pl.
+ 
++CHAMPS_TEXTE: tuple[Champ, ...] = (Champ.entite, Champ.titre, Champ.description)
++"""Champs d'un ticket repris dans `SCHEMA_TICKET_TEXTE`."""
++
++
++def tickets_textes(evenements: Iterable[Evenement], date_arrete: date) -> pl.DataFrame:
++    """`TicketTexte` : titre et description de chaque ticket créé au plus tard en D.
++
++    Chaque champ prend la dernière valeur `vers` rattachée au plus tard à la Date d'arrêté
++    (ordre : horodatage, puis rang dans le flux) ; un champ jamais renseigné reste nul.
++    """
++    table = _table_evenements(evenements)
++    vus = table.filter(pl.col("jour") <= date_arrete)
++    creations = (
++        vus.filter(pl.col("nature") == NatureEvenement.creation.value)
++        .group_by("cle_ticket", maintain_order=True)
++        .agg(pl.col("type_ticket").first(), pl.col("rang").first().alias("rang_creation"))
++    )
++    valeurs = (
++        vus.filter(pl.col("champ").is_in([c.value for c in CHAMPS_TEXTE]))
++        .group_by(["cle_ticket", "champ"], maintain_order=True)
++        .agg(pl.col("vers").last())
++        .with_columns(pl.col("champ").cast(pl.Utf8))
++    )
++    if valeurs.height:
++        valeurs = valeurs.pivot(on="champ", index="cle_ticket", values="vers")
++    else:
++        valeurs = pl.DataFrame(schema={"cle_ticket": pl.Utf8()})
++    textes = creations.join(valeurs, on="cle_ticket", how="left")
++    manquantes = [c.value for c in CHAMPS_TEXTE if c.value not in textes.columns]
++    textes = textes.with_columns(pl.lit(None, dtype=pl.Utf8).alias(c) for c in manquantes)
++    textes = (
++        textes.sort("rang_creation")
++        .with_columns(pl.col(c.value).cast(pl.Utf8) for c in CHAMPS_TEXTE)
++        .select(list(SCHEMA_TICKET_TEXTE.colonnes))
++    )
++    return valider(textes, SCHEMA_TICKET_TEXTE)
++
++
+ def instantane(etats: pl.DataFrame) -> pl.DataFrame:
+diff --git a/src/usine/ia/etape.py b/src/usine/ia/etape.py
+new file mode 100644
+index 0000000..591baa3
+--- /dev/null
++++ b/src/usine/ia/etape.py
+@@ -0,0 +1,48 @@
++"""Étape `explications` de la Chaîne (Palier 2) : une Explication par Entité rouge ou orange."""
++
++from usine.contrats.llm import SortieExplication
++from usine.contrats.meteo import Couleur
++from usine.contrats.passage import ContextePassage, ResultatEtape, StatutEtape
++from usine.contrats.trace import EntreeTrace
++from usine.ia.explication import ContexteExplication, expliquer, lire_prompt
++from usine.ia.passerelle import Passerelle
++from usine.ports.consultation import Consultation
++
++COULEURS_EXPLIQUEES = frozenset({Couleur.rouge, Couleur.orange})
++"""Météos expliquées par la tâche `explication` (FR-32)."""
++
++
++class EtapeExplications:
++    """Explique chaque Entité rouge ou orange à la Date d'arrêté ; n'écrit rien elle-même.
++
++    `version_prompt` est calculée à partir des octets du gabarit qu'elle envoie (par défaut
++    `ia/prompts/explication.md`).
++    """
++
++    def __init__(
++        self,
++        passerelle: Passerelle,
++        version_donnees: str,
++        gabarit: bytes | None = None,
++    ) -> None:
++        self._passerelle = passerelle
++        self._version_donnees = version_donnees
++        self._gabarit = gabarit if gabarit is not None else lire_prompt()
++
++    def executer(self, ctx: ContextePassage[Consultation]) -> ResultatEtape:
++        """Sortie `explications` et une trace par appel, lues via `ctx.consultation`."""
++        contexte = ContexteExplication(
++            passage_id=ctx.passage_id,
++            version_donnees=self._version_donnees,
++            gabarit=self._gabarit,
++        )
++        textes = ctx.consultation.textes_tickets()
++        sorties: list[SortieExplication] = []
++        traces: list[EntreeTrace] = []
++        for meteo_entite in ctx.consultation.meteo(ctx.date_arrete):
++            if meteo_entite.couleur not in COULEURS_EXPLIQUEES:
++                continue
++            sortie, traces_entite = expliquer(self._passerelle, meteo_entite, textes, contexte)
++            sorties.append(sortie)
++            traces.extend(traces_entite)
++        return ResultatEtape(StatutEtape.reussie, {"explications": tuple(sorties)}, tuple(traces))
+diff --git a/src/usine/ia/controles.py b/src/usine/ia/controles.py
+new file mode 100644
+index 0000000..306b782
+--- /dev/null
++++ b/src/usine/ia/controles.py
+@@ -0,0 +1,87 @@
++"""Contrôles déterministes des sorties LLM (AD-12, FR-32).
++
++`controler_citations` garde les seules phrases qui citent au moins une clé de ticket et
++aucune clé hors des tickets autorisés. N'est une Citation qu'une clé dont le projet (partie
++avant le dernier `-`) est celui d'au moins un ticket autorisé : `IND-1`, `ENT-12`, `UTF-8` ou
++`SHA-256` ont la forme d'une clé de ticket mais sont ignorés. Les clés de ticket ne sont jamais
++pseudonymisées : le contrôle s'applique donc indifféremment avant ou après la
++ré-identification.
++"""
++
++import re
++from collections.abc import Iterable
++from dataclasses import dataclass
++
++from usine.contrats.tickets import MOTIF_CLE_TICKET
++
++_CLE_TICKET = re.compile(rf"\b{MOTIF_CLE_TICKET}\b")
++_FIN_DE_PHRASE = re.compile(r"(?<=[.!?])\s+|\s*\n\s*")
++"""Une phrase finit par `.`, `!` ou `?` suivi d'un blanc (ou de la fin), ou par un saut de ligne."""
++
++
++@dataclass(frozen=True)
++class ControleCitations:
++    """Résultat de `controler_citations`."""
++
++    texte: str
++    """Phrases retenues, jointes par une espace."""
++    citations: tuple[str, ...]
++    """Clés citées par les phrases retenues, sans doublon, triées."""
++    phrases_retirees: int
++    phrases_total: int
++
++
++def decouper_phrases(texte: str) -> tuple[str, ...]:
++    """Phrases de `texte` ; coupe après `.`, `!` ou `?` suivi d'un blanc, et à chaque ligne."""
++    morceaux = (phrase.strip() for phrase in _FIN_DE_PHRASE.split(texte.strip()))
++    return tuple(phrase for phrase in morceaux if phrase)
++
++
++def projet(cle: str) -> str:
++    """Projet d'une clé : partie avant le dernier `-` (`DEMO-12` → `DEMO`)."""
++    return cle.rpartition("-")[0]
++
++
++def citations(phrase: str, projets: frozenset[str]) -> frozenset[str]:
++    """Clés de ticket citées par `phrase` dont le projet figure dans `projets`."""
++    return frozenset(cle for cle in _CLE_TICKET.findall(phrase) if projet(cle) in projets)
++
++
++def rang_cle(cle: str) -> tuple[str, int, str]:
++    """Clé de tri `DEMO-12` → `("DEMO", 12, "")` : ordre numérique dans un projet."""
++    prefixe, _, numero = cle.rpartition("-")
++    if numero.isdigit():
++        return (prefixe, int(numero), "")
++    return (cle, -1, cle)
++
++
++def controler_citations(texte: str, tickets_autorises: Iterable[str]) -> ControleCitations:
++    """Retire chaque phrase sans clé de ticket ou citant une clé hors de `tickets_autorises`."""
++    autorises = frozenset(tickets_autorises)
++    projets = frozenset(projet(cle) for cle in autorises)
++    retenues: list[str] = []
++    citees: set[str] = set()
++    phrases = decouper_phrases(texte)
++    for phrase in phrases:
++        cles = citations(phrase, projets)
++        if cles and cles <= autorises:
++            retenues.append(phrase)
++            citees |= cles
++    return ControleCitations(
++        texte=" ".join(retenues),
++        citations=tuple(sorted(citees, key=rang_cle)),
++        phrases_retirees=len(phrases) - len(retenues),
++        phrases_total=len(phrases),
++    )
++
++
++def retirer_citations_hors(texte: str, tickets_autorises: Iterable[str]) -> str:
++    """Retire de `texte` les phrases qui citent une clé hors de `tickets_autorises`.
++
++    Une phrase sans Citation reste (brouillon de commentaire).
++    """
++    autorises = frozenset(tickets_autorises)
++    projets = frozenset(projet(cle) for cle in autorises)
++    return " ".join(
++        phrase for phrase in decouper_phrases(texte) if citations(phrase, projets) <= autorises
++    )
+diff --git a/src/usine/adaptateurs/stockage_sqlite/__init__.py b/src/usine/adaptateurs/stockage_sqlite/__init__.py
+new file mode 100644
+index 0000000..1d59576
+--- /dev/null
++++ b/src/usine/adaptateurs/stockage_sqlite/__init__.py
+@@ -0,0 +1,144 @@
++"""Stockage SQLite : cache LLM et table des pseudonymes (AD-12, AD-15).
++
++- `CacheLLMSqlite` (`donnees/cache_llm.sqlite`) satisfait structurellement
++  `usine.ia.passerelle.CacheLLM` ; seule la passerelle LLM y accède.
++- `TablePseudonymesSqlite` (`donnees/pseudonymes.sqlite`) garde la correspondance
++  jeton → valeur d'origine, pour la ré-identification locale ; hors git.
++
++Chaque base est en mode WAL ; la connexion est ouverte et fermée à chaque opération (rien ne
++reste ouvert, ce qui compte sous Windows). Toute erreur `sqlite3` devient une `UsineErreur`
++qui nomme le fichier.
++"""
++
++import sqlite3
++from collections.abc import Callable, Collection, Mapping
++from contextlib import closing
++from pathlib import Path
++
++from usine.contrats.erreurs import UsineErreur
++
++
++class _BaseSqlite:
++    """Fichier SQLite en mode WAL, une connexion par opération, erreurs nommant le fichier."""
++
++    def __init__(self, chemin: Path, quoi: str, creer_table: str) -> None:
++        self._chemin = chemin
++        self._quoi = quoi
++        try:
++            chemin.parent.mkdir(parents=True, exist_ok=True)
++        except OSError as exc:
++            raise UsineErreur(
++                f"{chemin} : création du répertoire du {quoi} impossible ({exc.strerror or exc})"
++            ) from exc
++
++        def initialiser(connexion: sqlite3.Connection) -> str:
++            (mode,) = connexion.execute("PRAGMA journal_mode=WAL").fetchone()
++            connexion.execute(creer_table)
++            return str(mode).lower()
++
++        mode = self._operation(initialiser, "initialisation")
++        if mode != "wal":
++            raise UsineErreur(f"{chemin} : {quoi}, mode WAL refusé (journal_mode = {mode})")
++
++    @property
++    def chemin(self) -> Path:
++        """Fichier SQLite."""
++        return self._chemin
++
++    def _operation[R](self, operation: Callable[[sqlite3.Connection], R], quoi: str) -> R:
++        """Ouvre la base, exécute `operation` dans une transaction, puis ferme la connexion."""
++        try:
++            with closing(sqlite3.connect(self._chemin)) as connexion, connexion:
++                return operation(connexion)
++        except sqlite3.Error as exc:
++            raise UsineErreur(f"{self._chemin} : {self._quoi}, {quoi} impossible ({exc})") from exc
++
++
++class CacheLLMSqlite(_BaseSqlite):
++    """Cache `(cle TEXT PRIMARY KEY, brut TEXT)` dans un fichier SQLite en mode WAL."""
++
++    def __init__(self, chemin: Path) -> None:
++        super().__init__(
++            chemin,
++            "cache LLM",
++            "CREATE TABLE IF NOT EXISTS cache_llm (cle TEXT PRIMARY KEY, brut TEXT NOT NULL)",
++        )
++
++    def lire(self, cle: str) -> str | None:
++        """Réponse brute enregistrée sous `cle`, ou `None`."""
++
++        def lire(connexion: sqlite3.Connection) -> str | None:
++            ligne = connexion.execute("SELECT brut FROM cache_llm WHERE cle = ?", (cle,)).fetchone()
++            return None if ligne is None else str(ligne[0])
++
++        return self._operation(lire, "lecture")
++
++    def ecrire(self, cle: str, brut: str) -> None:
++        """Enregistre (ou remplace) la réponse brute sous `cle`."""
++
++        def ecrire(connexion: sqlite3.Connection) -> None:
++            connexion.execute(
++                "INSERT OR REPLACE INTO cache_llm (cle, brut) VALUES (?, ?)", (cle, brut)
++            )
++
++        self._operation(ecrire, "écriture")
++
++
++class TablePseudonymesSqlite(_BaseSqlite):
++    """Table `(jeton TEXT PRIMARY KEY, valeur TEXT)` dans un fichier SQLite en mode WAL."""
++
++    def __init__(self, chemin: Path) -> None:
++        super().__init__(
++            chemin,
++            "table des pseudonymes",
++            "CREATE TABLE IF NOT EXISTS pseudonymes (jeton TEXT PRIMARY KEY, valeur TEXT NOT NULL)",
++        )
++
++    def enregistrer(self, correspondances: Mapping[str, str]) -> None:
++        """Enregistre chaque `jeton → valeur` ; un jeton déjà lié à une autre valeur est refusé.
++
++        L'erreur de collision nomme le jeton, jamais la valeur. Rien n'est écrit en cas d'échec.
++        """
++        if not correspondances:
++            return
++
++        def enregistrer(connexion: sqlite3.Connection) -> list[str]:
++            collisions: list[str] = []
++            for jeton, valeur in correspondances.items():
++                connexion.execute(
++                    "INSERT OR IGNORE INTO pseudonymes (jeton, valeur) VALUES (?, ?)",
++                    (jeton, valeur),
++                )
++                (connue,) = connexion.execute(
++                    "SELECT valeur FROM pseudonymes WHERE jeton = ?", (jeton,)
++                ).fetchone()
++                if connue != valeur:
++                    collisions.append(jeton)
++            if collisions:
++                connexion.rollback()
++            return collisions
++
++        collisions = self._operation(enregistrer, "écriture")
++        if collisions:
++            raise UsineErreur(
++                f"{self._chemin} : collision de jeton {', '.join(sorted(collisions))}"
++                " entre deux valeurs"
++            )
++
++    def lire(self, jetons: Collection[str]) -> dict[str, str]:
++        """Valeurs d'origine des `jetons` connus ; les jetons inconnus sont absents."""
++        if not jetons:
++            return {}
++        uniques = sorted(set(jetons))
++
++        def lire(connexion: sqlite3.Connection) -> dict[str, str]:
++            trouves: dict[str, str] = {}
++            for jeton in uniques:
++                ligne = connexion.execute(
++                    "SELECT valeur FROM pseudonymes WHERE jeton = ?", (jeton,)
++                ).fetchone()
++                if ligne is not None:
++                    trouves[jeton] = str(ligne[0])
++            return trouves
++
++        return self._operation(lire, "lecture")
+diff --git a/src/usine/composition.py b/src/usine/composition.py
+index aa89ad6..384d5f2 100644
+--- a/src/usine/composition.py
++++ b/src/usine/composition.py
+@@ -4,3 +4,8 @@ Elle lit `config/*.yaml` et les secrets (Mode repli), calcule `version_grille` e
+ `version_donnees`, instancie la `SourceJournal`, charge le gabarit PowerPoint et construit le
+-registre des étapes de la Chaîne selon le Palier.
++registre des étapes de la Chaîne selon le Palier. En Palier 2, elle câble la passerelle LLM
++(fournisseur injecté, cache `donnees/cache_llm.sqlite`) dans l'étape `explications` ; les
++autres étapes LLM restent sautées. Sans pseudonymiseur injecté, elle construit
++`PseudonymiseurHmac` sur la clé `USINE_CLE_PSEUDO`, les motifs de
++`config/pseudonymisation.yaml` (ou `MOTIFS_PAR_DEFAUT`) et la table
++`donnees/pseudonymes.sqlite`.
+ """
+@@ -16,2 +21,8 @@ from types import MappingProxyType
+ from usine.adaptateurs.journal import SourceJournal
++from usine.adaptateurs.pseudonymisation import (
++    MOTIFS_PAR_DEFAUT,
++    PseudonymiseurHmac,
++    verifier_cle,
++)
++from usine.adaptateurs.stockage_sqlite import CacheLLMSqlite, TablePseudonymesSqlite
+ from usine.chaine.ecrivain import EcrivainPassage
+@@ -27,2 +38,3 @@ from usine.contrats.config import (
+     ConfigProgramme,
++    ConfigPseudonymisation,
+     ConfigUsine,
+@@ -34,4 +46,8 @@ from usine.contrats.versions import version_donnees, version_grille
+ from usine.generateur.journal import generer, serialiser_journal
++from usine.ia.etape import EtapeExplications
++from usine.ia.passerelle import Passerelle
+ from usine.ports.consultation import Consultation
+ from usine.ports.etape import Etape as PortEtape
++from usine.ports.fournisseur_llm import FournisseurLLM
++from usine.ports.pseudonymiseur import Pseudonymiseur
+ from usine.rendu.etape import EtapeRendu
+@@ -47,2 +63,8 @@ CHEMIN_GABARIT = Path("gabarits") / "rapport.pptx"
+ 
++CHEMIN_CACHE_LLM = Path("donnees") / "cache_llm.sqlite"
++"""Cache des réponses LLM (WAL), relatif à la racine ; seule la passerelle y accède."""
++
++CHEMIN_PSEUDONYMES = Path("donnees") / "pseudonymes.sqlite"
++"""Table jeton → valeur de la Pseudonymisation (WAL), relative à la racine ; hors git."""
++
+ REPERTOIRE_SORTIES = Path("sorties")
+@@ -87,6 +109,86 @@ def _octets(chemin: Path, quoi: str) -> bytes:
+ 
+-def construire_rapport(racine: Path) -> Rapport:
+-    """Charge la configuration et le Journal de `racine`, puis construit le registre."""
++def _maintenant() -> datetime:
++    return datetime.now(UTC)
++
++
++@dataclass(frozen=True)
++class _ParametresPseudonymisation:
++    """Clé et motifs de `PseudonymiseurHmac`, vérifiés avant tout Passage."""
++
++    cle: bytes
++    motifs: Mapping[str, str]
++
++
++def _motifs_pseudonymisation(repertoire_config: Path) -> Mapping[str, str]:
++    """Motifs de `config/pseudonymisation.yaml` s'il existe, sinon `MOTIFS_PAR_DEFAUT`.
++
++    Plusieurs reconnaisseurs d'un même type de jeton sont combinés en une alternative.
++    """
++    chemin = repertoire_config / "pseudonymisation.yaml"
++    if not chemin.exists():
++        return MOTIFS_PAR_DEFAUT
++    config = charger_yaml(chemin, ConfigPseudonymisation)
++    if not config.reconnaisseurs:
++        raise UsineErreur(
++            f"{chemin}, clé « reconnaisseurs », valeur vide : aucun motif de Pseudonymisation ;"
++            " déclarer au moins un reconnaisseur ou supprimer le fichier"
++        )
++    par_type: dict[str, list[str]] = {}
++    for reconnaisseur in config.reconnaisseurs:
++        par_type.setdefault(reconnaisseur.type_jeton, []).append(reconnaisseur.motif)
++    return {
++        type_jeton: motifs[0] if len(motifs) == 1 else "|".join(f"(?:{m})" for m in motifs)
++        for type_jeton, motifs in par_type.items()
++    }
++
++
++def _verifier_llm(
++    fournisseur: FournisseurLLM | None,
++    pseudonymiseur: Pseudonymiseur | None,
++    secrets_usine: Secrets,
++    repertoire_config: Path,
++) -> _ParametresPseudonymisation | None:
++    """Palier 2 : refuse, avant tout Passage, l'absence de fournisseur LLM ou de clé.
++
++    Sans pseudonymiseur injecté, renvoie la clé `USINE_CLE_PSEUDO` et les motifs de
++    `PseudonymiseurHmac` ; sinon `None`.
++    """
++    if fournisseur is None:
++        raise UsineErreur(
++            "config/chaine.yaml, clé « palier », valeur 2 : aucun fournisseur LLM injecté ;"
++            " repasser en palier 1 ou fournir un fournisseur LLM"
++        )
++    if pseudonymiseur is not None:
++        return None
++    cle = secrets_usine.usine_cle_pseudo
++    if cle is None or not cle.get_secret_value().strip():
++        raise UsineErreur(
++            "config/chaine.yaml, clé « palier », valeur 2 : variable d'environnement"
++            " USINE_CLE_PSEUDO absente ou vide ; aucun appel LLM sans Pseudonymisation"
++        )
++    octets_cle = cle.get_secret_value().encode("utf-8")
++    verifier_cle(octets_cle)
++    return _ParametresPseudonymisation(octets_cle, _motifs_pseudonymisation(repertoire_config))
++
++
++def construire_rapport(
++    racine: Path,
++    fournisseur: FournisseurLLM | None = None,
++    pseudonymiseur: Pseudonymiseur | None = None,
++    horloge: Callable[[], datetime] = _maintenant,
++) -> Rapport:
++    """Charge la configuration et le Journal de `racine`, puis construit le registre.
++
++    En Palier 2, `fournisseur` est obligatoire ; sans `pseudonymiseur`, `PseudonymiseurHmac`
++    est construit et exige `USINE_CLE_PSEUDO`. Toute absence lève une `UsineErreur` avant tout
++    Passage. `horloge` date les traces LLM.
++    """
+     repertoire_config = racine / "config"
+     chaine = charger_yaml(repertoire_config / "chaine.yaml", ConfigChaine)
++    secrets_usine = Secrets(_env_file=racine / ".env")
++    pseudonymisation = (
++        _verifier_llm(fournisseur, pseudonymiseur, secrets_usine, repertoire_config)
++        if chaine.palier == 2
++        else None
++    )
+     programme = charger_yaml(repertoire_config / "programme.yaml", ConfigProgramme)
+@@ -97,3 +199,3 @@ def construire_rapport(racine: Path) -> Rapport:
+     configuration = ConfigUsine(chaine=chaine, programme=programme, grille_meteo=grille, jira=jira)
+-    mode_repli = Secrets(_env_file=racine / ".env").usine_mode_repli
++    mode_repli = secrets_usine.usine_mode_repli
+     gabarit = _octets(racine / CHEMIN_GABARIT, "gabarit PowerPoint")
+@@ -107,3 +209,2 @@ def construire_rapport(racine: Path) -> Rapport:
+ 
+-    llm: PortEtape = EtapeSautee() if chaine.palier == 1 else EtapeBouchon()
+     registre: dict[Etape, PortEtape] = {
+@@ -116,3 +217,18 @@ def construire_rapport(racine: Path) -> Rapport:
+     }
+-    registre.update({etape: llm for etape in ETAPES_LLM})
++    registre.update({etape: EtapeSautee() for etape in ETAPES_LLM})
++    if chaine.palier == 2:
++        if fournisseur is None:  # pragma: no cover - vérifié par `_verifier_llm`
++            raise UsineErreur("Palier 2 sans fournisseur LLM")
++        if pseudonymiseur is None:
++            if pseudonymisation is None:  # pragma: no cover - vérifié par `_verifier_llm`
++                raise UsineErreur("Palier 2 sans USINE_CLE_PSEUDO")
++            pseudonymiseur = PseudonymiseurHmac(
++                pseudonymisation.cle,
++                pseudonymisation.motifs,
++                TablePseudonymesSqlite(racine / CHEMIN_PSEUDONYMES),
++            )
++        passerelle = Passerelle(
++            fournisseur, pseudonymiseur, CacheLLMSqlite(racine / CHEMIN_CACHE_LLM), horloge
++        )
++        registre[Etape.explications] = EtapeExplications(passerelle, empreinte_donnees)
+     return Rapport(
+@@ -127,6 +243,2 @@ def construire_rapport(racine: Path) -> Rapport:
+ 
+-def _maintenant() -> datetime:
+-    return datetime.now(UTC)
+-
+-
+ def _suffixe() -> str:
+@@ -157,2 +269,4 @@ def lancer_rapport(
+     alea: Callable[[], str] = _suffixe,
++    fournisseur: FournisseurLLM | None = None,
++    pseudonymiseur: Pseudonymiseur | None = None,
+ ) -> PassageLance:
+@@ -161,3 +275,3 @@ def lancer_rapport(
+     with verrou_exclusif(racine / CHEMIN_VERROU):
+-        rapport = construire_rapport(racine)
++        rapport = construire_rapport(racine, fournisseur, pseudonymiseur, horloge)
+         ecrivain = EcrivainPassage(rapport.racine_sorties, horloge)
+diff --git a/src/usine/ia/explication.py b/src/usine/ia/explication.py
+new file mode 100644
+index 0000000..5abd37c
+--- /dev/null
++++ b/src/usine/ia/explication.py
+@@ -0,0 +1,213 @@
++"""Tâche `explication` : Explication sourcée d'une Entité rouge ou orange (FR-32, FR-33).
++
++Le prompt `prompts/explication.md` reçoit les Règles déclenchantes et les tickets en cause
++(titres et descriptions). La réponse passe `controler_citations` : seules restent les phrases
++qui citent un ticket en cause. Plus de la moitié des phrases retirées déclenche une seule
++régénération (`tentative = 1`) ; un échec persistant donne « explication indisponible »
++(`statut_controle = rejete`) sans faire échouer le Passage. Sans ticket en cause, aucune
++Citation n'est possible : l'explication est indisponible d'emblée, sans appel au fournisseur.
++
++Les titres et descriptions des tickets sont des données, placées entre délimiteurs dans le
++prompt ; `version_prompt` est calculée à partir des octets du gabarit envoyé.
++"""
++
++import logging
++import re
++from collections.abc import Mapping
++from dataclasses import dataclass
++from importlib import resources
++
++import polars as pl
++
++from usine.contrats.erreurs import UsineErreur
++from usine.contrats.llm import ParametresAppel, SortieExplication, StatutControle, Tache
++from usine.contrats.meteo import MeteoEntite
++from usine.contrats.modele import Enregistrement
++from usine.contrats.trace import EntreeTrace
++from usine.contrats.versions import version_prompt
++from usine.ia.controles import controler_citations, rang_cle, retirer_citations_hors
++from usine.ia.passerelle import ContexteAppel, Controle, Passerelle
++
++TEXTE_INDISPONIBLE = "explication indisponible"
++"""Texte d'une explication rejetée après régénération."""
++
++MAX_JETONS_SORTIE = 1024
++"""Plafond de jetons de sortie d'une explication."""
++
++TENTATIVES = 2
++"""Appel initial (`tentative = 0`) et une seule régénération (`tentative = 1`)."""
++
++journal = logging.getLogger(__name__)
++
++_VARIABLE = re.compile(r"\{\{(\w+)\}\}")
++
++DELIMITEUR = "```"
++"""Délimiteur du bloc de données des tickets ; neutralisé dans les textes des tickets."""
++
++
++class ReponseExplication(Enregistrement):
++    """Schéma demandé au fournisseur ; la sortie publiée reste `SortieExplication`."""
++
++    texte: str
++    brouillon_commentaire: str = ""
++
++
++def lire_prompt() -> bytes:
++    """Octets de `ia/prompts/explication.md` (source de `version_prompt`)."""
++    return (resources.files("usine.ia") / "prompts" / "explication.md").read_bytes()
++
++
++def rendre_prompt(gabarit: str, variables: Mapping[str, str]) -> str:
++    """Remplace chaque `{{nom}}` ; une variable inconnue ou inutilisée lève une `UsineErreur`."""
++    attendues = set(_VARIABLE.findall(gabarit))
++    manquantes = sorted(attendues - set(variables))
++    en_trop = sorted(set(variables) - attendues)
++    if manquantes or en_trop:
++        raise UsineErreur(
++            f"prompt « explication » : variables manquantes {manquantes}, en trop {en_trop}"
++        )
++    return _VARIABLE.sub(lambda m: variables[m.group(1)], gabarit)
++
++
++@dataclass(frozen=True)
++class ContexteExplication:
++    """Contexte du Passage commun aux explications."""
++
++    passage_id: str
++    version_donnees: str
++    gabarit: bytes
++    """Octets du gabarit envoyé (source de `version_prompt`)."""
++
++    @property
++    def version_prompt(self) -> str:
++        """`version_prompt` du gabarit envoyé."""
++        return version_prompt(self.gabarit)
++
++    @property
++    def texte_gabarit(self) -> str:
++        """Gabarit décodé en UTF-8."""
++        return self.gabarit.decode("utf-8")
++
++
++def tickets_en_cause(meteo_entite: MeteoEntite) -> tuple[str, ...]:
++    """Clés en cause de toutes les Règles déclenchantes, sans doublon, triées."""
++    cles = {cle for regle in meteo_entite.regles for cle in regle.tickets_en_cause}
++    return tuple(sorted(cles, key=rang_cle))
++
++
++def _regles(meteo_entite: MeteoEntite) -> str:
++    lignes = []
++    for regle in meteo_entite.regles:
++        valeur = f"{regle.numerateur}/{regle.denominateur}"
++        seuil = f"{regle.operateur.value} {regle.seuil_numerateur}/{regle.seuil_denominateur}"
++        lignes.append(
++            f"- {regle.code.value} ({regle.couleur.value}) : valeur {valeur}, seuil {seuil} ;"
++            f" tickets en cause : {', '.join(regle.tickets_en_cause) or 'aucun'}"
++        )
++    return "\n".join(lignes) or "- aucune"
++
++
++def _donnee(texte: str) -> str:
++    """Texte de ticket sans délimiteur : il ne peut pas fermer le bloc de données."""
++    return texte.replace(DELIMITEUR, "'''")
++
++
++def _tickets(cles: tuple[str, ...], textes: pl.DataFrame) -> str:
++    par_cle = {ligne["cle_ticket"]: ligne for ligne in textes.iter_rows(named=True)}
++    lignes = []
++    for cle in cles:
++        if cle not in par_cle:
++            journal.warning("ticket en cause %s absent des textes des tickets", cle)
++        ligne = par_cle.get(cle, {})
++        titre = ligne.get("titre") or "(sans titre)"
++        description = ligne.get("description") or "(sans description)"
++        lignes.append(f"- {cle} : {_donnee(titre)}\n  {_donnee(description)}")
++    return "\n".join(lignes) or "- aucun"
++
++
++@dataclass(frozen=True)
++class _Controleur:
++    """Contrôle d'une `ReponseExplication` : Citations, statut, brouillon sans clé hors cause."""
++
++    meteo_entite: MeteoEntite
++    autorises: tuple[str, ...]
++
++    def __call__(self, reponse: ReponseExplication) -> Controle[SortieExplication]:
++        controle = controler_citations(reponse.texte, self.autorises)
++        if controle.phrases_total == 0 or 2 * controle.phrases_retirees > controle.phrases_total:
++            statut = StatutControle.rejete
++        elif controle.phrases_retirees:
++            statut = StatutControle.corrige
++        else:
++            statut = StatutControle.conforme
++        sortie = SortieExplication(
++            date_arrete=self.meteo_entite.date_arrete,
++            entite=self.meteo_entite.entite,
++            texte=controle.texte,
++            citations=controle.citations,
++            brouillon_commentaire=retirer_citations_hors(
++                reponse.brouillon_commentaire, self.autorises
++            ),
++            phrases_retirees=controle.phrases_retirees,
++            statut_controle=statut,
++        )
++        return Controle(sortie, statut, controle.phrases_retirees)
++
++
++def expliquer(
++    passerelle: Passerelle,
++    meteo_entite: MeteoEntite,
++    textes: pl.DataFrame,
++    contexte: ContexteExplication,
++) -> tuple[SortieExplication, tuple[EntreeTrace, ...]]:
++    """Explication sourcée de `meteo_entite` et traces de chaque appel (zéro, une ou deux)."""
++    autorises = tickets_en_cause(meteo_entite)
++    if not autorises:
++        return _indisponible(meteo_entite, 0), ()
++    prompt = rendre_prompt(
++        contexte.texte_gabarit,
++        {
++            "entite": meteo_entite.entite,
++            "couleur": meteo_entite.couleur.value,
++            "date_arrete": meteo_entite.date_arrete.isoformat(),
++            "regles": _regles(meteo_entite),
++            "tickets": _tickets(autorises, textes),
++        },
++    )
++    appel = ContexteAppel(
++        passage_id=contexte.passage_id,
++        date_arrete=meteo_entite.date_arrete,
++        cible=meteo_entite.entite,
++        version_prompt=contexte.version_prompt,
++        version_grille=meteo_entite.version_grille,
++        version_donnees=contexte.version_donnees,
++        entite=meteo_entite.entite,
++    )
++    controleur = _Controleur(meteo_entite, autorises)
++    traces: list[EntreeTrace] = []
++    phrases_retirees = 0
++    for tentative in range(TENTATIVES):
++        parametres = ParametresAppel(
++            tache=Tache.explication, max_jetons_sortie=MAX_JETONS_SORTIE, tentative=tentative
++        )
++        resultat = passerelle.executer_structure(
++            prompt, ReponseExplication, parametres, appel, controleur
++        )
++        traces.append(resultat.trace)
++        if resultat.statut is not StatutControle.rejete:
++            return resultat.sortie, tuple(traces)
++        phrases_retirees = resultat.phrases_retirees
++    return _indisponible(meteo_entite, phrases_retirees), tuple(traces)
++
++
++def _indisponible(meteo_entite: MeteoEntite, phrases_retirees: int) -> SortieExplication:
++    """Repli « explication indisponible » (`rejete`)."""
++    return SortieExplication(
++        date_arrete=meteo_entite.date_arrete,
++        entite=meteo_entite.entite,
++        texte=TEXTE_INDISPONIBLE,
++        citations=(),
++        brouillon_commentaire="",
++        phrases_retirees=phrases_retirees,
++        statut_controle=StatutControle.rejete,
++    )
+diff --git a/src/usine/adaptateurs/pseudonymisation/__init__.py b/src/usine/adaptateurs/pseudonymisation/__init__.py
+new file mode 100644
+index 0000000..f4ddd16
+--- /dev/null
++++ b/src/usine/adaptateurs/pseudonymisation/__init__.py
+@@ -0,0 +1,213 @@
++"""Pseudonymisation par expressions régulières et HMAC-SHA256, sans Presidio (AD-15).
++
++`PseudonymiseurHmac` implémente le port `Pseudonymiseur` : chaque correspondance d'un motif
++devient `<TYPE>_<6 hex de HMAC-SHA256(cle, valeur)>`. Le jeton ne dépend que de la clé
++(`USINE_CLE_PSEUDO`) et de la valeur : il est stable d'une exécution à l'autre. Une clé de
++ticket n'est jamais touchée : seules les parties d'une correspondance hors des clés de ticket
++sont pseudonymisées, chaque fragment restant devenant son propre jeton. `pseudonymiser`
++enregistre la correspondance dans la table, `apercu` ne l'enregistre pas, `reidentifier` la
++relit.
++
++Les reconnaisseurs Presidio et les motifs définitifs relèvent de la lane L6 ;
++`MOTIFS_PAR_DEFAUT` n'est qu'un motif d'amorce.
++"""
++
++import hashlib
++import hmac
++import re
++from collections.abc import Collection, Iterator, Mapping, Sequence
++from typing import Protocol
++
++from usine.contrats.erreurs import UsineErreur
++from usine.contrats.tickets import MOTIF_CLE_TICKET
++
++MOTIFS_PAR_DEFAUT: Mapping[str, str] = {"COMPTE": r"FR\d{2}(?: \d{4}){5} \d{3}"}
++"""Motifs d'amorce, sans `config/pseudonymisation.yaml` ; remplacés par la lane L6."""
++
++LONGUEUR_EMPREINTE = 6
++"""Nombre de caractères hexadécimaux du HMAC gardés dans le jeton."""
++
++LONGUEUR_MIN_CLE = 16
++"""Longueur minimale de `USINE_CLE_PSEUDO`."""
++
++_CLE_TICKET = re.compile(rf"\b{MOTIF_CLE_TICKET}\b")
++_MOTIF_TYPE_JETON = r"[A-Z](?:[A-Z_]*[A-Z])?"
++_TYPE_JETON = re.compile(_MOTIF_TYPE_JETON)
++CANDIDAT_JETON = re.compile(
++    rf"(?<![A-Z_])([A-Z][A-Z_]*)_([0-9a-f]{{{LONGUEUR_EMPREINTE}}})(?![0-9a-f])"
++)
++"""Jeton candidat, même collé à des lettres ou précédé d'un préfixe `MAJUSCULES_`.
++
++Le groupe 1 peut porter un préfixe en plus du type (`ID_COMPTE`) : voir `variantes_jeton`.
++"""
++
++
++def variantes_jeton(candidat: re.Match[str]) -> list[str]:
++    """Jetons possibles d'un candidat, du plus long au plus court.
++
++    `ID_COMPTE_abc123` → `ID_COMPTE_abc123`, puis `COMPTE_abc123`.
++    """
++    parties = candidat.group(1).split("_")
++    empreinte = candidat.group(2)
++    return [
++        f"{'_'.join(parties[rang:])}_{empreinte}"
++        for rang in range(len(parties))
++        if parties[rang] and _TYPE_JETON.fullmatch("_".join(parties[rang:]))
++    ]
++
++
++def verifier_cle(cle: bytes) -> None:
++    """Refuse une clé de moins de `LONGUEUR_MIN_CLE` caractères (`UsineErreur`)."""
++    if len(cle.strip()) < LONGUEUR_MIN_CLE:
++        raise UsineErreur(
++            f"USINE_CLE_PSEUDO : clé de Pseudonymisation absente ou trop courte"
++            f" (au moins {LONGUEUR_MIN_CLE} caractères)"
++        )
++
++
++def fragments_hors_cles(
++    texte: str, debut: int, fin: int, proteges: Sequence[tuple[int, int]]
++) -> Iterator[tuple[int, int]]:
++    """Parties de `texte[debut:fin]` hors des clés de ticket `proteges`.
++
++    Au contact d'une clé coupée, la ponctuation et les blancs restent en clair, pour que la
++    clé reste reconnaissable (`ABC-2024-5678` → `ABC-2024-` + jeton de `5678`).
++    """
++    morceaux: list[tuple[int, int]] = []
++    position = debut
++    for d, f in sorted(proteges):
++        if f <= position or d >= fin:
++            continue
++        if d > position:
++            morceaux.append((position, d))
++        position = max(position, f)
++    if position < fin:
++        morceaux.append((position, fin))
++    fins_de_cle = {f for _, f in proteges}
++    debuts_de_cle = {d for d, _ in proteges}
++    for gauche, droite in morceaux:
++        if gauche in fins_de_cle:
++            while gauche < droite and not texte[gauche].isalnum():
++                gauche += 1
++        if droite in debuts_de_cle:
++            while gauche < droite and not texte[droite - 1].isalnum():
++                droite -= 1
++        if gauche < droite:
++            yield gauche, droite
++
++
++class TablePseudonymes(Protocol):
++    """Correspondance jeton → valeur d'origine (satisfaite par `TablePseudonymesSqlite`)."""
++
++    def enregistrer(self, correspondances: Mapping[str, str]) -> None:
++        """Enregistre les correspondances ; un jeton lié à une autre valeur est refusé."""
++        ...
++
++    def lire(self, jetons: Collection[str]) -> dict[str, str]:
++        """Valeurs d'origine des jetons connus."""
++        ...
++
++
++class PseudonymiseurHmac:
++    """Pseudonymiseur par motifs et HMAC-SHA256 ; correspondance gardée dans `table`."""
++
++    def __init__(self, cle: bytes, motifs: Mapping[str, str], table: TablePseudonymes) -> None:
++        verifier_cle(cle)
++        self._cle = cle
++        invalides = sorted(t for t in motifs if not _TYPE_JETON.fullmatch(t))
++        if invalides:
++            raise UsineErreur(
++                f"Pseudonymisation : type de jeton invalide {invalides}"
++                " (majuscules et « _ », ex. COMPTE) ; reidentifier ne le reconnaîtrait pas"
++            )
++        try:
++            self._motifs = [(type_jeton, re.compile(motif)) for type_jeton, motif in motifs.items()]
++        except re.error as exc:
++            raise UsineErreur(f"Pseudonymisation : motif invalide ({exc})") from exc
++        self._table = table
++
++    def jeton(self, type_jeton: str, valeur: str) -> str:
++        """Jeton `<TYPE>_<6 hex>` de `valeur`."""
++        empreinte = hmac.new(self._cle, valeur.encode("utf-8"), hashlib.sha256).hexdigest()
++        return f"{type_jeton}_{empreinte[:LONGUEUR_EMPREINTE]}"
++
++    def _plages(self, texte: str) -> list[tuple[int, int, str]]:
++        """Plages à remplacer, triées et disjointes, avec leur type de jeton.
++
++        Toutes les correspondances sont collectées ; seule est écartée celle qui tient tout
++        entière dans une clé de ticket. Des correspondances qui se chevauchent forment un
++        groupe (de son premier à son dernier caractère), avec le type de jeton de la plus
++        longue, pour qu'aucun fragment ne reste en clair. Les clés de ticket sont ensuite
++        retirées du groupe : chaque fragment restant est une plage.
++        """
++        proteges = [m.span() for m in _CLE_TICKET.finditer(texte)]
++        trouvees: list[tuple[int, int, str]] = []
++        for type_jeton, motif in self._motifs:
++            for trouve in motif.finditer(texte):
++                debut, fin = trouve.span()
++                if debut == fin or any(d <= debut and fin <= f for d, f in proteges):
++                    continue
++                trouvees.append((debut, fin, type_jeton))
++        trouvees.sort(key=lambda t: (t[0], -(t[1] - t[0])))
++        groupes: list[tuple[int, int, str]] = []
++        longueur_type = 0
++        for debut, fin, type_jeton in trouvees:
++            if groupes and debut < groupes[-1][1]:
++                debut_groupe, fin_groupe, type_groupe = groupes[-1]
++                if fin - debut > longueur_type:
++                    type_groupe, longueur_type = type_jeton, fin - debut
++                groupes[-1] = (debut_groupe, max(fin, fin_groupe), type_groupe)
++            else:
++                groupes.append((debut, fin, type_jeton))
++                longueur_type = fin - debut
++        return [
++            (d, f, type_groupe)
++            for debut, fin, type_groupe in groupes
++            for d, f in fragments_hors_cles(texte, debut, fin, proteges)
++        ]
++
++    def _remplacer(self, texte: str) -> tuple[str, dict[str, str]]:
++        """Texte pseudonymisé et correspondances jeton → valeur de ce texte."""
++        retenus = self._plages(texte)
++        correspondances: dict[str, str] = {}
++        morceaux: list[str] = []
++        position = 0
++        for debut, fin, type_jeton in retenus:
++            valeur = texte[debut:fin]
++            jeton = self.jeton(type_jeton, valeur)
++            if correspondances.setdefault(jeton, valeur) != valeur:
++                raise UsineErreur(f"Pseudonymisation : collision de jeton {jeton}")
++            morceaux.extend((texte[position:debut], jeton))
++            position = fin
++        morceaux.append(texte[position:])
++        return "".join(morceaux), correspondances
++
++    def pseudonymiser(self, texte: str) -> str:
++        """Texte pseudonymisé ; la correspondance est enregistrée dans la table."""
++        sortie, correspondances = self._remplacer(texte)
++        self._table.enregistrer(correspondances)
++        return sortie
++
++    def reidentifier(self, texte: str) -> str:
++        """Remplace, localement, les jetons connus de la table ; les autres restent tels quels.
++
++        Un jeton collé à des lettres ou précédé d'un préfixe `MAJUSCULES_` (`ID_COMPTE_abc123`)
++        est reconnu : la plus longue variante connue de la table est remplacée, le préfixe
++        reste.
++        """
++        candidats = list(CANDIDAT_JETON.finditer(texte))
++        if not candidats:
++            return texte
++        valeurs = self._table.lire({v for c in candidats for v in variantes_jeton(c)})
++
++        def remplacer(candidat: re.Match[str]) -> str:
++            for variante in variantes_jeton(candidat):
++                if variante in valeurs:
++                    return candidat.group(0)[: -len(variante)] + valeurs[variante]
++            return candidat.group(0)
++
++        return CANDIDAT_JETON.sub(remplacer, texte)
++
++    def apercu(self, texte: str) -> str:
++        """Comme `pseudonymiser`, sans écrire la table (FR-31)."""
++        return self._remplacer(texte)[0]
+diff --git a/src/usine/ia/passerelle.py b/src/usine/ia/passerelle.py
+new file mode 100644
+index 0000000..e8509e4
+--- /dev/null
++++ b/src/usine/ia/passerelle.py
+@@ -0,0 +1,258 @@
++"""Passerelle LLM : seul appelant du `FournisseurLLM`, dans l'ordre imposé par AD-12.
++
++Ordre, sans exception : Pseudonymisation de toute l'entrée → cache → `FournisseurLLM` →
++contrôle propre à la tâche → ré-identification locale → `EntreeTrace`. Rien n'atteint le
++fournisseur ni le cache sans être pseudonymisé ; la trace ne contient que des textes
++pseudonymisés (entrée, et sortie contrôlée avant ré-identification). Seuls les jetons présents
++dans l'entrée pseudonymisée de l'appel sont ré-identifiés ; tout autre jeton reste tel quel.
++
++Le cache est reçu par injection : `CacheLLM` est un `Protocol` à types primitifs que
++l'adaptateur SQLite satisfait structurellement (la couche `ia` n'importe pas `adaptateurs`).
++La valeur stockée est une `EnveloppeCache` JSON : réponse brute et `version_modele` reçu.
++"""
++
++import hashlib
++import json
++import logging
++import re
++from collections.abc import Callable
++from dataclasses import dataclass
++from datetime import date, datetime
++from typing import Protocol, runtime_checkable
++
++from pydantic import BaseModel, ConfigDict, Field, ValidationError
++
++from usine.contrats.llm import ParametresAppel, StatutControle
++from usine.contrats.trace import EntreeTrace, TypeTrace
++from usine.ports.fournisseur_llm import FournisseurLLM
++from usine.ports.pseudonymiseur import Pseudonymiseur
++
++journal = logging.getLogger(__name__)
++
++
++@runtime_checkable
++class CacheLLM(Protocol):
++    """Cache des réponses brutes du fournisseur, avant contrôle (AD-12)."""
++
++    def lire(self, cle: str) -> str | None:
++        """Réponse brute enregistrée sous `cle`, ou `None`."""
++        ...
++
++    def ecrire(self, cle: str, brut: str) -> None:
++        """Enregistre (ou remplace) la réponse brute sous `cle`."""
++        ...
++
++
++class EnveloppeCache(BaseModel):
++    """Valeur stockée en cache : réponse brute avant contrôle et modèle qui l'a produite."""
++
++    model_config = ConfigDict(frozen=True, extra="forbid")
++
++    brut: str
++    version_modele: str = Field(min_length=1)
++
++
++@dataclass(frozen=True)
++class ContexteAppel:
++    """Contexte d'un appel : identité du Passage, cible et versions tracées."""
++
++    passage_id: str
++    date_arrete: date
++    cible: str
++    """Clé de ticket (classification) ou Entité (explication, narration)."""
++    version_prompt: str
++    version_grille: str
++    version_donnees: str
++    entite: str | None = None
++
++
++@dataclass(frozen=True)
++class Controle[S: BaseModel]:
++    """Sortie d'un contrôle propre à la tâche, encore pseudonymisée."""
++
++    sortie: S
++    statut: StatutControle
++    phrases_retirees: int = 0
++
++
++@dataclass(frozen=True)
++class ResultatAppel[S: BaseModel]:
++    """Résultat d'un appel : sortie contrôlée et ré-identifiée, et sa trace."""
++
++    sortie: S
++    statut: StatutControle
++    phrases_retirees: int
++    trace: EntreeTrace
++
++
++def empreinte(texte: str) -> str:
++    """SHA-256 (64 hex) du texte encodé en UTF-8."""
++    return hashlib.sha256(texte.encode("utf-8")).hexdigest()
++
++
++def cle_cache(
++    parametres: ParametresAppel, contexte: ContexteAppel, version_modele: str, entree: str
++) -> str:
++    """Clé de cache stable (JSON trié) ; `entree` est l'entrée déjà pseudonymisée.
++
++    `version_donnees` n'y entre pas : elle figure seulement dans la trace.
++    """
++    return json.dumps(
++        {
++            "tache": parametres.tache.value,
++            "cible": contexte.cible,
++            "date_arrete": contexte.date_arrete.isoformat(),
++            "version_prompt": contexte.version_prompt,
++            "version_modele": version_modele,
++            "empreinte_entree": empreinte(entree),
++            "tentative": parametres.tentative,
++        },
++        sort_keys=True,
++        ensure_ascii=False,
++        separators=(",", ":"),
++    )
++
++
++_CANDIDAT_JETON = re.compile(r"(?<![A-Z_])([A-Z][A-Z_]*)_([0-9a-f]{6})(?![0-9a-f])")
++"""Jeton candidat `<TYPE>_<6 hex>`, éventuellement précédé d'un préfixe `MAJUSCULES_`."""
++_MASQUE = re.compile("\x00([0-9]+)\x00")
++
++
++def _variantes(candidat: re.Match[str]) -> frozenset[str]:
++    """Jetons possibles d'un candidat : `ID_COMPTE_abc123` → lui-même et `COMPTE_abc123`."""
++    parties = candidat.group(1).split("_")
++    return frozenset(
++        f"{'_'.join(parties[rang:])}_{candidat.group(2)}"
++        for rang in range(len(parties))
++        if parties[rang]
++    )
++
++
++def jetons_de(texte: str) -> frozenset[str]:
++    """Jetons (et variantes) présents dans `texte`."""
++    return frozenset().union(*(_variantes(m) for m in _CANDIDAT_JETON.finditer(texte)))
++
++
++def _reidentifier_texte(
++    texte: str, pseudonymiseur: Pseudonymiseur, autorises: frozenset[str]
++) -> str:
++    """Ré-identifie `texte` ; un jeton absent de l'entrée de cet appel reste un jeton.
++
++    Un jeton recopié ou inventé par le modèle depuis un autre appel ne doit pas faire entrer
++    la valeur d'un autre enregistrement : il est masqué pendant la ré-identification.
++    """
++    masques: list[str] = []
++
++    def masquer(candidat: re.Match[str]) -> str:
++        if _variantes(candidat) & autorises:
++            return candidat.group(0)
++        masques.append(candidat.group(0))
++        return f"\x00{len(masques) - 1}\x00"
++
++    resultat = pseudonymiseur.reidentifier(_CANDIDAT_JETON.sub(masquer, texte))
++    return _MASQUE.sub(lambda m: masques[int(m.group(1))], resultat)
++
++
++def _reidentifier(
++    valeur: object, pseudonymiseur: Pseudonymiseur, autorises: frozenset[str]
++) -> object:
++    """Ré-identifie chaque chaîne d'une structure `model_dump` (listes, tuples, dicts)."""
++    if isinstance(valeur, str):
++        return _reidentifier_texte(valeur, pseudonymiseur, autorises)
++    if isinstance(valeur, dict):
++        return {cle: _reidentifier(v, pseudonymiseur, autorises) for cle, v in valeur.items()}
++    if isinstance(valeur, list | tuple):
++        return [_reidentifier(v, pseudonymiseur, autorises) for v in valeur]
++    return valeur
++
++
++class Passerelle:
++    """Passerelle LLM ; seule à appeler le fournisseur et à accéder au cache."""
++
++    def __init__(
++        self,
++        fournisseur: FournisseurLLM,
++        pseudonymiseur: Pseudonymiseur,
++        cache: CacheLLM,
++        horloge: Callable[[], datetime],
++    ) -> None:
++        self._fournisseur = fournisseur
++        self._pseudonymiseur = pseudonymiseur
++        self._cache = cache
++        self._horloge = horloge
++
++    @property
++    def version_modele(self) -> str:
++        """Version de modèle du fournisseur (`fournisseur:modele`)."""
++        return self._fournisseur.version_modele
++
++    def executer_structure[T: BaseModel, S: BaseModel](
++        self,
++        prompt: str,
++        schema: type[T],
++        parametres: ParametresAppel,
++        contexte: ContexteAppel,
++        controler: Callable[[T], Controle[S]],
++    ) -> ResultatAppel[S]:
++        """Exécute un appel structuré dans l'ordre d'AD-12 et renvoie sortie et trace.
++
++        La clé de cache porte le `version_modele` du fournisseur, connu avant l'appel ; la trace
++        porte celui de la `ReponseStructuree` reçue, gardé dans l'`EnveloppeCache` pour un succès
++        en cache.
++        """
++        entree = self._pseudonymiseur.pseudonymiser(prompt)
++        version_modele = self._fournisseur.version_modele
++        cle = cle_cache(parametres, contexte, version_modele, entree)
++
++        reponse: T | None = None
++        version_reponse = version_modele
++        jetons_entree = jetons_sortie = 0
++        stocke = self._cache.lire(cle)
++        if stocke is not None:
++            try:
++                enveloppe = EnveloppeCache.model_validate_json(stocke)
++                reponse = schema.model_validate_json(enveloppe.brut)
++                version_reponse = enveloppe.version_modele
++            except ValidationError as exc:
++                journal.warning(
++                    "réponse en cache illisible pour %s (%s), nouvel appel au fournisseur",
++                    contexte.cible,
++                    exc.error_count(),
++                )
++        depuis_cache = reponse is not None
++        if reponse is None:
++            appel = self._fournisseur.generer_structure(entree, schema, parametres)
++            enveloppe = EnveloppeCache(brut=appel.brut, version_modele=appel.version_modele)
++            self._cache.ecrire(cle, enveloppe.model_dump_json())
++            reponse = appel.sortie
++            jetons_entree, jetons_sortie = appel.jetons_entree, appel.jetons_sortie
++            version_reponse = appel.version_modele
++
++        controle = controler(reponse)
++        donnees = _reidentifier(
++            controle.sortie.model_dump(), self._pseudonymiseur, jetons_de(entree)
++        )
++        sortie = type(controle.sortie).model_validate(donnees)
++
++        trace = EntreeTrace(
++            type_trace=TypeTrace.llm,
++            horodatage=self._horloge(),
++            passage_id=contexte.passage_id,
++            date_arrete=contexte.date_arrete,
++            entite=contexte.entite,
++            tache=parametres.tache,
++            cible=contexte.cible,
++            fournisseur=version_reponse.split(":", 1)[0],
++            version_prompt=contexte.version_prompt,
++            version_modele=version_reponse,
++            version_grille=contexte.version_grille,
++            version_donnees=contexte.version_donnees,
++            entree_pseudonymisee=entree,
++            sortie=controle.sortie.model_dump_json(),
++            statut_controle=controle.statut,
++            phrases_retirees=controle.phrases_retirees,
++            depuis_cache=depuis_cache,
++            jetons_entree=jetons_entree,
++            jetons_sortie=jetons_sortie,
++        )
++        return ResultatAppel(sortie, controle.statut, controle.phrases_retirees, trace)
+diff --git a/tests/unit/ia/__init__.py b/tests/unit/ia/__init__.py
+new file mode 100644
+index 0000000..e69de29
+diff --git a/tests/unit/adaptateurs/stockage_sqlite/__init__.py b/tests/unit/adaptateurs/stockage_sqlite/__init__.py
+new file mode 100644
+index 0000000..e69de29
+diff --git a/tests/unit/adaptateurs/pseudonymisation/__init__.py b/tests/unit/adaptateurs/pseudonymisation/__init__.py
+new file mode 100644
+index 0000000..e69de29
+diff --git a/tests/unit/chaine/test_cli.py b/tests/unit/chaine/test_cli.py
+index 52ed811..9d7a6a2 100644
+--- a/tests/unit/chaine/test_cli.py
++++ b/tests/unit/chaine/test_cli.py
+@@ -6,2 +6,3 @@ from datetime import date, datetime
+ from pathlib import Path
++from typing import Any
+ 
+@@ -177,4 +178,4 @@ def test_echec_rend_le_verrou(
+ 
+-    def construire_en_panne(r: Path) -> composition.Rapport:
+-        rapport = construire(r)
++    def construire_en_panne(r: Path, *args: Any, **kwargs: Any) -> composition.Rapport:
++        rapport = construire(r, *args, **kwargs)
+         return replace(rapport, registre={**rapport.registre, Etape.kpi: _Panne()})
+diff --git a/tests/unit/consultation/test_passage.py b/tests/unit/consultation/test_passage.py
+index 98693f7..933deb6 100644
+--- a/tests/unit/consultation/test_passage.py
++++ b/tests/unit/consultation/test_passage.py
+@@ -152,3 +152,3 @@ def test_tables_filtrees(lance: PassageLance) -> None:
+ 
+-def test_fichiers_absents_palier_1(lance: PassageLance) -> None:
++def test_palier_1_textes_presents_autres_fichiers_absents(lance: PassageLance) -> None:
+     consultation = ConsultationPassage(lance.repertoire)
+@@ -158,3 +158,3 @@ def test_fichiers_absents_palier_1(lance: PassageLance) -> None:
+     assert consultation.tendances().is_empty()
+-    assert consultation.textes_tickets().is_empty()
++    assert consultation.textes_tickets().height > 0  # écrit par `instantanes` (Story 0.7)
+     assert consultation.explications() == ()
+diff --git a/tests/doublures/pseudonymiseur_factice.py b/tests/doublures/pseudonymiseur_factice.py
+index 0c66e63..d89c4c4 100644
+--- a/tests/doublures/pseudonymiseur_factice.py
++++ b/tests/doublures/pseudonymiseur_factice.py
+@@ -2,3 +2,4 @@
+ 
+-Jeton = `<TYPE>_<6 hex de HMAC-SHA256(cle, valeur)>` ; une clé de ticket n'est jamais touchée.
++Jeton = `<TYPE>_<6 hex de HMAC-SHA256(cle, valeur)>` ; une clé de ticket n'est jamais touchée :
++seules les parties d'une correspondance hors des clés de ticket sont pseudonymisées.
+ La correspondance reste en mémoire.
+@@ -11,2 +12,3 @@ from collections.abc import Mapping
+ 
++from usine.adaptateurs.pseudonymisation import fragments_hors_cles
+ from usine.contrats.erreurs import UsineErreur
+@@ -38,6 +40,5 @@ class PseudonymiseurFactice:
+                     continue
+-                chevauche = any(d < fin and debut < f for d, f in proteges)
+-                chevauche = chevauche or any(d < fin and debut < f for d, f, _ in retenus)
+-                if not chevauche:
+-                    retenus.append((debut, fin, type_jeton))
++                for d_frag, f_frag in fragments_hors_cles(texte, debut, fin, proteges):
++                    if not any(d < f_frag and d_frag < f for d, f, _ in retenus):
++                        retenus.append((d_frag, f_frag, type_jeton))
+         morceaux: list[str] = []
+diff --git a/tests/contrat/pseudonymiseur/fabriques.py b/tests/contrat/pseudonymiseur/fabriques.py
+index ab62aed..349810a 100644
+--- a/tests/contrat/pseudonymiseur/fabriques.py
++++ b/tests/contrat/pseudonymiseur/fabriques.py
+@@ -6,6 +6,12 @@ correspondance partagée (répertoire temporaire neuf pour un adaptateur persist
+ 
++import atexit
++import shutil
++import tempfile
+ from collections.abc import Callable
+ from dataclasses import dataclass
++from pathlib import Path
+ 
+ from tests.doublures import PseudonymiseurFactice
++from usine.adaptateurs.pseudonymisation import PseudonymiseurHmac
++from usine.adaptateurs.stockage_sqlite import TablePseudonymesSqlite
+ from usine.ports import Pseudonymiseur
+@@ -42,2 +48,8 @@ EXEMPLES = (
+     ExempleSensible("Aucune donnée sensible dans DEMO-12.", (), ("DEMO-12",)),
++    ExempleSensible(
++        # Le motif DOSSIER chevauche la clé ABC-2024 : la clé reste, le reste disparaît.
++        "Dossier ABC-2024-5678-9012 bloqué (voir DEMO-8).",
++        ("5678-9012",),
++        ("ABC-2024", "DEMO-8"),
++    ),
+ )
+@@ -48,2 +60,3 @@ MOTIFS_FACTICES = {
+     "IDENTIFIANT": r"\b\d{6}\b",
++    "DOSSIER": r"\d{4}-\d{4}-\d{4}",
+ }
+@@ -59,4 +72,16 @@ def fabrique_factice() -> CasPseudonymiseur:
+ 
++def fabrique_hmac() -> CasPseudonymiseur:
++    """Adaptateur de production, table SQLite dans un répertoire temporaire neuf."""
++    repertoire = Path(tempfile.mkdtemp(prefix="pseudonymes-"))
++    atexit.register(shutil.rmtree, repertoire, ignore_errors=True)
++    table = TablePseudonymesSqlite(repertoire / "pseudonymes.sqlite")
++    return CasPseudonymiseur(
++        PseudonymiseurHmac(b"cle-de-test-fictive", MOTIFS_FACTICES, table),
++        EXEMPLES,
++    )
++
++
+ FABRIQUES: list[tuple[str, Callable[[], CasPseudonymiseur]]] = [
+     ("factice", fabrique_factice),
++    ("hmac", fabrique_hmac),
+ ]
+diff --git a/tests/unit/domaine/test_instantanes.py b/tests/unit/domaine/test_instantanes.py
+index 19b1bc1..063a7cc 100644
+--- a/tests/unit/domaine/test_instantanes.py
++++ b/tests/unit/domaine/test_instantanes.py
+@@ -16,4 +16,4 @@ from usine.contrats.evenements import NatureEvenement
+ from usine.contrats.schemas import valider
+-from usine.contrats.tickets import SCHEMA_TICKET_ETAT, Champ, TypeTicket
+-from usine.domaine.instantanes import instantane, tickets_etats
++from usine.contrats.tickets import SCHEMA_TICKET_ETAT, SCHEMA_TICKET_TEXTE, Champ, TypeTicket
++from usine.domaine.instantanes import instantane, tickets_etats, tickets_textes
+ from usine.generateur.journal import Generation, generer
+@@ -189 +189,39 @@ def test_dates_en_double_refusees() -> None:
+         tickets_etats(flux.evenements, [VENDREDI, LUNDI, VENDREDI])
++
++
++def test_tickets_textes_dernieres_valeurs_en_d() -> None:
++    flux = Flux()
++    flux.creer(
++        "DEMO-1",
++        TypeTicket.anomalie,
++        _ts(1, 9),
++        {Champ.entite: "ENT-A", Champ.titre: "Titre initial", Champ.description: "Desc"},
++    )
++    flux.modifier("DEMO-1", TypeTicket.anomalie, _ts(5, 10), Champ.titre, "Titre initial", "Lundi")
++    flux.modifier("DEMO-1", TypeTicket.anomalie, _ts(6, 10), Champ.titre, "Lundi", "Mardi")
++    flux.anomalie("DEMO-2", _ts(5, 11), entite="ENT-B")  # ni titre ni description
++    flux.anomalie("DEMO-3", _ts(6, 9))  # créé après le lundi D
++    textes = tickets_textes(flux.evenements, LUNDI)
++    valider(textes, SCHEMA_TICKET_TEXTE)
++    assert textes.to_dicts() == [
++        {
++            "cle_ticket": "DEMO-1",
++            "type_ticket": "anomalie",
++            "entite": "ENT-A",
++            "titre": "Lundi",
++            "description": "Desc",
++        },
++        {
++            "cle_ticket": "DEMO-2",
++            "type_ticket": "anomalie",
++            "entite": "ENT-B",
++            "titre": None,
++            "description": None,
++        },
++    ]
++
++
++def test_tickets_textes_vide() -> None:
++    textes = tickets_textes([], LUNDI)
++    assert textes.is_empty()
++    assert textes.schema == dict(SCHEMA_TICKET_TEXTE.colonnes)
+diff --git a/tests/unit/adaptateurs/stockage_sqlite/test_cache.py b/tests/unit/adaptateurs/stockage_sqlite/test_cache.py
+new file mode 100644
+index 0000000..c59b700
+--- /dev/null
++++ b/tests/unit/adaptateurs/stockage_sqlite/test_cache.py
+@@ -0,0 +1,68 @@
++"""`CacheLLMSqlite` : cache LLM en SQLite, mode WAL, erreurs nommant le fichier (AD-12)."""
++
++import sqlite3
++from contextlib import closing
++from pathlib import Path
++
++import pytest
++
++from usine.adaptateurs.stockage_sqlite import CacheLLMSqlite, TablePseudonymesSqlite
++from usine.contrats.erreurs import UsineErreur
++from usine.ia.passerelle import CacheLLM
++
++
++def test_mode_wal_et_relecture(tmp_path: Path) -> None:
++    chemin = tmp_path / "cache_llm.sqlite"
++ 
+[... diff tronque a 60 000 caracteres ...]

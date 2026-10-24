@@ -1,0 +1,47 @@
+{
+ "modele": "moonshotai/kimi-k3.1-pro",
+ "story": "S3-6-10",
+ "latence_s": 926.9,
+ "usage": {
+  "prompt_tokens": 13531,
+  "completion_tokens": 11390,
+  "total_tokens": 24921,
+  "cost": 0.1395796,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 768,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.1395796,
+   "upstream_inference_prompt_cost": 0.0256796,
+   "upstream_inference_completions_cost": 0.1139
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 10380,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.48525719999999994,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "length",
+   "jetons_sortis": 32000,
+   "cout_usd": 0.3456776,
+   "latence_s": 674.7
+  },
+  {
+   "effort": "low",
+   "finish_reason": "stop",
+   "jetons_sortis": 11390,
+   "cout_usd": 0.1395796,
+   "latence_s": 252.2
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"outils/balayer_sm7.py\",\"ligne\":89,\"severite\":\"Important\",\"description\":\"Les traces sont balayées comme du JSON sérialisé brut, sans décodage des chaînes. Ainsi, un IBAN contenant des tabulations ou des sauts de ligne est échappé en `\\\\t` ou `\\\\n` dans llm.jsonl et n'est plus retrouvé par la recherche insensible aux blancs ; les caractères non ASCII échappés en `\\\\uXXXX` posent le même problème. Par exemple, une trace valide produite avec `json.dumps` et contenant l'IBAN injecté séparé par des tabulations retourne le code 0 au lieu du code 1. Les tests actuels de `balayer` contournent ce cas en lui passant directement du texte déjà décodé.\",\"test_pytest\":\"import json\\nfrom pathlib import Path\\n\\nfrom outils.balayer_sm7 import CHEMIN_TRACES_LLM, main\\n\\n\\ndef test_fuite_iban_avec_tabulations_dans_une_trace_json(tmp_path: Path) -> None:\\n    iban = \\\"FR46 9999 9143 2694 4104 2320 086\\\"\\n    iban_avec_tabulations = iban.replace(\\\" \\\", \\\"\\\\t\\\")\\n    passage = tmp_path / \\\"passage\\\"\\n    traces = passage / CHEMIN_TRACES_LLM\\n    traces.parent.mkdir(parents=True)\\n    traces.write_text(\\n        json.dumps({\\\"entree_pseudonymisee\\\": f\\\"compte {iban_avec_tabulations} débité\\\"})\\n        + \\\"\\\\n\\\",\\n        encoding=\\\"utf-8\\\",\\n    )\\n    identifiants = tmp_path / \\\"identifiants_injectes.json\\\"\\n    identifiants.write_text(\\n        json.dumps([{\\\"type\\\": \\\"COMPTE\\\", \\\"valeur\\\": iban}]), encoding=\\\"utf-8\\\"\\n    )\\n\\n    assert main(\\n        [\\\"--passage\\\", str(passage), \\\"--identifiants\\\", str(identifiants)]\\n    ) == 1\\n\"},{\"id\":\"C2\",\"fichier\":\"src/usine/composition.py\",\"ligne\":1114,\"severite\":\"Important\",\"description\":\"`BilanPrechauffage` ne compte que les traces des appels aboutis. Un appel frais qui lève `UsineErreur` est bien imputé au plafond par la passerelle, mais ne produit aucune trace dans `classer` : avec un échec isolé, `appels` sous-compte donc les requêtes réellement émises et `cout_eur` omet leur coût majoré. Le bilan affiché par l'outil peut ainsi sous-estimer le budget consommé pendant la recette.\",\"test_pytest\":\"from pathlib import Path\\n\\nimport pytest\\n\\nfrom tests.unit.chaine import test_execution as execution\\nfrom tests.unit.chaine.environnement import preparer_racine\\nfrom usine import composition\\nfrom usine.contrats.erreurs import UsineErreur\\n\\n\\nclass EchecAuPremierAppel(execution.FournisseurPalier2):\\n    def __init__(self) -> None:\\n        super().__init__()\\n        self.recus = 0\\n\\n    def generer_structure(self, *args, **kwargs):\\n        self.recus += 1\\n        if self.recus == 1:\\n            raise UsineErreur(\\\"échec fournisseur de test\\\")\\n        return super().generer_structure(*args, **kwargs)\\n\\n\\ndef test_bilan_compte_aussi_un_appel_frais_en_echec(\\n    tmp_path: Path, monkeypatch: pytest.MonkeyPatch\\n) -> None:\\n    monkeypatch.setenv(\\\"USINE_CLE_PSEUDO\\\", \\\"cle-de-test-fictive\\\")\\n    racine = preparer_racine(tmp_path)\\n    execution._passer_en_palier_2(racine)\\n    fournisseur = EchecAuPremierAppel()\\n\\n    bilan = composition.prechauffer_classification(\\n        racine, execution.DATE_ARRETE, 1e9, fournisseur=fournisseur\\n    )\\n\\n    assert fournisseur.recus > 0\\n    assert bilan.appels == fournisseur.recus\\n\"}]}"
+}

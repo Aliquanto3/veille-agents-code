@@ -1,0 +1,1390 @@
+diff --git a/evals/agent/__init__.py b/evals/agent/__init__.py
+new file mode 100644
+index 0000000..97878db
+--- /dev/null
++++ b/evals/agent/__init__.py
+@@ -0,0 +1 @@
++"""Suite d'évaluation de l'Agent (SM-4, FR-42) : rejeu hors réseau par défaut."""
+diff --git a/src/usine/ia/passerelle.py b/src/usine/ia/passerelle.py
+index 1fef53d..827d3ce 100644
+--- a/src/usine/ia/passerelle.py
++++ b/src/usine/ia/passerelle.py
+@@ -363,2 +363,3 @@ class Passerelle:
+         plafond_eur: Decimal | None = None,
++        sur_trace: Callable[[EntreeTrace], None] | None = None,
+     ) -> ResultatAgent:
+@@ -372,2 +373,5 @@ class Passerelle:
+         ré-identification n'admet que les jetons de la conversation pseudonymisée.
++
++        `sur_trace` reçoit chaque trace dès sa production (chaque outil, puis la réponse) : une
++        exception en cours de conversation ne fait pas perdre les traces déjà produites.
+         """
+@@ -420,2 +424,4 @@ class Passerelle:
+                 )
++                if sur_trace is not None:
++                    sur_trace(traces_outils[-1])
+                 return resultat
+@@ -481,2 +487,4 @@ class Passerelle:
+         )
++        if sur_trace is not None:
++            sur_trace(trace)
+         return ResultatAgent(sortie, controle.statut, (*traces_outils, trace))
+diff --git a/src/usine/composition.py b/src/usine/composition.py
+index 6bf72ba..5d20e64 100644
+--- a/src/usine/composition.py
++++ b/src/usine/composition.py
+@@ -54,3 +54,5 @@ Les services de l'UI vivent dans `ui/cli.py`, l'écriture du Journal dans
+ `construire_classificateur` expose de même à `evals/classification` la vraie tâche `classer`,
+-sur la même passerelle d'évaluation (`_passerelle_evaluation`).
++sur la même passerelle d'évaluation (`_passerelle_evaluation`). `evals/agent` passe par
++`construire_session_agent` (même session que l'UI, `SessionAgent` ré-exporté) sur le lecteur
++de `consultation_repertoire`.
+ 
+@@ -156,3 +158,3 @@ from usine.generateur.journal import ecrire_journal, generer
+ from usine.generateur.textes import corpus_provisoire
+-from usine.ia.agent.session import SessionAgent
++from usine.ia.agent.session import SessionAgent as SessionAgent
+ from usine.ia.classification import (
+@@ -610,2 +612,10 @@ def construire_classificateur(
+ 
++def consultation_repertoire(repertoire: Path) -> Consultation:
++    """`Consultation` du Passage de `repertoire`, sans URL Jira (suite `evals/agent`).
++
++    `evals` ne peut pas importer `usine.consultation` : la composition construit le lecteur.
++    """
++    return ConsultationPassage(repertoire, racine_passages=repertoire, url_jira=None)
++
++
+ def construire_session_agent(
+diff --git a/evals/agent/__main__.py b/evals/agent/__main__.py
+new file mode 100644
+index 0000000..95b4d0d
+--- /dev/null
++++ b/evals/agent/__main__.py
+@@ -0,0 +1,88 @@
++"""CLI de la suite d'évaluation de l'Agent (SM-4, FR-42).
++
++    uv run python -m evals.agent executer [--reel] [--sortie REPERTOIRE]
++
++Sans `--reel`, le tour enregistré de chaque question est rejoué, sans réseau ni secret.
++"""
++
++import argparse
++import sys
++from collections.abc import Sequence
++from pathlib import Path
++
++from evals.agent.questions import CHEMIN_QUESTIONS, charger_questions
++from evals.agent.suite import (
++    CHEMIN_HISTORIQUE,
++    REPERTOIRE_RESULTATS,
++    ajouter_historique,
++    executer_suite,
++)
++from evals.explication.suite import ecrire_resultat
++from usine.contrats.erreurs import UsineErreur
++
++
++def _analyseur() -> argparse.ArgumentParser:
++    analyseur = argparse.ArgumentParser(
++        prog="python -m evals.agent",
++        description="Suite d'évaluation de l'Agent (SM-4).",
++    )
++    commandes = analyseur.add_subparsers(dest="commande", required=True)
++    executer = commandes.add_parser("executer", help="pose les 15 questions et publie le score")
++    executer.add_argument(
++        "--reel",
++        action="store_true",
++        help="appelle le vrai fournisseur (config/llm.yaml, clé, USINE_CLE_PSEUDO ; coût)",
++    )
++    executer.add_argument(
++        "--questions", type=Path, default=CHEMIN_QUESTIONS, help="fichier des questions"
++    )
++    executer.add_argument(
++        "--racine",
++        type=Path,
++        default=Path(__file__).resolve().parents[2],
++        help="racine du dépôt (configuration en mode réel, traces sous sorties/agent/)",
++    )
++    executer.add_argument(
++        "--passage", type=Path, default=None, help="Passage interrogé (défaut : demo/repli/passage)"
++    )
++    executer.add_argument(
++        "--sortie", type=Path, default=REPERTOIRE_RESULTATS, help="répertoire des résultats"
++    )
++    executer.add_argument(
++        "--historique", type=Path, default=CHEMIN_HISTORIQUE, help="historique JSON Lines"
++    )
++    return analyseur
++
++
++def main(arguments: Sequence[str] | None = None) -> int:
++    """Point d'entrée ; renvoie le code de sortie (1 sur `UsineErreur`)."""
++    options = _analyseur().parse_args(arguments)
++    try:
++        resultat = executer_suite(
++            charger_questions(options.questions),
++            options.racine,
++            options.passage,
++            reel=options.reel,
++        )
++        chemin = ecrire_resultat(resultat, options.sortie)
++        ajouter_historique(resultat, chemin, options.historique)
++    except UsineErreur as exc:
++        print(f"Erreur : {exc}", file=sys.stderr)
++        return 1
++    print(
++        f"Résultat écrit : {chemin}\n"
++        f"Score : {resultat['score']}/{resultat['nombre_questions']}\n"
++        f"Chiffres inventés : {resultat['chiffres_inventes']},"
++        f" tickets inventés : {resultat['tickets_inventes']}\n"
++        f"Refus sur les {resultat['nombre_repondables']} questions répondables :"
++        f" {resultat['refus_repondables']}\n"
++        f"SM-4 atteint : {'oui' if resultat['sm4_atteint'] else 'non'}"
++        f" (score d'au moins 13, aucun chiffre inventé, au plus 1 refus)\n"
++        f"version_prompt {resultat['version_prompt']}, version_modele"
++        f" {resultat['version_modele']}, coût estimé {resultat['cout_estime_eur']} €"
++    )
++    return 0
++
++
++if __name__ == "__main__":
++    sys.exit(main())
+diff --git a/src/usine/ia/agent/session.py b/src/usine/ia/agent/session.py
+index 0e02549..e97c947 100644
+--- a/src/usine/ia/agent/session.py
++++ b/src/usine/ia/agent/session.py
+@@ -11,5 +11,6 @@ dates ISO) ; un nombre du texte absent de ces valeurs (`controler_nombres`) ou u
+ absent des clés retournées rejette la réponse, remplacée par `MESSAGE_REJET`. Un ticket cité est
+-une clé `MOTIF_CLE_TICKET` dont le projet n'est ni `IND`, ni `ENT`, ni `J`.
++une clé `MOTIF_CLE_TICKET` dont le projet n'est ni `IND`, ni `ENT`, ni `J`. Les refus de la
++dernière réponse restent lisibles dans `SessionAgent.derniers_refus` (suite d'évaluation).
+ 
+-Traces : une ligne `EntreeTrace` par outil exécuté et par réponse, ajoutée à
++Traces : une ligne `EntreeTrace` par outil exécuté et par réponse, ajoutée dès sa production à
+ `sorties/agent/<AAAA-MM-JJ>/<session>.jsonl` ; aucun répertoire de Passage n'est écrit.
+@@ -20,2 +21,3 @@ import re
+ from collections.abc import Callable, Mapping
++from dataclasses import dataclass
+ from datetime import date, datetime
+@@ -142,2 +144,20 @@ def tickets_cites(texte: str) -> tuple[str, ...]:
+ 
++@dataclass(frozen=True)
++class RefusControle:
++    """Ce que le contrôle refuse dans le texte brut d'une réponse (encore pseudonymisé)."""
++
++    nombres: tuple[str, ...] = ()
++    """Nombres et dates absents des résultats des outils, sans doublon, dans l'ordre."""
++    tickets: tuple[str, ...] = ()
++    """Tickets cités mais non retournés par les outils, dans l'ordre."""
++
++
++def refus_reponse(reponse: ReponseAgentBrute) -> RefusControle:
++    """Nombres et tickets du texte brut de `reponse` que le contrôle refuse."""
++    valeurs, retournes = valeurs_outils(reponse.messages)
++    nombres = controler_nombres(reponse.texte, valeurs)
++    hors = tuple(c for c in tickets_cites(reponse.texte) if c not in retournes)
++    return RefusControle(tuple(dict.fromkeys(nombres.refuses)), hors)
++
++
+ def controler_reponse(reponse: ReponseAgentBrute) -> Controle[ReponseAgent]:
+@@ -150,8 +170,7 @@ def controler_reponse(reponse: ReponseAgentBrute) -> Controle[ReponseAgent]:
+     outils = tuple(a.nom_outil for m in reponse.messages for a in m.appels_outils)
+-    valeurs, retournes = valeurs_outils(reponse.messages)
+-    nombres = controler_nombres(reponse.texte, valeurs)
++    refus = refus_reponse(reponse)
+     cites = tickets_cites(reponse.texte)
+-    hors = tuple(c for c in cites if c not in retournes)
++    hors = refus.tickets
+     vide = not reponse.texte.strip()
+-    if nombres.conforme and not hors and not vide:
++    if not refus.nombres and not hors and not vide:
+         sortie = ReponseAgent(
+@@ -165,4 +184,4 @@ def controler_reponse(reponse: ReponseAgentBrute) -> Controle[ReponseAgent]:
+     motifs: list[str] = ["réponse vide"] if vide else []
+-    if not nombres.conforme:
+-        refuses = ", ".join(f"« {n} »" for n in dict.fromkeys(nombres.refuses))
++    if refus.nombres:
++        refuses = ", ".join(f"« {n} »" for n in refus.nombres)
+         motifs.append(f"chiffres absents des résultats des outils : {refuses}")
+@@ -219,2 +238,4 @@ class SessionAgent:
+         self.dernier_resultat: ResultatAgent | None = None
++        self.derniers_refus = RefusControle()
++        """Nombres et tickets refusés dans le texte brut de la dernière réponse contrôlée."""
+ 
+@@ -226,3 +247,7 @@ class SessionAgent:
+     def repondre(self, question: str) -> ReponseAgent:
+-        """Réponse contrôlée et ré-identifiée à `question` ; ses traces sont écrites."""
++        """Réponse contrôlée et ré-identifiée à `question`.
++
++        Chaque trace est écrite dès sa production : une exception en cours de conversation
++        laisse dans le fichier celles des outils déjà exécutés.
++        """
+         messages = (
+@@ -231,6 +256,16 @@ class SessionAgent:
+         )
++        self.derniers_refus = RefusControle()
++
++        def controler(reponse: ReponseAgentBrute) -> Controle[ReponseAgent]:
++            self.derniers_refus = refus_reponse(reponse)
++            return controler_reponse(reponse)
++
+         resultat = self._passerelle.executer_agent(
+-            messages, self._sources, self._parametres, self._contexte, controler_reponse
++            messages,
++            self._sources,
++            self._parametres,
++            self._contexte,
++            controler,
++            sur_trace=self._ecrire,
+         )
+-        self._ecrire(resultat.traces)
+         self.dernier_resultat = resultat
+@@ -238,7 +273,7 @@ class SessionAgent:
+ 
+-    def _ecrire(self, traces: tuple[EntreeTrace, ...]) -> None:
++    def _ecrire(self, trace: EntreeTrace) -> None:
++        """Ajoute `trace` au fichier de traces de la session."""
+         self.chemin_traces.parent.mkdir(parents=True, exist_ok=True)
+         with self.chemin_traces.open("a", encoding="utf-8", newline="\n") as fichier:
+-            for trace in traces:
+-                fichier.write(trace.model_dump_json() + "\n")
++            fichier.write(trace.model_dump_json() + "\n")
+ 
+diff --git a/evals/agent/questions.py b/evals/agent/questions.py
+new file mode 100644
+index 0000000..d78ca87
+--- /dev/null
++++ b/evals/agent/questions.py
+@@ -0,0 +1,122 @@
++"""Questions versionnées de la suite d'évaluation de l'Agent (SM-4, FR-42).
++
++Le fichier `questions.json` porte en tête le `passage_id` du Passage interrogé
++(`demo/repli/passage/`), puis 15 questions types du Pilote. Chacune a un identifiant, son
++texte, `repondable` (faux : la seule réponse juste est « Les données ne permettent pas de
++répondre. »), `demo` (vrai pour la seule question de la démo), ses éléments attendus
++(`entites` : codes d'Entité ou d'indicateur ; `tickets` ; `chiffres` : nombres ou dates ISO
++écrits à la française) et le tour enregistré (`tour` : appels d'outils, puis texte final),
++rejoué hors réseau.
++"""
++
++from pathlib import Path
++
++from pydantic import BaseModel, ConfigDict, Field, JsonValue, ValidationError
++
++from usine.contrats.erreurs import UsineErreur
++
++NOMBRE_QUESTIONS = 15
++"""Nombre de questions exigé par FR-42."""
++
++MIN_SANS_REPONSE = 2
++"""Nombre minimal de questions sans réponse possible (FR-42)."""
++
++QUESTION_DEMO = "Quelles entités risquent de passer au rouge la semaine prochaine, et pourquoi ?"
++"""Question de la démo, mot pour mot celle de l'epic 7 (Story 7.9)."""
++
++CHEMIN_QUESTIONS = Path(__file__).parent / "questions.json"
++"""Fichier des questions versionnées."""
++
++
++class _Modele(BaseModel):
++    model_config = ConfigDict(extra="forbid", frozen=True)
++
++
++class Attendus(_Modele):
++    """Éléments qu'une réponse juste doit contenir."""
++
++    entites: tuple[str, ...] = ()
++    """Codes d'Entité (`ENT-C`) ou d'indicateur (`IND-4`), cherchés en mot entier."""
++    tickets: tuple[str, ...] = ()
++    """Clés de ticket, cherchées en mot entier."""
++    chiffres: tuple[str, ...] = ()
++    """Nombres isolés écrits à la française (`1 100`, `0,5`) ou dates ISO (`2026-10-14`)."""
++
++
++class AppelEnregistre(_Modele):
++    """Appel d'outil du tour enregistré."""
++
++    nom_outil: str = Field(min_length=1)
++    arguments: dict[str, JsonValue] = Field(default_factory=dict)
++
++
++class TourEnregistre(_Modele):
++    """Tour d'Agent enregistré : appels d'outils exécutés dans l'ordre, puis texte final."""
++
++    appels: tuple[AppelEnregistre, ...] = ()
++    texte: str
++
++
++class QuestionAgent(_Modele):
++    """Question de la suite, ses attendus et son tour enregistré."""
++
++    identifiant: str = Field(min_length=1)
++    question: str = Field(min_length=1)
++    repondable: bool
++    demo: bool = False
++    attendus: Attendus = Attendus()
++    tour: TourEnregistre | None = None
++    """Absent : la question ne peut être jouée qu'en mode réel."""
++
++
++class FichierQuestions(_Modele):
++    """Contenu de `questions.json`."""
++
++    passage_id: str = Field(min_length=1)
++    """Passage dont les questions et leurs attendus décrivent les données."""
++    questions: tuple[QuestionAgent, ...]
++
++
++def charger_questions(chemin: Path = CHEMIN_QUESTIONS) -> FichierQuestions:
++    """Questions de `chemin`, validées : 15 questions aux identifiants et textes uniques, une
++    seule `demo` (la question de l'epic, répondable), au moins 2 sans réponse possible.
++
++    Un fichier illisible, mal formé ou hors de ces règles lève une `UsineErreur`.
++    """
++    try:
++        fichier = FichierQuestions.model_validate_json(chemin.read_bytes())
++    except OSError as exc:
++        raise UsineErreur(f"{chemin} : questions illisibles ({exc.strerror or exc})") from exc
++    except ValidationError as exc:
++        premiere = exc.errors()[0]
++        lieu = ".".join(str(partie) for partie in premiere["loc"]) or "racine"
++        raise UsineErreur(
++            f"{chemin} : questions mal formées ({exc.error_count()} erreur(s), {lieu} :"
++            f" {premiere['msg']})"
++        ) from exc
++    questions = fichier.questions
++    if len(questions) != NOMBRE_QUESTIONS:
++        raise UsineErreur(
++            f"{chemin} : {len(questions)} question(s), {NOMBRE_QUESTIONS} attendues (FR-42)"
++        )
++    for attribut in ("identifiant", "question"):
++        valeurs = [getattr(q, attribut) for q in questions]
++        doublons = sorted({v for v in valeurs if valeurs.count(v) > 1})
++        if doublons:
++            raise UsineErreur(f"{chemin} : {attribut}(s) en double {doublons}")
++    demos = [q for q in questions if q.demo]
++    if len(demos) != 1:
++        raise UsineErreur(f"{chemin} : {len(demos)} question(s) de la démo, une seule attendue")
++    (demo,) = demos
++    if demo.question != QUESTION_DEMO or not demo.repondable:
++        raise UsineErreur(
++            f"{chemin}, question « {demo.identifiant} » : la question de la démo doit être"
++            f" répondable et exactement « {QUESTION_DEMO} »"
++        )
++    sans_reponse = sum(not q.repondable for q in questions)
++    if sans_reponse < MIN_SANS_REPONSE:
++        raise UsineErreur(
++            f"{chemin} : {sans_reponse} question(s) sans réponse possible,"
++            f" au moins {MIN_SANS_REPONSE} attendues (FR-42)"
++        )
++    return fichier
+diff --git a/evals/agent/suite.py b/evals/agent/suite.py
+new file mode 100644
+index 0000000..feb3613
+--- /dev/null
++++ b/evals/agent/suite.py
+@@ -0,0 +1,277 @@
++"""Exécution et notation automatique de la suite d'évaluation de l'Agent (SM-4, FR-42).
++
++`executer_suite` pose chaque question à la vraie `SessionAgent`, celle de l'UI (façade
++`usine.composition.construire_session_agent`) : outils réels sur le Passage, passerelle
++(Pseudonymisation, cache en mémoire, traces) et contrôle des chiffres et des tickets. Les
++traces vont dans `racine/sorties/agent/<AAAA-MM-JJ>/<session>.jsonl` ; le Passage n'est que lu.
++
++Par défaut, le fournisseur est `FournisseurAgentEnregistre` (tour enregistré de chaque
++question : ses appels d'outils sont réellement exécutés, puis son texte est rendu) et le
++pseudonymiseur `PseudonymiseurIdentite` : ni réseau ni secret. `reel=True` lit
++`config/llm.yaml` (tâche `agent`), la clé du fournisseur et `USINE_CLE_PSEUDO`.
++
++Notation : une question répondable réussit si la réponse est conforme au contrôle, n'est pas
++un refus et contient chaque élément attendu (Entité et ticket : mot entier ; chiffre : nombre
++isolé écrit à la française) ; une question sans réponse possible réussit si la réponse
++conforme contient « ne permettent pas de répondre ». Sont comptés les chiffres inventés
++(nombres refusés par le contrôle dans le texte brut), les tickets inventés et les refus sur
++les questions répondables. SM-4 : score ≥ 13 sur 15, aucun chiffre inventé, au plus 1 refus.
++"""
++
++import json
++import re
++from collections.abc import Mapping, Sequence
++from datetime import UTC, datetime
++from decimal import Decimal
++from pathlib import Path
++from typing import Any
++
++from pydantic import BaseModel
++
++from evals.agent.questions import FichierQuestions, QuestionAgent, TourEnregistre
++from evals.explication.suite import VERSION_MODELE_ENREGISTRE, PseudonymiseurIdentite
++from usine.composition import SessionAgent, construire_session_agent, consultation_repertoire
++from usine.contrats.erreurs import UsineErreur
++from usine.contrats.llm import (
++    AppelOutil,
++    MessageAgent,
++    OutilAgent,
++    ParametresAppel,
++    ReponseAgentBrute,
++    ReponseStructuree,
++    StatutControle,
++)
++
++SCORE_SM4 = 13
++"""Score minimal sur 15 de SM-4."""
++
++MAX_REFUS_SM4 = 1
++"""Refus tolérés sur les questions répondables (H-22)."""
++
++PHRASE_SANS_REPONSE = "ne permettent pas de répondre"
++"""Marque d'une réponse « Les données ne permettent pas de répondre. »"""
++
++REPERTOIRE_PASSAGE = Path("demo/repli/passage")
++"""Passage interrogé, relatif à la racine du dépôt."""
++
++REPERTOIRE_RESULTATS = Path(__file__).parent / "resultats"
++CHEMIN_HISTORIQUE = Path(__file__).parent / "historique.jsonl"
++
++
++def _jetons(texte: str) -> int:
++    return len(texte.split())
++
++
++class FournisseurAgentEnregistre:
++    """Fournisseur LLM sans réseau : joue le tour enregistré de la question posée.
++
++    Les appels d'outils du tour sont exécutés par les vrais outils (enveloppés par la
++    passerelle), puis le texte enregistré est rendu, comme le ferait le modèle.
++    """
++
++    def __init__(self, tours: Mapping[str, tuple[str, TourEnregistre]]) -> None:
++        """`tours` : texte de la question -> (identifiant, tour enregistré)."""
++        self._tours = dict(tours)
++
++    @property
++    def version_modele(self) -> str:
++        """Version de modèle annoncée (`enregistre:rejeu`)."""
++        return VERSION_MODELE_ENREGISTRE
++
++    def generer_structure[T: BaseModel](
++        self, prompt: str, schema: type[T], parametres: ParametresAppel
++    ) -> ReponseStructuree[T]:
++        """Sans objet pour l'Agent."""
++        raise UsineErreur("suite de l'Agent : aucune réponse structurée enregistrée")
++
++    def executer_agent(
++        self,
++        messages: Sequence[MessageAgent],
++        outils: Sequence[OutilAgent],
++        parametres: ParametresAppel,
++    ) -> ReponseAgentBrute:
++        """Conversation du tour enregistré de la dernière question de `messages`."""
++        question = next((m.contenu for m in reversed(messages) if m.role == "utilisateur"), "")
++        if question not in self._tours:
++            raise UsineErreur(f"suite de l'Agent : aucun tour enregistré pour « {question} »")
++        identifiant, tour = self._tours[question]
++        par_nom = {outil.nom: outil for outil in outils}
++        appels = tuple(
++            AppelOutil(
++                id_appel=f"{identifiant}-{rang}", nom_outil=a.nom_outil, arguments=a.arguments
++            )
++            for rang, a in enumerate(tour.appels, start=1)
++        )
++        conversation = list(messages)
++        if appels:
++            conversation.append(MessageAgent(role="assistant", contenu="", appels_outils=appels))
++        for appel in appels:
++            outil = par_nom.get(appel.nom_outil)
++            if outil is None:
++                raise UsineErreur(
++                    f"question « {identifiant} » : outil inconnu « {appel.nom_outil} »"
++                    f" (outils : {', '.join(par_nom)})"
++                )
++            conversation.append(
++                MessageAgent(
++                    role="outil", contenu=outil.executer(appel.arguments), id_appel=appel.id_appel
++                )
++            )
++        conversation.append(MessageAgent(role="assistant", contenu=tour.texte))
++        return ReponseAgentBrute(
++            texte=tour.texte,
++            messages=tuple(conversation),
++            jetons_entree=sum(_jetons(m.contenu) for m in messages),
++            jetons_sortie=_jetons(tour.texte),
++            version_modele=VERSION_MODELE_ENREGISTRE,
++        )
++
++
++_ESPACES = re.compile(r"[  ]")
++
++
++def contient_mot(texte: str, element: str) -> bool:
++    """Vrai si `element` (Entité, indicateur, ticket) figure en mot entier dans `texte`."""
++    return re.search(rf"(?<![\w-]){re.escape(element)}(?![\w]|-\w)", texte) is not None
++
++
++def contient_chiffre(texte: str, chiffre: str) -> bool:
++    """Vrai si `chiffre` figure isolé dans `texte` : ni collé à un mot, une clé ou une date, ni
++    fragment d'un nombre plus long (`100` n'est pas dans `1 100`, ni `4` dans `IND-4`)."""
++    normalise = _ESPACES.sub(" ", texte)
++    motif = re.escape(_ESPACES.sub(" ", chiffre))
++    return (
++        re.search(rf"(?<![\w.,/-])(?<!\d ){motif}(?![\w/-]|[.,]\d| \d{{3}})", normalise) is not None
++    )
++
++
++def _manquants(question: QuestionAgent, texte: str) -> dict[str, list[str]]:
++    attendus = question.attendus
++    return {
++        "entites": [e for e in attendus.entites if not contient_mot(texte, e)],
++        "tickets": [t for t in attendus.tickets if not contient_mot(texte, t)],
++        "chiffres": [c for c in attendus.chiffres if not contient_chiffre(texte, c)],
++    }
++
++
++def _poser(session: SessionAgent, question: QuestionAgent) -> dict[str, Any]:
++    reponse = session.repondre(question.question)
++    refus_controle = session.derniers_refus
++    resultat = session.dernier_resultat
++    conforme = reponse.statut_controle is StatutControle.conforme
++    sans_reponse = conforme and PHRASE_SANS_REPONSE in reponse.texte
++    manquants = _manquants(question, reponse.texte)
++    if question.repondable:
++        reussie = conforme and not sans_reponse and not any(manquants.values())
++    else:
++        reussie = sans_reponse
++    trace = resultat.traces[-1] if resultat is not None else None
++    return {
++        "identifiant": question.identifiant,
++        "question": question.question,
++        "repondable": question.repondable,
++        "demo": question.demo,
++        "texte": reponse.texte,
++        "statut_controle": reponse.statut_controle.value,
++        "outils_appeles": list(reponse.outils_appeles),
++        "tickets_cites": list(reponse.tickets_cites),
++        "reussie": reussie,
++        "refus": question.repondable and sans_reponse,
++        "chiffres_inventes": len(refus_controle.nombres),
++        "chiffres_refuses": list(refus_controle.nombres),
++        "tickets_inventes": len(refus_controle.tickets),
++        "tickets_refuses": list(refus_controle.tickets),
++        "manquants": manquants,
++        "version_prompt": trace.version_prompt if trace else None,
++        "version_modele": trace.version_modele if trace else None,
++        "cout_estime_eur": str(trace.cout_estime_eur if trace else Decimal(0)),
++    }
++
++
++def executer_suite(
++    fichier: FichierQuestions,
++    racine: Path,
++    passage: Path | None = None,
++    *,
++    reel: bool = False,
++    horloge: datetime | None = None,
++) -> dict[str, Any]:
++    """Résultat JSON de la suite : réponse et notation par question, score, verdict SM-4.
++
++    `passage` (défaut : `racine/demo/repli/passage`) doit être le Passage des questions
++    (`passage_id`), sinon `UsineErreur`. Rejeu (défaut) : chaque question doit porter son tour
++    enregistré, sinon `UsineErreur` nommant la question. Une seule session pour les 15
++    questions, donc un seul fichier de traces.
++    """
++    instant = horloge or datetime.now(UTC)
++    repertoire = passage if passage is not None else racine / REPERTOIRE_PASSAGE
++    consultation = consultation_repertoire(repertoire)
++    passage_id = consultation.manifeste().passage_id
++    if passage_id != fichier.passage_id:
++        raise UsineErreur(
++            f"{repertoire} : Passage {passage_id}, alors que les questions décrivent le Passage"
++            f" {fichier.passage_id}"
++        )
++    if reel:
++        session = construire_session_agent(racine, consultation)
++    else:
++        tours: dict[str, tuple[str, TourEnregistre]] = {}
++        for question in fichier.questions:
++            if question.tour is None:
++                raise UsineErreur(
++                    f"question « {question.identifiant} » : aucun tour enregistré (rejeu)"
++                )
++            tours[question.question] = (question.identifiant, question.tour)
++        session = construire_session_agent(
++            racine, consultation, FournisseurAgentEnregistre(tours), PseudonymiseurIdentite()
++        )
++    try:
++        sorties = [_poser(session, question) for question in fichier.questions]
++    finally:
++        session.fermer()
++    repondables = [s for s in sorties if s["repondable"]]
++    score = sum(s["reussie"] for s in sorties)
++    chiffres = sum(s["chiffres_inventes"] for s in sorties)
++    refus = sum(s["refus"] for s in sorties)
++    return {
++        "horodatage": instant.isoformat(),
++        "mode": "reel" if reel else "rejeu",
++        "passage_id": passage_id,
++        "version_prompt": ", ".join(sorted({str(s["version_prompt"]) for s in sorties})),
++        "version_modele": ", ".join(sorted({str(s["version_modele"]) for s in sorties})),
++        "traces": str(session.chemin_traces),
++        "nombre_questions": len(sorties),
++        "nombre_repondables": len(repondables),
++        "score": score,
++        "chiffres_inventes": chiffres,
++        "tickets_inventes": sum(s["tickets_inventes"] for s in sorties),
++        "refus_repondables": refus,
++        "sm4_atteint": score >= SCORE_SM4 and chiffres == 0 and refus <= MAX_REFUS_SM4,
++        "cout_estime_eur": str(sum((Decimal(s["cout_estime_eur"]) for s in sorties), Decimal(0))),
++        "questions": sorties,
++    }
++
++
++def ajouter_historique(
++    resultat: dict[str, Any], chemin_resultat: Path, chemin_historique: Path = CHEMIN_HISTORIQUE
++) -> dict[str, Any]:
++    """Ajoute à `chemin_historique` la synthèse de `resultat` (une ligne JSON) et la renvoie."""
++    entree = {
++        "horodatage": resultat["horodatage"],
++        "resultat": chemin_resultat.name,
++        "mode": resultat["mode"],
++        "passage_id": resultat["passage_id"],
++        "version_prompt": resultat["version_prompt"],
++        "version_modele": resultat["version_modele"],
++        "nombre_questions": resultat["nombre_questions"],
++        "score": resultat["score"],
++        "chiffres_inventes": resultat["chiffres_inventes"],
++        "tickets_inventes": resultat["tickets_inventes"],
++        "refus_repondables": resultat["refus_repondables"],
++        "sm4_atteint": resultat["sm4_atteint"],
++        "cout_estime_eur": resultat["cout_estime_eur"],
++    }
++    chemin_historique.parent.mkdir(parents=True, exist_ok=True)
++    with chemin_historique.open("a", encoding="utf-8", newline="\n") as fichier:
++        fichier.write(json.dumps(entree, ensure_ascii=False) + "\n")
++    return entree
+diff --git a/tests/unit/evals/agent/__init__.py b/tests/unit/evals/agent/__init__.py
+new file mode 100644
+index 0000000..e69de29
+diff --git a/tests/unit/ia/test_passerelle_agent.py b/tests/unit/ia/test_passerelle_agent.py
+index 0c5d231..ecaae56 100644
+--- a/tests/unit/ia/test_passerelle_agent.py
++++ b/tests/unit/ia/test_passerelle_agent.py
+@@ -3,3 +3,3 @@
+ import json
+-from collections.abc import Mapping
++from collections.abc import Mapping, Sequence
+ from decimal import Decimal
+@@ -24,2 +24,3 @@ from usine.contrats.llm import (
+     MessageAgent,
++    OutilAgent,
+     ParametresAppel,
+@@ -228 +229,45 @@ def test_plafond_atteint() -> None:
+     assert len(factice.appels) == 1
++
++
++class FournisseurInterrompu(FournisseurFactice):
++    """Exécute ses outils, puis lève : une exception en cours de conversation."""
++
++    def executer_agent(
++        self,
++        messages: Sequence[MessageAgent],
++        outils: Sequence[OutilAgent],
++        parametres: ParametresAppel,
++    ) -> ReponseAgentBrute:
++        for outil in outils:
++            outil.executer({})
++        raise RuntimeError("coupure du fournisseur")
++
++
++def test_sur_trace_recoit_chaque_trace_des_sa_production() -> None:
++    recues: list[str | None] = []
++    factice = FournisseurFactice(reponses_agent=[ReponseAgentScriptee("Réponse.", (_appel(),))])
++    passerelle = Passerelle(factice, Marqueur([]), CacheMemoire(), lambda: INSTANT)
++    resultat = passerelle.executer_agent(
++        MESSAGES,
++        [_source('{"x": 1}')],
++        PARAMETRES,
++        CONTEXTE,
++        _controler(),
++        sur_trace=lambda trace: recues.append(trace.cible),
++    )
++    assert recues == [t.cible for t in resultat.traces] == ["get_meteo", PASSAGE_ID]
++
++
++def test_sur_trace_avant_une_exception_du_fournisseur() -> None:
++    recues: list[str | None] = []
++    passerelle = Passerelle(FournisseurInterrompu(), Marqueur([]), CacheMemoire(), lambda: INSTANT)
++    with pytest.raises(RuntimeError, match="coupure"):
++        passerelle.executer_agent(
++            MESSAGES,
++            [_source('{"x": 1}')],
++            PARAMETRES,
++            CONTEXTE,
++            _controler(),
++            sur_trace=lambda trace: recues.append(trace.cible),
++        )
++    assert recues == ["get_meteo"]
+diff --git a/tests/unit/ia/agent/test_session.py b/tests/unit/ia/agent/test_session.py
+index 93ea259..497bd3e 100644
+--- a/tests/unit/ia/agent/test_session.py
++++ b/tests/unit/ia/agent/test_session.py
+@@ -4,2 +4,3 @@
+ import json
++from collections.abc import Sequence
+ from datetime import date, timedelta
+@@ -17,2 +18,4 @@ from usine.contrats.llm import (
+     MessageAgent,
++    OutilAgent,
++    ParametresAppel,
+     ReponseAgentBrute,
+@@ -27,2 +30,3 @@ from usine.ia.agent.session import (
+     SANS_REPONSE,
++    RefusControle,
+     SessionAgent,
+@@ -273 +277,44 @@ def test_construire_session_agent(cas_palier_2: Consultation, tmp_path: Path) ->
+     assert session.chemin_traces.exists()
++
++
++def test_derniers_refus_de_la_reponse_brute(cas_palier_2: Consultation, tmp_path: Path) -> None:
++    appels = (AppelOutil(id_appel="a1", nom_outil="get_risques", arguments={}),)
++    texte = "ENT-C a 42 Anomalies, voir MIG-999 et MIG-998."
++    session, _ = _session(cas_palier_2, tmp_path, [ReponseAgentScriptee(texte, appels)])
++    reponse = session.repondre("Risques ?")
++    assert reponse.statut_controle is StatutControle.rejete
++    assert session.derniers_refus == RefusControle(("42",), ("MIG-999", "MIG-998"))
++
++
++def test_derniers_refus_vides_si_conforme(cas_palier_2: Consultation, tmp_path: Path) -> None:
++    session, _ = _session(cas_palier_2, tmp_path, [ReponseAgentScriptee(SANS_REPONSE)])
++    session.repondre("Question ?")
++    assert session.derniers_refus == RefusControle()
++
++
++class FournisseurInterrompu(FournisseurFactice):
++    """Exécute `get_risques`, puis lève : une exception en cours de conversation."""
++
++    def executer_agent(
++        self,
++        messages: Sequence[MessageAgent],
++        outils: Sequence[OutilAgent],
++        parametres: ParametresAppel,
++    ) -> ReponseAgentBrute:
++        next(o for o in outils if o.nom == "get_risques").executer({})
++        raise RuntimeError("coupure du fournisseur")
++
++
++def test_exception_en_cours_garde_la_trace_de_l_outil(
++    cas_palier_2: Consultation, tmp_path: Path
++) -> None:
++    passerelle = Passerelle(
++        FournisseurInterrompu(), pseudonymiseur(), CacheMemoire(), lambda: INSTANT
++    )
++    session = SessionAgent(passerelle, cas_palier_2, tmp_path, lambda: INSTANT, "session-test")
++    with pytest.raises(RuntimeError, match="coupure"):
++        session.repondre("Risques ?")
++    lignes = session.chemin_traces.read_text("utf-8").splitlines()
++    (trace,) = [EntreeTrace.model_validate_json(ligne) for ligne in lignes]
++    assert trace.cible == "get_risques"
++    assert trace.tache is Tache.agent
+diff --git a/tests/unit/evals/agent/test_suite.py b/tests/unit/evals/agent/test_suite.py
+new file mode 100644
+index 0000000..d54a4b8
+--- /dev/null
++++ b/tests/unit/evals/agent/test_suite.py
+@@ -0,0 +1,311 @@
++"""Suite d'évaluation de l'Agent (Story 7.10, SM-4, FR-42) : rejeu hors réseau.
++
++Le mode `--reel` (réseau, secrets, coût) n'est jamais lancé ici.
++"""
++
++import json
++from datetime import UTC, datetime
++from pathlib import Path
++from typing import Any
++
++import pytest
++
++from evals.agent import __main__ as cli
++from evals.agent.questions import (
++    CHEMIN_QUESTIONS,
++    NOMBRE_QUESTIONS,
++    QUESTION_DEMO,
++    FichierQuestions,
++    QuestionAgent,
++    TourEnregistre,
++    charger_questions,
++)
++from evals.agent.suite import (
++    FournisseurAgentEnregistre,
++    contient_chiffre,
++    contient_mot,
++    executer_suite,
++)
++from usine.contrats.erreurs import UsineErreur
++from usine.ports.fournisseur_llm import FournisseurLLM
++
++INSTANT = datetime(2026, 10, 13, 7, 30, tzinfo=UTC)
++RACINE = Path(__file__).resolve().parents[4]
++PASSAGE = RACINE / "demo" / "repli" / "passage"
++SANS_REPONSE = "Les données ne permettent pas de répondre."
++
++
++@pytest.fixture(scope="module")
++def fichier() -> FichierQuestions:
++    return charger_questions()
++
++
++@pytest.fixture(scope="module")
++def resultat(fichier: FichierQuestions, tmp_path_factory: pytest.TempPathFactory) -> Any:
++    return executer_suite(fichier, tmp_path_factory.mktemp("racine"), PASSAGE, horloge=INSTANT)
++
++
++def _question(resultat: Any, identifiant: str) -> Any:
++    return next(q for q in resultat["questions"] if q["identifiant"] == identifiant)
++
++
++def _avec_texte(fichier: FichierQuestions, identifiant: str, texte: str) -> FichierQuestions:
++    questions = tuple(
++        q.model_copy(update={"tour": TourEnregistre(appels=q.tour.appels, texte=texte)})
++        if q.identifiant == identifiant and q.tour is not None
++        else q
++        for q in fichier.questions
++    )
++    return fichier.model_copy(update={"questions": questions})
++
++
++def _fichiers(repertoire: Path) -> dict[Path, bytes]:
++    return {p: p.read_bytes() for p in sorted(repertoire.rglob("*")) if p.is_file()}
++
++
++def test_fournisseur_enregistre_implemente_le_port() -> None:
++    assert isinstance(FournisseurAgentEnregistre({}), FournisseurLLM)
++
++
++def test_quinze_questions_dont_la_demo_et_deux_sans_reponse(fichier: FichierQuestions) -> None:
++    assert len(fichier.questions) == NOMBRE_QUESTIONS == 15
++    (demo,) = [q for q in fichier.questions if q.demo]
++    assert demo.question == QUESTION_DEMO
++    assert QUESTION_DEMO == (
++        "Quelles entités risquent de passer au rouge la semaine prochaine, et pourquoi ?"
++    )
++    assert sum(not q.repondable for q in fichier.questions) >= 2
++    assert sum(q.repondable for q in fichier.questions) == 13
++    assert all(q.tour is not None for q in fichier.questions)
++    assert fichier.passage_id == "20261012T221158Z-96c621"
++
++
++def test_rejeu_nominal_quinze_sur_quinze(resultat: Any) -> None:
++    assert resultat["mode"] == "rejeu"
++    assert resultat["passage_id"] == "20261012T221158Z-96c621"
++    assert resultat["nombre_questions"] == 15
++    assert resultat["nombre_repondables"] == 13
++    assert resultat["score"] == 15
++    assert resultat["chiffres_inventes"] == 0
++    assert resultat["tickets_inventes"] == 0
++    assert resultat["refus_repondables"] == 0
++    assert resultat["sm4_atteint"] is True
++    assert resultat["version_modele"] == "enregistre:rejeu"
++    assert all(q["statut_controle"] == "conforme" for q in resultat["questions"])
++
++
++def test_question_de_la_demo(resultat: Any) -> None:
++    demo = _question(resultat, "q01")
++    assert demo["demo"] and demo["reussie"]
++    assert demo["outils_appeles"] == ["get_risques", "get_meteo"]
++    assert contient_mot(demo["texte"], "ENT-C") and contient_mot(demo["texte"], "IND-4")
++    assert "DEMO-2350" in demo["tickets_cites"]
++
++
++def test_questions_sans_reponse_reussies(resultat: Any) -> None:
++    sans_reponse = [q for q in resultat["questions"] if not q["repondable"]]
++    assert len(sans_reponse) >= 2
++    assert all(q["reussie"] and q["texte"] == SANS_REPONSE for q in sans_reponse)
++    assert not any(q["refus"] for q in sans_reponse)
++
++
++def test_traces_hors_du_passage(fichier: FichierQuestions, tmp_path: Path) -> None:
++    avant = _fichiers(PASSAGE)
++    resultat = executer_suite(fichier, tmp_path, PASSAGE, horloge=INSTANT)
++    traces = Path(resultat["traces"])
++    assert traces.is_relative_to(tmp_path / "sorties" / "agent")
++    lignes = traces.read_text("utf-8").splitlines()
++    appels = sum(len(q.tour.appels) for q in fichier.questions if q.tour is not None)
++    assert len(lignes) == appels + NOMBRE_QUESTIONS  # une trace par outil, une par réponse
++    assert _fichiers(PASSAGE) == avant
++
++
++def test_chiffre_invente_compte(fichier: FichierQuestions, tmp_path: Path) -> None:
++    modifie = _avec_texte(fichier, "q02", "ENT-A et ENT-B sont rouges sur IND-1 : 42 et 9.")
++    resultat = executer_suite(modifie, tmp_path, PASSAGE, horloge=INSTANT)
++    q02 = _question(resultat, "q02")
++    assert not q02["reussie"]
++    assert q02["statut_controle"] == "rejete"
++    assert q02["chiffres_inventes"] == 1
++    assert q02["chiffres_refuses"] == ["42"]
++    assert resultat["chiffres_inventes"] == 1
++    assert resultat["score"] == 14
++    assert resultat["sm4_atteint"] is False
++
++
++def test_ticket_invente_compte(fichier: FichierQuestions, tmp_path: Path) -> None:
++    modifie = _avec_texte(fichier, "q07", "ENT-E est jaune sur IND-6 à cause de DEMO-99999.")
++    resultat = executer_suite(modifie, tmp_path, PASSAGE, horloge=INSTANT)
++    q07 = _question(resultat, "q07")
++    assert not q07["reussie"]
++    assert q07["tickets_refuses"] == ["DEMO-99999"]
++    assert resultat["tickets_inventes"] == 1
++    assert resultat["chiffres_inventes"] == 0
++
++
++def test_refus_sur_une_repondable(fichier: FichierQuestions, tmp_path: Path) -> None:
++    modifie = _avec_texte(fichier, "q03", SANS_REPONSE)
++    resultat = executer_suite(modifie, tmp_path, PASSAGE, horloge=INSTANT)
++    q03 = _question(resultat, "q03")
++    assert not q03["reussie"]
++    assert q03["refus"]
++    assert resultat["refus_repondables"] == 1
++    assert resultat["score"] == 14
++    assert resultat["sm4_atteint"] is True  # 14 ≥ 13, aucun chiffre inventé, 1 refus toléré
++
++
++def test_element_attendu_manquant(fichier: FichierQuestions, tmp_path: Path) -> None:
++    modifie = _avec_texte(fichier, "q08", "ENT-C a des Anomalies ouvertes, dont DEMO-1922.")
++    resultat = executer_suite(modifie, tmp_path, PASSAGE, horloge=INSTANT)
++    q08 = _question(resultat, "q08")
++    assert q08["statut_controle"] == "conforme"
++    assert not q08["reussie"]
++    assert q08["manquants"] == {"entites": [], "tickets": [], "chiffres": ["70"]}
++
++
++def test_sans_reponse_mal_traitee(fichier: FichierQuestions, tmp_path: Path) -> None:
++    modifie = _avec_texte(fichier, "q14", "Le budget est inconnu.")
++    resultat = executer_suite(modifie, tmp_path, PASSAGE, horloge=INSTANT)
++    assert not _question(resultat, "q14")["reussie"]
++    assert resultat["refus_repondables"] == 0
++
++
++def test_passage_different_arrete(fichier: FichierQuestions, tmp_path: Path) -> None:
++    autre = fichier.model_copy(update={"passage_id": "20260101T000000Z-000000"})
++    with pytest.raises(UsineErreur) as erreur:
++        executer_suite(autre, tmp_path, PASSAGE, horloge=INSTANT)
++    assert "20260101T000000Z-000000" in str(erreur.value)
++    assert "20261012T221158Z-96c621" in str(erreur.value)
++
++
++def test_passage_different_code_de_sortie(
++    fichier: FichierQuestions, tmp_path: Path, capsys: pytest.CaptureFixture[str]
++) -> None:
++    donnees = json.loads(CHEMIN_QUESTIONS.read_text("utf-8"))
++    donnees["passage_id"] = "20260101T000000Z-000000"
++    chemin = tmp_path / "questions.json"
++    chemin.write_text(json.dumps(donnees, ensure_ascii=False), encoding="utf-8")
++    code = cli.main(
++        [
++            *("executer", "--questions", str(chemin), "--racine", str(tmp_path)),
++            *("--passage", str(PASSAGE), "--sortie", str(tmp_path / "res")),
++            *("--historique", str(tmp_path / "historique.jsonl")),
++        ]
++    )
++    assert code == 1
++    erreur = capsys.readouterr().err
++    assert "20260101T000000Z-000000" in erreur and "20261012T221158Z-96c621" in erreur
++    assert not (tmp_path / "res").exists()
++
++
++def test_tour_absent_nomme_la_question(fichier: FichierQuestions, tmp_path: Path) -> None:
++    questions = tuple(
++        q.model_copy(update={"tour": None}) if q.identifiant == "q05" else q
++        for q in fichier.questions
++    )
++    with pytest.raises(UsineErreur, match="q05"):
++        executer_suite(
++            fichier.model_copy(update={"questions": questions}), tmp_path, PASSAGE, horloge=INSTANT
++        )
++
++
++def test_cli_publie_le_score_et_l_historique(
++    tmp_path: Path, capsys: pytest.CaptureFixture[str]
++) -> None:
++    historique = tmp_path / "historique.jsonl"
++    code = cli.main(
++        [
++            *("executer", "--racine", str(tmp_path), "--passage", str(PASSAGE)),
++            *("--sortie", str(tmp_path / "res"), "--historique", str(historique)),
++        ]
++    )
++    assert code == 0
++    sortie = capsys.readouterr().out
++    assert "Score : 15/15" in sortie
++    assert "Chiffres inventés : 0" in sortie
++    assert "Refus sur les 13 questions répondables : 0" in sortie
++    assert "SM-4 atteint : oui" in sortie
++    (chemin,) = (tmp_path / "res").glob("*.json")
++    assert json.loads(chemin.read_text("utf-8"))["score"] == 15
++    (ligne,) = historique.read_text("utf-8").splitlines()
++    entree = json.loads(ligne)
++    assert entree["resultat"] == chemin.name
++    assert entree["score"] == 15 and entree["sm4_atteint"] is True
++
++
++def _ecrire(tmp_path: Path, transformer: Any) -> Path:
++    donnees = json.loads(CHEMIN_QUESTIONS.read_text("utf-8"))
++    transformer(donnees)
++    chemin = tmp_path / "questions.json"
++    chemin.write_text(json.dumps(donnees, ensure_ascii=False), encoding="utf-8")
++    return chemin
++
++
++def test_moins_de_quinze_questions_refuse(tmp_path: Path) -> None:
++    chemin = _ecrire(tmp_path, lambda d: d["questions"].pop())
++    with pytest.raises(UsineErreur, match="14 question"):
++        charger_questions(chemin)
++
++
++def test_deux_questions_demo_refuse(tmp_path: Path) -> None:
++    chemin = _ecrire(tmp_path, lambda d: d["questions"][1].update(demo=True))
++    with pytest.raises(UsineErreur, match="2 question"):
++        charger_questions(chemin)
++
++
++def test_question_demo_modifiee_refusee(tmp_path: Path) -> None:
++    chemin = _ecrire(tmp_path, lambda d: d["questions"][0].update(question="Autre ?"))
++    with pytest.raises(UsineErreur, match="démo"):
++        charger_questions(chemin)
++
++
++def test_une_seule_sans_reponse_refusee(tmp_path: Path) -> None:
++    chemin = _ecrire(tmp_path, lambda d: d["questions"][-1].update(repondable=True))
++    with pytest.raises(UsineErreur, match="sans réponse"):
++        charger_questions(chemin)
++
++
++def test_question_mal_formee_nomme_le_fichier(tmp_path: Path) -> None:
++    chemin = _ecrire(tmp_path, lambda d: d["questions"][0].update(inconnu=1))
++    with pytest.raises(UsineErreur, match="mal formées"):
++        charger_questions(chemin)
++
++
++@pytest.mark.parametrize(
++    ("texte", "chiffre", "attendu"),
++    [
++        ("IND-4 vaut 27 sur 150.", "27", True),
++        ("IND-4 vaut 270.", "27", False),
++        ("IND-4 vaut 2,7.", "2", False),
++        ("Voir IND-4.", "4", False),
++        ("Voir DEMO-27.", "27", False),
++        ("1 100 Anomalies", "1 100", True),
++        ("1 100 Anomalies", "1 100", True),
++        ("1 100 Anomalies", "100", False),
++        ("1 100 Anomalies", "1", False),
++        ("estimé au 2026-10-14.", "2026-10-14", True),
++        ("estimé au 2026-10-14.", "14", False),
++        ("probabilité de 0,5.", "0,5", True),
++    ],
++)
++def test_contient_chiffre(texte: str, chiffre: str, attendu: bool) -> None:
++    assert contient_chiffre(texte, chiffre) is attendu
++
++
++@pytest.mark.parametrize(
++    ("texte", "element", "attendu"),
++    [
++        ("ENT-C risque le rouge.", "ENT-C", True),
++        ("ENT-CD risque le rouge.", "ENT-C", False),
++        ("Voir DEMO-23500.", "DEMO-2350", False),
++        ("Voir DEMO-2350, DEMO-2414.", "DEMO-2350", True),
++        ("IND-40 monte.", "IND-4", False),
++    ],
++)
++def test_contient_mot(texte: str, element: str, attendu: bool) -> None:
++    assert contient_mot(texte, element) is attendu
++
++
++def test_question_sans_tour_valide() -> None:
++    question = QuestionAgent(identifiant="x", question="Q ?", repondable=False)
++    assert question.tour is None
+diff --git a/evals/agent/README.md b/evals/agent/README.md
+new file mode 100644
+index 0000000..7c2f9d3
+--- /dev/null
++++ b/evals/agent/README.md
+@@ -0,0 +1,71 @@
++# Suite d'évaluation de l'Agent (SM-4)
++
++Mesure la fiabilité de l'Agent conversationnel avant la démo. Cible SM-4 : **au moins 13
++questions réussies sur 15**, **aucun chiffre inventé** et **au plus 1 refus** sur les 13
++questions répondables (H-22).
++
++## Contenu
++
++- `questions.json` : le `passage_id` du Passage interrogé (`demo/repli/passage/`, Date
++  d'arrêté 2026-10-09), puis les 15 questions versionnées. Chacune porte son identifiant, son
++  texte, `repondable`, `demo` (une seule : la question de l'epic, « Quelles entités risquent
++  de passer au rouge la semaine prochaine, et pourquoi ? »), ses éléments attendus
++  (`attendus` : `entites`, codes d'Entité ou d'indicateur ; `tickets` ; `chiffres`, nombres
++  écrits à la française ou dates ISO) et son tour enregistré (`tour` : appels d'outils, puis
++  texte final). Deux questions n'ont pas de réponse possible (budget, Date d'arrêté non
++  couverte).
++- `questions.py` : chargement validé (15 questions, une seule `demo`, au moins 2 sans
++  réponse possible, identifiants et textes uniques).
++- `suite.py` : exécution, notation automatique et historique.
++- `resultats/<horodatage>.json` : un fichier par exécution.
++- `historique.jsonl` : une ligne de synthèse par exécution.
++
++## Protocole
++
++```sh
++uv run python -m evals.agent executer
++```
++
++Chaque question est posée à la vraie `SessionAgent`, celle de l'UI
++(`usine.composition.construire_session_agent`) : outils réels sur le Passage, passerelle
++(Pseudonymisation, cache en mémoire, traces) et contrôle des chiffres et des tickets. Par
++défaut, le tour enregistré de chaque question est rejoué : ses appels d'outils sont exécutés
++sur le Passage, puis son texte passe le contrôle, sans réseau ni secret (c'est ce que teste
++la CI). Les traces de la session vont dans `sorties/agent/<AAAA-MM-JJ>/<session>.jsonl` ; le
++Passage n'est que lu. Si le `passage_id` du Passage diffère de celui des questions, ou si une
++question n'a pas de tour enregistré en rejeu, la commande s'arrête (code 1) en le nommant.
++
++Options : `--questions`, `--passage`, `--racine`, `--sortie`, `--historique`.
++
++## Notation
++
++- **Question répondable réussie** : réponse conforme au contrôle, qui n'est pas un refus et
++  contient chaque élément attendu. Entité, indicateur et ticket : mot entier (`ENT-C` n'est
++  pas dans `ENT-CD`). Chiffre : nombre isolé écrit à la française (`1 100`, `0,5`), qui
++  n'est ni un fragment d'un nombre plus long, ni un morceau de clé (`4` de `IND-4`) ou de
++  date.
++- **Question sans réponse possible réussie** : réponse conforme contenant « ne permettent pas
++  de répondre ».
++- **Chiffres inventés** : nombres et dates du texte brut refusés par le contrôle (absents des
++  résultats des outils). **Tickets inventés** : tickets cités mais non retournés.
++- **Refus** : réponse conforme « Les données ne permettent pas de répondre. » à une question
++  répondable.
++- **Verdict** `sm4_atteint` : score ≥ 13, 0 chiffre inventé, refus ≤ 1.
++
++## Mode réel
++
++```sh
++uv run python -m evals.agent executer --reel
++```
++
++Lit `config/llm.yaml` (fournisseur et modèle de la tâche `agent`, plafond de coût), la clé du
++fournisseur et `USINE_CLE_PSEUDO`, comme l'écran Agent. Le cache est en mémoire. Les tours
++enregistrés sont ignorés. Jamais lancé en CI.
++
++Coût estimé (Sonnet 5.5, 3 $ / 15 $ par million de jetons) : environ 3 tours de modèle par
++question, avec des résultats d'outils de 2 000 à 5 000 jetons, soit **0,40 à 0,90 €** pour
++les 15 questions. Le coût réel, tarifé par le registre des prix, figure dans le résultat
++(`cout_estime_eur`).
++
++Pour figer une réponse réelle comme tour enregistré, recopier ses appels d'outils et son texte
++dans `tour` de la question concernée.
+diff --git a/evals/agent/questions.json b/evals/agent/questions.json
+new file mode 100644
+index 0000000..35010b1
+--- /dev/null
++++ b/evals/agent/questions.json
+@@ -0,0 +1,202 @@
++{
++  "passage_id": "20261012T221158Z-96c621",
++  "questions": [
++    {
++      "identifiant": "q01",
++      "question": "Quelles entités risquent de passer au rouge la semaine prochaine, et pourquoi ?",
++      "repondable": true,
++      "demo": true,
++      "attendus": {
++        "entites": ["ENT-C", "IND-4"],
++        "tickets": ["DEMO-2350"],
++        "chiffres": ["27", "150", "2026-10-14"]
++      },
++      "tour": {
++        "appels": [
++          {"nom_outil": "get_risques", "arguments": {}},
++          {"nom_outil": "get_meteo", "arguments": {"entite": "ENT-C"}}
++        ],
++        "texte": "ENT-C risque de passer au rouge : son indicateur IND-4 vaut 27 sur 150, et le franchissement du seuil rouge est estimé au 2026-10-14. ENT-C est déjà orange sur IND-4 au 2026-10-09 ; tickets en cause : DEMO-2350, DEMO-2414, DEMO-2612, DEMO-2654 et DEMO-2658."
++      }
++    },
++    {
++      "identifiant": "q02",
++      "question": "Quelles entités sont rouges à la Date d'arrêté ?",
++      "repondable": true,
++      "attendus": {
++        "entites": ["ENT-A", "ENT-B", "IND-1"],
++        "chiffres": ["4", "9"]
++      },
++      "tour": {
++        "appels": [{"nom_outil": "get_meteo", "arguments": {}}],
++        "texte": "ENT-A et ENT-B sont rouges au 2026-10-09, toutes deux sur IND-1 : il vaut 4 pour ENT-A et 9 pour ENT-B, pour un seuil de 3."
++      }
++    },
++    {
++      "identifiant": "q03",
++      "question": "Pourquoi ENT-B est-elle rouge ?",
++      "repondable": true,
++      "attendus": {
++        "entites": ["ENT-B", "IND-1"],
++        "tickets": ["DEMO-2842", "DEMO-3450"],
++        "chiffres": ["9"]
++      },
++      "tour": {
++        "appels": [{"nom_outil": "get_meteo", "arguments": {"entite": "ENT-B"}}],
++        "texte": "ENT-B est rouge sur IND-1, qui vaut 9 pour un seuil de 3. Tickets en cause : DEMO-2842, DEMO-2928, DEMO-3079, DEMO-3128, DEMO-3160, DEMO-3232, DEMO-3307, DEMO-3430 et DEMO-3450."
++      }
++    },
++    {
++      "identifiant": "q04",
++      "question": "Quand ENT-A devrait-elle sortir du rouge ?",
++      "repondable": true,
++      "attendus": {
++        "entites": ["ENT-A"],
++        "chiffres": ["2026-10-13", "8", "16"]
++      },
++      "tour": {
++        "appels": [{"nom_outil": "get_prevision", "arguments": {"entite": "ENT-A"}}],
++        "texte": "La Baseline projette la sortie du rouge d'ENT-A au 2026-10-13, avec une probabilité de 8 sur 16. Son stock est de 4 Anomalies bloquantes ouvertes, avec 6 entrées et 15 sorties sur les 10 derniers Jours ouvrés."
++      }
++    },
++    {
++      "identifiant": "q05",
++      "question": "ENT-B va-t-elle sortir du rouge prochainement ?",
++      "repondable": true,
++      "attendus": {
++        "entites": ["ENT-B"],
++        "chiffres": ["10", "11"]
++      },
++      "tour": {
++        "appels": [{"nom_outil": "get_prevision", "arguments": {"entite": "ENT-B"}}],
++        "texte": "Non : aucune sortie du rouge n'est projetée pour ENT-B sur l'horizon de 10 Jours ouvrés (probabilité de 0 sur 16). Son stock est de 9 Anomalies bloquantes ouvertes, avec 11 entrées pour 9 sorties sur les 10 derniers Jours ouvrés."
++      }
++    },
++    {
++      "identifiant": "q06",
++      "question": "Quelle est la météo d'ENT-D ?",
++      "repondable": true,
++      "attendus": {
++        "entites": ["ENT-D"],
++        "chiffres": ["2026-10-09"]
++      },
++      "tour": {
++        "appels": [{"nom_outil": "get_meteo", "arguments": {"entite": "ENT-D"}}],
++        "texte": "ENT-D est verte au 2026-10-09, sans Règle déclenchante ; elle était déjà verte le 2026-10-08 et le 2026-10-02."
++      }
++    },
++    {
++      "identifiant": "q07",
++      "question": "Pourquoi ENT-E est-elle jaune ?",
++      "repondable": true,
++      "attendus": {
++        "entites": ["ENT-E", "IND-6"],
++        "tickets": ["DEMO-3088"]
++      },
++      "tour": {
++        "appels": [{"nom_outil": "get_meteo", "arguments": {"entite": "ENT-E"}}],
++        "texte": "ENT-E est jaune sur IND-6, déclenché par un seul ticket en cause : DEMO-3088."
++      }
++    },
++    {
++      "identifiant": "q08",
++      "question": "Combien d'Anomalies sont ouvertes chez ENT-C ?",
++      "repondable": true,
++      "attendus": {
++        "entites": ["ENT-C"],
++        "tickets": ["DEMO-1922"],
++        "chiffres": ["70"]
++      },
++      "tour": {
++        "appels": [{"nom_outil": "list_anomalies", "arguments": {"entite": "ENT-C", "limite": 5}}],
++        "texte": "ENT-C compte 70 Anomalies ouvertes au 2026-10-09 ; parmi elles, DEMO-1922 est ouverte depuis 18 Jours ouvrés."
++      }
++    },
++    {
++      "identifiant": "q09",
++      "question": "Combien d'Anomalies sont ouvertes sur l'ensemble des Entités ?",
++      "repondable": true,
++      "attendus": {
++        "chiffres": ["1 100"]
++      },
++      "tour": {
++        "appels": [{"nom_outil": "list_anomalies", "arguments": {"limite": 1}}],
++        "texte": "1 100 Anomalies sont ouvertes au 2026-10-09, toutes Entités confondues."
++      }
++    },
++    {
++      "identifiant": "q10",
++      "question": "Quelles entités sont en jaune ?",
++      "repondable": true,
++      "attendus": {
++        "entites": ["ENT-E", "ENT-F", "ENT-G", "ENT-H", "ENT-I", "ENT-J", "IND-6"]
++      },
++      "tour": {
++        "appels": [{"nom_outil": "get_meteo", "arguments": {}}],
++        "texte": "ENT-E, ENT-F, ENT-G, ENT-H, ENT-I et ENT-J sont jaunes au 2026-10-09, chacune sur IND-6."
++      }
++    },
++    {
++      "identifiant": "q11",
++      "question": "La météo d'ENT-C a-t-elle changé depuis la veille ?",
++      "repondable": true,
++      "attendus": {
++        "entites": ["ENT-C"],
++        "chiffres": ["2026-10-08"]
++      },
++      "tour": {
++        "appels": [{"nom_outil": "get_meteo", "arguments": {"entite": "ENT-C"}}],
++        "texte": "Non : ENT-C est orange au 2026-10-09 et l'était déjà le 2026-10-08, comme le 2026-10-02."
++      }
++    },
++    {
++      "identifiant": "q12",
++      "question": "Combien d'Anomalies sont entrées et sorties chez ENT-C la semaine dernière ?",
++      "repondable": true,
++      "attendus": {
++        "entites": ["ENT-C"],
++        "chiffres": ["36", "38"]
++      },
++      "tour": {
++        "appels": [
++          {"nom_outil": "get_tendance", "arguments": {"entite": "ENT-C", "code_kpi": "entrees_semaine"}},
++          {"nom_outil": "get_tendance", "arguments": {"entite": "ENT-C", "code_kpi": "sorties_semaine"}}
++        ],
++        "texte": "Sur la semaine arrêtée au 2026-10-09, ENT-C compte 36 entrées et 38 sorties d'Anomalies."
++      }
++    },
++    {
++      "identifiant": "q13",
++      "question": "Quelles Anomalies bloquantes d'ENT-A sont encore en analyse ?",
++      "repondable": true,
++      "attendus": {
++        "entites": ["ENT-A"],
++        "tickets": ["DEMO-3389"]
++      },
++      "tour": {
++        "appels": [
++          {"nom_outil": "list_anomalies", "arguments": {"entite": "ENT-A", "gravite": "bloquante", "statut": "en_analyse"}}
++        ],
++        "texte": "DEMO-3389 est la seule Anomalie bloquante d'ENT-A en analyse, ouverte depuis 1 Jour ouvré, en phase TNR."
++      }
++    },
++    {
++      "identifiant": "q14",
++      "question": "Quel est le budget restant du programme de migration ?",
++      "repondable": false,
++      "tour": {
++        "appels": [],
++        "texte": "Les données ne permettent pas de répondre."
++      }
++    },
++    {
++      "identifiant": "q15",
++      "question": "Quelle sera la météo d'ENT-C le 2026-11-30 ?",
++      "repondable": false,
++      "tour": {
++        "appels": [{"nom_outil": "get_meteo", "arguments": {"entite": "ENT-C", "date_arrete": "2026-11-30"}}],
++        "texte": "Les données ne permettent pas de répondre."
++      }
++    }
++  ]
++}

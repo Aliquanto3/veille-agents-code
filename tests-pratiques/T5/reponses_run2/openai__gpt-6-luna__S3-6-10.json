@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "S3-6-10",
+ "latence_s": 37.5,
+ "usage": {
+  "prompt_tokens": 12458,
+  "completion_tokens": 3387,
+  "total_tokens": 15845,
+  "cost": 0.003250675,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 12455,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.003250675,
+   "upstream_inference_prompt_cost": 0.001557175,
+   "upstream_inference_completions_cost": 0.0016935
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 3106,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.003250675,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 3387,
+   "cout_usd": 0.003250675,
+   "latence_s": 37.5
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/usine/ia/classification.py\",\"ligne\":225,\"severite\":\"Important\",\"description\":\"Le plafond supplémentaire de `MAX_ECHECS_PASSAGE` fait échouer la classification après 20 erreurs fournisseur au total, même si elles sont toutes séparées par des succès. La matrice de la spec prévoit que les erreurs non consécutives remettent le compteur à zéro et que la panne franche dépend de 3 erreurs consécutives ; une série d'erreurs isolées doit donc laisser le Passage continuer.\",\"test_pytest\":\"from tests.unit.ia.test_classification import FournisseurEchouantSur, _classer, _reponse, textes\\n\\n\\ndef test_erreurs_isolees_non_consecutives_ne_font_pas_echouer_le_passage() -> None:\\n    cles = {f\\\"DEMO-{n}\\\": (\\\"Titre\\\", \\\"Description.\\\") for n in range(1, 41)}\\n    fournisseur = FournisseurEchouantSur(set(range(0, 40, 2)), [_reponse()] * 20)\\n\\n    sorties, _ = _classer(fournisseur, textes(cles))\\n\\n    assert len(sorties) == 20\"}]}"
+}

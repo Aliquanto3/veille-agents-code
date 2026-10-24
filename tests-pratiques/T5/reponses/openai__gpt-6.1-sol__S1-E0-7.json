@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "S1-E0-7",
+ "latence_s": 20.3,
+ "usage": {
+  "prompt_tokens": 21912,
+  "completion_tokens": 777,
+  "total_tokens": 22689,
+  "cost": 0.0625485,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 21909,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0625485,
+   "upstream_inference_prompt_cost": 0.0547785,
+   "upstream_inference_completions_cost": 0.00777
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 467,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.0625485,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 777,
+   "cout_usd": 0.0625485,
+   "latence_s": 20.3
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/usine/ia/controles.py\",\"ligne\":48,\"severite\":\"Important\",\"description\":\"Le filtrage des citations par projet masque les tickets non autorisés appartenant à un autre projet. Avec tickets_autorises = [\\\"DEMO-1\\\"], la phrase « DEMO-1 dépend de AUTRE-2. » est conservée et déclarée conforme : AUTRE-2 est ignoré avant la vérification d'appartenance. La spécification impose pourtant de retirer toute phrase citant une clé non autorisée, quel que soit son projet ; seules les exclusions explicites (codes d'indicateur et d'Entité) doivent être appliquées. Cette erreur laisse publier des explications fondées sur des tickets hors cause et peut empêcher la régénération attendue.\",\"test_pytest\":\"from usine.ia.controles import controler_citations\\n\\n\\ndef test_citation_non_autorisee_d_un_autre_projet_retire_la_phrase():\\n    resultat = controler_citations(\\n        \\\"DEMO-1 dépend de AUTRE-2.\\\",\\n        [\\\"DEMO-1\\\"],\\n    )\\n\\n    assert resultat.texte == \\\"\\\"\\n    assert resultat.citations == ()\\n    assert resultat.phrases_retirees == 1\\n    assert resultat.phrases_total == 1\\n\"}]}"
+}

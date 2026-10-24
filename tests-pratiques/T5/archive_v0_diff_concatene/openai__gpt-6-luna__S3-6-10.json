@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "S3-6-10",
+ "latence_s": 38.9,
+ "usage": {
+  "prompt_tokens": 14227,
+  "completion_tokens": 2923,
+  "total_tokens": 17150,
+  "cost": 0.0032398,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 14224,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0032398,
+   "upstream_inference_prompt_cost": 0.0017783,
+   "upstream_inference_completions_cost": 0.0014615
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 2588,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.0032398,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 2923,
+   "cout_usd": 0.0032398,
+   "latence_s": 38.9
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"outils/balayer_sm7.py\",\"ligne\":111,\"severite\":\"Important\",\"description\":\"Un fichier d’identifiants contenant une valeur vide passe la validation de `charger_identifiants`. `balayer` retire ensuite cette valeur de `par_valeur`, mais construit quand même une expression régulière qui matche la chaîne vide ; l’accès `par_valeur[\\\"\\\"]` lève alors `KeyError`, non interceptée par `main`, au lieu de retourner le code 2 prévu pour un fichier invalide/illisible.\",\"test_pytest\":\"import json\\nfrom pathlib import Path\\n\\nfrom outils.balayer_sm7 import CHEMIN_TRACES_LLM, main\\n\\n\\ndef test_identifiant_vide_retourne_code_erreur_sans_exception(\\n    tmp_path: Path,\\n) -> None:\\n    passage = tmp_path / \\\"passage\\\"\\n    traces = passage / CHEMIN_TRACES_LLM\\n    traces.parent.mkdir(parents=True)\\n    traces.write_text(\\\"{}\\\\n\\\", encoding=\\\"utf-8\\\")\\n\\n    identifiants = tmp_path / \\\"identifiants.json\\\"\\n    identifiants.write_text(\\n        json.dumps([{\\\"type\\\": \\\"CLIENT\\\", \\\"valeur\\\": \\\"\\\"}]), encoding=\\\"utf-8\\\"\\n    )\\n\\n    assert main(\\n        [\\\"--passage\\\", str(passage), \\\"--identifiants\\\", str(identifiants)]\\n    ) == 2\"}]}"
+}

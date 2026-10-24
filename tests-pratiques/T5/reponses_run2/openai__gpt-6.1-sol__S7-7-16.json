@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "S7-7-16",
+ "latence_s": 40.7,
+ "usage": {
+  "prompt_tokens": 19469,
+  "completion_tokens": 1519,
+  "total_tokens": 20988,
+  "cost": 0.063861,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 19466,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.063861,
+   "upstream_inference_prompt_cost": 0.048671,
+   "upstream_inference_completions_cost": 0.01519
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 1209,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.063861,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 1519,
+   "cout_usd": 0.063861,
+   "latence_s": 40.7
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/usine/ui/ecrans.py\",\"ligne\":154,\"severite\":\"Important\",\"description\":\"Pour une réponse dont le texte vaut SANS_REPONSE, le badge devient bien « Hors périmètre », mais `outils` conserve tous les outils appelés. Si l’Agent consulte un outil avant de refuser, le navigateur affichera cet outil au lieu de « aucun », contrairement au scénario Refus de la spec. La vue doit également neutraliser la liste des outils pour ce cas.\",\"test_pytest\":\"from usine.contrats.llm import ReponseAgent, StatutControle\\nfrom usine.ia.agent.session import SANS_REPONSE\\nfrom usine.ui.ecrans import vue_reponse_agent\\n\\n\\ndef test_refus_affiche_aucun_outil_meme_apres_une_consultation():\\n    reponse = ReponseAgent(\\n        question=\\\"Quel est le budget ?\\\",\\n        texte=SANS_REPONSE,\\n        outils_appeles=(\\\"get_meteo\\\",),\\n        statut_controle=StatutControle.conforme,\\n    )\\n\\n    vue = vue_reponse_agent(reponse, SANS_REPONSE)\\n\\n    assert vue.badge_code == \\\"hors_perimetre\\\"\\n    assert vue.aucun_outil == \\\"aucun\\\"\\n    assert vue.outils == []\\n\"}]}"
+}

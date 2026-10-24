@@ -1,0 +1,1025 @@
+diff --git a/src/usine/ui/navigation.py b/src/usine/ui/navigation.py
+index b1972d0..d9f110c 100644
+--- a/src/usine/ui/navigation.py
++++ b/src/usine/ui/navigation.py
+@@ -14,2 +14,3 @@ class Ecran(StrEnum):
+     avant_apres = "Avant / après"
++    pseudonymisation = "Pseudonymisation"
+     agent = "Agent"
+@@ -34,2 +35,6 @@ CLE_REPLI = "mode_repli"
+ """Clé de `session_state` de la bascule manuelle du Mode repli (barre latérale)."""
++CLE_PALIER = "palier"
++"""Clé de `session_state` du sélecteur de Palier du détail (Passage Palier 2 seulement)."""
++CLE_TICKET_APERCU = "ticket_apercu"
++"""Clé de `session_state` du ticket choisi sur l'écran Pseudonymisation."""
+ 
+diff --git a/src/usine/ui/cli.py b/src/usine/ui/cli.py
+index 97943a2..163e19c 100644
+--- a/src/usine/ui/cli.py
++++ b/src/usine/ui/cli.py
+@@ -4,5 +4,5 @@ Module `cli` de la lane L7 : il démarre la page et lui fournit la racine (`USIN
+ Mode repli, la `Consultation` du dernier Passage publié ou du Passage enregistré du Mode repli
+-(`demo/repli/passage/`), la configuration de la démo (`config/demo.yaml`) et les manifestes
+-mesurés par l'avant / après. La page n'importe ni `ports`, ni `config`, ni `adaptateurs` :
+-elle passe par ces services.
++(`demo/repli/passage/`), la configuration de la démo (`config/demo.yaml`), les manifestes
++mesurés par l'avant / après et l'aperçu de la Pseudonymisation (vue côte à côte). La page
++n'importe ni `ports`, ni `config`, ni `adaptateurs` : elle passe par ces services.
+ """
+@@ -11,2 +11,3 @@ import subprocess
+ import sys
++from collections.abc import Callable
+ from pathlib import Path
+@@ -114,2 +115,10 @@ def manifestes_avant_apres(
+ 
++def apercu_pseudonymisation(racine: Path) -> Callable[[str], str]:
++    """`Pseudonymiseur.apercu` construit par la composition (AD-15) : local, sans écriture.
++
++    `USINE_CLE_PSEUDO` absente ou invalide lève une `UsineErreur` qui nomme la variable.
++    """
++    return composition.apercu_pseudonymisation(racine)
++
++
+ def commande_streamlit() -> list[str]:
+diff --git a/src/usine/ui/pseudonymisation.py b/src/usine/ui/pseudonymisation.py
+new file mode 100644
+index 0000000..98481eb
+--- /dev/null
++++ b/src/usine/ui/pseudonymisation.py
+@@ -0,0 +1,36 @@
++"""Écran Pseudonymisation, sans Streamlit : descriptions à comparer et messages (FR-31, AD-15).
++
++La page montre côte à côte une description de ticket et sa version pseudonymisée par
++`Pseudonymiseur.apercu`, que la composition expose seul (`ui/cli.apercu_pseudonymisation`) :
++l'aperçu est local, sans fournisseur LLM ni écriture de la table de correspondance.
++"""
++
++from collections.abc import Mapping
++from typing import Protocol
++
++import polars as pl
++
++AUCUNE_DESCRIPTION = "Aucune description de ticket non vide dans ce Passage : rien à comparer."
++LEGENDE = (
++    "Aperçu local : la description choisie est pseudonymisée sur ce poste, sans appel LLM ni"
++    " écriture de la table de correspondance (donnees/pseudonymes.sqlite)."
++)
++TITRE_ORIGINAL = "Original"
++TITRE_PSEUDONYMISE = "Version pseudonymisée"
++
++
++class LecturePseudonymisation(Protocol):
++    """Lecture de la `Consultation` dont l'écran a besoin (alignée sur elle par un test)."""
++
++    def textes_tickets(self) -> pl.DataFrame:
++        """Table `SCHEMA_TICKET_TEXTE` à la Date d'arrêté du Passage."""
++        ...
++
++
++def descriptions(table: pl.DataFrame) -> Mapping[str, str]:
++    """Description de chaque ticket qui en a une non vide, par clé, dans l'ordre de la table."""
++    return {
++        rangee["cle_ticket"]: rangee["description"]
++        for rangee in table.select("cle_ticket", "description").iter_rows(named=True)
++        if rangee["description"] is not None and rangee["description"].strip()
++    }
+diff --git a/src/usine/composition.py b/src/usine/composition.py
+index 1ee8f66..bf0b1ae 100644
+--- a/src/usine/composition.py
++++ b/src/usine/composition.py
+@@ -53,2 +53,5 @@ Les services de l'UI vivent dans `ui/cli.py`, l'écriture du Journal dans
+ `controler_citations` est ré-exporté pour qu'`evals` n'importe pas `usine.ia`.
++
++`apercu_pseudonymisation` expose à l'UI (vue côte à côte, Story 7.7) le seul `apercu` du
++moteur de Pseudonymisation, sur une table en mémoire qui refuse toute écriture.
+ """
+@@ -81,2 +84,3 @@ from usine.adaptateurs.pseudonymisation import (
+     PseudonymiseurHmac,
++    TablePseudonymes,
+     verifier_cle,
+@@ -800,3 +804,9 @@ def _pseudonymiseur(racine: Path, parametres: _ParametresPseudonymisation) -> Ps
+     """Moteur de Pseudonymisation de `config/pseudonymisation.yaml` (AD-15)."""
+-    table = TablePseudonymesSqlite(racine / CHEMIN_PSEUDONYMES)
++    return _moteur_sur_table(parametres, TablePseudonymesSqlite(racine / CHEMIN_PSEUDONYMES))
++
++
++def _moteur_sur_table(
++    parametres: _ParametresPseudonymisation, table: TablePseudonymes
++) -> Pseudonymiseur:
++    """`PseudonymiseurHmac` ou `PseudonymiseurPresidio` sur la table de correspondance donnée."""
+     if parametres.presidio is None:
+@@ -809,2 +819,37 @@ def _pseudonymiseur(racine: Path, parametres: _ParametresPseudonymisation) -> Ps
+ 
++class _TableApercu:
++    """Table de correspondance vide et en lecture seule : l'aperçu n'écrit rien (FR-31)."""
++
++    def enregistrer(self, correspondances: Mapping[str, str]) -> None:
++        """Refuse toute écriture : l'aperçu ne doit jamais enregistrer une correspondance."""
++        raise UsineErreur(
++            "Aperçu de la Pseudonymisation : table de correspondance en lecture seule"
++        )
++
++    def lire(self, jetons: Iterable[str]) -> dict[str, str]:
++        """Aucun jeton connu."""
++        return {}
++
++
++def apercu_pseudonymisation(racine: Path) -> Callable[[str], str]:
++    """`Pseudonymiseur.apercu` du moteur de `config/pseudonymisation.yaml` (AD-15, FR-31).
++
++    Seule porte de l'UI vers la Pseudonymisation : elle ne voit que l'aperçu. Local, sans
++    fournisseur LLM ; la table est en mémoire et refuse toute écriture, si bien que
++    `donnees/pseudonymes.sqlite` n'est ni lu ni créé. La clé `USINE_CLE_PSEUDO` vient de
++    `charger_secrets` ; absente, vide ou trop courte, une `UsineErreur` nomme la variable.
++    """
++    cle = charger_secrets(racine).usine_cle_pseudo
++    if cle is None or not cle.get_secret_value().strip():
++        raise UsineErreur(
++            "Variable d'environnement USINE_CLE_PSEUDO absente ou vide : aperçu de la"
++            " Pseudonymisation impossible"
++        )
++    octets_cle = cle.get_secret_value().encode("utf-8")
++    verifier_cle(octets_cle)
++    motifs, presidio = _moteur_pseudonymisation(racine / "config")
++    parametres = _ParametresPseudonymisation(octets_cle, motifs, presidio)
++    return _moteur_sur_table(parametres, _TableApercu()).apercu
++
++
+ def _suffixe() -> str:
+diff --git a/src/usine/ui/app.py b/src/usine/ui/app.py
+index a1183f0..f91dfe3 100644
+--- a/src/usine/ui/app.py
++++ b/src/usine/ui/app.py
+@@ -14,2 +14,8 @@ en lecture seule la fiche `docs/fiche-outillage.md` (Story 8.1), lue sous la mê
+ 
++Comparaison des Paliers (Story 7.7) : sur un Passage Palier 2, un sélecteur de Palier du détail
++lit l'Explication sourcée et la narration de la Prévision avec le filtre `palier` de
++`Consultation` ; en Palier 1, aucune sortie LLM n'est lue. L'écran Pseudonymisation montre côte
++à côte une description de ticket et son aperçu pseudonymisé (`ui/cli.apercu_pseudonymisation`),
++calculé localement sans rien écrire.
++
+ Mode repli (activation toujours manuelle, H-30) : `USINE_MODE_REPLI` l'impose, sinon la bascule
+@@ -22,3 +28,3 @@ import subprocess
+ from pathlib import Path
+-from typing import IO, Protocol
++from typing import IO, Literal, Protocol
+ 
+@@ -28,5 +34,15 @@ from usine.contrats.erreurs import UsineErreur
+ from usine.contrats.passage import Etape, EvenementProgression, ManifestePassage, StatutEtape
+-from usine.ui import avant_apres, carte, detail, lancement, navigation, outillage, progression
++from usine.ui import (
++    avant_apres,
++    carte,
++    detail,
++    lancement,
++    navigation,
++    outillage,
++    progression,
++    pseudonymisation,
++)
+ from usine.ui.cli import (
+     REPERTOIRE_REPLI,
++    apercu_pseudonymisation,
+     config_demo,
+@@ -38,3 +54,3 @@ from usine.ui.cli import (
+ )
+-from usine.ui.liens import echapper_markdown
++from usine.ui.liens import echapper_markdown, lien_ticket
+ from usine.ui.navigation import Ecran
+@@ -110,4 +126,6 @@ def afficher_bandeau(racine: Path, erreur_racine: str | None = None) -> bool:
+ 
+-class _Lecture(carte.LectureCarte, detail.LectureDetail, Protocol):
+-    """Lectures de la `Consultation` utilisées par la carte et par le détail."""
++class _Lecture(
++    carte.LectureCarte, detail.LectureDetail, pseudonymisation.LecturePseudonymisation, Protocol
++):
++    """Lectures de la `Consultation` utilisées par la carte, le détail et la Pseudonymisation."""
+ 
+@@ -186,4 +204,23 @@ def _bloc(titre: str, contenu: str) -> None:
+ 
++def _palier_affiche(palier_passage: Literal[1, 2]) -> Literal[1, 2]:
++    """Palier affiché : le sélecteur n'est offert que pour un Passage Palier 2 (FR-46)."""
++    if palier_passage == 1:
++        return 1
++    choix = st.radio(
++        "Palier affiché",
++        [2, 1],
++        format_func=lambda palier: f"Palier {palier}",
++        horizontal=True,
++        key=navigation.CLE_PALIER,
++        help="Palier 1 : la même Entité sans aucune sortie LLM.",
++    )
++    return 1 if choix == 1 else 2
++
++
+ def afficher_detail(racine: Path, repli: bool = False) -> None:
+-    """Détail d'une Entité (Palier 1) : Météo, Règles, KPI clés, Prévision, Risque, Explication."""
++    """Détail d'une Entité : Météo, Règles, KPI clés, Prévision, Risque, Explication sourcée.
++
++    Sur un Passage Palier 2, le sélecteur de Palier choisit le filtre `palier` des lectures
++    LLM (Explication, narration) ; en Palier 1, aucune sortie LLM n'est lue.
++    """
+     st.subheader(Ecran.detail.value)
+@@ -193,2 +230,3 @@ def afficher_detail(racine: Path, repli: bool = False) -> None:
+     try:
++        manifeste = consultation.manifeste()
+         meteos = {meteo.entite: meteo for meteo in consultation.meteo()}
+@@ -203,5 +241,5 @@ def afficher_detail(racine: Path, repli: bool = False) -> None:
+     entite = st.selectbox("Entité", list(meteos), key=navigation.CLE_ENTITE)
++    palier = _palier_affiche(manifeste.palier)
+     meteo = meteos[entite]
+     try:
+-        manifeste = consultation.manifeste()
+         regles = detail.lignes_regles(meteo, consultation.url_ticket)
+@@ -211,2 +249,6 @@ def afficher_detail(racine: Path, repli: bool = False) -> None:
+         risques = consultation.risques(entite=entite)
++        narrations = consultation.narrations(entite=entite, palier=palier)
++        explications = consultation.explications(entite=entite, palier=palier)
++        prevision = detail.texte_prevision(meteo, previsions, calculees, narrations)
++        explication = detail.texte_explication(palier, explications, consultation.url_ticket)
+     except UsineErreur as exc:
+@@ -217,5 +259,42 @@ def afficher_detail(racine: Path, repli: bool = False) -> None:
+     _bloc("KPI clés", carte.tableau_markdown(kpi) or detail.AUCUN_KPI)
+-    _bloc("Prévision de sortie du rouge", detail.texte_prevision(meteo, previsions, calculees))
++    _bloc("Prévision de sortie du rouge", prevision)
+     _bloc("Risque d'entrée en rouge", detail.texte_risques(meteo, risques, calculees))
+-    _bloc("Explication", detail.texte_explication(manifeste.palier))
++    _bloc("Explication", explication)
++
++
++def afficher_pseudonymisation(racine: Path, repli: bool = False) -> None:
++    """Description d'un ticket et sa version pseudonymisée, côte à côte (FR-31, AD-15).
++
++    L'aperçu vient de `ui/cli.apercu_pseudonymisation` : local, sans LLM ni écriture.
++    """
++    st.subheader(Ecran.pseudonymisation.value)
++    consultation = _lecture(racine, repli)
++    if consultation is None:
++        return
++    try:
++        textes = pseudonymisation.descriptions(consultation.textes_tickets())
++    except UsineErreur as exc:
++        _echec_lecture(exc, repli)
++        return
++    if not textes:
++        st.info(pseudonymisation.AUCUNE_DESCRIPTION)
++        return
++    if st.session_state.get(navigation.CLE_TICKET_APERCU) not in textes:
++        st.session_state.pop(navigation.CLE_TICKET_APERCU, None)  # ticket absent du Passage
++    cle = st.selectbox("Ticket", list(textes), key=navigation.CLE_TICKET_APERCU)
++    original = textes[cle]
++    try:
++        version = apercu_pseudonymisation(racine)(original)
++    except UsineErreur as exc:
++        st.error(f"Aperçu de la Pseudonymisation impossible : {exc}")
++        return
++    st.markdown(f"Ticket : {lien_ticket(cle, consultation.url_ticket(cle))}")
++    st.caption(pseudonymisation.LEGENDE)
++    gauche, droite = st.columns(2)
++    with gauche:
++        st.markdown(f"#### {pseudonymisation.TITRE_ORIGINAL}")
++        st.text(original)
++    with droite:
++        st.markdown(f"#### {pseudonymisation.TITRE_PSEUDONYMISE}")
++        st.text(version)
+ 
+@@ -498,2 +577,4 @@ def principal() -> None:
+         afficher_avant_apres(racine, repli)
++    elif ecran is Ecran.pseudonymisation:
++        afficher_pseudonymisation(racine, repli)
+     elif ecran is Ecran.outillage:
+diff --git a/src/usine/ui/detail.py b/src/usine/ui/detail.py
+index fcf8479..737ce00 100644
+--- a/src/usine/ui/detail.py
++++ b/src/usine/ui/detail.py
+@@ -1,8 +1,10 @@
+-"""Détail d'une Entité (Palier 1), sans Streamlit : blocs de l'écran, via `Consultation`.
++"""Détail d'une Entité, sans Streamlit : blocs de l'écran, via `Consultation`.
+ 
+-Règles déclenchantes, KPI clés, Prévision de sortie du rouge, Risque d'entrée en rouge et zone
+-Explication (FR-43, FR-17, FR-20, FR-21). L'UI ne calcule aucun chiffre : elle formate les
+-fractions de `Consultation` avec `contrats.format`.
++Règles déclenchantes, KPI clés, Prévision de sortie du rouge (ou sa narration contrôlée en
++Palier 2), Risque d'entrée en rouge et Explication sourcée (FR-43, FR-17, FR-20, FR-21, FR-24,
++FR-32, FR-46). L'UI ne calcule aucun chiffre : elle formate les fractions de `Consultation`
++avec `contrats.format`, et le nombre de phrases retirées vient de `SortieExplication`.
+ """
+ 
++import re
+ from collections.abc import Callable, Mapping
+@@ -16,2 +18,3 @@ import polars as pl
+ from usine.contrats.format import formater_date, formater_fraction, formater_pourcentage
++from usine.contrats.llm import SortieExplication, SortieNarration, StatutControle
+ from usine.contrats.meteo import Couleur, MeteoEntite
+@@ -47,3 +50,23 @@ RISQUE_SANS_OBJET = "Sans objet : l'Entité est déjà rouge."
+ EXPLICATION_PALIER_1 = "commentaire non généré (Palier 1)"
+-EXPLICATION_PALIER_2 = "Explication sourcée : Story 7.7"
++EXPLICATION_ABSENTE = "Aucune Explication sourcée pour cette Entité dans ce Passage."
++NARRATION_CONTROLEE = "narration contrôlée"
++CITATIONS = "Citations"
++PHRASES_RETIREES = "Phrases retirées au contrôle"
++STATUT_CONTROLE = "Statut du contrôle"
++
++LIBELLES_STATUT: Mapping[StatutControle, str] = MappingProxyType(
++    {
++        StatutControle.non_controle: "non contrôlée",
++        StatutControle.conforme: "conforme",
++        StatutControle.corrige: "corrigée (phrases fautives retirées)",
++        StatutControle.rejete: "rejetée (texte de remplacement)",
++    }
++)
++"""Libellé français de chaque `StatutControle`."""
++
++STATUTS_ACCEPTES = frozenset({StatutControle.conforme, StatutControle.corrige})
++"""Statuts d'une narration qui peut remplacer la Prévision brute."""
++
++Palier = Literal[1, 2]
++"""Même alias que `ports.consultation.Palier` (que `ui` n'importe pas)."""
+ 
+@@ -79,2 +102,14 @@ class LectureDetail(Protocol):
+ 
++    def explications(
++        self, entite: str | None = None, palier: Palier = 2
++    ) -> tuple[SortieExplication, ...]:
++        """Explications sourcées et Brouillons de commentaire (FR-32, FR-33)."""
++        ...
++
++    def narrations(
++        self, entite: str | None = None, palier: Palier = 2
++    ) -> tuple[SortieNarration, ...]:
++        """Narrations des Prévisions (FR-24)."""
++        ...
++
+     def url_ticket(self, cle: str) -> str | None:
+@@ -192,4 +227,21 @@ def _texte_une_prevision(prevision: Prevision) -> str:
+ 
+-def texte_prevision(meteo: MeteoEntite, previsions: tuple[Prevision, ...], calculees: bool) -> str:
+-    """Bloc Prévision de sortie du rouge de l'Entité (Markdown)."""
++def _texte_narration(narration: SortieNarration) -> str:
++    return (
++        f"{echapper_markdown(narration.texte)}\n\n"
++        f"*{NARRATION_CONTROLEE} ({LIBELLES_STATUT[narration.statut_controle]})*"
++    )
++
++
++def texte_prevision(
++    meteo: MeteoEntite,
++    previsions: tuple[Prevision, ...],
++    calculees: bool,
++    narrations: tuple[SortieNarration, ...] = (),
++) -> str:
++    """Bloc Prévision de sortie du rouge de l'Entité (Markdown).
++
++    Une narration de l'Entité remplace la Prévision brute seulement si son contrôle est
++    `conforme` ou `corrige` ; sinon (rejetée, non contrôlée, absente, Palier 1), la Prévision
++    brute reste affichée.
++    """
+     if not calculees:
+@@ -201,2 +253,7 @@ def texte_prevision(meteo: MeteoEntite, previsions: tuple[Prevision, ...], calcu
+         return PREVISION_NON_CALCULEE_ENTITE
++    controlees = [
++        n for n in narrations if n.entite == meteo.entite and n.statut_controle in STATUTS_ACCEPTES
++    ]
++    if controlees:
++        return "\n\n".join(_texte_narration(narration) for narration in controlees)
+     return "\n\n".join(_texte_une_prevision(prevision) for prevision in propres)
+@@ -244,4 +301,56 @@ def texte_risques(
+ 
+-def texte_explication(palier: Literal[1, 2]) -> str:
+-    """Zone Explication : en Palier 1, aucun commentaire n'est généré."""
+-    return EXPLICATION_PALIER_1 if palier == 1 else EXPLICATION_PALIER_2
++def texte_avec_liens(
++    texte: str, citations: tuple[str, ...], url_ticket: Callable[[str], str | None]
++) -> str:
++    """`texte` en Markdown, chaque clé citée en lien Jira (texte simple en Mode repli).
++
++    Le texte est découpé sur les clés de `citations`, bornées par `(?<![\\w-])` et
++    `(?![\\w-])`, les plus longues d'abord ; les morceaux hors clé sont échappés.
++    """
++    cles = sorted({c for c in citations if c}, key=len, reverse=True)
++    if not cles:
++        return echapper_markdown(texte)
++    motif = re.compile(rf"(?<![\w-])({'|'.join(re.escape(c) for c in cles)})(?![\w-])")
++    morceaux = motif.split(texte)  # hors clé aux rangs pairs, clés aux rangs impairs
++    return "".join(
++        lien_ticket(morceau, url_ticket(morceau)) if rang % 2 else echapper_markdown(morceau)
++        for rang, morceau in enumerate(morceaux)
++    )
++
++
++def _texte_une_explication(
++    explication: SortieExplication, url_ticket: Callable[[str], str | None]
++) -> str:
++    statut = f"{STATUT_CONTROLE} : {LIBELLES_STATUT[explication.statut_controle]}"
++    if explication.statut_controle is StatutControle.rejete:
++        return f"{echapper_markdown(explication.texte)}\n\n*{statut}*"
++    lignes = [texte_avec_liens(explication.texte, explication.citations, url_ticket), ""]
++    if explication.citations:
++        lignes += [f"**{CITATIONS}**", ""]
++        lignes += [f"- {lien_ticket(cle, url_ticket(cle))}" for cle in explication.citations]
++        lignes.append("")
++    lignes += [f"- {PHRASES_RETIREES} : {explication.phrases_retirees}", f"- {statut}"]
++    return "\n".join(lignes)
++
++
++def _sans_lien(_cle: str) -> None:
++    return None
++
++
++def texte_explication(
++    palier: Palier,
++    explications: tuple[SortieExplication, ...] = (),
++    url_ticket: Callable[[str], str | None] = _sans_lien,
++) -> str:
++    """Zone Explication de l'Entité (Markdown).
++
++    En Palier 1, aucun commentaire n'est généré (`EXPLICATION_PALIER_1`). En Palier 2 : le
++    texte avec ses clés citées en liens, la liste des Citations (une clé absente du texte
++    reste visible), le nombre de phrases retirées au contrôle et le statut ; une Explication
++    rejetée affiche son texte de remplacement tel quel, avec son statut.
++    """
++    if palier == 1:
++        return EXPLICATION_PALIER_1
++    if not explications:
++        return EXPLICATION_ABSENTE
++    return "\n\n".join(_texte_une_explication(e, url_ticket) for e in explications)
+diff --git a/tests/unit/ui/test_navigation.py b/tests/unit/ui/test_navigation.py
+index 3521eb0..e43b3b9 100644
+--- a/tests/unit/ui/test_navigation.py
++++ b/tests/unit/ui/test_navigation.py
+@@ -5,2 +5,5 @@ from usine.ui.navigation import (
+     CLE_ENTITE,
++    CLE_PALIER,
++    CLE_REPLI,
++    CLE_TICKET_APERCU,
+     ECRAN_PAR_DEFAUT,
+@@ -19,2 +22,3 @@ def test_ordre_et_defaut() -> None:
+         "Avant / après",
++        "Pseudonymisation",
+         "Agent",
+@@ -33,2 +37,8 @@ def test_stories_a_venir() -> None:
+     assert Ecran.outillage not in STORY_A_VENIR  # écran livré par la Story 7.5
++    assert Ecran.pseudonymisation not in STORY_A_VENIR  # écran livré par la Story 7.7
++
++
++def test_cles_distinctes() -> None:
++    cles = [CLE_ECRAN, CLE_ENTITE, CLE_REPLI, CLE_PALIER, CLE_TICKET_APERCU]
++    assert len(set(cles)) == len(cles)
+ 
+diff --git a/tests/unit/ui/test_pseudonymisation.py b/tests/unit/ui/test_pseudonymisation.py
+new file mode 100644
+index 0000000..1312d5a
+--- /dev/null
++++ b/tests/unit/ui/test_pseudonymisation.py
+@@ -0,0 +1,48 @@
++"""Écran Pseudonymisation : descriptions à comparer, alignement sur `Consultation`."""
++
++import inspect
++from pathlib import Path
++
++import polars as pl
++
++from usine.contrats.tickets import SCHEMA_TICKET_TEXTE
++from usine.ports.consultation import Consultation
++from usine.ui.cli import consultation_repli
++from usine.ui.pseudonymisation import LecturePseudonymisation, descriptions
++
++
++def test_lecture_alignee_sur_consultation() -> None:
++    assert inspect.signature(LecturePseudonymisation.textes_tickets) == inspect.signature(
++        Consultation.textes_tickets
++    )
++
++
++def _table(lignes: list[tuple[str, str | None]]) -> pl.DataFrame:
++    return pl.DataFrame(
++        {
++            "cle_ticket": [cle for cle, _ in lignes],
++            "type_ticket": ["anomalie"] * len(lignes),
++            "entite": ["ENT-A"] * len(lignes),
++            "titre": ["titre"] * len(lignes),
++            "description": [description for _, description in lignes],
++        },
++        schema=dict(SCHEMA_TICKET_TEXTE.colonnes),
++    )
++
++
++def test_descriptions_non_vides_dans_l_ordre() -> None:
++    table = _table([("DEMO-2", "deux"), ("DEMO-1", None), ("DEMO-3", "  "), ("DEMO-4", "quatre")])
++    assert list(descriptions(table).items()) == [("DEMO-2", "deux"), ("DEMO-4", "quatre")]
++
++
++def test_aucune_description() -> None:
++    assert descriptions(_table([("DEMO-1", None), ("DEMO-2", "")])) == {}
++    assert descriptions(_table([])) == {}
++
++
++def test_copie_du_mode_repli(racine_publiee: Path) -> None:
++    consultation = consultation_repli(racine_publiee)
++    assert consultation is not None
++    textes = descriptions(consultation.textes_tickets())
++    assert textes
++    assert all(cle.startswith("DEMO-") for cle in textes)
+diff --git a/tests/unit/test_composition_apercu.py b/tests/unit/test_composition_apercu.py
+new file mode 100644
+index 0000000..f7cb561
+--- /dev/null
++++ b/tests/unit/test_composition_apercu.py
+@@ -0,0 +1,76 @@
++"""`composition.apercu_pseudonymisation` : aperçu local de la Pseudonymisation (Story 7.7, AD-15).
++
++Aucun appel LLM ; la clé vient de `monkeypatch`, jamais d'un `.env`.
++"""
++
++import shutil
++from pathlib import Path
++
++import pytest
++
++from tests.unit.chaine.environnement import RACINE_DEPOT
++from usine import composition
++from usine.adaptateurs.pseudonymisation import MOTIFS_PAR_DEFAUT, PseudonymiseurHmac
++from usine.contrats.erreurs import UsineErreur
++from usine.contrats.passage import CHEMIN_PSEUDONYMES
++
++CLE = "cle-de-test-fictive"
++COMPTE = "FR76 9999 9123 4567 8901 2345 678"
++TEXTE = f"Cas cité sur DEMO-12 : compte {COMPTE}, client M. Fictivia EXEMPLON."
++
++
++@pytest.fixture(autouse=True)
++def _environnement(monkeypatch: pytest.MonkeyPatch) -> None:
++    monkeypatch.delenv("USINE_CLE_PSEUDO", raising=False)
++
++
++def test_sans_cle(tmp_path: Path) -> None:
++    with pytest.raises(UsineErreur, match="USINE_CLE_PSEUDO"):
++        composition.apercu_pseudonymisation(tmp_path)
++
++
++def test_cle_vide_ou_trop_courte(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
++    for valeur in ("   ", "courte"):
++        monkeypatch.setenv("USINE_CLE_PSEUDO", valeur)
++        with pytest.raises(UsineErreur, match="USINE_CLE_PSEUDO"):
++            composition.apercu_pseudonymisation(tmp_path)
++
++
++def test_moteur_regex_sans_ecriture(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
++    monkeypatch.setenv("USINE_CLE_PSEUDO", CLE)
++    apercu = composition.apercu_pseudonymisation(tmp_path)  # sans config : MOTIFS_PAR_DEFAUT
++    version = apercu(TEXTE)
++    attendu = PseudonymiseurHmac(CLE.encode(), MOTIFS_PAR_DEFAUT, _TableRefus()).apercu(TEXTE)
++    assert version == attendu
++    assert COMPTE not in version
++    assert "COMPTE_" in version
++    assert "DEMO-12" in version  # clé de ticket intacte
++    assert not (tmp_path / CHEMIN_PSEUDONYMES).exists()
++    assert not (tmp_path / "donnees").exists()
++
++
++def test_moteur_presidio_du_depot(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
++    spacy = pytest.importorskip("spacy")
++    if not spacy.util.is_package("fr_core_news_md"):
++        pytest.skip("modèle spaCy fr_core_news_md absent")
++    shutil.copytree(RACINE_DEPOT / "config", tmp_path / "config")
++    monkeypatch.setenv("USINE_CLE_PSEUDO", CLE)
++    version = composition.apercu_pseudonymisation(tmp_path)(TEXTE)
++    assert COMPTE not in version
++    assert "DEMO-12" in version
++    assert not (tmp_path / CHEMIN_PSEUDONYMES).exists()
++
++
++def test_table_apercu_refuse_l_ecriture() -> None:
++    table = composition._TableApercu()
++    assert table.lire({"COMPTE_abcdef"}) == {}
++    with pytest.raises(UsineErreur, match="lecture seule"):
++        table.enregistrer({"COMPTE_abcdef": COMPTE})
++
++
++class _TableRefus:
++    def enregistrer(self, correspondances: object) -> None:
++        raise AssertionError("aucune écriture attendue")
++
++    def lire(self, jetons: object) -> dict[str, str]:
++        return {}
+diff --git a/tests/unit/ui/test_detail.py b/tests/unit/ui/test_detail.py
+index 802299d..65402d9 100644
+--- a/tests/unit/ui/test_detail.py
++++ b/tests/unit/ui/test_detail.py
+@@ -1,2 +1,2 @@
+-"""Détail d'une Entité (Palier 1) : blocs en fonctions pures, alignement sur `Consultation`."""
++"""Détail d'une Entité : blocs en fonctions pures, alignement sur `Consultation`."""
+ 
+@@ -12,2 +12,3 @@ import pytest
+ from usine.contrats.format import formater_date, formater_fraction, formater_pourcentage
++from usine.contrats.llm import SortieExplication, SortieNarration, StatutControle
+ from usine.contrats.meteo import CodeIndicateur, Couleur, MeteoEntite, Operateur, RegleDeclenchante
+@@ -27,5 +28,6 @@ from usine.ui.detail import (
+     AUCUNE_REGLE,
++    EXPLICATION_ABSENTE,
+     EXPLICATION_PALIER_1,
+-    EXPLICATION_PALIER_2,
+     KPI_CLES,
++    NARRATION_CONTROLEE,
+     PREVISION_NON_CALCULEE_ENTITE,
+@@ -39,2 +41,3 @@ from usine.ui.detail import (
+     previsions_calculees,
++    texte_avec_liens,
+     texte_explication,
+@@ -47,3 +50,12 @@ from usine.ui.liens import echapper_markdown
+ DATE = date(2026, 10, 9)
+-METHODES = ["manifeste", "meteo", "kpi", "previsions", "risques", "url_ticket"]
++METHODES = [
++    "manifeste",
++    "meteo",
++    "kpi",
++    "previsions",
++    "risques",
++    "explications",
++    "narrations",
++    "url_ticket",
++]
+ 
+@@ -365,4 +377,98 @@ def test_previsions_calculees(
+ 
+-def test_explication() -> None:
++def _explication(
++    texte: str = "ENT-A est rouge : DEMO-12 et DEMO-1 bloquent la recette (DEMO-1).",
++    citations: tuple[str, ...] = ("DEMO-1", "DEMO-12"),
++    phrases_retirees: int = 1,
++    statut: StatutControle = StatutControle.corrige,
++) -> SortieExplication:
++    return SortieExplication(
++        date_arrete=DATE,
++        entite="ENT-A",
++        texte=texte,
++        citations=citations,
++        brouillon_commentaire="",
++        phrases_retirees=phrases_retirees,
++        statut_controle=statut,
++    )
++
++
++def _narration(statut: StatutControle, entite: str = "ENT-A") -> SortieNarration:
++    return SortieNarration(
++        date_arrete=DATE,
++        entite=entite,
++        texte="La sortie du rouge est attendue sous deux semaines.",
++        statut_controle=statut,
++    )
++
++
++def test_explication_palier_1() -> None:
+     assert texte_explication(1) == "commentaire non généré (Palier 1)" == EXPLICATION_PALIER_1
+-    assert texte_explication(2) == "Explication sourcée : Story 7.7" == EXPLICATION_PALIER_2
++    # En Palier 1, même une sortie LLM transmise n'est jamais affichée.
++    assert texte_explication(1, (_explication(),), _url) == EXPLICATION_PALIER_1
++
++
++def test_explication_absente() -> None:
++    assert texte_explication(2, (), _url) == EXPLICATION_ABSENTE
++
++
++def test_explication_palier_2_liens_citations_phrases_retirees() -> None:
++    texte = texte_explication(2, (_explication(),), _url)
++    premiere = texte.split("\n")[0]
++    assert premiere == (
++        f"ENT-A est rouge : [DEMO-12]({_url('DEMO-12')}) et [DEMO-1]({_url('DEMO-1')})"
++        f" bloquent la recette \\([DEMO-1]({_url('DEMO-1')})\\)."
++    )
++    assert "**Citations**" in texte
++    assert f"- [DEMO-1]({_url('DEMO-1')})" in texte
++    assert f"- [DEMO-12]({_url('DEMO-12')})" in texte
++    assert "Phrases retirées au contrôle : 1" in texte
++    assert "corrigée" in texte
++
++
++def test_explication_citation_absente_du_texte_reste_visible() -> None:
++    texte = texte_explication(2, (_explication("Aucune clé ici.", ("DEMO-7",), 0),), _url)
++    assert texte.startswith("Aucune clé ici.")
++    assert f"- [DEMO-7]({_url('DEMO-7')})" in texte
++    assert "Phrases retirées au contrôle : 0" in texte
++
++
++def test_explication_en_mode_repli() -> None:
++    texte = texte_explication(2, (_explication(),), _sans_url)
++    assert "](" not in texte
++    assert "- DEMO-12" in texte
++
++
++def test_explication_rejetee() -> None:
++    remplacement = "explication indisponible (contrôle des citations)"
++    texte = texte_explication(2, (_explication(remplacement, (), 0, StatutControle.rejete),), _url)
++    assert texte.startswith(echapper_markdown(remplacement))  # affiché tel quel
++    assert "rejetée" in texte
++    assert "Citations" not in texte
++
++
++def test_texte_avec_liens_bornes() -> None:
++    # `DEMO-1` n'est pas reconnu dans `DEMO-12`, `XDEMO-1` ni `DEMO-1-2`.
++    texte = texte_avec_liens("DEMO-12 XDEMO-1 DEMO-1-2 DEMO-1.", ("DEMO-1",), _url)
++    assert texte == f"DEMO-12 XDEMO-1 DEMO-1-2 [DEMO-1]({_url('DEMO-1')})."
++    assert texte_avec_liens("a_b", (), _url) == "a\\_b"
++
++
++def test_narration_controlee_remplace_la_prevision_brute() -> None:
++    prevision = (_prevision(StatutPrevision.sortie_projetee),)
++    for statut in (StatutControle.conforme, StatutControle.corrige):
++        texte = texte_prevision(ROUGE, prevision, True, (_narration(statut),))
++        assert "La sortie du rouge est attendue sous deux semaines." in texte
++        assert NARRATION_CONTROLEE in texte
++        assert "20/10/2026" not in texte
++
++
++def test_narration_rejetee_ou_absente() -> None:
++    prevision = (_prevision(StatutPrevision.sortie_projetee),)
++    brute = texte_prevision(ROUGE, prevision, True)
++    for narrations in (
++        (_narration(StatutControle.rejete),),
++        (_narration(StatutControle.non_controle),),
++        (_narration(StatutControle.conforme, entite="ENT-B"),),
++    ):
++        assert texte_prevision(ROUGE, prevision, True, narrations) == brute
++    assert "20/10/2026" in brute
+diff --git a/tests/unit/ui/test_app.py b/tests/unit/ui/test_app.py
+index 64e196e..27633ba 100644
+--- a/tests/unit/ui/test_app.py
++++ b/tests/unit/ui/test_app.py
+@@ -1,3 +1,3 @@
+ """Page Streamlit (`AppTest`) : bandeau, navigation, carte, détail, lancement, avant / après,
+-outillage, Mode repli."""
++outillage, Mode repli, comparaison des Paliers et Pseudonymisation."""
+ 
+@@ -21,2 +21,3 @@ from usine.contrats.erreurs import UsineErreur
+ from usine.contrats.format import formater_date, formater_pourcentage
++from usine.contrats.llm import SortieExplication, SortieNarration, StatutControle
+ from usine.contrats.meteo import (
+@@ -29,3 +30,9 @@ from usine.contrats.meteo import (
+ )
+-from usine.contrats.passage import Etape, EvenementProgression, ManifestePassage, StatutEtape
++from usine.contrats.passage import (
++    CHEMIN_PSEUDONYMES,
++    Etape,
++    EvenementProgression,
++    ManifestePassage,
++    StatutEtape,
++)
+ from usine.contrats.prevision import (
+@@ -37,3 +44,3 @@ from usine.contrats.prevision import (
+ )
+-from usine.ui import avant_apres, cli, detail, lancement, outillage
++from usine.ui import avant_apres, cli, detail, lancement, outillage, pseudonymisation
+ from usine.ui.carte import formater_regle, tendance
+@@ -149,2 +156,3 @@ def test_navigation(ecran: Ecran, racine_publiee: Path, monkeypatch: pytest.Monk
+     monkeypatch.setenv("USINE_MODE_REPLI", "1")
++    monkeypatch.setattr(cli, "apercu_pseudonymisation", lambda _racine: str.upper)
+     page = _page(ecran)
+@@ -174,2 +182,7 @@ def test_navigation(ecran: Ecran, racine_publiee: Path, monkeypatch: pytest.Monk
+         assert not page.info  # plus un emplacement
++    elif ecran is Ecran.pseudonymisation:
++        assert page.subheader[0].value == ecran.value
++        original, version = (t.value for t in page.text)
++        assert version == original.upper()
++        assert not page.info  # plus un emplacement
+     elif ecran is not Ecran.carte:
+@@ -465,10 +478,236 @@ def test_detail_lecture_entite_illisible(
+ 
++# --- Explication sourcée et comparaison des Paliers (Story 7.7) ---
++
++TEXTE_EXPLICATION = "ENT-A est rouge : DEMO-11 bloque la recette."
++TEXTE_NARRATION = "La sortie du rouge est attendue sous deux semaines."
++
++
++class _DoublurePalier2(_Doublure):
++    """Passage Palier 2 : Explication corrigée (2 citations, 1 phrase retirée) et narration
++    conforme pour ENT-A ; filtre `palier` respecté et noté, comme `Consultation`."""
++
++    statut_explication = StatutControle.corrige
++    statut_narration = StatutControle.conforme
++    avec_explication = True
++
++    def __init__(self, reelle: Any, palier: int = 2) -> None:
++        super().__init__(reelle, palier)
++        self.paliers_lus: list[int] = []
++
++    def explications(
++        self, entite: str | None = None, palier: int = 2
++    ) -> tuple[SortieExplication, ...]:
++        self.paliers_lus.append(palier)
++        sortie = SortieExplication(
++            date_arrete=self._jour,
++            entite="ENT-A",
++            texte=TEXTE_EXPLICATION,
++            citations=("DEMO-11", "DEMO-10"),
++            brouillon_commentaire="",
++            phrases_retirees=1,
++            statut_controle=self.statut_explication,
++        )
++        if palier == 1 or not self.avec_explication:
++            return ()
++        return tuple(s for s in (sortie,) if entite is None or s.entite == entite)
++
++    def narrations(self, entite: str | None = None, palier: int = 2) -> tuple[SortieNarration, ...]:
++        self.paliers_lus.append(palier)
++        sortie = SortieNarration(
++            date_arrete=self._jour,
++            entite="ENT-A",
++            texte=TEXTE_NARRATION,
++            statut_controle=self.statut_narration,
++        )
++        if palier == 1:
++            return ()
++        return tuple(s for s in (sortie,) if entite is None or s.entite == entite)
++
++
++def _palier(page: AppTest) -> Any:
++    """Sélecteur de Palier du détail, ou `None` s'il n'est pas offert."""
++    radios = [r for r in page.radio if r.label == "Palier affiché"]
++    return radios[0] if radios else None
++
++
++def _detail_a(monkeypatch: pytest.MonkeyPatch, classe: type[_Doublure]) -> tuple[AppTest, Any]:
++    doublure = _avec_doublure(monkeypatch, palier=2, classe=classe)
++    page = _page()
++    page.button(key="detail_ENT-A").click().run()
++    assert not page.exception
++    assert not page.error
++    return page, doublure
++
++
+ def test_detail_palier_2(racine_publiee: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+     monkeypatch.chdir(racine_publiee)
+-    _avec_doublure(monkeypatch, palier=2)
+-    page = _page(Ecran.detail)
+-    assert not page.exception
++    page, doublure = _detail_a(monkeypatch, _DoublurePalier2)
++    assert _palier(page).value == 2  # Palier du Passage par défaut
+     textes = _textes(page)
+-    assert detail.EXPLICATION_PALIER_2 in textes
+     assert detail.EXPLICATION_PALIER_1 not in textes
++    liens = dict(LIEN.findall(textes))
++    assert set(liens) == {"DEMO-10", "DEMO-11"}  # chaque Citation est un lien Jira
++    for cle, url in liens.items():
++        assert url == doublure.url_ticket(cle)
++    assert f"[DEMO-11]({doublure.url_ticket('DEMO-11')}) bloque la recette." in textes
++    assert "**Citations**" in textes
++    assert "Phrases retirées au contrôle : 1" in textes
++    assert TEXTE_NARRATION in textes  # la narration contrôlée remplace la Prévision brute
++    assert detail.NARRATION_CONTROLEE in textes
++    assert "Stock d'Anomalies : 2" not in textes
++    assert set(doublure.paliers_lus) == {2}
++
++    doublure.paliers_lus.clear()
++    _palier(page).set_value(1).run()  # la même Entité, sans aucune sortie LLM
++    assert not page.exception
++    assert page.selectbox[0].value == "ENT-A"
++    textes = _textes(page)
++    assert detail.EXPLICATION_PALIER_1 in textes
++    assert TEXTE_EXPLICATION not in textes
++    assert TEXTE_NARRATION not in textes
++    assert "Stock d'Anomalies : 2" in textes  # Prévision brute
++    assert doublure.paliers_lus and set(doublure.paliers_lus) == {1}
++
++
++class _DoublureSansExplication(_DoublurePalier2):
++    avec_explication = False
++
++
++def test_detail_palier_2_sans_explication(
++    racine_publiee: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    monkeypatch.chdir(racine_publiee)
++    page, _ = _detail_a(monkeypatch, _DoublureSansExplication)
++    assert detail.EXPLICATION_ABSENTE in _textes(page)
++
++
++class _DoublureRejetee(_DoublurePalier2):
++    statut_explication = StatutControle.rejete
++    statut_narration = StatutControle.rejete
++
++
++def test_detail_explication_et_narration_rejetees(
++    racine_publiee: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    monkeypatch.chdir(racine_publiee)
++    page, _ = _detail_a(monkeypatch, _DoublureRejetee)
++    textes = _textes(page)
++    assert echapper_markdown(TEXTE_EXPLICATION) in textes  # texte de remplacement tel quel
++    assert "rejetée" in textes
++    assert TEXTE_NARRATION not in textes
++    assert "Stock d'Anomalies : 2" in textes  # Prévision brute
++
++
++class _DoublureCorrigee(_DoublurePalier2):
++    statut_narration = StatutControle.corrige
++
++
++def test_detail_narration_corrigee(racine_publiee: Path, monkeypatch: pytest.MonkeyPatch) -> None:
++    monkeypatch.chdir(racine_publiee)
++    page, _ = _detail_a(monkeypatch, _DoublureCorrigee)
++    textes = _textes(page)
++    assert TEXTE_NARRATION in textes
++    assert "Stock d'Anomalies : 2" not in textes
++
++
++def test_detail_passage_palier_1_sans_selecteur(
++    racine_publiee: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    monkeypatch.chdir(racine_publiee)
++    doublure = _avec_doublure(monkeypatch, palier=1, classe=_DoublurePalier2)
++    page = _page()
++    page.button(key="detail_ENT-A").click().run()
++    assert not page.exception
++    assert _palier(page) is None
++    textes = _textes(page)
++    assert detail.EXPLICATION_PALIER_1 in textes
++    assert TEXTE_NARRATION not in textes
++    assert set(doublure.paliers_lus) == {1}
++
++
++class _DoublureRepli(_DoublurePalier2):
++    def url_ticket(self, cle: str) -> None:
++        return None
++
++
++def test_detail_palier_2_en_mode_repli(
++    racine_publiee: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    monkeypatch.chdir(racine_publiee)
++    monkeypatch.setenv("USINE_MODE_REPLI", "1")
++    reelle = cli.consultation_repli(racine_publiee)
++    doublure = _DoublureRepli(reelle, 2)
++    monkeypatch.setattr(cli, "consultation_repli", lambda _racine: doublure)
++    page = _page()
++    page.button(key="detail_ENT-A").click().run()
++    assert not page.exception
++    textes = _textes(page)
++    assert "Phrases retirées au contrôle : 1" in textes
++    assert "- DEMO-11" in textes  # Citation en texte simple
++    assert not LIEN.findall(textes)
++
++
++def test_pseudonymisation_cote_a_cote(
++    racine_publiee: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """Aperçu réel (moteur du dépôt), sur la copie du Mode repli, sans écriture de la table."""
++    monkeypatch.chdir(racine_publiee)
++    monkeypatch.setenv("USINE_MODE_REPLI", "1")
++    monkeypatch.setenv("USINE_CLE_PSEUDO", "cle-de-test-fictive")
++    table = racine_publiee / CHEMIN_PSEUDONYMES
++    presente = table.exists()
++    page = _page(Ecran.pseudonymisation)
++    assert not page.exception
++    assert not page.error
++    consultation = cli.consultation_repli(racine_publiee)
++    assert consultation is not None
++    textes = pseudonymisation.descriptions(consultation.textes_tickets())
++    cle = next(c for c, t in textes.items() if "FR" in t and "compte" in t)
++    page.selectbox(key="ticket_apercu").set_value(cle).run()
++    assert not page.exception
++    original, version = (t.value for t in page.text)
++    assert original == textes[cle]
++    assert version != original
++    assert re.search(r"COMPTE_[0-9a-f]{6}", version)
++    assert f"Ticket : {cle}" in _textes(page)  # Mode repli : clé en texte simple
++    assert pseudonymisation.LEGENDE in [c.value for c in page.caption]
++    assert table.exists() is presente  # rien n'est écrit
++
++
++def test_pseudonymisation_sans_cle(racine_publiee: Path, monkeypatch: pytest.MonkeyPatch) -> None:
++    monkeypatch.chdir(racine_publiee)
++    monkeypatch.delenv("USINE_CLE_PSEUDO", raising=False)
++    page = _page(Ecran.pseudonymisation)
++    assert not page.exception
++    assert len(page.error) == 1
++    assert "USINE_CLE_PSEUDO" in page.error[0].value
++
++
++class _DoublureSansDescription(_Doublure):
++    def textes_tickets(self) -> Any:
++        return self._reelle.textes_tickets().head(0)
++
++
++def test_pseudonymisation_aucune_description(
++    racine_publiee: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    monkeypatch.chdir(racine_publiee)
++    _avec_doublure(monkeypatch, classe=_DoublureSansDescription)
++    page = _page(Ecran.pseudonymisation)
++    assert not page.exception
++    assert [i.value for i in page.info] == [pseudonymisation.AUCUNE_DESCRIPTION]
++    assert not page.text
++
++
++def test_pseudonymisation_lien_jira(racine_publiee: Path, monkeypatch: pytest.MonkeyPatch) -> None:
++    monkeypatch.chdir(racine_publiee)
++    monkeypatch.setattr(cli, "apercu_pseudonymisation", lambda _racine: str.upper)
++    page = _page(Ecran.pseudonymisation)
++    assert not page.exception
++    consultation = consultation_dernier_passage(racine_publiee)
++    assert consultation is not None
++    cle = str(page.selectbox(key="ticket_apercu").value)
++    url = consultation.url_ticket(cle)
++    attendu = f"[{cle}]({url})" if url else cle
++    assert f"Ticket : {attendu}" in _textes(page)
+ 

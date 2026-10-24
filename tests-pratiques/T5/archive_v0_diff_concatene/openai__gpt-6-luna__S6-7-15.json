@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "S6-7-15",
+ "latence_s": 42.4,
+ "usage": {
+  "prompt_tokens": 20333,
+  "completion_tokens": 3042,
+  "total_tokens": 23375,
+  "cost": 0.00406255,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 20330,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00406255,
+   "upstream_inference_prompt_cost": 0.00254155,
+   "upstream_inference_completions_cost": 0.001521
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 2898,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.00406255,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 3042,
+   "cout_usd": 0.00406255,
+   "latence_s": 42.4
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/usine/ui/chaine.py\",\"ligne\":253,\"severite\":\"Nit\",\"description\":\"Pendant une étape en cours, `_annonce` renvoie le même texte à chaque sondage au lieu de le vider lorsqu'il n'y a rien de nouveau à annoncer, contrairement au contrat de la spec. Le script évite probablement une répétition dans la région `status` en ne mettant pas à jour un texte identique, mais l'API ne respecte pas ce contrat et une réouverture de la page peut réannoncer l'étape déjà en cours.\",\"test_pytest\":null}]}"
+}

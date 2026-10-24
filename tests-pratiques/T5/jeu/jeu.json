@@ -1,0 +1,374 @@
+[
+ {
+  "id": "S1-E0-7",
+  "titre": "Story 0.7, passerelle LLM minimale",
+  "commits": [
+   "674dd68",
+   "e34200a"
+  ],
+  "etat": "e34200a",
+  "spec": "spec-0-7-passerelle-llm-minimale.md",
+  "defauts": [
+   {
+    "id": "D1",
+    "categorie": "manque_chaine",
+    "resume": "Grammaire des jetons de pseudonymisation dupliquee entre adaptateurs/pseudonymisation et ia/passerelle.py ; la doublure de test ne reconnait pas les jetons prefixes et la suite de contrat ne couvre pas ce cas",
+    "source": "retrospective Epic 0 (2026-10-12), constat 8",
+    "mots": [
+     "grammaire",
+     "dupliqu",
+     "prefix",
+     "préfix",
+     "regex"
+    ]
+   }
+  ],
+  "diff_caracteres": 60044,
+  "spec_caracteres": 14000,
+  "fichiers_inclus": [
+   "src/usine/chaine/etapes.py",
+   "src/usine/domaine/instantanes.py",
+   "src/usine/ia/etape.py",
+   "src/usine/ia/controles.py",
+   "src/usine/adaptateurs/stockage_sqlite/__init__.py",
+   "src/usine/composition.py",
+   "src/usine/ia/explication.py",
+   "src/usine/adaptateurs/pseudonymisation/__init__.py",
+   "src/usine/ia/passerelle.py",
+   "tests/unit/ia/__init__.py",
+   "tests/unit/adaptateurs/stockage_sqlite/__init__.py",
+   "tests/unit/adaptateurs/pseudonymisation/__init__.py",
+   "tests/unit/chaine/test_cli.py",
+   "tests/unit/consultation/test_passage.py",
+   "tests/doublures/pseudonymiseur_factice.py",
+   "tests/contrat/pseudonymiseur/fabriques.py",
+   "tests/unit/domaine/test_instantanes.py",
+   "tests/unit/adaptateurs/stockage_sqlite/test_cache.py (tronque)"
+  ],
+  "fichiers_omis": [
+   "tests/unit/ia/test_controles.py",
+   "tests/unit/ia/espions.py",
+   "tests/unit/adaptateurs/pseudonymisation/test_hmac.py",
+   "tests/unit/ia/test_etape.py",
+   "tests/unit/ia/test_passerelle.py",
+   "tests/unit/ia/test_explication.py",
+   "tests/unit/chaine/test_execution.py",
+   "src/usine/ia/prompts/explication.md",
+   "_bmad-output/implementation-artifacts/spec-0-7-passerelle-llm-minimale.md (exclu)"
+  ],
+  "mode_diff": "net"
+ },
+ {
+  "id": "S2-E0-8",
+  "titre": "Story 0.8, UI minimale",
+  "commits": [
+   "05ee86f",
+   "4171da2"
+  ],
+  "etat": "4171da2",
+  "spec": "spec-0-8-ui-minimale.md",
+  "defauts": [
+   {
+    "id": "D1",
+    "categorie": "manque_chaine",
+    "resume": "construire_rapport instancie Secrets(...) sans traduire la ValidationError pydantic : un USINE_MODE_REPLI illisible leve une erreur brute (la CLI ne capte que UsineErreur) ; seul mode_repli() a ete corrige",
+    "source": "retrospective Epic 0, constat 13 (verifie dans le source)",
+    "mots": [
+     "ValidationError",
+     "Secrets",
+     "USINE_MODE_REPLI",
+     "construire_rapport"
+    ]
+   },
+   {
+    "id": "D2",
+    "categorie": "manque_chaine",
+    "resume": "USINE_RACINE lu par os.environ dans ui/app.py, hors usine.config.Secrets, contre AD-19",
+    "source": "retrospective Epic 0, constat 14 (verifie dans le source)",
+    "mots": [
+     "USINE_RACINE",
+     "os.environ",
+     "AD-19"
+    ]
+   },
+   {
+    "id": "D3",
+    "categorie": "manque_chaine",
+    "resume": "lancement.lancer_chaine lance Popen sans nouveau groupe de processus ni detachement : la Chaine partage la console, Ctrl+C ou la fermeture du terminal l'arrete aussi (decouvert par la revue de 7.17-b, documente seulement)",
+    "source": "spec 7.17-b, Revue, second avis 2 (le code vient de la Story 0.8, lancement.py)",
+    "mots": [
+     "Popen",
+     "creationflags",
+     "start_new_session",
+     "console",
+     "Ctrl+C",
+     "détach",
+     "detach",
+     "groupe"
+    ]
+   }
+  ],
+  "diff_caracteres": 42109,
+  "spec_caracteres": 7257,
+  "fichiers_inclus": [
+   "src/usine/__main__.py",
+   "src/usine/ui/cli.py",
+   "src/usine/composition.py",
+   "src/usine/ui/carte.py",
+   "src/usine/ui/lancement.py",
+   "src/usine/ui/progression.py",
+   "src/usine/ui/app.py",
+   "tests/unit/ui/__init__.py",
+   "tests/unit/ui/conftest.py",
+   "tests/unit/ui/test_cli.py",
+   "tests/unit/ui/test_lancement.py",
+   "tests/unit/ui/test_carte.py",
+   "tests/unit/ui/test_progression.py",
+   "tests/unit/ui/test_app.py"
+  ],
+  "fichiers_omis": [
+   "_bmad-output/implementation-artifacts/spec-0-8-ui-minimale.md (exclu)"
+  ],
+  "mode_diff": "net"
+ },
+ {
+  "id": "S3-6-10",
+  "titre": "Story 6.10, classification tolerante, prechauffage, balayage SM-7",
+  "commits": [
+   "22d7079",
+   "3ac720e"
+  ],
+  "etat": "3ac720e",
+  "spec": "spec-6-10-recette-palier-2.md",
+  "defauts": [
+   {
+    "id": "D1",
+    "categorie": "connu_chaine",
+    "resume": "Le cout majore d'un appel LLM en echec est impute au plafond mais absent des traces et de cout_llm_eur ; SM-7 ne voit pas ces appels (reporte par la revue, corrige en 6.10-b)",
+    "source": "spec 6.10-b, Problem (1) et (2)",
+    "mots": [
+     "échec",
+     "echec",
+     "trace",
+     "cout_llm_eur",
+     "SM-7"
+    ]
+   },
+   {
+    "id": "D2",
+    "categorie": "connu_chaine",
+    "resume": "Le prechauffage redemande a chaque relance une Anomalie qui echoue toujours (echecs non mis en cache, passage_id neuf par tranche) ; relances non bornees",
+    "source": "spec 6.10-b, Problem (3)",
+    "mots": [
+     "préchauffage",
+     "prechauffage",
+     "relance",
+     "tranche"
+    ]
+   }
+  ],
+  "diff_caracteres": 34536,
+  "spec_caracteres": 5463,
+  "fichiers_inclus": [
+   "src/usine/adaptateurs/llm/registre.py",
+   "src/usine/ia/passerelle.py",
+   "outils/prechauffer_cache.py",
+   "src/usine/composition.py",
+   "src/usine/ia/classification.py",
+   "outils/balayer_sm7.py",
+   "tests/unit/outils/test_prechauffer_cache.py",
+   "tests/unit/chaine/test_execution.py",
+   "tests/unit/outils/test_balayer_sm7.py",
+   "tests/unit/ia/test_classification.py"
+  ],
+  "fichiers_omis": [
+   "evals/classification/historique.jsonl (exclu)",
+   "_bmad-output/implementation-artifacts/spec-6-9-suite-d-evaluation-de-la-classification.md (exclu)",
+   "_bmad-output/implementation-artifacts/spec-6-10-recette-palier-2.md (exclu)",
+   "evals/classification/resultats/20261013T034159Z.json (exclu)",
+   "evals/classification/resultats/20261013-generateur-haiku-5-5-echantillon-982.json (exclu)",
+   "evals/classification/resultats/20261013-generateur-mistral-small-recette-6-10.json (exclu)"
+  ],
+  "mode_diff": "net"
+ },
+ {
+  "id": "S4-7-7",
+  "titre": "Story 7.7, explication sourcee a l'ecran et apercu de pseudonymisation",
+  "commits": [
+   "adba54b"
+  ],
+  "etat": "adba54b",
+  "spec": "spec-7-7-explication-sourcee-et-comparaison-des-paliers.md",
+  "defauts": [
+   {
+    "id": "D1",
+    "categorie": "connu_chaine",
+    "resume": "Une ImportError/OSError a la construction du moteur Presidio ou au chargement du modele spaCy plante l'ecran Pseudonymisation (erreur hors UsineErreur non interceptee) ; note par la revue, corrige apres coup (7.7-a)",
+    "source": "spec 7.7 Auto Run Result + commit 4056a97",
+    "mots": [
+     "ImportError",
+     "OSError",
+     "Presidio",
+     "spaCy",
+     "apercu",
+     "aperçu"
+    ]
+   }
+  ],
+  "diff_caracteres": 43160,
+  "spec_caracteres": 5670,
+  "fichiers_inclus": [
+   "src/usine/ui/navigation.py",
+   "src/usine/ui/cli.py",
+   "src/usine/ui/pseudonymisation.py",
+   "src/usine/composition.py",
+   "src/usine/ui/app.py",
+   "src/usine/ui/detail.py",
+   "tests/unit/ui/test_navigation.py",
+   "tests/unit/ui/test_pseudonymisation.py",
+   "tests/unit/test_composition_apercu.py",
+   "tests/unit/ui/test_detail.py",
+   "tests/unit/ui/test_app.py"
+  ],
+  "fichiers_omis": [
+   "_bmad-output/implementation-artifacts/epic-7-context.md (exclu)",
+   "_bmad-output/implementation-artifacts/spec-7-7-explication-sourcee-et-comparaison-des-paliers.md (exclu)"
+  ],
+  "mode_diff": "simple"
+ },
+ {
+  "id": "S5-7-10",
+  "titre": "Story 7.10, suite d'evaluation de l'agent",
+  "commits": [
+   "56f0de6"
+  ],
+  "etat": "56f0de6",
+  "spec": "spec-7-10-suite-d-evaluation-de-l-agent.md",
+  "defauts": [
+   {
+    "id": "D1",
+    "categorie": "connu_chaine",
+    "resume": "En mode --reel, une erreur reseau non UsineErreur remonte en trace Python au lieu du code de sortie 1 ; rejetee low par la revue, corrigee apres coup (7.10-a)",
+    "source": "spec 7.10 Review Triage Log + commit 5ca440d",
+    "mots": [
+     "réseau",
+     "reseau",
+     "--reel",
+     "UsineErreur",
+     "exit",
+     "code de sortie"
+    ]
+   }
+  ],
+  "diff_caracteres": 58015,
+  "spec_caracteres": 6151,
+  "fichiers_inclus": [
+   "evals/agent/__init__.py",
+   "src/usine/ia/passerelle.py",
+   "src/usine/composition.py",
+   "evals/agent/__main__.py",
+   "src/usine/ia/agent/session.py",
+   "evals/agent/questions.py",
+   "evals/agent/suite.py",
+   "tests/unit/evals/agent/__init__.py",
+   "tests/unit/ia/test_passerelle_agent.py",
+   "tests/unit/ia/agent/test_session.py",
+   "tests/unit/evals/agent/test_suite.py",
+   "evals/agent/README.md",
+   "evals/agent/questions.json"
+  ],
+  "fichiers_omis": [
+   "_bmad-output/implementation-artifacts/spec-7-10-suite-d-evaluation-de-l-agent.md (exclu)"
+  ],
+  "mode_diff": "simple"
+ },
+ {
+  "id": "S6-7-15",
+  "titre": "Story 7.15, lancement de la Chaine et bouton de mode",
+  "commits": [
+   "d58ce6c",
+   "c86b2f7"
+  ],
+  "etat": "c86b2f7",
+  "spec": "spec-7-15-lancement-de-la-chaine-et-bouton-de-mode.md",
+  "defauts": [],
+  "diff_caracteres": 60044,
+  "spec_caracteres": 6297,
+  "fichiers_inclus": [
+   "src/usine/ui/cli.py",
+   "src/usine/ui/textes.py",
+   "src/usine/ui/app.py",
+   "src/usine/ui/vues.py",
+   "src/usine/ui/serveur.py",
+   "src/usine/ui/chaine.py",
+   "tests/unit/ui/test_cli.py",
+   "tests/unit/ui/test_serveur.py",
+   "tests/unit/ui/test_vues_ecrans.py",
+   "tests/unit/ui/test_chaine.py",
+   "src/usine/ui/statique/cadre.js",
+   "src/usine/ui/statique/chaine.html",
+   "docs/tests-manuels.md",
+   "src/usine/ui/statique/cadre.css (tronque)"
+  ],
+  "fichiers_omis": [
+   "src/usine/ui/statique/chaine.js",
+   "_bmad-output/implementation-artifacts/spec-7-15-lancement-de-la-chaine-et-bouton-de-mode.md (exclu)"
+  ],
+  "mode_diff": "net"
+ },
+ {
+  "id": "S7-7-16",
+  "titre": "Story 7.16, Agent, Avant/apres, Pseudonymisation et Outillage",
+  "commits": [
+   "5545523",
+   "cf54141"
+  ],
+  "etat": "cf54141",
+  "spec": "spec-7-16-agent-avant-apres-pseudonymisation-et-outillage.md",
+  "defauts": [
+   {
+    "id": "D1",
+    "categorie": "manque_chaine",
+    "resume": "Le badge 'hors perimetre' de l'Agent compare la reponse du LLM a SANS_REPONSE par egalite stricte (apres strip) : casse, ponctuation finale, guillemets ou espaces differents font perdre le badge (corrige en 7.17-b)",
+    "source": "spec 7.17-b, Problem (2) ; commit 40e44ad",
+    "mots": [
+     "SANS_REPONSE",
+     "hors_perimetre",
+     "hors périmètre",
+     "texte_hors_perimetre",
+     "égalité",
+     "egalite",
+     "strip"
+    ]
+   }
+  ],
+  "diff_caracteres": 60044,
+  "spec_caracteres": 4467,
+  "fichiers_inclus": [
+   "src/usine/ui/pseudonymisation.py",
+   "src/usine/ui/cli.py",
+   "src/usine/ui/outillage.py",
+   "src/usine/ui/vues.py",
+   "src/usine/ui/serveur.py",
+   "src/usine/ui/ecrans.py",
+   "tests/unit/ui/test_vues_ecrans.py",
+   "tests/unit/ui/test_chaine.py",
+   "tests/unit/ui/test_ecrans_web.py (tronque)"
+  ],
+  "fichiers_omis": [
+   "src/usine/ui/statique/outillage.html",
+   "src/usine/ui/statique/cadre.js",
+   "src/usine/ui/statique/outillage.js",
+   "src/usine/ui/statique/pseudonymisation.html",
+   "src/usine/ui/statique/avant-apres.html",
+   "src/usine/ui/statique/agent.html",
+   "src/usine/ui/statique/pseudonymisation.js",
+   "docs/tests-manuels.md",
+   "src/usine/ui/statique/avant-apres.js",
+   "src/usine/ui/statique/cadre.css",
+   "src/usine/ui/statique/agent.js",
+   "_bmad-output/implementation-artifacts/spec-7-16-agent-avant-apres-pseudonymisation-et-outillage.md (exclu)"
+  ],
+  "mode_diff": "net"
+ }
+]

@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "S2-E0-8",
+ "latence_s": 22.7,
+ "usage": {
+  "prompt_tokens": 15291,
+  "completion_tokens": 989,
+  "total_tokens": 16280,
+  "cost": 0.048116,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 15288,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.048116,
+   "upstream_inference_prompt_cost": 0.038226,
+   "upstream_inference_completions_cost": 0.00989
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 596,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.048116,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 989,
+   "cout_usd": 0.048116,
+   "latence_s": 22.7
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/usine/ui/progression.py\",\"ligne\":49,\"severite\":\"Important\",\"description\":\"Le tri lexicographique ne sélectionne pas nécessairement le premier fichier apparu après le lancement, contrairement à la spec. Deux Passages démarrés dans la même seconde ont le même préfixe temporel : leur suffixe départage alors les fichiers sans rapport avec leur ordre d'apparition. Si « …-ffffff.jsonl » apparaît avant « …-aaaaaa.jsonl » entre deux sondages, l'UI suit le second et affiche potentiellement la progression d'un autre Passage. Le test existant ne couvre que des noms dont l'ordre lexical correspond à l'ordre d'apparition.\",\"test_pytest\":\"import os\\nfrom pathlib import Path\\n\\nfrom usine.ui.progression import fichier_nouveau, fichiers_progression\\n\\n\\ndef test_premier_fichier_apparu_et_non_premier_nom(tmp_path: Path) -> None:\\n    repertoire = tmp_path / \\\"sorties\\\" / \\\"progression\\\"\\n    repertoire.mkdir(parents=True)\\n    avant = fichiers_progression(tmp_path)\\n\\n    premier = repertoire / \\\"20261012T073000Z-ffffff.jsonl\\\"\\n    premier.write_text(\\\"\\\", encoding=\\\"utf-8\\\")\\n    os.utime(premier, ns=(1_000_000_000, 1_000_000_000))\\n\\n    second = repertoire / \\\"20261012T073000Z-aaaaaa.jsonl\\\"\\n    second.write_text(\\\"\\\", encoding=\\\"utf-8\\\")\\n    os.utime(second, ns=(2_000_000_000, 2_000_000_000))\\n\\n    assert fichier_nouveau(avant, tmp_path) == premier\\n\"}]}"
+}

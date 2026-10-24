@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "S7-7-16",
+ "latence_s": 38.4,
+ "usage": {
+  "prompt_tokens": 19469,
+  "completion_tokens": 3708,
+  "total_tokens": 23177,
+  "cost": 0.00428755,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 19466,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00428755,
+   "upstream_inference_prompt_cost": 0.00243355,
+   "upstream_inference_completions_cost": 0.001854
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 3425,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.00428755,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 3708,
+   "cout_usd": 0.00428755,
+   "latence_s": 38.4
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/usine/ui/ecrans.py\",\"ligne\":149,\"severite\":\"Important\",\"description\":\"La construction de session ne convertit en `SessionIndisponible` que les `UsineErreur`. Si la fabrique lève une autre exception (par exemple une erreur d'E/S ou une erreur inattendue du fournisseur pendant l'initialisation), elle remonte jusqu'à la route qui la traite comme une erreur de réponse et renvoie 502. La spec distingue pourtant l'indisponibilité de session (503) de l'échec d'une réponse (502).\",\"test_pytest\":\"import pytest\\n\\nfrom usine.ui.ecrans import GardeSession, SessionIndisponible\\n\\n\\nclass ConsultationFactice:\\n    passage_id = \\\"passage-1\\\"\\n\\n    def manifeste(self):\\n        return self\\n\\n\\ndef test_echec_de_construction_de_session_est_indisponible() -> None:\\n    def construire(_consultation):\\n        raise RuntimeError(\\\"échec pendant l'initialisation\\\")\\n\\n    garde = GardeSession(construire)\\n    with pytest.raises(SessionIndisponible):\\n        garde.repondre(ConsultationFactice(), \\\"Question ?\\\")\"}]}"
+}

@@ -1,0 +1,47 @@
+{
+ "modele": "xiaomi/mimo-v2.6-pro",
+ "story": "S3-6-10",
+ "latence_s": 1288.0,
+ "usage": {
+  "prompt_tokens": 13229,
+  "completion_tokens": 32000,
+  "total_tokens": 45229,
+  "cost": 0.0279070374,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 13184,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0279070374,
+   "upstream_inference_prompt_cost": 6.70374e-05,
+   "upstream_inference_completions_cost": 0.02784
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 31156,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.0615016524,
+ "finish_reason": "length",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "length",
+   "jetons_sortis": 32000,
+   "cout_usd": 0.033594615,
+   "latence_s": 674.2
+  },
+  {
+   "effort": "low",
+   "finish_reason": "length",
+   "jetons_sortis": 32000,
+   "cout_usd": 0.0279070374,
+   "latence_s": 613.8
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/usine/ia/classification.py\",\"ligne\":217,\"severite\":\"Important\",\"description\":\"La tolérance promise par la matrice I/O (« Échecs non consécutifs : échecs séparés par un succès → compteur remis à zéro », sans erreur) est contredite par `MAX_ECHECS_PASSAGE = 20` : au 21e échec isolé, pourtant séparé d'un succès, `classer` lève `UsineErreur` et fait échouer toute l'étape. Sur le stock de 3 114 Anomalies (la story existe justement parce que Haiku échoue sur une Anomalie isolée), une simple alternance échec/succès fait donc réapparaître l'échec total de la 6.9 et empêche de produire le Passage (AC 1). La section « Always » n'autorise qu'un seul mode d'échec : `MAX_ECHECS_CONSECUTIFS` (3) échecs d'affilée ; le surcoût des échecs est déjà contenu par l'imputation de majoration dans la passerelle.\",\"test_pytest\":\"\\\"\\\"\\\"Story 6.10 : des échecs non consécutifs ne doivent jamais faire échouer la classification.\\\"\\\"\\\"\\n\\nfrom tests.unit.ia.test_classification import (\\n    FournisseurEchouantSur,\\n    _classer,\\n    _reponse,\\n    textes,\\n)\\n\\n\\ndef test_echecs_non_consecutifs_toleres_quels_qu_en_soit_le_nombre() -> None:\\n    \\\"\\\"\\\"Matrice I/O « Échecs non consécutifs » : seul un échec consécutif fait échouer l'étape.\\\"\\\"\\\"\\n    cles = {f\\\"DEMO-{n}\\\": (\\\"Titre\\\", \\\"Description.\\\") for n in range(1, 81)}\\n    # 40 échecs du fournisseur, tous séparés d'un succès (rang pair en échec).\\n    factice = FournisseurEchouantSur(set(range(0, 80, 2)), [_reponse()] * 40)\\n    sorties, traces = _classer(factice, textes(cles))\\n    assert len(sorties) == 40\\n    assert [t.cible for t in traces] == [s.cle_ticket for s in sorties]\\n\"},{\"id\":\"C2\",\"fichier\":\"outils/balayer_sm7.py\",\"ligne\":120,\"severite\":\"Nit\",\"description\":\"Si toutes les valeurs de `identifiants_injectes.json` sont vides ou purement blanches, `par_valeur` est vidé par `par_valeur.pop(\\\"\\\")` mais le motif reste compilé en `(?=())` : `finditer` trouve alors une correspondance vide à chaque position et `par_valeur[trouve.group(1)]` lève un `KeyError: ''` non attrapé (traceback au lieu du code 2). `charger_identifiants` accepte pourtant ces entrées puisqu'elles ne sont pas vides.\",\"test_pytest\":null},{\"id\":\"C3\",\"fichier\":\"outils/balayer_sm7.py\",\"ligne\":109,\"severite\":\"Nit\",\"description\":\"Le commentaire affirme que « une valeur contenue dans une autre est cherchée », mais deux identifiants dont l'un contient l'autre (ex. « M. Fictivia EXEMPLON » et « EXEMPLON ») ou dont les formes compactées s'identifient ne donnent qu'une seule `Fuite` : `par"
+}

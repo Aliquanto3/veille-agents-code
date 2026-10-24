@@ -1,0 +1,1525 @@
+diff --git a/src/usine/ui/pseudonymisation.py b/src/usine/ui/pseudonymisation.py
+index 98481eb..a7e5bf5 100644
+--- a/src/usine/ui/pseudonymisation.py
++++ b/src/usine/ui/pseudonymisation.py
+@@ -36 +36,9 @@ def descriptions(table: pl.DataFrame) -> Mapping[str, str]:
+     }
++
++
++def moteur_indisponible(exc: Exception) -> str:
++    """Message d'une ligne qui nomme la cause : moteur Presidio ou modèle spaCy introuvable
++    ou en échec (première ligne du message seulement)."""
++    lignes = str(exc).strip().splitlines()
++    cause = f"{type(exc).__name__} : {lignes[0]}" if lignes else type(exc).__name__
++    return f"Moteur de Pseudonymisation indisponible (Presidio ou modèle spaCy) : {cause}"
+diff --git a/src/usine/ui/cli.py b/src/usine/ui/cli.py
+index 69df185..7ea4629 100644
+--- a/src/usine/ui/cli.py
++++ b/src/usine/ui/cli.py
+@@ -14,3 +14,3 @@ from collections.abc import Callable
+ from pathlib import Path
+-from typing import Annotated
++from typing import Annotated, cast
+ 
+@@ -27,4 +27,4 @@ from usine.contrats.llm import ReponseAgentEnregistree
+ from usine.contrats.passage import FICHIERS_PASSAGE, REPERTOIRE_PASSAGES, ManifestePassage
+-from usine.ia.agent.repli import REPERTOIRE_REPONSES, charger_reponses
+-from usine.ia.agent.session import SessionAgent
++from usine.ia.agent.repli import QUESTIONS_DEMO, REPERTOIRE_REPONSES, charger_reponses
++from usine.ia.agent.session import SANS_REPONSE, SessionAgent
+ from usine.ports.consultation import Consultation
+@@ -32,2 +32,4 @@ from usine.ui.avant_apres import FICHIER_CONFIG
+ from usine.ui.chaine import GestionChaine
++from usine.ui.ecrans import LectureEcransAgent, ServicesEcrans
++from usine.ui.outillage import lire_fiche
+ from usine.ui.serveur import HOTE, LireConsultation, LireManifeste, creer_application
+@@ -119,2 +121,19 @@ def manifestes_avant_apres(
+ 
++def manifestes_mesures(
++    racine: Path, repli: bool
++) -> tuple[ManifestePassage | None, ManifestePassage | None]:
++    """Manifestes de l'avant / après dans le mode donné : (mesuré, dernier).
++
++    Mode réel : `manifestes_avant_apres`. Mode repli : le Passage enregistré, mesuré seulement
++    s'il est sans classification initiale ; copie absente : `UsineErreur` (`REPLI_ABSENT`).
++    """
++    if not repli:
++        return manifestes_avant_apres(racine)
++    consultation = consultation_repli(racine)
++    if consultation is None:
++        raise UsineErreur(REPLI_ABSENT)
++    manifeste = consultation.manifeste()
++    return (None if manifeste.classification_initiale else manifeste), manifeste
++
++
+ def apercu_pseudonymisation(racine: Path) -> Callable[[str], str]:
+@@ -187,2 +206,20 @@ def lecture_consultation(racine: Path) -> LireConsultation:
+ 
++def services_ecrans(racine: Path) -> ServicesEcrans:
++    """Services des écrans Agent, Avant / après, Pseudonymisation et Outillage sur `racine`."""
++
++    def fabrique(consultation: LectureEcransAgent) -> SessionAgent:
++        return session_agent(racine, cast("Consultation", consultation))
++
++    return ServicesEcrans(
++        session_agent=fabrique,
++        reponses_repli=lambda passage_id: reponses_repli(racine, passage_id),
++        questions_suggerees=QUESTIONS_DEMO,
++        texte_hors_perimetre=SANS_REPONSE,
++        apercu_pseudonymisation=lambda: apercu_pseudonymisation(racine),
++        config_demo=lambda: config_demo(racine),
++        manifestes_avant_apres=lambda repli: manifestes_mesures(racine, repli),
++        lire_fiche=lambda: lire_fiche(racine),
++    )
++
++
+ def application_web(racine: Path, repli: bool) -> FastAPI:
+@@ -194,2 +231,3 @@ def application_web(racine: Path, repli: bool) -> FastAPI:
+         chaine=GestionChaine(racine),
++        services=services_ecrans(racine),
+     )
+diff --git a/src/usine/ui/outillage.py b/src/usine/ui/outillage.py
+index 3f87d4f..8ed79eb 100644
+--- a/src/usine/ui/outillage.py
++++ b/src/usine/ui/outillage.py
+@@ -7,4 +7,8 @@ fiche n'est recopié ici : seuls le chemin du fichier et les messages de l'écra
+ 
++import re
+ from pathlib import Path
+ 
++from markdown_it import MarkdownIt
++from markdown_it.token import Token
++
+ FICHIER_FICHE = Path("docs/fiche-outillage.md")
+@@ -31 +35,71 @@ def lire_fiche(racine: Path) -> str | None:
+         return None
++
++
++PASTILLES: dict[str, tuple[str, str]] = {
++    "✅": ("oui", "Oui"),
++    "⚠": ("surveiller", "À surveiller"),
++    "❌": ("non", "Non"),
++}
++"""Marqueur de la fiche (sans sélecteur de variante) : variante de la pastille et son libellé."""
++
++_MARQUEUR = re.compile("([✅⚠❌])️?")
++
++_MARKDOWN = MarkdownIt("commonmark", {"html": False}).enable("table")
++"""Rendu de la fiche : le HTML brut du Markdown n'est jamais interprété."""
++
++LIBELLE_TABLEAU = "Tableau de la fiche, défilant"
++
++
++def _pastille(marqueur: str) -> Token:
++    variante, libelle = PASTILLES[marqueur]
++    jeton = Token("html_inline", "", 0)
++    jeton.content = f'<span class="pastille pastille--{variante}">{libelle}</span>'
++    return jeton
++
++
++def _pastilles(jetons: list[Token]) -> list[Token]:
++    """Remplace chaque marqueur ✅ ⚠️ ❌ d'un texte en ligne par sa pastille de texte."""
++    resultat: list[Token] = []
++    for jeton in jetons:
++        if jeton.type != "text" or not _MARQUEUR.search(jeton.content):
++            resultat.append(jeton)
++            continue
++        morceaux = _MARQUEUR.split(jeton.content)
++        for rang, morceau in enumerate(morceaux):
++            if rang % 2:
++                resultat.append(_pastille(morceau))
++            elif morceau:
++                texte = Token("text", "", 0)
++                texte.content = morceau
++                resultat.append(texte)
++    return resultat
++
++
++def rendre_fiche(fiche: str) -> str:
++    """Fiche en HTML : cartes par section `##`, tableau défilant, pastilles de texte.
++
++    Le titre `#` de la fiche est celui de l'écran : il n'est pas rendu. Aucun HTML brut de la
++    fiche ne traverse ; seules les pastilles et les enveloppes ci-dessous sont du HTML du serveur.
++    """
++    jetons = _MARKDOWN.parse(fiche)
++    sans_titre: list[Token] = []
++    rang = 0
++    while rang < len(jetons):
++        jeton = jetons[rang]
++        if jeton.type == "heading_open" and jeton.tag == "h1":
++            rang += 3  # ouverture, contenu, fermeture
++            continue
++        if jeton.type == "inline" and jeton.children:
++            jeton.children = _pastilles(jeton.children)
++        sans_titre.append(jeton)
++        rang += 1
++    html = _MARKDOWN.renderer.render(sans_titre, _MARKDOWN.options, {})
++    ouverture = (
++        f'<div class="table-defile" role="region" tabindex="0" aria-label="{LIBELLE_TABLEAU}">'
++        "<table>"
++    )
++    html = html.replace("<table>", ouverture).replace("</table>", "</table></div>")
++    intro, *sections = html.split("<h2>")
++    cartes = [intro] if intro.strip() else []
++    cartes += [f"<h2>{section}" for section in sections]
++    return "".join(f'<section class="carte carte--fiche">{carte}</section>' for carte in cartes)
+diff --git a/src/usine/ui/vues.py b/src/usine/ui/vues.py
+index f95db91..f9d2c3a 100644
+--- a/src/usine/ui/vues.py
++++ b/src/usine/ui/vues.py
+@@ -11,3 +11,3 @@ from typing import Literal
+ from markdown_it import MarkdownIt
+-from pydantic import BaseModel, ConfigDict
++from pydantic import BaseModel, ConfigDict, Field, field_validator
+ 
+@@ -345 +345,135 @@ class DemandeMode(BaseModel):
+     mode: Literal["reel", "repli"]
++
++
++# --- Agent, Avant / après, Pseudonymisation et Outillage (Story 7.16) ---
++
++CodeBadge = Literal["conforme", "corrige", "rejete", "non_controle", "hors_perimetre"]
++Periode = Literal["rapport", "cumul"]
++
++
++class DemandeQuestion(BaseModel):
++    """Corps de `POST /api/agent/question` : la question du Pilote, jamais vide."""
++
++    model_config = ConfigDict(frozen=True, extra="forbid")
++
++    question: str = Field(min_length=1, max_length=2000)
++
++    @field_validator("question")
++    @classmethod
++    def _non_vide(cls, valeur: str) -> str:
++        texte = valeur.strip()
++        if not texte:
++            raise ValueError("la question est vide")
++        return texte
++
++
++class VueOutil(_Vue):
++    """Outil de l'Agent (lecture seule) et sa description."""
++
++    nom: str
++    description: str
++
++
++class VueSaisie(_Vue):
++    """Saisie de la question (Mode réel seulement)."""
++
++    libelle: str
++    valeur_defaut: str
++    bouton: str
++
++
++class VueQuestionEnregistree(_Vue):
++    """Question enregistrée : suggestion (Mode réel) ou seul moyen de questionner (Mode repli)."""
++
++    rang: int
++    question: str
++
++
++class VueReponseAgent(_Vue):
++    """Réponse contrôlée : `texte` vaut `None` quand le contrôle l'a rejetée (jamais affichée)."""
++
++    question: str
++    texte: str | None
++    texte_masque: str | None
++    badge: str
++    badge_code: CodeBadge
++    libelle_outils: str
++    outils: list[str]
++    aucun_outil: str
++    mention_repli: str | None
++    annonce: str
++
++
++class VueAgent(_Vue):
++    """Écran Agent."""
++
++    mode: Literal["reel", "repli"]
++    erreur: str | None
++    message: str | None
++    """Remplace l'écran (aucun Passage publié)."""
++    lien_message: VueLien | None
++    legende: str | None
++    message_repli: str | None
++    saisie: VueSaisie | None
++    titre_questions: str
++    questions: list[VueQuestionEnregistree]
++    titre_outils: str
++    outils: list[VueOutil]
++    attente: str
++    lien_repli: VueLien | None
++    """Avec une erreur d'Agent en Mode réel : passer en Mode repli par l'écran de lancement."""
++
++
++class VueCarteTemps(_Vue):
++    """Grande carte « Reporting manuel » ou « Chaîne » : valeur de chaque période."""
++
++    titre: str
++    etiquette: str
++    valeurs: dict[Periode, str]
++
++
++class VueOptionPeriode(_Vue):
++    valeur: Periode
++    libelle: str
++
++
++class VueAvantApres(_Vue):
++    """Écran Avant / après : valeurs reçues telles quelles, aucun écart ni ratio."""
++
++    erreur: str | None
++    message: str | None
++    lien_message: VueLien | None
++    avertissements: list[str]
++    manuel: VueCarteTemps | None
++    chaine: VueCarteTemps | None
++    libelle_periode: str
++    periodes: list[VueOptionPeriode]
++    periode: Periode
++    tableau: VueTableau | None
++    legende: str | None
++
++
++class VuePseudonymisation(_Vue):
++    """Écran Pseudonymisation : texte brut, sans surlignage (AD-11)."""
++
++    erreur: str | None
++    message: str | None
++    lien_message: VueLien | None
++    libelle_ticket: str
++    tickets: list[str]
++    ticket: VueTicket | None
++    legende: str | None
++    titre_original: str
++    titre_pseudonymise: str
++    etiquette_pseudonymise: str
++    original: str | None
++    pseudonymise: str | None
++
++
++class VueOutillage(_Vue):
++    """Écran Outillage : fiche rendue en HTML par le serveur (HTML brut désactivé)."""
++
++    erreur: str | None
++    message: str | None
++    legende: str | None
++    html: str | None
+diff --git a/src/usine/ui/serveur.py b/src/usine/ui/serveur.py
+index bb221c7..64e7f45 100644
+--- a/src/usine/ui/serveur.py
++++ b/src/usine/ui/serveur.py
+@@ -10,3 +10,4 @@ Le mode vit dans le processus serveur et ne change jamais seul (AD-19) : il est
+ démarrage par `USINE_MODE_REPLI` et ne change que par `POST /api/mode`, sur clic du Pilote.
+-Seules deux routes `POST` changent un état (Chaîne, mode) ; aucune ne touche un Passage ni Jira.
++Seules deux routes `POST` changent un état (Chaîne, mode) ; une troisième, la question à
++l'Agent, appelle le LLM : aucune ne touche un Passage ni Jira.
+ """
+@@ -14,2 +15,3 @@ Seules deux routes `POST` changent un état (Chaîne, mode) ; aucune ne touche u
+ import html
++import logging
+ import threading
+@@ -17,3 +19,3 @@ from collections.abc import Callable
+ from pathlib import Path
+-from typing import Protocol, get_args
++from typing import Literal, Protocol, get_args
+ from urllib.parse import urlsplit
+@@ -27,2 +29,3 @@ from usine.contrats.erreurs import UsineErreur
+ from usine.contrats.passage import ManifestePassage
++from usine.ui import agent as agent_textes
+ from usine.ui.carte import (
+@@ -40,5 +43,27 @@ from usine.ui.chaine import MOTIF_MODE_EN_COURS, GestionChaine, LancementRefuse
+ from usine.ui.detail import LectureDetail, vue_detail, vue_detail_erreur, vue_detail_message
++from usine.ui.ecrans import (
++    MODE_REPLI_SANS_LLM,
++    SERVICES_ABSENTS,
++    GardeSession,
++    LectureEcransAgent,
++    ServicesEcrans,
++    SessionIndisponible,
++    vue_agent,
++    vue_agent_erreur,
++    vue_avant_apres,
++    vue_avant_apres_erreur,
++    vue_outillage,
++    vue_outillage_erreur,
++    vue_pseudonymisation,
++    vue_pseudonymisation_erreur,
++    vue_pseudonymisation_message,
++    vue_reponse_agent,
++)
+ from usine.ui.vues import (
+     DemandeMode,
++    DemandeQuestion,
+     NomLivrable,
++    Periode,
++    VueAgent,
++    VueAvantApres,
+     VueCadre,
+@@ -48,2 +73,5 @@ from usine.ui.vues import (
+     VueLien,
++    VueOutillage,
++    VuePseudonymisation,
++    VueReponseAgent,
+     vue_cadre,
+@@ -77,3 +105,3 @@ lève `UsineErreur` (ou `OSError`) si la lecture est impossible."""
+ 
+-class LectureEcrans(LectureVueCarte, LectureDetail, Protocol):
++class LectureEcrans(LectureVueCarte, LectureDetail, LectureEcransAgent, Protocol):
+     """Lectures de la `Consultation` que les écrans Carte et Détail utilisent."""
+@@ -87,2 +115,9 @@ LIENS_CARTE = VueLien(libelle="← Carte météo", url="/")
+ LIEN_CHAINE = VueLien(libelle="Lancer la Chaîne", url="/chaine")
++SEULEMENT_REPLI = "Réponses enregistrées : Mode repli seulement."
++REPONSE_IMPOSSIBLE = (
++    "Réponse de l'Agent impossible : le fournisseur ou le contrôle a échoué ; le détail est"
++    " dans le journal du serveur."
++)
++
++_journal = logging.getLogger(__name__)
+ 
+@@ -116,2 +151,3 @@ def creer_application(
+     chaine: GestionChaine | None = None,
++    services: ServicesEcrans | None = None,
+ ) -> FastAPI:
+@@ -120,3 +156,4 @@ def creer_application(
+     `chaine` gère le lancement de `usine rapport` (fourni par `ui/cli.py`) ; sans elle, la
+-    Chaîne ne peut pas être lancée (racine absente).
++    Chaîne ne peut pas être lancée (racine absente). `services` fournit les lectures et la
++    session de l'Agent des écrans Agent, Avant / après, Pseudonymisation et Outillage.
+     """
+@@ -247,2 +284,4 @@ def creer_application(
+ 
++    _ajouter_ecrans(application, mode, lire, services)
++
+     for route, fichier in PAGES.items():
+@@ -254,2 +293,123 @@ def creer_application(
+ 
++def _ajouter_ecrans(
++    application: FastAPI,
++    mode: _Mode,
++    lire: Callable[[], LectureEcrans | None],
++    services: ServicesEcrans | None,
++) -> None:
++    """Routes des écrans Agent, Avant / après, Pseudonymisation et Outillage (Story 7.16)."""
++    garde = None if services is None else GardeSession(services.session_agent)
++
++    def refus_lecture(exc: UsineErreur | OSError) -> str:
++        return (
++            str(exc) if isinstance(exc, UsineErreur) else f"Lecture du Passage impossible : {exc}"
++        )
++
++    def vue_ecran_agent() -> VueAgent:
++        repli = mode.repli
++        if services is None:
++            return vue_agent_erreur(repli, SERVICES_ABSENTS)
++        try:
++            return vue_agent(repli=repli, consultation=lire(), services=services)
++        except (UsineErreur, OSError) as exc:
++            return vue_agent_erreur(repli, refus_lecture(exc))
++
++    application.add_api_route("/api/agent", vue_ecran_agent, response_model=VueAgent)
++
++    def poser_question(demande: DemandeQuestion, request: Request) -> VueReponseAgent:
++        """Question à l'Agent, par la session existante ; Mode réel seulement (AD-24)."""
++        _meme_origine(request)
++        if services is None or garde is None:
++            raise HTTPException(status_code=503, detail=SERVICES_ABSENTS)
++        if mode.repli:
++            raise HTTPException(status_code=409, detail=MODE_REPLI_SANS_LLM)
++        try:
++            consultation = lire()
++        except (UsineErreur, OSError) as exc:
++            raise HTTPException(status_code=503, detail=refus_lecture(exc)) from exc
++        if consultation is None:
++            raise HTTPException(status_code=409, detail=agent_textes.AUCUN_PASSAGE)
++        try:
++            reponse = garde.repondre(consultation, demande.question)
++        except SessionIndisponible as exc:
++            raise HTTPException(status_code=503, detail=str(exc)) from exc
++        except Exception as exc:  # fournisseur, trace ou validation : détail au journal seulement
++            # Le message d'un fournisseur peut citer une URL ou un corps de réponse : il reste
++            # dans le journal du serveur, le navigateur reçoit un message générique.
++            _journal.exception("Réponse de l'Agent impossible")
++            raise HTTPException(status_code=502, detail=REPONSE_IMPOSSIBLE) from exc
++        return vue_reponse_agent(reponse, services.texte_hors_perimetre)
++
++    application.add_api_route(
++        "/api/agent/question", poser_question, methods=["POST"], response_model=VueReponseAgent
++    )
++
++    def rejouer(rang: int) -> VueReponseAgent:
++        """Réponse enregistrée rejouée sans LLM ; Mode repli seulement (FR-45)."""
++        if services is None:
++            raise HTTPException(status_code=503, detail=SERVICES_ABSENTS)
++        if not mode.repli:
++            raise HTTPException(status_code=409, detail=SEULEMENT_REPLI)
++        try:
++            consultation = lire()
++            if consultation is None:
++                raise HTTPException(status_code=409, detail=agent_textes.AUCUN_PASSAGE)
++            enregistrees = services.reponses_repli(consultation.manifeste().passage_id)
++        except UsineErreur as exc:
++            detail = f"{agent_textes.REFUS_REPLI} : {exc}"
++            raise HTTPException(status_code=409, detail=detail) from exc
++        except OSError as exc:
++            raise HTTPException(status_code=503, detail=refus_lecture(exc)) from exc
++        if not 0 <= rang < len(enregistrees):
++            raise HTTPException(status_code=404, detail="Question enregistrée inconnue.")
++        enregistree = enregistrees[rang]
++        return vue_reponse_agent(enregistree.reponse, services.texte_hors_perimetre, enregistree)
++
++    application.add_api_route(
++        "/api/agent/enregistrees/{rang}", rejouer, response_model=VueReponseAgent
++    )
++
++    def avant_apres(periode: Literal["rapport", "cumul"] = "rapport") -> VueAvantApres:
++        if services is None:
++            return vue_avant_apres_erreur(SERVICES_ABSENTS)
++        choix: Periode = periode
++        try:
++            try:
++                config = services.config_demo()
++            except UsineErreur as exc:
++                return vue_avant_apres_erreur(f"Configuration de la démo invalide : {exc}")
++            mesure, dernier = services.manifestes_avant_apres(mode.repli)
++        except (UsineErreur, OSError) as exc:
++            return vue_avant_apres_erreur(refus_lecture(exc))
++        minutes = None if config is None else config.temps_manuel_minutes_par_rapport
++        return vue_avant_apres(minutes=minutes, mesure=mesure, dernier=dernier, periode=choix)
++
++    application.add_api_route("/api/avant-apres", avant_apres, response_model=VueAvantApres)
++
++    def pseudonymisation(ticket: str | None = None) -> VuePseudonymisation:
++        if services is None:
++            return vue_pseudonymisation_erreur(SERVICES_ABSENTS)
++        try:
++            consultation = lire()
++            if consultation is None:
++                return vue_pseudonymisation_message(AUCUN_PASSAGE, LIEN_CHAINE)
++            return vue_pseudonymisation(consultation, services.apercu_pseudonymisation, ticket)
++        except (UsineErreur, OSError) as exc:
++            return vue_pseudonymisation_erreur(refus_lecture(exc))
++
++    application.add_api_route(
++        "/api/pseudonymisation", pseudonymisation, response_model=VuePseudonymisation
++    )
++
++    def vue_fiche() -> VueOutillage:
++        if services is None:
++            return vue_outillage_erreur(SERVICES_ABSENTS)
++        try:
++            return vue_outillage(services.lire_fiche())
++        except (OSError, UnicodeDecodeError) as exc:
++            return vue_outillage_erreur(f"Lecture de la fiche outillage impossible : {exc}")
++
++    application.add_api_route("/api/outillage", vue_fiche, response_model=VueOutillage)
++
++
+ def _page(chemin: Path) -> Callable[..., FileResponse]:
+diff --git a/src/usine/ui/ecrans.py b/src/usine/ui/ecrans.py
+new file mode 100644
+index 0000000..7246142
+--- /dev/null
++++ b/src/usine/ui/ecrans.py
+@@ -0,0 +1,412 @@
++"""Vues JSON des quatre derniers écrans de l'UI web : Agent, Avant / après, Pseudonymisation,
++Outillage (Story 7.16, AD-25).
++
++Chaque fonction reçoit des lectures déjà faites (ou des services injectés par `ui/cli.py`,
++racine de composition) et rend une vue pydantic locale à `ui/`, aux libellés écrits : le
++navigateur n'a ni calcul ni formatage à faire (AD-9). Aucun module d'`ia`, de `ports` ou
++d'adaptateur n'est importé ici (AD-1).
++"""
++
++import threading
++from collections.abc import Callable, Sequence
++from dataclasses import dataclass
++from datetime import timedelta
++from typing import Protocol
++
++from usine.contrats.config import ConfigDemo
++from usine.contrats.erreurs import UsineErreur
++from usine.contrats.format import formater_entier
++from usine.contrats.llm import ReponseAgent, ReponseAgentEnregistree, StatutControle
++from usine.contrats.passage import ManifestePassage
++from usine.ui import agent, avant_apres, outillage, pseudonymisation
++from usine.ui.carte import LectureCarte
++from usine.ui.liens import vue_ticket
++from usine.ui.progression import texte_duree
++from usine.ui.pseudonymisation import LecturePseudonymisation
++from usine.ui.vues import (
++    CodeBadge,
++    Periode,
++    VueAgent,
++    VueAvantApres,
++    VueCarteTemps,
++    VueLien,
++    VueOptionPeriode,
++    VueOutil,
++    VueOutillage,
++    VuePseudonymisation,
++    VueQuestionEnregistree,
++    VueReponseAgent,
++    VueSaisie,
++    VueTableau,
++)
++
++
++class LectureEcransAgent(LectureCarte, LecturePseudonymisation, Protocol):
++    """Lectures de la `Consultation` des quatre écrans (le manifeste et l'URL d'un ticket)."""
++
++
++SERVICES_ABSENTS = "Écran indisponible : l'interface n'a pas reçu ses services (racine absente)."
++
++LIEN_CHAINE = VueLien(libelle="Lancer la Chaîne", url="/chaine")
++LIEN_REPLI = VueLien(libelle="Passer en Mode repli depuis l'écran de lancement", url="/chaine")
++
++ATTENTE_AGENT = "L'Agent consulte le Passage…"
++ANNONCE_REPONSE = "Réponse de l'Agent reçue"
++TITRE_QUESTIONS_REEL = "Questions enregistrées (suggestions)"
++TITRE_QUESTIONS_REPLI = agent.LIBELLE_CHOIX
++TITRE_OUTILS = "Outils de l'Agent"
++LIBELLE_OUTILS = "Outils appelés :"
++AUCUN_OUTIL = "aucun"
++BADGE_HORS_PERIMETRE = "Hors périmètre · aucune donnée inventée"
++REPONSE_REJETEE = "Réponse rejetée par le contrôle : son texte n'est pas affiché."
++MODE_REPLI_SANS_LLM = (
++    "Mode repli : l'Agent ne s'adresse à aucun LLM, choisir une question enregistrée."
++)
++
++OUTILS_AGENT: tuple[VueOutil, ...] = (
++    VueOutil(
++        nom="get_meteo",
++        description="Météo des Entités, Règles déclenchantes et évolution J-1 / J-5.",
++    ),
++    VueOutil(
++        nom="list_anomalies",
++        description="Anomalies ouvertes, filtrées par Entité, Gravité, Phase, domaine ou statut.",
++    ),
++    VueOutil(nom="get_tendance", description="Tendance hebdomadaire des KPI, par Entité."),
++    VueOutil(nom="get_prevision", description="Prévisions de sortie du rouge."),
++    VueOutil(nom="get_risques", description="Risques d'entrée en rouge."),
++)
++"""Outils exposés à l'Agent, tous en lecture seule (liste fixe de l'écran, EXPERIENCE.md)."""
++
++
++@dataclass(frozen=True)
++class ServicesEcrans:
++    """Services des quatre écrans, fournis par `ui/cli.py` (AD-1).
++
++    Chaque appel lit la racine au moment de l'affichage : aucune lecture n'est gardée.
++    """
++
++    session_agent: Callable[[LectureEcransAgent], agent.Session]
++    reponses_repli: Callable[[str], tuple[ReponseAgentEnregistree, ...]]
++    questions_suggerees: tuple[str, ...]
++    texte_hors_perimetre: str
++    apercu_pseudonymisation: Callable[[], Callable[[str], str]]
++    config_demo: Callable[[], ConfigDemo | None]
++    manifestes_avant_apres: Callable[
++        [bool], tuple[ManifestePassage | None, ManifestePassage | None]
++    ]
++    lire_fiche: Callable[[], str | None]
++
++
++# --- Agent ---
++
++
++class SessionIndisponible(UsineErreur):
++    """La session de l'Agent ne peut pas être construite (configuration, clé, fournisseur)."""
++
++
++class GardeSession:
++    """Garde la session de l'Agent tant que le Passage publié ne change pas (FR-39).
++
++    Une question à la fois : le verrou serialise les appels au fournisseur.
++    """
++
++    def __init__(self, fabrique: Callable[[LectureEcransAgent], agent.Session]) -> None:
++        self._fabrique = fabrique
++        self._verrou = threading.Lock()
++        self._session: agent.Session | None = None
++
++    def repondre(self, consultation: LectureEcransAgent, question: str) -> ReponseAgent:
++        """Réponse contrôlée de la session du Passage de `consultation` (rebâtie si changé)."""
++        with self._verrou:
++            passage_id = consultation.manifeste().passage_id
++            if self._session is not None and self._session.passage_id != passage_id:
++                self._session.fermer()  # nouveau Passage publié : nouvelle session
++                self._session = None
++            if self._session is None:
++                try:
++                    self._session = self._fabrique(consultation)
++                except UsineErreur as exc:
++                    raise SessionIndisponible(
++                        f"Agent indisponible : la session ne peut être construite ({exc})"
++                    ) from exc
++            return self._session.repondre(question)
++
++
++def vue_reponse_agent(
++    reponse: ReponseAgent,
++    texte_hors_perimetre: str,
++    enregistree: ReponseAgentEnregistree | None = None,
++) -> VueReponseAgent:
++    """Réponse avec son badge de contrôle et ses outils ; le texte d'un rejet n'est pas envoyé."""
++    rejetee = reponse.statut_controle is StatutControle.rejete
++    hors_perimetre = not rejetee and reponse.texte.strip() == texte_hors_perimetre
++    code: CodeBadge = "hors_perimetre" if hors_perimetre else reponse.statut_controle.value
++    return VueReponseAgent(
++        question=reponse.question,
++        texte=None if rejetee else reponse.texte,
++        texte_masque=REPONSE_REJETEE if rejetee else None,
++        badge=BADGE_HORS_PERIMETRE if hors_perimetre else agent.texte_statut(reponse),
++        badge_code=code,
++        libelle_outils=LIBELLE_OUTILS,
++        outils=list(reponse.outils_appeles),
++        aucun_outil=AUCUN_OUTIL,
++        mention_repli=None if enregistree is None else agent.mention_repli(enregistree),
++        annonce=ANNONCE_REPONSE,
++    )
++
++
++def _vue_agent(repli: bool, **champs: object) -> VueAgent:
++    base: dict[str, object] = {
++        "mode": "repli" if repli else "reel",
++        "erreur": None,
++        "message": None,
++        "lien_message": None,
++        "legende": None,
++        "message_repli": None,
++        "saisie": None,
++        "titre_questions": TITRE_QUESTIONS_REPLI if repli else TITRE_QUESTIONS_REEL,
++        "questions": [],
++        "titre_outils": TITRE_OUTILS,
++        "outils": list(OUTILS_AGENT),
++        "attente": ATTENTE_AGENT,
++        "lien_repli": None,
++    }
++    return VueAgent.model_validate(base | champs)
++
++
++def vue_agent_erreur(repli: bool, erreur: str) -> VueAgent:
++    """Écran Agent avec une lecture impossible (bandeau d'erreur)."""
++    return _vue_agent(
++        repli,
++        erreur=erreur,
++        message_repli=agent.MESSAGE_REPLI if repli else None,
++        lien_repli=None if repli else LIEN_REPLI,
++    )
++
++
++def vue_agent(
++    *,
++    repli: bool,
++    consultation: LectureEcransAgent | None,
++    services: ServicesEcrans,
++) -> VueAgent:
++    """Écran Agent : saisie (Mode réel) ou questions enregistrées (Mode repli)."""
++    if repli:
++        questions: list[VueQuestionEnregistree] = []
++        erreur = None
++        if consultation is not None:
++            try:
++                enregistrees = services.reponses_repli(consultation.manifeste().passage_id)
++            except UsineErreur as exc:
++                erreur = f"{agent.REFUS_REPLI} : {exc}"
++            else:
++                questions = [
++                    VueQuestionEnregistree(rang=rang, question=e.reponse.question)
++                    for rang, e in enumerate(enregistrees)
++                ]
++        return _vue_agent(
++            True, message_repli=agent.MESSAGE_REPLI, questions=questions, erreur=erreur
++        )
++    if consultation is None:
++        return _vue_agent(False, message=agent.AUCUN_PASSAGE, lien_message=LIEN_CHAINE)
++    suggestions = [
++        VueQuestionEnregistree(rang=rang, question=question)
++        for rang, question in enumerate(services.questions_suggerees)
++    ]
++    saisie = VueSaisie(
++        libelle=agent.LIBELLE_QUESTION,
++        valeur_defaut=agent.QUESTION_DEMO,
++        bouton="Envoyer",
++    )
++    return _vue_agent(False, legende=agent.LEGENDE, saisie=saisie, questions=suggestions)
++
++
++# --- Avant / après ---
++
++LIBELLE_PERIODE = "Période"
++PERIODES: tuple[VueOptionPeriode, ...] = (
++    VueOptionPeriode(valeur="rapport", libelle="Par Rapport quotidien"),
++    VueOptionPeriode(
++        valeur="cumul", libelle=f"Cumulé sur {avant_apres.NB_RAPPORTS_CUMUL} Rapports"
++    ),
++)
++
++
++def _vue_avant_apres(**champs: object) -> VueAvantApres:
++    base: dict[str, object] = {
++        "erreur": None,
++        "message": None,
++        "lien_message": None,
++        "avertissements": [],
++        "manuel": None,
++        "chaine": None,
++        "libelle_periode": LIBELLE_PERIODE,
++        "periodes": list(PERIODES),
++        "periode": "rapport",
++        "tableau": None,
++        "legende": None,
++    }
++    return VueAvantApres.model_validate(base | champs)
++
++
++def vue_avant_apres_erreur(erreur: str) -> VueAvantApres:
++    """Écran Avant / après avec une lecture impossible."""
++    return _vue_avant_apres(erreur=erreur)
++
++
++def _carte_manuel(minutes: int) -> VueCarteTemps:
++    cumul = minutes * avant_apres.NB_RAPPORTS_CUMUL
++    return VueCarteTemps(
++        titre="Reporting manuel",
++        etiquette="déclaré",
++        valeurs={
++            "rapport": f"{formater_entier(minutes)} min",
++            "cumul": f"{formater_entier(cumul)} min",
++        },
++    )
++
++
++def _carte_chaine(duree: timedelta) -> VueCarteTemps:
++    return VueCarteTemps(
++        titre="Chaîne",
++        etiquette="mesuré",
++        valeurs={
++            "rapport": texte_duree(duree),
++            "cumul": texte_duree(duree * avant_apres.NB_RAPPORTS_CUMUL),
++        },
++    )
++
++
++def _tableau(manuel: VueCarteTemps | None, chaine: VueCarteTemps | None) -> VueTableau:
++    colonnes = ["Rapport"]
++    cartes = [carte for carte in (manuel, chaine) if carte is not None]
++    colonnes += [
++        "Reporting manuel (déclaré)" if carte is manuel else "Chaîne (mesuré)" for carte in cartes
++    ]
++    lignes = [
++        [option.libelle, *(carte.valeurs[option.valeur] for carte in cartes)] for option in PERIODES
++    ]
++    return VueTableau(colonnes=colonnes, lignes=lignes)
++
++
++def vue_avant_apres(
++    *,
++    minutes: int | None,
++    mesure: ManifestePassage | None,
++    dernier: ManifestePassage | None,
++    periode: Periode = "rapport",
++) -> VueAvantApres:
++    """Écran Avant / après : valeurs des fonctions de `avant_apres`, aucun écart ni ratio.
++
++    `minutes` à `None` : configuration absente. `mesure` à `None` : aucun Passage sans
++    classification initiale (`dernier` précise s'il y a un Passage publié ou non).
++    """
++    avertissements: list[str] = []
++    if minutes is None:
++        avertissements.append(avant_apres.CONFIG_ABSENTE)
++    if mesure is None:
++        if dernier is None:
++            return _vue_avant_apres(
++                message=avant_apres.AUCUN_PASSAGE, lien_message=LIEN_CHAINE, periode=periode
++            )
++        avertissements.append(avant_apres.SEULE_CLASSIFICATION_INITIALE)
++    manuel = None if minutes is None else _carte_manuel(minutes)
++    chaine = None if mesure is None else _carte_chaine(avant_apres.duree_mesuree(mesure))
++    return _vue_avant_apres(
++        avertissements=avertissements,
++        manuel=manuel,
++        chaine=chaine,
++        periode=periode,
++        tableau=None if manuel is None and chaine is None else _tableau(manuel, chaine),
++        legende=None if mesure is None else avant_apres.legende(mesure),
++    )
++
++
++# --- Pseudonymisation ---
++
++LIBELLE_TICKET = "Ticket"
++ETIQUETTE_PSEUDONYMISE = "envoyée au LLM"
++
++
++def _vue_pseudo(**champs: object) -> VuePseudonymisation:
++    base: dict[str, object] = {
++        "erreur": None,
++        "message": None,
++        "lien_message": None,
++        "libelle_ticket": LIBELLE_TICKET,
++        "tickets": [],
++        "ticket": None,
++        "legende": None,
++        "titre_original": pseudonymisation.TITRE_ORIGINAL,
++        "titre_pseudonymise": pseudonymisation.TITRE_PSEUDONYMISE,
++        "etiquette_pseudonymise": ETIQUETTE_PSEUDONYMISE,
++        "original": None,
++        "pseudonymise": None,
++    }
++    return VuePseudonymisation.model_validate(base | champs)
++
++
++def vue_pseudonymisation_erreur(erreur: str) -> VuePseudonymisation:
++    """Écran Pseudonymisation avec une lecture impossible."""
++    return _vue_pseudo(erreur=erreur)
++
++
++def vue_pseudonymisation_message(message: str, lien: VueLien | None = None) -> VuePseudonymisation:
++    """Écran Pseudonymisation remplacé par un message (aucun Passage)."""
++    return _vue_pseudo(message=message, lien_message=lien)
++
++
++def vue_pseudonymisation(
++    consultation: LectureEcransAgent,
++    apercu: Callable[[], Callable[[str], str]],
++    ticket: str | None,
++) -> VuePseudonymisation:
++    """Original et `Pseudonymiseur.apercu` en texte brut, côte à côte (FR-31, AD-15).
++
++    Un moteur absent (Presidio, modèle spaCy) ou une clé absente est nommé dans `erreur`, la
++    sélection du ticket restant utilisable.
++    """
++    textes = pseudonymisation.descriptions(consultation.textes_tickets())
++    if not textes:
++        return _vue_pseudo(message=pseudonymisation.AUCUNE_DESCRIPTION)
++    cles: Sequence[str] = sorted(textes)
++    if ticket is not None and ticket not in textes:
++        return _vue_pseudo(
++            tickets=list(cles),
++            erreur=f"Le ticket {ticket} n'a pas de description non vide dans ce Passage.",
++        )
++    cle = ticket if ticket is not None else cles[0]
++    base: dict[str, object] = {
++        "tickets": list(cles),
++        "ticket": vue_ticket(cle, consultation.url_ticket(cle)),
++    }
++    try:
++        version = apercu()(textes[cle])
++    except UsineErreur as exc:
++        return _vue_pseudo(**base, erreur=f"Aperçu de la Pseudonymisation impossible : {exc}")
++    except Exception as exc:  # Presidio ou modèle spaCy indisponible ou en échec
++        return _vue_pseudo(**base, erreur=pseudonymisation.moteur_indisponible(exc))
++    return _vue_pseudo(
++        **base, legende=pseudonymisation.LEGENDE, original=textes[cle], pseudonymise=version
++    )
++
++
++# --- Outillage ---
++
++
++def vue_outillage(fiche: str | None) -> VueOutillage:
++    """Fiche d'outillage rendue en HTML par le serveur, ou le message de fiche absente."""
++    if fiche is None:
++        return VueOutillage(erreur=None, message=outillage.FICHE_ABSENTE, legende=None, html=None)
++    return VueOutillage(
++        erreur=None,
++        message=None,
++        legende=outillage.LEGENDE,
++        html=outillage.rendre_fiche(fiche),
++    )
++
++
++def vue_outillage_erreur(erreur: str) -> VueOutillage:
++    """Écran Outillage avec une fiche illisible."""
++    return VueOutillage(erreur=erreur, message=None, legende=None, html=None)
+diff --git a/tests/unit/ui/test_vues_ecrans.py b/tests/unit/ui/test_vues_ecrans.py
+index 7a8a374..00b02b8 100644
+--- a/tests/unit/ui/test_vues_ecrans.py
++++ b/tests/unit/ui/test_vues_ecrans.py
+@@ -28,2 +28,3 @@ from usine.contrats.passage import Etape, ExecutionEtape, ManifestePassage, Stat
+ from usine.contrats.prevision import Prevision, RisqueEntreeRouge, StatutPrevision
++from usine.contrats.tickets import SCHEMA_TICKET_TEXTE
+ from usine.ports.consultation import Consultation
+@@ -155,2 +156,5 @@ class _Double:
+ 
++    def textes_tickets(self) -> pl.DataFrame:
++        return pl.DataFrame(schema=dict(SCHEMA_TICKET_TEXTE.colonnes))
++
+ 
+diff --git a/tests/unit/ui/test_chaine.py b/tests/unit/ui/test_chaine.py
+index 7e4c513..a8697d7 100644
+--- a/tests/unit/ui/test_chaine.py
++++ b/tests/unit/ui/test_chaine.py
+@@ -519,3 +519,3 @@ def test_repli_sans_passage_n_invite_pas_a_lancer(racine: Path) -> None:
+ 
+-def test_seules_deux_routes_post_changent_un_etat(racine: Path) -> None:
++def test_seules_trois_routes_post_ecrivent(racine: Path) -> None:
+     application = Banc(racine).application
+@@ -527,3 +527,8 @@ def test_seules_deux_routes_post_changent_un_etat(racine: Path) -> None:
+     }
+-    assert ecritures == {("/api/chaine", "POST"), ("/api/mode", "POST")}
++    # Chaîne, mode, et la question à l'Agent (trace de session, jamais un Passage ni Jira).
++    assert ecritures == {
++        ("/api/chaine", "POST"),
++        ("/api/mode", "POST"),
++        ("/api/agent/question", "POST"),
++    }
+ 
+diff --git a/tests/unit/ui/test_ecrans_web.py b/tests/unit/ui/test_ecrans_web.py
+new file mode 100644
+index 0000000..c4a6866
+--- /dev/null
++++ b/tests/unit/ui/test_ecrans_web.py
+@@ -0,0 +1,651 @@
++"""Agent, Avant / après, Pseudonymisation et Outillage de l'UI web (Story 7.16, AD-25).
++
++Aucun LLM ni moteur Presidio réel : la session de l'Agent et l'aperçu sont des doublures
++injectées par `ServicesEcrans`, comme les services réels le sont par `ui/cli.py`.
++"""
++
++import json
++import shutil
++from collections.abc import Callable
++from dataclasses import replace
++from pathlib import Path
++from typing import Any
++
++import pytest
++from fastapi.testclient import TestClient
++
++from tests.unit.ui.test_avant_apres import manifeste, publier
++from usine.contrats.erreurs import UsineErreur
++from usine.contrats.llm import ReponseAgent, StatutControle
++from usine.ia.agent.repli import QUESTIONS_DEMO, REPERTOIRE_REPONSES
++from usine.ia.agent.session import SANS_REPONSE
++from usine.ui import agent, avant_apres, cli, outillage, pseudonymisation
++from usine.ui.chaine import GestionChaine
++from usine.ui.ecrans import (
++    BADGE_HORS_PERIMETRE,
++    GardeSession,
++    ServicesEcrans,
++    SessionIndisponible,
++    vue_reponse_agent,
++)
++from usine.ui.outillage import rendre_fiche
++from usine.ui.serveur import HOTE, REPERTOIRE_STATIQUE, REPONSE_IMPOSSIBLE, creer_application
++from usine.ui.textes import REPLI_ABSENT
++
++PASSAGE_REPLI = "20261012T221158Z-96c621"
++
++
++class SessionFactice:
++    """Session de l'Agent qui rejoue des réponses scriptées, sans LLM."""
++
++    def __init__(self, passage_id: str, reponses: list[ReponseAgent | Exception]) -> None:
++        self._passage_id = passage_id
++        self.reponses = reponses
++        self.questions: list[str] = []
++        self.fermee = False
++
++    @property
++    def passage_id(self) -> str:
++        return self._passage_id
++
++    def repondre(self, question: str) -> ReponseAgent:
++        self.questions.append(question)
++        suivante = self.reponses.pop(0)
++        if isinstance(suivante, Exception):
++            raise suivante
++        return suivante
++
++    def fermer(self) -> None:
++        self.fermee = True
++
++
++def reponse(
++    texte: str = "ENT-B est rouge.",
++    statut: StatutControle = StatutControle.conforme,
++    outils: tuple[str, ...] = ("get_meteo",),
++) -> ReponseAgent:
++    return ReponseAgent(
++        question="Pourquoi ENT-B est-elle rouge ?",
++        texte=texte,
++        outils_appeles=outils,
++        statut_controle=statut,
++    )
++
++
++def application(
++    racine: Path,
++    *,
++    repli: bool = False,
++    **remplacements: Any,
++) -> TestClient:
++    services = replace(cli.services_ecrans(racine), **remplacements)
++    return TestClient(
++        creer_application(
++            repli=repli,
++            lire_manifeste=cli.lecture_manifeste(racine),
++            lire_consultation=cli.lecture_consultation(racine),
++            chaine=GestionChaine(None),
++            services=services,
++        ),
++        base_url=f"http://{HOTE}",
++    )
++
++
++def fabrique(session: SessionFactice, appels: list[str] | None = None) -> Callable[..., Any]:
++    def construire(_consultation: Any) -> SessionFactice:
++        if appels is not None:
++            appels.append("construite")
++        return session
++
++    return construire
++
++
++# --- Agent : Mode réel ---
++
++
++def test_agent_reel_saisie_suggestions_et_outils(racine_publiee: Path) -> None:
++    vue = application(racine_publiee).get("/api/agent").json()
++    assert vue["mode"] == "reel"
++    assert vue["erreur"] is None
++    assert vue["message_repli"] is None
++    assert vue["saisie"]["valeur_defaut"] == agent.QUESTION_DEMO
++    assert vue["saisie"]["libelle"] == agent.LIBELLE_QUESTION
++    assert vue["legende"] == agent.LEGENDE
++    assert [q["question"] for q in vue["questions"]] == list(QUESTIONS_DEMO)
++    assert [o["nom"] for o in vue["outils"]] == [
++        "get_meteo",
++        "list_anomalies",
++        "get_tendance",
++        "get_prevision",
++        "get_risques",
++    ]
++    assert vue["attente"] == "L'Agent consulte le Passage…"
++
++
++def test_agent_reel_sans_passage_publie(tmp_path: Path) -> None:
++    vue = application(tmp_path).get("/api/agent").json()
++    assert vue["message"] == agent.AUCUN_PASSAGE
++    assert vue["lien_message"]["url"] == "/chaine"
++    assert vue["saisie"] is None
++
++
++def test_question_passe_par_la_session_existante(racine_publiee: Path) -> None:
++    manifeste_publie = cli.lecture_manifeste(racine_publiee)(False)
++    assert manifeste_publie is not None
++    session = SessionFactice(manifeste_publie.passage_id, [reponse(), reponse("Autre texte.")])
++    construites: list[str] = []
++    client = application(racine_publiee, session_agent=fabrique(session, construites))
++    premiere = client.post("/api/agent/question", json={"question": "  Pourquoi ENT-B ?  "})
++    assert premiere.status_code == 200
++    vue = premiere.json()
++    assert vue["texte"] == "ENT-B est rouge."
++    assert vue["badge"] == agent.texte_statut(reponse())
++    assert vue["badge_code"] == "conforme"
++    assert vue["outils"] == ["get_meteo"]
++    assert vue["libelle_outils"] == "Outils appelés :"
++    assert vue["mention_repli"] is None
++    assert vue["annonce"] == "Réponse de l'Agent reçue"
++    second = client.post("/api/agent/question", json={"question": "Et ENT-C ?"}).json()
++    assert second["texte"] == "Autre texte."
++    assert session.questions == ["Pourquoi ENT-B ?", "Et ENT-C ?"]  # question nettoyée
++    assert construites == ["construite"]  # une seule session, gardée d'une question à l'autre
++
++
++def test_reponse_rejetee_n_expose_pas_son_texte(racine_publiee: Path) -> None:
++    secret = "ENT-Z vaut 999 (texte faux rejeté)"
++    session = SessionFactice("p", [reponse(secret, StatutControle.rejete, ())])
++    client = application(racine_publiee, session_agent=fabrique(session))
++    brut = client.post("/api/agent/question", json={"question": "Q ?"})
++    assert brut.status_code == 200
++    assert secret not in brut.text
++    vue = brut.json()
++    assert vue["texte"] is None
++    assert "n'est pas affiché" in vue["texte_masque"]
++    assert vue["badge_code"] == "rejete"
++    assert vue["aucun_outil"] == "aucun"
++
++
++def test_refus_hors_perimetre(racine_publiee: Path) -> None:
++    session = SessionFactice("p", [reponse(SANS_REPONSE, outils=())])
++    client = application(racine_publiee, session_agent=fabrique(session))
++    vue = client.post("/api/agent/question", json={"question": "Budget ?"}).json()
++    assert vue["badge"] == BADGE_HORS_PERIMETRE
++    assert vue["badge_code"] == "hors_perimetre"
++    assert vue["outils"] == []
++
++
++def test_question_vide_ou_invalide_refusee(racine_publiee: Path) -> None:
++    session = SessionFactice("p", [])
++    client = application(racine_publiee, session_agent=fabrique(session))
++    for corps in ({"question": ""}, {"question": "   "}, {}, {"question": "a", "x": 1}):
++        assert client.post("/api/agent/question", json=corps).status_code == 422
++    assert client.post("/api/agent/question", content="question=a").status_code == 422
++    assert session.questions == []
++
++
++def test_question_origine_etrangere_refusee(racine_publiee: Path) -> None:
++    session = SessionFactice("p", [reponse()])
++    client = application(racine_publiee, session_agent=fabrique(session))
++    refus = client.post(
++        "/api/agent/question", json={"question": "Q ?"}, headers={"Origin": "http://evil.test"}
++    )
++    assert refus.status_code == 403
++    assert session.questions == []
++    mauvais_hote = client.post(
++        "/api/agent/question", json={"question": "Q ?"}, headers={"Host": "evil.test:8000"}
++    )
++    assert mauvais_hote.status_code == 400
++
++
++def test_agent_indisponible_et_reponse_impossible(racine_publiee: Path) -> None:
++    def echouer(_consultation: Any) -> SessionFactice:
++        raise UsineErreur("USINE_CLE_LLM absente")
++
++    client = application(racine_publiee, session_agent=echouer)
++    refus = client.post("/api/agent/question", json={"question": "Q ?"})
++    assert refus.status_code == 503
++    assert "Agent indisponible" in refus.json()["detail"]
++    assert "USINE_CLE_LLM absente" in refus.json()["detail"]
++
++    session = SessionFactice("p", [RuntimeError("https://fournisseur.test/v1 cle=sk-secret")])
++    client = application(racine_publiee, session_agent=fabrique(session))
++    refus = client.post("/api/agent/question", json={"question": "Q ?"})
++    assert refus.status_code == 502
++    assert refus.json()["detail"] == REPONSE_IMPOSSIBLE  # détail au journal du serveur seulement
++    assert "sk-secret" not in refus.text
++    assert "fournisseur.test" not in refus.text
++
++
++def test_question_sans_passage_ou_en_mode_repli(racine_publiee: Path, tmp_path: Path) -> None:
++    session = SessionFactice("p", [reponse()])
++    assert (
++        application(tmp_path, session_agent=fabrique(session))
++        .post("/api/agent/question", json={"question": "Q ?"})
++        .status_code
++        == 409
++    )
++    repli = application(racine_publiee, repli=True, session_agent=fabrique(session))
++    refus = repli.post("/api/agent/question", json={"question": "Q ?"})
++    assert refus.status_code == 409
++    assert session.questions == []  # aucun appel au LLM en Mode repli
++
++
++def test_la_session_change_avec_le_passage() -> None:
++    class Passage:
++        def __init__(self, passage_id: str) -> None:
++            self.passage_id = passage_id
++
++        def manifeste(self) -> Any:
++            return self
++
++    sessions: list[SessionFactice] = []
++
++    def construire(consultation: Any) -> SessionFactice:
++        session = SessionFactice(consultation.passage_id, [reponse(), reponse(), reponse()])
++        sessions.append(session)
++        return session
++
++    garde = GardeSession(construire)
++    garde.repondre(Passage("a"), "Q1")  # type: ignore[arg-type]
++    garde.repondre(Passage("a"), "Q2")  # type: ignore[arg-type]
++    assert len(sessions) == 1
++    garde.repondre(Passage("b"), "Q3")  # type: ignore[arg-type]
++    assert len(sessions) == 2
++    assert sessions[0].fermee is True
++    assert sessions[1].questions == ["Q3"]
++
++
++def test_construction_refusee_est_une_session_indisponible() -> None:
++    class Passage:
++        passage_id = "a"
++
++        def manifeste(self) -> Any:
++            return self
++
++    def echouer(_consultation: Any) -> SessionFactice:
++        raise UsineErreur("config/llm.yaml absent")
++
++    with pytest.raises(SessionIndisponible, match=r"config/llm\.yaml absent"):
++        GardeSession(echouer).repondre(Passage(), "Q")  # type: ignore[arg-type]
++
++
++# --- Agent : Mode repli ---
++
++
++def test_agent_repli_sans_saisie_questions_enregistrees(racine_publiee: Path) -> None:
++    client = application(racine_publiee, repli=True)
++    vue = client.get("/api/agent").json()
++    assert vue["mode"] == "repli"
++    assert vue["saisie"] is None
++    assert vue["message_repli"] == agent.MESSAGE_REPLI
++    assert vue["erreur"] is None
++    assert [q["question"] for q in vue["questions"]] == list(QUESTIONS_DEMO)
++    assert [q["rang"] for q in vue["questions"]] == [0, 1, 2, 3, 4]
++
++
++def test_agent_repli_rejoue_la_reponse_avec_sa_mention(racine_publiee: Path) -> None:
++    client = application(racine_publiee, repli=True)
++    brut = client.get("/api/agent/enregistrees/0")
++    assert brut.status_code == 200
++    vue = brut.json()
++    enregistree = json.loads(
++        (racine_publiee / REPERTOIRE_REPONSES / "01.json").read_text(encoding="utf-8")
++    )
++    assert vue["texte"] == enregistree["reponse"]["texte"]
++    assert vue["outils"] == enregistree["reponse"]["outils_appeles"]
++    assert vue["mention_repli"].startswith("Mode repli : réponse enregistrée le ")
++    assert PASSAGE_REPLI in vue["mention_repli"]
++    assert "sans LLM" in vue["mention_repli"]
++    refus = client.get("/api/agent/enregistrees/4").json()  # la question hors périmètre
++    assert refus["badge_code"] == "hors_perimetre"
++    assert client.get("/api/agent/enregistrees/99").status_code == 404
++    assert client.get("/api/agent/enregistrees/-1").status_code == 404
++    assert application(racine_publiee).get("/api/agent/enregistrees/0").status_code == 409
++
++
++def test_reponses_d_un_autre_passage_refusees(racine_publiee: Path, tmp_path: Path) -> None:
++    shutil.copytree(racine_publiee / "demo", tmp_path / "demo")
++    chemin = tmp_path / REPERTOIRE_REPONSES / "02.json"
++    chemin.write_text(
++        chemin.read_text(encoding="utf-8").replace(PASSAGE_REPLI, "20260101T000000Z-bbbbbb"),
++        encoding="utf-8",
++    )
++    client = application(tmp_path, repli=True)
++    vue = client.get("/api/agent").json()
++    assert vue["erreur"].startswith(agent.REFUS_REPLI)
++    assert vue["questions"] == []
++    assert vue["saisie"] is None
++    rejeu = client.get("/api/agent/enregistrees/0")
++    assert rejeu.status_code == 409
++    assert rejeu.json()["detail"].startswith(agent.REFUS_REPLI)
++
++
++def test_agent_repli_copie_absente(tmp_path: Path) -> None:
++    vue = application(tmp_path, repli=True).get("/api/agent").json()
++    assert vue["erreur"] == REPLI_ABSENT
++    assert vue["message_repli"] == agent.MESSAGE_REPLI
++    assert vue["lien_repli"] is None
++
++
++def test_agent_reel_erreur_propose_le_mode_repli(racine_publiee: Path) -> None:
++    def echouer(_repli: bool) -> Any:
++        raise UsineErreur("lecture impossible")
++
++    services = cli.services_ecrans(racine_publiee)
++    client = TestClient(
++        creer_application(
++            repli=False,
++            lire_manifeste=cli.lecture_manifeste(racine_publiee),
++            lire_consultation=echouer,
++            services=services,
++        ),
++        base_url=f"http://{HOTE}",
++    )
++    vue = client.get("/api/agent").json()
++    assert vue["erreur"] == "lecture impossible"
++    assert vue["lien_repli"]["url"] == "/chaine"
++
++
++def test_le_mode_courant_s_applique_aux_ecrans(racine_publiee: Path) -> None:
++    client = application(racine_publiee)
++    assert client.get("/api/agent").json()["mode"] == "reel"
++    assert client.post("/api/mode", json={"mode": "repli"}).status_code == 200
++    vue = client.get("/api/agent").json()
++    assert vue["mode"] == "repli"
++    assert vue["saisie"] is None
++    assert client.get("/api/agent/enregistrees/0").status_code == 200
++    client.post("/api/mode", json={"mode": "reel"})
++    assert client.get("/api/agent/enregistrees/0").status_code == 409
++
++
++# --- Avant / après ---
++
++
++def racine_mesuree(tmp_path: Path, **options: Any) -> Path:
++    shutil.copytree(Path(cli.__file__).parents[3] / "config", tmp_path / "config")
++    publier(tmp_path, manifeste(**options))
++    return tmp_path
++
++
++def test_avant_apres_valeurs_des_deux_periodes(tmp_path: Path) -> None:
++    racine = racine_mesuree(tmp_path, secondes=3.4)
++    brut = application(racine).get("/api/avant-apres")
++    vue = brut.json()
++    assert vue["erreur"] is None
++    assert vue["manuel"]["valeurs"] == {"rapport": "120 min", "cumul": "600 min"}
++    assert vue["manuel"]["etiquette"] == "déclaré"
++    assert vue["chaine"]["valeurs"] == {"rapport": "3,4 s", "cumul": "17 s"}
++    assert vue["chaine"]["etiquette"] == "mesuré"
++    assert [o["valeur"] for o in vue["periodes"]] == ["rapport", "cumul"]
++    assert vue["tableau"]["colonnes"] == [
++        "Rapport",
++        "Reporting manuel (déclaré)",
++        "Chaîne (mesuré)",
++    ]
++    assert vue["tableau"]["lignes"] == [
++        ["Par Rapport quotidien", "120 min", "3,4 s"],
++        ["Cumulé sur 5 Rapports", "600 min", "17 s"],
++    ]
++    assert "20261012T073000Z-aaaaaa" in vue["legende"]
++    assert vue["avertissements"] == []
++    texte = brut.text.lower()
++    assert "%" not in texte
++    assert "écart" not in texte
++    assert "ratio" not in texte
++    assert avant_apres.MENTION_FICTIVE in vue["legende"]
++
++
++def test_avant_apres_periode_choisie(tmp_path: Path) -> None:
++    client = application(racine_mesuree(tmp_path))
++    assert client.get("/api/avant-apres?periode=cumul").json()["periode"] == "cumul"
++    assert client.get("/api/avant-apres").json()["periode"] == "rapport"
++    assert client.get("/api/avant-apres?periode=ecart").status_code == 422
++
++
++def test_avant_apres_avertissements(tmp_path: Path) -> None:
++    racine = racine_mesuree(tmp_path / "a", classification_initiale=True)
++    vue = application(racine).get("/api/avant-apres").json()
++    assert vue["avertissements"] == [avant_apres.SEULE_CLASSIFICATION_INITIALE]
++    assert vue["chaine"] is None
++    assert vue["manuel"]["valeurs"]["rapport"] == "120 min"
++    assert vue["legende"] is None
++
++    sans_config = racine_mesuree(tmp_path / "b")
++    (sans_config / "config" / "demo.yaml").unlink()
++    vue = application(sans_config).get("/api/avant-apres").json()
++    assert vue["avertissements"] == [avant_apres.CONFIG_ABSENTE]
++    assert vue["manuel"] is None
++    assert vue["chaine"]["valeurs"]["rapport"] == "3,4 s"
++    assert vue["tableau"]["colonnes"] == ["Rapport", "Chaîne (mesuré)"]
++
++    invalide = racine_mesuree(tmp_path / "c")
++    (invalide / "config" / "demo.yaml").write_text("temps_manuel_minutes_par_rapport: 0\n")
++    vue = application(invalide).get("/api/avant-apres").json()
++    assert vue["erreur"].startswith("Configuration de la démo invalide")
++
++
++def test_avant_apres_aucun_passage(tmp_path: Path) -> None:
++    shutil.copytree(Path(cli.__file__).parents[3] / "config", tmp_path / "config")
++    vue = application(tmp_path).get("/api/avant-apres").json()
++    assert vue["message"] == avant_apres.AUCUN_PASSAGE
++    assert vue["manuel"] is None
++    assert vue["chaine"] is None
++
++
++def test_avant_apres_mode_repli_lit_la_copie(racine_publiee: Path, tmp_path: Path) -> None:
++    vue = application(racine_publiee, repli=True).get("/api/avant-apres").json()
++    assert vue["erreur"] is None
++    assert vue["manuel"] is not None or vue["avertissements"]
++    vide = application(tmp_path, repli=True).get("/api/avant-apres").json()
++    assert vide["erreur"] == REPLI_ABSENT
++
++
++def test_manifestes_mesures_du_repli(racine_publiee: Path, tmp_path: Path) -> None:
++    mesure, dernier = cli.manifestes_mesures(racine_publiee, True)
++    assert dernier is not None
++    assert (mesure is None) == dernier.classification_initiale
++    with pytest.raises(UsineErreur):
++        cli.manifestes_mesures(tmp_path, True)
++    assert cli.manifestes_mesures(tmp_path, False) == (None, None)
++
++
++# --- Pseudonymisation ---
++
++
++def apercu_factice(
++    texte: str = "<b>[PERSONNE_1]</b> a écrit",
++) -> Callable[[], Callable[[str], str]]:
++    return lambda: lambda _original: texte
++
++
++def test_pseudonymisation_cote_a_cote_en_texte_brut(racine_publiee: Path) -> None:
++    client = application(racine_publiee, repli=True, apercu_pseudonymisation=apercu_factice())
++    brut = client.get("/api/pseudonymisation?ticket=DEMO-17")
++    vue = brut.json()
++    assert vue["erreur"] is None
++    assert vue["ticket"]["cle"] == "DEMO-17"
++    assert vue["ticket"]["url"] is None  # Mode repli : texte simple
++    assert vue["tickets"] == sorted(vue["tickets"])
++    assert "DEMO-17" in vue["tickets"]
++    assert vue["original"]
++    assert vue["pseudonymise"] == "<b>[PERSONNE_1]</b> a écrit"  # brut, sans HTML ni surlignage
++    assert vue["legende"] == pseudonymisation.LEGENDE
++    assert "<mark" not in brut.text
++    assert vue["titre_original"] == "Original"
++    assert vue["titre_pseudonymise"] == "Version pseudonymisée"
++    assert vue["etiquette_pseudonymise"] == "envoyée au LLM"
++
++
++def test_pseudonymisation_ticket_par_defaut_et_inconnu(racine_publiee: Path) -> None:
++    client = application(racine_publiee, repli=True, apercu_pseudonymisation=apercu_factice())
++    vue = client.get("/api/pseudonymisation").json()
++    assert vue["ticket"]["cle"] == vue["tickets"][0]
++    inconnu = client.get("/api/pseudonymisation?ticket=NOPE-1").json()
++    assert "NOPE-1" in inconnu["erreur"]
++    assert inconnu["original"] is None
++    assert inconnu["tickets"]
++
++
++def test_moteur_absent_nomme_dans_le_bandeau(racine_publiee: Path) -> None:
++    def moteur_absent() -> Callable[[str], str]:
++        raise ImportError("No module named 'presidio_analyzer'")
++
++    client = application(racine_publiee, repli=True, apercu_pseudonymisation=moteur_absent)
++    vue = client.get("/api/pseudonymisation?ticket=DEMO-17").json()
++    assert "Moteur de Pseudonymisation indisponible (Presidio ou modèle spaCy)" in vue["erreur"]
++    assert "presidio_analyzer" in vue["erreur"]
++    assert vue["original"] is None
++    assert vue["pseudonymise"] is None
++    assert vue["tickets"]  # la sélection du ticket reste utilisable
++
++
++def test_moteur_en_echec_nomme_dans_le_bandeau(racine_publiee: Path) -> None:
++    def moteur_en_echec() -> Callable[[str], str]:
++        def apercu(_texte: str) -> str:
++            raise ValueError("modèle spaCy fr_core_news_md incompatible\ndétail")
++
++        return apercu
++
++    client = application(racine_publiee, repli=True, apercu_pseudonymisation=moteur_en_echec)
++    reponse = client.get("/api/pseudonymisation?ticket=DEMO-17")
++    assert reponse.status_code == 200
++    vue = reponse.json()
++    assert vue["erreur"] == (
++        "Moteur de Pseudonymisation indisponible (Presidio ou modèle spaCy) : ValueError :"
++        " modèle spaCy fr_core_news_md incompatible"
++    )
++    assert vue["tickets"]
++
++
++def test_aperçu_impossible_cle_absente(racine_publiee: Path) -> None:
++    def sans_cle() -> Callable[[str], str]:
++        raise UsineErreur("USINE_CLE_PSEUDO absente")
++
++    client = application(racine_publiee, repli=True, apercu_pseudonymisation=sans_cle)
++    vue = client.get("/api/pseudonymisation").json()
++    assert vue["erreur"] == "Aperçu de la Pseudonymisation impossible : USINE_CLE_PSEUDO absente"
++
++
++def test_pseudonymisation_sans_passage(tmp_path: Path) -> None:
++    vue = application(tmp_path).get("/api/pseudonymisation").json()
++    assert vue["message"].startswith("Aucun Passage publié")
++    assert vue["lien_message"]["url"] == "/chaine"
++
++
++# --- Outillage ---
++
++
++def test_fiche_rendue_sans_marqueurs_ni_titre(racine_publiee: Path) -> None:
++    vue = application(racine_publiee).get("/api/outillage").json()
++    html = vue["html"]
++    assert vue["legende"] == outillage.LEGENDE
++    assert "<h1" not in html
++    assert "<h2>Demandes, par ordre de priorité</h2>" in html
++    assert "<ol>" in html
++    assert 'role="region" tabindex="0"' in html  # tableau défilant, région focalisable
++    for marqueur in ("✅", "⚠
+[... diff tronque a 60 000 caracteres ...]

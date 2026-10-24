@@ -1,0 +1,47 @@
+{
+ "modele": "moonshotai/kimi-k3.1-pro",
+ "story": "S6-7-15",
+ "latence_s": 821.5,
+ "usage": {
+  "prompt_tokens": 22197,
+  "completion_tokens": 6647,
+  "total_tokens": 28844,
+  "cost": 0.110864,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.110864,
+   "upstream_inference_prompt_cost": 0.044394,
+   "upstream_inference_completions_cost": 0.06647
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 6322,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.4738736,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "length",
+   "jetons_sortis": 32000,
+   "cout_usd": 0.3630096,
+   "latence_s": 682.1
+  },
+  {
+   "effort": "low",
+   "finish_reason": "stop",
+   "jetons_sortis": 6647,
+   "cout_usd": 0.110864,
+   "latence_s": 139.4
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"tests/unit/ui/test_chaine.py\",\"ligne\":500,\"severite\":\"Nit\",\"description\":\"Les tests de `chaine.html` et `chaine.js` se limitent à rechercher des chaînes de caractères. Ils passeraient donc même si les boutons n’avaient aucun gestionnaire, si le sondage ne reprenait pas au retour sur `/chaine`, ou si les motifs n’étaient jamais reliés aux boutons. Les principaux comportements navigateur des critères d’acceptation restent ainsi sans vérification automatisée, sans défaut précis démontré dans l’implémentation.\",\"test_pytest\":null},{\"id\":\"C2\",\"fichier\":\"tests/unit/ui/test_chaine.py\",\"ligne\":241,\"severite\":\"Nit\",\"description\":\"`test_fin_de_chaine_reussie` vérifie le bandeau et le bouton de relance, mais pas l’autre exigence d’intégration de la fin réussie : l’en-tête doit afficher le nouveau Passage. Le banc utilise en outre un manifeste fixe, donc il ne pourrait pas distinguer un rafraîchissement correct d’un cadre conservant l’ancien Passage.\",\"test_pytest\":null}]}"
+}

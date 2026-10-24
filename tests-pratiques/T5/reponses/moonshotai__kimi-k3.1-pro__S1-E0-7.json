@@ -1,0 +1,40 @@
+{
+ "modele": "moonshotai/kimi-k3.1-pro",
+ "story": "S1-E0-7",
+ "latence_s": 661.6,
+ "usage": {
+  "prompt_tokens": 23735,
+  "completion_tokens": 28785,
+  "total_tokens": 52520,
+  "cost": 0.326104,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 5120,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.326104,
+   "upstream_inference_prompt_cost": 0.038254,
+   "upstream_inference_completions_cost": 0.28785
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 28460,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.326104,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 28785,
+   "cout_usd": 0.326104,
+   "latence_s": 661.6
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/usine/ia/controles.py\",\"ligne\":47,\"severite\":\"Important\",\"description\":\"Le filtrage par `projets` ignore toute clé dont le projet n'est pas déjà représenté dans `tickets_autorises`. Ainsi, avec seul `DEMO-1` autorisé, la phrase `DEMO-1 et ABC-2 sont cités.` est conservée : `ABC-2` est ignoré au lieu d'être reconnu comme une citation hors cause. Cela viole la règle centrale du contrôle, qui impose de retirer une phrase dès qu'elle cite une clé absente des tickets autorisés ; seuls les codes d'indicateur et d'Entité doivent être exclus.\",\"test_pytest\":\"from usine.ia.controles import controler_citations\\n\\n\\ndef test_une_cle_hors_cause_dun_autre_projet_fait_retirer_la_phrase() -> None:\\n    controle = controler_citations(\\n        \\\"DEMO-1 et ABC-2 sont cités.\\\",\\n        (\\\"DEMO-1\\\",),\\n    )\\n\\n    assert controle.texte == \\\"\\\"\\n    assert controle.citations == ()\\n    assert controle.phrases_retirees == 1\\n\"}]}"
+}
