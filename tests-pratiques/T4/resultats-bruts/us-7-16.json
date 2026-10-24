@@ -1,0 +1,307 @@
+{
+ "story": "us-7-16",
+ "base": "5545523^",
+ "tests": [
+  "tests/unit/ui/test_ecrans_web.py",
+  "tests/unit/ui/test_vues_ecrans.py",
+  "tests/unit/ui/test_serveur.py",
+  "tests/unit/ui/test_chaine.py"
+ ],
+ "modules": [
+  {
+   "module": "src/usine/ui/ecrans.py",
+   "generated": 319,
+   "excluded_annotations": 154,
+   "excluded_outside_diff": 0,
+   "effective": 165,
+   "exec_seconds": 700.7,
+   "budget_exceeded": false,
+   "done": 165,
+   "killed": 155,
+   "survived": 10,
+   "incompetent": 0,
+   "pending": 0,
+   "survival_rate": 0.061,
+   "survivors": [
+    {
+     "line": 82,
+     "operator": "core/ReplaceTrueWithFalse",
+     "function": null,
+     "diff": "-@dataclass(frozen=True)\n+@dataclass(frozen=False)"
+    },
+    {
+     "line": 123,
+     "operator": "core/ReplaceComparisonOperator_NotEq_Lt",
+     "function": "repondre",
+     "diff": "-            if self._session is not None and self._session.passage_id != passage_id:\n+            if self._session is not None and self._session.passage_id < passage_id:"
+    },
+    {
+     "line": 142,
+     "operator": "core/ReplaceComparisonOperator_Is_GtE",
+     "function": "vue_reponse_agent",
+     "diff": "-    rejetee = reponse.statut_controle is StatutControle.rejete\n+    rejetee = reponse.statut_controle >= StatutControle.rejete"
+    },
+    {
+     "line": 142,
+     "operator": "core/ReplaceComparisonOperator_Is_Eq",
+     "function": "vue_reponse_agent",
+     "diff": "-    rejetee = reponse.statut_controle is StatutControle.rejete\n+    rejetee = reponse.statut_controle == StatutControle.rejete"
+    },
+    {
+     "line": 143,
+     "operator": "core/ReplaceComparisonOperator_Eq_GtE",
+     "function": "vue_reponse_agent",
+     "diff": "-    hors_perimetre = not rejetee and reponse.texte.strip() == texte_hors_perimetre\n+    hors_perimetre = not rejetee and reponse.texte.strip() >= texte_hors_perimetre"
+    },
+    {
+     "line": 168,
+     "operator": "core/AddNot",
+     "function": "_vue_agent",
+     "diff": "-        \"titre_questions\": TITRE_QUESTIONS_REPLI if repli else TITRE_QUESTIONS_REEL,\n+        \"titre_questions\": TITRE_QUESTIONS_REPLI if not repli else TITRE_QUESTIONS_REEL,"
+    },
+    {
+     "line": 212,
+     "operator": "core/ReplaceFalseWithTrue",
+     "function": "vue_agent",
+     "diff": "-        return _vue_agent(False, message=agent.AUCUN_PASSAGE, lien_message=LIEN_CHAINE)\n+        return _vue_agent(True, message=agent.AUCUN_PASSAGE, lien_message=LIEN_CHAINE)"
+    },
+    {
+     "line": 285,
+     "operator": "core/ReplaceComparisonOperator_Is_Eq",
+     "function": "_tableau",
+     "diff": "-        \"Reporting manuel (déclaré)\" if carte is manuel else \"Chaîne (mesuré)\" for carte in cartes\n+        \"Reporting manuel (déclaré)\" if carte == manuel else \"Chaîne (mesuré)\" for carte in cartes"
+    },
+    {
+     "line": 321,
+     "operator": "core/ReplaceComparisonOperator_Is_IsNot",
+     "function": "vue_avant_apres",
+     "diff": "-        tableau=None if manuel is None and chaine is None else _tableau(manuel, chaine),\n+        tableau=None if manuel is not None and chaine is None else _tableau(manuel, chaine),"
+    },
+    {
+     "line": 321,
+     "operator": "core/AddNot",
+     "function": "vue_avant_apres",
+     "diff": "-        tableau=None if manuel is None and chaine is None else _tableau(manuel, chaine),\n+        tableau=None if not manuel is None and chaine is None else _tableau(manuel, chaine),"
+    }
+   ]
+  },
+  {
+   "module": "src/usine/ui/outillage.py",
+   "generated": 96,
+   "excluded_annotations": 11,
+   "excluded_outside_diff": 12,
+   "effective": 73,
+   "exec_seconds": 458.1,
+   "budget_exceeded": false,
+   "done": 73,
+   "killed": 51,
+   "survived": 22,
+   "incompetent": 0,
+   "pending": 0,
+   "survival_rate": 0.301,
+   "survivors": [
+    {
+     "line": 55,
+     "operator": "core/NumberReplacer",
+     "function": "_pastille",
+     "diff": "-    jeton = Token(\"html_inline\", \"\", 0)\n+    jeton = Token(\"html_inline\", \"\", 1)"
+    },
+    {
+     "line": 55,
+     "operator": "core/NumberReplacer",
+     "function": "_pastille",
+     "diff": "-    jeton = Token(\"html_inline\", \"\", 0)\n+    jeton = Token(\"html_inline\", \"\", -1)"
+    },
+    {
+     "line": 64,
+     "operator": "core/ReplaceComparisonOperator_NotEq_Lt",
+     "function": "_pastilles",
+     "diff": "-        if jeton.type != \"text\" or not _MARQUEUR.search(jeton.content):\n+        if jeton.type < \"text\" or not _MARQUEUR.search(jeton.content):"
+    },
+    {
+     "line": 64,
+     "operator": "core/ReplaceOrWithAnd",
+     "function": "_pastilles",
+     "diff": "-        if jeton.type != \"text\" or not _MARQUEUR.search(jeton.content):\n+        if jeton.type != \"text\" and not _MARQUEUR.search(jeton.content):"
+    },
+    {
+     "line": 64,
+     "operator": "core/ReplaceComparisonOperator_NotEq_Gt",
+     "function": "_pastilles",
+     "diff": "-        if jeton.type != \"text\" or not _MARQUEUR.search(jeton.content):\n+        if jeton.type > \"text\" or not _MARQUEUR.search(jeton.content):"
+    },
+    {
+     "line": 64,
+     "operator": "core/ReplaceComparisonOperator_NotEq_IsNot",
+     "function": "_pastilles",
+     "diff": "-        if jeton.type != \"text\" or not _MARQUEUR.search(jeton.content):\n+        if jeton.type is not \"text\" or not _MARQUEUR.search(jeton.content):"
+    },
+    {
+     "line": 66,
+     "operator": "core/ReplaceContinueWithBreak",
+     "function": "_pastilles",
+     "diff": "-            continue\n+            break"
+    },
+    {
+     "line": 72,
+     "operator": "core/NumberReplacer",
+     "function": "_pastilles",
+     "diff": "-                texte = Token(\"text\", \"\", 0)\n+                texte = Token(\"text\", \"\", -1)"
+    },
+    {
+     "line": 72,
+     "operator": "core/NumberReplacer",
+     "function": "_pastilles",
+     "diff": "-                texte = Token(\"text\", \"\", 0)\n+                texte = Token(\"text\", \"\", 1)"
+    },
+    {
+     "line": 86,
+     "operator": "core/NumberReplacer",
+     "function": "rendre_fiche",
+     "diff": "-    rang = 0\n+    rang = 1"
+    },
+    {
+     "line": 86,
+     "operator": "core/NumberReplacer",
+     "function": "rendre_fiche",
+     "diff": "-    rang = 0\n+    rang = -1"
+    },
+    {
+     "line": 87,
+     "operator": "core/ReplaceComparisonOperator_Lt_NotEq",
+     "function": "rendre_fiche",
+     "diff": "-    while rang < len(jetons):\n+    while rang != len(jetons):"
+    },
+    {
+     "line": 89,
+     "operator": "core/ReplaceComparisonOperator_Eq_Is",
+     "function": "rendre_fiche",
+     "diff": "-        if jeton.type == \"heading_open\" and jeton.tag == \"h1\":\n+        if jeton.type is \"heading_open\" and jeton.tag == \"h1\":"
+    },
+    {
+     "line": 89,
+     "operator": "core/ReplaceComparisonOperator_Eq_LtE",
+     "function": "rendre_fiche",
+     "diff": "-        if jeton.type == \"heading_open\" and jeton.tag == \"h1\":\n+        if jeton.type == \"heading_open\" and jeton.tag <= \"h1\":"
+    },
+    {
+     "line": 89,
+     "operator": "core/ReplaceComparisonOperator_Eq_GtE",
+     "function": "rendre_fiche",
+     "diff": "-        if jeton.type == \"heading_open\" and jeton.tag == \"h1\":\n+        if jeton.type >= \"heading_open\" and jeton.tag == \"h1\":"
+    },
+    {
+     "line": 89,
+     "operator": "core/ReplaceComparisonOperator_Eq_LtE",
+     "function": "rendre_fiche",
+     "diff": "-        if jeton.type == \"heading_open\" and jeton.tag == \"h1\":\n+        if jeton.type <= \"heading_open\" and jeton.tag == \"h1\":"
+    },
+    {
+     "line": 90,
+     "operator": "core/NumberReplacer",
+     "function": "rendre_fiche",
+     "diff": "-            rang += 3  # ouverture, contenu, fermeture\n+            rang += 2  # ouverture, contenu, fermeture"
+    },
+    {
+     "line": 90,
+     "operator": "core/NumberReplacer",
+     "function": "rendre_fiche",
+     "diff": "-            rang += 3  # ouverture, contenu, fermeture\n+            rang += 4  # ouverture, contenu, fermeture"
+    },
+    {
+     "line": 92,
+     "operator": "core/ReplaceComparisonOperator_Eq_GtE",
+     "function": "rendre_fiche",
+     "diff": "-        if jeton.type == \"inline\" and jeton.children:\n+        if jeton.type >= \"inline\" and jeton.children:"
+    },
+    {
+     "line": 92,
+     "operator": "core/ReplaceComparisonOperator_Eq_Is",
+     "function": "rendre_fiche",
+     "diff": "-        if jeton.type == \"inline\" and jeton.children:\n+        if jeton.type is \"inline\" and jeton.children:"
+    },
+    {
+     "line": 92,
+     "operator": "core/ReplaceAndWithOr",
+     "function": "rendre_fiche",
+     "diff": "-        if jeton.type == \"inline\" and jeton.children:\n+        if jeton.type == \"inline\" or jeton.children:"
+    },
+    {
+     "line": 92,
+     "operator": "core/ReplaceComparisonOperator_Eq_LtE",
+     "function": "rendre_fiche",
+     "diff": "-        if jeton.type == \"inline\" and jeton.children:\n+        if jeton.type <= \"inline\" and jeton.children:"
+    }
+   ]
+  },
+  {
+   "module": "src/usine/ui/pseudonymisation.py",
+   "generated": 6,
+   "excluded_annotations": 0,
+   "excluded_outside_diff": 3,
+   "effective": 3,
+   "exec_seconds": 13.4,
+   "budget_exceeded": false,
+   "done": 3,
+   "killed": 3,
+   "survived": 0,
+   "incompetent": 0,
+   "pending": 0,
+   "survival_rate": 0.0,
+   "survivors": []
+  },
+  {
+   "module": "src/usine/ui/vues.py",
+   "generated": 59,
+   "excluded_annotations": 30,
+   "excluded_outside_diff": 20,
+   "effective": 9,
+   "exec_seconds": 5.8,
+   "budget_exceeded": true,
+   "done": 0,
+   "killed": 0,
+   "survived": 0,
+   "incompetent": 0,
+   "pending": 9,
+   "survival_rate": null,
+   "survivors": []
+  },
+  {
+   "module": "src/usine/ui/serveur.py",
+   "generated": 306,
+   "excluded_annotations": 88,
+   "excluded_outside_diff": 133,
+   "effective": 85,
+   "exec_seconds": 0.0,
+   "budget_exceeded": false,
+   "done": 0,
+   "killed": 0,
+   "survived": 0,
+   "incompetent": 0,
+   "pending": 85,
+   "survival_rate": null,
+   "survivors": []
+  },
+  {
+   "module": "src/usine/ui/cli.py",
+   "generated": 262,
+   "excluded_annotations": 99,
+   "excluded_outside_diff": 158,
+   "effective": 5,
+   "exec_seconds": 0.0,
+   "budget_exceeded": false,
+   "done": 0,
+   "killed": 0,
+   "survived": 0,
+   "incompetent": 0,
+   "pending": 5,
+   "survival_rate": null,
+   "survivors": []
+  }
+ ],
+ "test_command": "<user>/AppData/Local/Temp/claude/C--Users-user-Documents-GitHub/791fed94-a8b0-414e-8a6c-8fe967283749/scratchpad/t4/us-7-16/.venv/Scripts/python.exe -m pytest -x -q --tb=no -p no:cacheprovider tests/unit/ui/test_ecrans_web.py tests/unit/ui/test_vues_ecrans.py tests/unit/ui/test_serveur.py tests/unit/ui/test_chaine.py",
+ "tests_seconds": 12.4,
+ "tests_rc": 0,
+ "tests_tail": "148 passed in 7.64s",
+ "total_seconds": 1202.1
+}

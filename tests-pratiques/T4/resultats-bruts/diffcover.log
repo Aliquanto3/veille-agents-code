@@ -1,0 +1,75 @@
+##### wd-5-9
+19 passed in 2.77s
+src/wavedevsecops/engine/steps.py (100%)
+src/wavedevsecops/scenarios/loader.py (100%)
+src/wavedevsecops/scenarios/model.py (100%)
+src/wavedevsecops/web/app.py (50.0%): Missing lines 230
+src/wavedevsecops/web/blockers.py (88.0%): Missing lines 31,41-43,56,66
+src/wavedevsecops/web/catalogue.py (100%)
+-------------
+Total:   99 lines
+Missing: 8 lines
+Coverage: 91%
+-------------
+
+diff-cover rc=0 duree=4s
+##### wd-8-4
+23 passed in 21.48s
+src/wavedevsecops/ci/__init__.py (83.8%): Missing lines 432,435,438-441
+src/wavedevsecops/ci/findings.py (93.2%): Missing lines 394,406,437-438
+src/wavedevsecops/config.py (100%)
+src/wavedevsecops/scenarios/ops/replace_in_file.py (92.3%): Missing lines 39,47-48
+src/wavedevsecops/scenarios/steps/pr_state.py (92.3%): Missing lines 105
+src/wavedevsecops/toolrun/__init__.py (14.3%): Missing lines 543,545,553-555,564
+-------------
+Total:   157 lines
+Missing: 20 lines
+Coverage: 87%
+-------------
+
+diff-cover rc=0 duree=22s
+##### us-7-14
+146 passed in 7.01s
+src/usine/ui/carte.py (100%)
+src/usine/ui/cli.py (100%)
+src/usine/ui/detail.py (90.3%): Missing lines 194,233,235,250,313,346,438-439,459,543
+src/usine/ui/liens.py (100%)
+src/usine/ui/serveur.py (97.0%): Missing lines 125-126
+src/usine/ui/vues.py (100%)
+-------------
+Total:   378 lines
+Missing: 12 lines
+Coverage: 96%
+-------------
+
+diff-cover rc=0 duree=11s
+##### us-7-15
+131 passed in 9.13s
+src/usine/ui/app.py (100%)
+src/usine/ui/chaine.py (98.1%): Missing lines 129-130,290
+src/usine/ui/cli.py (100%)
+src/usine/ui/serveur.py (100%)
+src/usine/ui/textes.py (100%)
+src/usine/ui/vues.py (100%)
+-------------
+Total:   266 lines
+Missing: 3 lines
+Coverage: 98%
+-------------
+
+diff-cover rc=0 duree=14s
+##### us-7-16
+148 passed in 10.79s
+src/usine/ui/cli.py (94.1%): Missing lines 211
+src/usine/ui/ecrans.py (99.3%): Missing lines 372
+src/usine/ui/outillage.py (100%)
+src/usine/ui/pseudonymisation.py (100%)
+src/usine/ui/serveur.py (92.8%): Missing lines 328-329,356,361-362,397-398
+src/usine/ui/vues.py (100%)
+-------------
+Total:   400 lines
+Missing: 9 lines
+Coverage: 97%
+-------------
+
+diff-cover rc=0 duree=15s

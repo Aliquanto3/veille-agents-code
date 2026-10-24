@@ -1,0 +1,227 @@
+{
+ "story": "wd-5-9",
+ "base": "45fb3b4^",
+ "tests": [
+  "tests/test_blockers.py"
+ ],
+ "modules": [
+  {
+   "module": "src/wavedevsecops/web/blockers.py",
+   "generated": 68,
+   "excluded_annotations": 33,
+   "excluded_outside_diff": 0,
+   "effective": 35,
+   "exec_seconds": 55.7,
+   "budget_exceeded": false,
+   "done": 35,
+   "killed": 17,
+   "survived": 18,
+   "incompetent": 0,
+   "pending": 0,
+   "survival_rate": 0.514,
+   "survivors": [
+    {
+     "line": 41,
+     "operator": "core/ExceptionReplacer",
+     "function": "catalogue_scenario_titles",
+     "diff": "-        except (ScenarioError, OSError, UnicodeDecodeError) as error:\n+        except (CosmicRayTestingException, OSError, UnicodeDecodeError) as error:"
+    },
+    {
+     "line": 41,
+     "operator": "core/ExceptionReplacer",
+     "function": "catalogue_scenario_titles",
+     "diff": "-        except (ScenarioError, OSError, UnicodeDecodeError) as error:\n+        except (ScenarioError, CosmicRayTestingException, UnicodeDecodeError) as error:"
+    },
+    {
+     "line": 41,
+     "operator": "core/ExceptionReplacer",
+     "function": "catalogue_scenario_titles",
+     "diff": "-        except (ScenarioError, OSError, UnicodeDecodeError) as error:\n+        except (ScenarioError, OSError, CosmicRayTestingException) as error:"
+    },
+    {
+     "line": 43,
+     "operator": "core/ReplaceContinueWithBreak",
+     "function": "catalogue_scenario_titles",
+     "diff": "-            continue\n+            break"
+    },
+    {
+     "line": 44,
+     "operator": "core/ReplaceOrWithAnd",
+     "function": "catalogue_scenario_titles",
+     "diff": "-        if scenario.catalogue and (scenario.mode == \"A\" or scenario.scenario_id not in titles):\n+        if scenario.catalogue and (scenario.mode == \"A\" and scenario.scenario_id not in titles):"
+    },
+    {
+     "line": 44,
+     "operator": "core/ReplaceComparisonOperator_Eq_LtE",
+     "function": "catalogue_scenario_titles",
+     "diff": "-        if scenario.catalogue and (scenario.mode == \"A\" or scenario.scenario_id not in titles):\n+        if scenario.catalogue and (scenario.mode <= \"A\" or scenario.scenario_id not in titles):"
+    },
+    {
+     "line": 44,
+     "operator": "core/ReplaceComparisonOperator_Eq_GtE",
+     "function": "catalogue_scenario_titles",
+     "diff": "-        if scenario.catalogue and (scenario.mode == \"A\" or scenario.scenario_id not in titles):\n+        if scenario.catalogue and (scenario.mode >= \"A\" or scenario.scenario_id not in titles):"
+    },
+    {
+     "line": 44,
+     "operator": "core/ReplaceComparisonOperator_Eq_Is",
+     "function": "catalogue_scenario_titles",
+     "diff": "-        if scenario.catalogue and (scenario.mode == \"A\" or scenario.scenario_id not in titles):\n+        if scenario.catalogue and (scenario.mode is \"A\" or scenario.scenario_id not in titles):"
+    },
+    {
+     "line": 44,
+     "operator": "core/ReplaceComparisonOperator_Eq_NotEq",
+     "function": "catalogue_scenario_titles",
+     "diff": "-        if scenario.catalogue and (scenario.mode == \"A\" or scenario.scenario_id not in titles):\n+        if scenario.catalogue and (scenario.mode != \"A\" or scenario.scenario_id not in titles):"
+    },
+    {
+     "line": 44,
+     "operator": "core/ReplaceComparisonOperator_Eq_Lt",
+     "function": "catalogue_scenario_titles",
+     "diff": "-        if scenario.catalogue and (scenario.mode == \"A\" or scenario.scenario_id not in titles):\n+        if scenario.catalogue and (scenario.mode < \"A\" or scenario.scenario_id not in titles):"
+    },
+    {
+     "line": 44,
+     "operator": "core/ReplaceComparisonOperator_Eq_Gt",
+     "function": "catalogue_scenario_titles",
+     "diff": "-        if scenario.catalogue and (scenario.mode == \"A\" or scenario.scenario_id not in titles):\n+        if scenario.catalogue and (scenario.mode > \"A\" or scenario.scenario_id not in titles):"
+    },
+    {
+     "line": 44,
+     "operator": "core/ReplaceComparisonOperator_Eq_IsNot",
+     "function": "catalogue_scenario_titles",
+     "diff": "-        if scenario.catalogue and (scenario.mode == \"A\" or scenario.scenario_id not in titles):\n+        if scenario.catalogue and (scenario.mode is not \"A\" or scenario.scenario_id not in titles):"
+    },
+    {
+     "line": 44,
+     "operator": "core/ReplaceAndWithOr",
+     "function": "catalogue_scenario_titles",
+     "diff": "-        if scenario.catalogue and (scenario.mode == \"A\" or scenario.scenario_id not in titles):\n+        if scenario.catalogue or (scenario.mode == \"A\" or scenario.scenario_id not in titles):"
+    },
+    {
+     "line": 53,
+     "operator": "core/ReplaceOrWithAnd",
+     "function": "blockers_body",
+     "diff": "-    settings = settings or get_settings()\n+    settings = settings and get_settings()"
+    },
+    {
+     "line": 65,
+     "operator": "core/ReplaceComparisonOperator_Is_IsNot",
+     "function": "blockers_body",
+     "diff": "-        if delivered and title is None:\n+        if delivered and title is not None:"
+    },
+    {
+     "line": 65,
+     "operator": "core/AddNot",
+     "function": "blockers_body",
+     "diff": "-        if delivered and title is None:\n+        if not delivered and title is None:"
+    },
+    {
+     "line": 65,
+     "operator": "core/ReplaceAndWithOr",
+     "function": "blockers_body",
+     "diff": "-        if delivered and title is None:\n+        if delivered or title is None:"
+    },
+    {
+     "line": 76,
+     "operator": "core/AddNot",
+     "function": "blockers_body",
+     "diff": "-            soon_text = chain.map.soon_text if chain.map else SOON_FALLBACK_TEXT\n+            soon_text = chain.map.soon_text if not chain.map else SOON_FALLBACK_TEXT"
+    }
+   ]
+  },
+  {
+   "module": "src/wavedevsecops/scenarios/model.py",
+   "generated": 110,
+   "excluded_annotations": 46,
+   "excluded_outside_diff": 42,
+   "effective": 22,
+   "exec_seconds": 29.1,
+   "budget_exceeded": false,
+   "done": 22,
+   "killed": 14,
+   "survived": 8,
+   "incompetent": 0,
+   "pending": 0,
+   "survival_rate": 0.364,
+   "survivors": [
+    {
+     "line": 55,
+     "operator": "core/ReplaceTrueWithFalse",
+     "function": "Blocker",
+     "diff": "-    model_config = ConfigDict(frozen=True, extra=\"forbid\")\n+    model_config = ConfigDict(frozen=False, extra=\"forbid\")"
+    },
+    {
+     "line": 59,
+     "operator": "core/NumberReplacer",
+     "function": "Blocker",
+     "diff": "-    station: int = Field(ge=1, le=4)\n+    station: int = Field(ge=1, le= 3)"
+    },
+    {
+     "line": 59,
+     "operator": "core/NumberReplacer",
+     "function": "Blocker",
+     "diff": "-    station: int = Field(ge=1, le=4)\n+    station: int = Field(ge=1, le= 5)"
+    },
+    {
+     "line": 59,
+     "operator": "core/NumberReplacer",
+     "function": "Blocker",
+     "diff": "-    station: int = Field(ge=1, le=4)\n+    station: int = Field(ge= 0, le=4)"
+    },
+    {
+     "line": 63,
+     "operator": "core/NumberReplacer",
+     "function": "Blocker",
+     "diff": "-    reason_text: str = Field(min_length=1)\n+    reason_text: str = Field(min_length= 0)"
+    },
+    {
+     "line": 63,
+     "operator": "core/NumberReplacer",
+     "function": "Blocker",
+     "diff": "-    reason_text: str = Field(min_length=1)\n+    reason_text: str = Field(min_length= 2)"
+    },
+    {
+     "line": 132,
+     "operator": "core/ReplaceComparisonOperator_NotEq_Lt",
+     "function": "semantic_errors",
+     "diff": "-                elif barriers[blocker.barrier_id] != blocker.station:\n+                elif barriers[blocker.barrier_id] < blocker.station:"
+    },
+    {
+     "line": 132,
+     "operator": "core/ReplaceComparisonOperator_NotEq_IsNot",
+     "function": "semantic_errors",
+     "diff": "-                elif barriers[blocker.barrier_id] != blocker.station:\n+                elif barriers[blocker.barrier_id] is not blocker.station:"
+    }
+   ]
+  },
+  {
+   "module": "src/wavedevsecops/scenarios/loader.py",
+   "generated": 428,
+   "excluded_annotations": 121,
+   "excluded_outside_diff": 294,
+   "effective": 13,
+   "exec_seconds": 13.3,
+   "budget_exceeded": false,
+   "done": 13,
+   "killed": 12,
+   "survived": 1,
+   "incompetent": 0,
+   "pending": 0,
+   "survival_rate": 0.077,
+   "survivors": [
+    {
+     "line": 254,
+     "operator": "core/ReplaceBinaryOperator_Mul_Div",
+     "function": "load_scenario",
+     "diff": "-    *,\n+    /,"
+    }
+   ]
+  }
+ ],
+ "test_command": "<user>/AppData/Local/Temp/claude/C--Users-user-Documents-GitHub/791fed94-a8b0-414e-8a6c-8fe967283749/scratchpad/t4/wd-5-9/.venv/Scripts/python.exe -m pytest -x -q --tb=no -p no:cacheprovider tests/test_blockers.py",
+ "tests_seconds": 1.9,
+ "tests_rc": 0,
+ "tests_tail": "19 passed in 1.43s",
+ "total_seconds": 102.8
+}
