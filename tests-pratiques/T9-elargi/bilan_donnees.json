@@ -1,36 +1,36 @@
 {
- "agents_retenus": 333,
- "stories_ecartees_en_cours": 0,
- "stories_avec_numero": 230,
+ "agents_retenus": 453,
+ "stories_ecartees_en_cours": 2,
+ "stories_avec_numero": 269,
  "ecartes": {
-  "sans_spec_ante_dev": 4
+  "sans_spec_ante_dev": 26
  },
- "stories_etiquetees": 226,
+ "stories_etiquetees": 243,
  "lignes_post_dev_retirees": 0,
- "positifs_derapage": 15,
- "positifs_cout80": 46,
- "positifs_derapage_par_agent": 15,
- "positifs_haut20": 43,
+ "positifs_derapage": 25,
+ "positifs_cout80": 51,
+ "positifs_derapage_par_agent": 26,
+ "positifs_haut20": 47,
  "defaut_revue": {
-  "n_lisible": 225,
-  "positifs": 174
+  "n_lisible": 241,
+  "positifs": 184
  },
  "source_spec": {
-  "epics": 226,
-  "fichier": 0
+  "epics": 237,
+  "fichier": 6
  },
  "source_epics": {
-  "avant": 226,
+  "avant": 243,
   "jour": 0
  },
  "par_depot": {
   "service-public-slm-fine-tuning": {
-   "n": 31,
-   "stories_numerotees": 31,
-   "mediane_appels": 33,
-   "p80_cout_usd": 1.68,
-   "derapages": 1,
-   "cout80": 6
+   "n": 38,
+   "stories_numerotees": 60,
+   "mediane_appels": 35.0,
+   "p80_cout_usd": 3.41,
+   "derapages": 5,
+   "cout80": 8
   },
   "usine-migration-jira-demo": {
    "n": 12,
@@ -57,12 +57,12 @@
    "cout80": 13
   },
   "wavelocalai": {
-   "n": 54,
-   "stories_numerotees": 58,
-   "mediane_appels": 87.0,
-   "p80_cout_usd": 4.74,
-   "derapages": 1,
-   "cout80": 11
+   "n": 64,
+   "stories_numerotees": 68,
+   "mediane_appels": 95.5,
+   "p80_cout_usd": 5.35,
+   "derapages": 7,
+   "cout80": 14
   }
  }
 }

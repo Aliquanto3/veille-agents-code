@@ -2,9 +2,9 @@
 "bras": "jev",
 "modele": "typesafe/jev-1.13",
 "version_prompt": "t9e-1",
-"n": 226,
-"duree_s": 0,
-"cout_usd": 0.016976,
+"n": 243,
+"duree_s": 17,
+"cout_usd": 0.018672,
 "scores": {
 "service-public-slm-fine-tuning/10.4": {
 "p_derapage": 0.39,
@@ -2491,6 +2491,193 @@
 "latence_s": 0.279,
 "modele_repondu": "typesafe/jev-1.13-20260917",
 "sha": "2af115c6c4d0"
+},
+"service-public-slm-fine-tuning/12.14": {
+"p_derapage": 0.31,
+"p_cout80": 0.52,
+"p_defaut_revue": 0.69,
+"cout": 7.7154e-05,
+"tokens_in": 1837,
+"tokens_out": 59,
+"latence_s": 0.34,
+"modele_repondu": "typesafe/jev-1.13-20260917",
+"sha": "5efed55c1dda"
+},
+"service-public-slm-fine-tuning/12.15": {
+"p_derapage": 0.3,
+"p_cout80": 0.5,
+"p_defaut_revue": 0.7,
+"cout": 9.3408e-05,
+"tokens_in": 2224,
+"tokens_out": 59,
+"latence_s": 0.456,
+"modele_repondu": "typesafe/jev-1.13-20260917",
+"sha": "c7eee057b745"
+},
+"service-public-slm-fine-tuning/17.1": {
+"p_derapage": 0.52,
+"p_cout80": 0.71,
+"p_defaut_revue": 0.75,
+"cout": 0.000183876,
+"tokens_in": 4378,
+"tokens_out": 59,
+"latence_s": 0.481,
+"modele_repondu": "typesafe/jev-1.13-20260917",
+"sha": "ffeec3dbbec6"
+},
+"service-public-slm-fine-tuning/17.4": {
+"p_derapage": 0.52,
+"p_cout80": 0.71,
+"p_defaut_revue": 0.75,
+"cout": 0.000198786,
+"tokens_in": 4733,
+"tokens_out": 59,
+"latence_s": 0.592,
+"modele_repondu": "typesafe/jev-1.13-20260917",
+"sha": "b9e1f305300f"
+},
+"service-public-slm-fine-tuning/17.6": {
+"p_derapage": 0.54,
+"p_cout80": 0.69,
+"p_defaut_revue": 0.76,
+"cout": 0.000162918,
+"tokens_in": 3879,
+"tokens_out": 59,
+"latence_s": 1.89,
+"modele_repondu": "typesafe/jev-1.13-20260917",
+"sha": "6314a7b5d412"
+},
+"service-public-slm-fine-tuning/9.10": {
+"p_derapage": 0.4,
+"p_cout80": 0.54,
+"p_defaut_revue": 0.71,
+"cout": 0.000127932,
+"tokens_in": 3046,
+"tokens_out": 59,
+"latence_s": 0.9,
+"modele_repondu": "typesafe/jev-1.13-20260917",
+"sha": "e94a66707e6d"
+},
+"service-public-slm-fine-tuning/9.9": {
+"p_derapage": 0.29,
+"p_cout80": 0.5,
+"p_defaut_revue": 0.71,
+"cout": 0.000179634,
+"tokens_in": 4277,
+"tokens_out": 59,
+"latence_s": 0.676,
+"modele_repondu": "typesafe/jev-1.13-20260917",
+"sha": "564bf7355bce"
+},
+"wavelocalai/8.5": {
+"p_derapage": 0.54,
+"p_cout80": 0.67,
+"p_defaut_revue": 0.71,
+"cout": 9.5718e-05,
+"tokens_in": 2279,
+"tokens_out": 59,
+"latence_s": 0.818,
+"modele_repondu": "typesafe/jev-1.13-20260917",
+"sha": "924fef87f4b7"
+},
+"wavelocalai/9.1": {
+"p_derapage": 0.2,
+"p_cout80": 0.3,
+"p_defaut_revue": 0.68,
+"cout": 6.132e-05,
+"tokens_in": 1460,
+"tokens_out": 59,
+"latence_s": 0.705,
+"modele_repondu": "typesafe/jev-1.13-20260917",
+"sha": "8ab39510f016"
+},
+"wavelocalai/9.2": {
+"p_derapage": 0.35,
+"p_cout80": 0.55,
+"p_defaut_revue": 0.72,
+"cout": 7.4844e-05,
+"tokens_in": 1782,
+"tokens_out": 59,
+"latence_s": 0.768,
+"modele_repondu": "typesafe/jev-1.13-20260917",
+"sha": "9979fba27fae"
+},
+"wavelocalai/9.3": {
+"p_derapage": 0.28,
+"p_cout80": 0.43,
+"p_defaut_revue": 0.68,
+"cout": 6.2958e-05,
+"tokens_in": 1499,
+"tokens_out": 59,
+"latence_s": 0.514,
+"modele_repondu": "typesafe/jev-1.13-20260917",
+"sha": "f4452e7f7e79"
+},
+"wavelocalai/9.4": {
+"p_derapage": 0.26,
+"p_cout80": 0.4,
+"p_defaut_revue": 0.72,
+"cout": 6.3924e-05,
+"tokens_in": 1522,
+"tokens_out": 59,
+"latence_s": 0.715,
+"modele_repondu": "typesafe/jev-1.13-20260917",
+"sha": "05ae1fc1c5a1"
+},
+"wavelocalai/9.5": {
+"p_derapage": 0.37,
+"p_cout80": 0.53,
+"p_defaut_revue": 0.71,
+"cout": 6.5058e-05,
+"tokens_in": 1549,
+"tokens_out": 59,
+"latence_s": 0.77,
+"modele_repondu": "typesafe/jev-1.13-20260917",
+"sha": "0f288ef2e740"
+},
+"wavelocalai/9.6": {
+"p_derapage": 0.23,
+"p_cout80": 0.29,
+"p_defaut_revue": 0.59,
+"cout": 6.825e-05,
+"tokens_in": 1625,
+"tokens_out": 59,
+"latence_s": 0.838,
+"modele_repondu": "typesafe/jev-1.13-20260917",
+"sha": "6da701de1f23"
+},
+"wavelocalai/9.7": {
+"p_derapage": 0.28,
+"p_cout80": 0.46,
+"p_defaut_revue": 0.7,
+"cout": 6.0522e-05,
+"tokens_in": 1441,
+"tokens_out": 59,
+"latence_s": 4.14,
+"modele_repondu": "typesafe/jev-1.13-20260917",
+"sha": "97e1a24a03f1"
+},
+"wavelocalai/9.8": {
+"p_derapage": 0.2,
+"p_cout80": 0.3,
+"p_defaut_revue": 0.7,
+"cout": 5.6868e-05,
+"tokens_in": 1354,
+"tokens_out": 59,
+"latence_s": 1.597,
+"modele_repondu": "typesafe/jev-1.13-20260917",
+"sha": "6ac7f07aabf8"
+},
+"wavelocalai/9.9": {
+"p_derapage": 0.22,
+"p_cout80": 0.32,
+"p_defaut_revue": 0.67,
+"cout": 6.216e-05,
+"tokens_in": 1480,
+"tokens_out": 59,
+"latence_s": 0.307,
+"modele_repondu": "typesafe/jev-1.13-20260917",
+"sha": "1ce009f93a2e"
 }
 }
 }

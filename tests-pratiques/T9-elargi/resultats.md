@@ -4,6 +4,20 @@ Test pratique de la veille sur les agents de code (2026-10-24), suite de T9 (`..
 
 **Conclusion courte.** Aucun bras (heuristique, Jev, gpt-6-luna) ne satisfait le critère (AUC > 0,7 et +0,05 sur l'heuristique), pour aucune des trois étiquettes ni des deux exploratoires. Le passage à 226 stories et 15 dérapages (contre 125 et 9) resserre l'intervalle sans changer la conclusion : les modèles retrouvent à peu près l'AUC de la **longueur de la spec** (0,65 sur le coût, 0,61 sur le dérapage), écart à l'heuristique de −0,08 à +0,03 sur le dérapage et le coût. Le test reste sous-puissant sur le dérapage (15 positifs, il en faut 32 pour détecter 0,65), mais il est assez puissant sur le coût (46 positifs, puissance 88 % pour 0,65) : un signal de 0,65 existe, c'est la longueur. Décision proposée : ne rien brancher dans `agent-cost-kit`.
 
+## Relance du 2026-10-25 : transcriptions des trois PC (243 stories, 25 dérapages)
+
+Relance par `relancer.py` avec les transcriptions de ce poste et de deux autres (`_hors-depot/transcriptions/`, hors dépôt), 0,13 $ d'OpenRouter en cumul. Les médianes par dépôt sont recalculées sur l'ensemble, donc les étiquettes de stories déjà présentes peuvent changer. Chiffres complets dans `tableaux.md`.
+
+| Étiquette | Positifs | Longueur seule | Jev latest | Jev 1,13 | gpt-6-luna (moy.) |
+|---|---|---|---|---|---|
+| Dérapage | 25 / 243 | 0,56 [0,42 ; 0,70] | 0,63 [0,53 ; 0,73] | 0,63 [0,53 ; 0,74] | 0,53 |
+| Coût au-dessus du 80e centile | 51 / 243 | 0,59 | 0,60 | 0,61 | 0,59 |
+| Défaut de revue | 184 / 241 | 0,56 | 0,52 | 0,58 | 0,59 |
+
+- **Toujours aucun bras au critère** (AUC > 0,7 et +0,05 sur la longueur). Jev passe devant la longueur sur le dérapage (+0,07), mais l'intervalle de l'écart contient 0 ([−0,05 ; +0,20]).
+- **Inutilisable en pratique** : en alertant sur les 20 % de stories qu'il juge les plus risquées, Jev a une précision de 11 à 14 % pour un taux de base de 10 % ; il ne trie presque pas.
+- Décision inchangée : ne rien brancher. Puissance : 25 dérapages pour ~32 visés ; même à 32, une AUC de 0,63 resterait sous le critère de 0,7.
+
 ## 1. Ce qui change par rapport à T9
 
 | | T9 | T9 élargi |
