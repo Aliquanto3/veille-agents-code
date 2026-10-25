@@ -1,0 +1,417 @@
+diff --git a/pyproject.toml b/pyproject.toml
+index ad0da28..41eb258 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -210,6 +210,18 @@ ignore_imports = [
+ unmatched_ignore_imports_alerting = "none"
+ allow_indirect_imports = true
+ 
++[[tool.importlinter.contracts]]
++name = "ia.agent : lecture seule"
++type = "forbidden"
++source_modules = ["usine.ia.agent"]
++forbidden_modules = [
++    "usine.ports.source_tickets", "usine.ports.entrepot", "usine.ports.etape",
++    "usine.ports.fournisseur_llm", "usine.ports.cache_llm",
++]
++ignore_imports = ["usine.ia.agent.cli -> usine.**"]
++unmatched_ignore_imports_alerting = "none"
++allow_indirect_imports = true
++
+ [[tool.importlinter.contracts]]
+ name = "rendu : contrats, ports, consultation ; openpyxl, pptx"
+ type = "forbidden"
+diff --git a/src/usine/ia/agent/outils.py b/src/usine/ia/agent/outils.py
+new file mode 100644
+index 0000000..30048d7
+--- /dev/null
++++ b/src/usine/ia/agent/outils.py
+@@ -0,0 +1,175 @@
++"""Outils de consultation de l'Agent, en lecture seule, servis par `Consultation` (FR-39, AD-11).
++
++La passerelle (Story 7.9) construit les `OutilAgent` à partir de ces définitions et sérialise les
++résultats ; ce module ne calcule aucun chiffre.
++"""
++
++from collections.abc import Callable, Mapping
++from dataclasses import dataclass
++from datetime import date
++from typing import Any
++
++from usine.contrats.agent import (
++    ArgumentsGetMeteo,
++    ArgumentsGetPrevision,
++    ArgumentsGetRisques,
++    ArgumentsGetTendance,
++    ArgumentsListAnomalies,
++    AucuneDonnee,
++    PointTendance,
++    ResultatGetMeteo,
++    ResultatGetPrevision,
++    ResultatGetRisques,
++    ResultatGetTendance,
++    ResultatListAnomalies,
++)
++from usine.contrats.modele import Enregistrement
++from usine.ports.consultation import Consultation
++
++NOMS_OUTILS = ("get_meteo", "list_anomalies", "get_tendance", "get_prevision", "get_risques")
++"""Les cinq outils de l'Agent, tous en lecture seule."""
++
++
++@dataclass(frozen=True)
++class DefinitionOutil:
++    """Un outil : nom, description pour le modèle, classe d'arguments et exécution."""
++
++    nom: str
++    description: str
++    arguments: type[Enregistrement]
++    executer: Callable[[Mapping[str, Any]], Enregistrement]
++
++
++class OutilsConsultation:
++    """Lectures du Passage exposées à l'Agent."""
++
++    def __init__(self, consultation: Consultation) -> None:
++        self._consultation = consultation
++
++    def _date(self, demandee: date | None) -> date | None:
++        """Date à lire, ou `None` si le Passage ne couvre pas la date demandée."""
++        disponibles = self._consultation.dates_disponibles()
++        if demandee is None:
++            if not disponibles:
++                return None
++            return self._consultation.manifeste().date_arrete
++        return demandee if demandee in disponibles else None
++
++    def get_meteo(self, arguments: ArgumentsGetMeteo) -> ResultatGetMeteo | AucuneDonnee:
++        jour = self._date(arguments.date_arrete)
++        if jour is None:
++            return AucuneDonnee(date_arrete=arguments.date_arrete)
++        return ResultatGetMeteo(
++            date_arrete=jour,
++            meteos=self._consultation.meteo(jour, arguments.entite),
++            evolutions=tuple(
++                e
++                for e in self._consultation.evolution_meteo(jour)
++                if arguments.entite is None or e.entite == arguments.entite
++            ),
++        )
++
++    def list_anomalies(
++        self, arguments: ArgumentsListAnomalies
++    ) -> ResultatListAnomalies | AucuneDonnee:
++        jour = self._date(arguments.date_arrete)
++        if jour is None:
++            return AucuneDonnee(date_arrete=arguments.date_arrete)
++        if arguments.statut is None:
++            return self._consultation.anomalies(
++                date_arrete=jour,
++                entite=arguments.entite,
++                gravite=arguments.gravite,
++                phase=arguments.phase,
++                domaine=arguments.domaine,
++                limite=arguments.limite,
++            )
++        lues = self._consultation.anomalies(
++            date_arrete=jour,
++            entite=arguments.entite,
++            gravite=arguments.gravite,
++            phase=arguments.phase,
++            domaine=arguments.domaine,
++            limite=None,
++        )
++        retenues = tuple(a for a in lues.anomalies if a.statut == arguments.statut)
++        return ResultatListAnomalies(
++            date_arrete=lues.date_arrete,
++            anomalies=retenues[: arguments.limite],
++            total=len(retenues),
++        )
++
++    def get_tendance(self, arguments: ArgumentsGetTendance) -> ResultatGetTendance:
++        table = self._consultation.tendances(arguments.entite, arguments.code_kpi)
++        return ResultatGetTendance(
++            points=tuple(PointTendance(**ligne) for ligne in table.iter_rows(named=True))
++        )
++
++    def get_prevision(
++        self, arguments: ArgumentsGetPrevision
++    ) -> ResultatGetPrevision | AucuneDonnee:
++        jour = self._date(arguments.date_arrete)
++        if jour is None:
++            return AucuneDonnee(date_arrete=arguments.date_arrete)
++        return ResultatGetPrevision(
++            date_arrete=jour, previsions=self._consultation.previsions(jour, arguments.entite)
++        )
++
++    def get_risques(self, arguments: ArgumentsGetRisques) -> ResultatGetRisques | AucuneDonnee:
++        jour = self._date(arguments.date_arrete)
++        if jour is None:
++            return AucuneDonnee(date_arrete=arguments.date_arrete)
++        return ResultatGetRisques(
++            date_arrete=jour, risques=self._consultation.risques(jour, arguments.entite)
++        )
++
++
++def _definition(
++    nom: str,
++    description: str,
++    arguments: type[Any],
++    methode: Callable[[Any], Enregistrement],
++) -> DefinitionOutil:
++    return DefinitionOutil(
++        nom=nom,
++        description=description,
++        arguments=arguments,
++        executer=lambda brut: methode(arguments.model_validate(dict(brut))),
++    )
++
++
++def outils_consultation(consultation: Consultation) -> tuple[DefinitionOutil, ...]:
++    """Les cinq outils de l'Agent, dans l'ordre de `NOMS_OUTILS`."""
++    outils = OutilsConsultation(consultation)
++    return (
++        _definition(
++            "get_meteo",
++            "Météo par Entité, Règles déclenchantes et évolution J-1 / J-5, à une Date d'arrêté.",
++            ArgumentsGetMeteo,
++            outils.get_meteo,
++        ),
++        _definition(
++            "list_anomalies",
++            "Anomalies ouvertes, filtrables par Entité, Gravité, Phase, domaine et statut.",
++            ArgumentsListAnomalies,
++            outils.list_anomalies,
++        ),
++        _definition(
++            "get_tendance",
++            "Tendances hebdomadaires, filtrables par Entité et par KPI.",
++            ArgumentsGetTendance,
++            outils.get_tendance,
++        ),
++        _definition(
++            "get_prevision",
++            "Prévisions de sortie du rouge, à une Date d'arrêté.",
++            ArgumentsGetPrevision,
++            outils.get_prevision,
++        ),
++        _definition(
++            "get_risques",
++            "Risques d'entrée en rouge, à une Date d'arrêté.",
++            ArgumentsGetRisques,
++            outils.get_risques,
++        ),
++    )
+diff --git a/tests/unit/ia/agent/test_outils.py b/tests/unit/ia/agent/test_outils.py
+new file mode 100644
+index 0000000..b38ada2
+--- /dev/null
++++ b/tests/unit/ia/agent/test_outils.py
+@@ -0,0 +1,207 @@
++"""Outils de consultation de l'Agent : lecture seule, servis par `Consultation` (FR-39, AD-5)."""
++
++import ast
++import re
++from datetime import date
++from pathlib import Path
++from typing import Any, cast
++
++import polars as pl
++import pytest
++from pydantic import ValidationError
++
++import usine.ia.agent as paquet_agent
++from tests.contrat.consultation.fabriques import passage_palier_2
++from tests.unit.ia.espions import DATE_ARRETE, prevision_rouge, risque_entree_rouge
++from usine.contrats import agent as contrats_agent
++from usine.contrats.agent import (
++    AnomalieResume,
++    AucuneDonnee,
++    ResultatGetMeteo,
++    ResultatGetPrevision,
++    ResultatGetRisques,
++    ResultatGetTendance,
++    ResultatListAnomalies,
++)
++from usine.contrats.passage import ManifestePassage
++from usine.contrats.tickets import Gravite, Phase, StatutAnomalie
++from usine.ia.agent.outils import NOMS_OUTILS, OutilsConsultation, outils_consultation
++from usine.ports.consultation import Consultation
++
++AUTRE_DATE = date(2026, 1, 5)
++
++
++def _anomalie(cle: str, statut: StatutAnomalie) -> AnomalieResume:
++    return AnomalieResume(
++        cle_ticket=cle,
++        entite="ENT-A",
++        gravite=Gravite.majeure,
++        phase=Phase.recette,
++        domaine="D",
++        statut=statut,
++        age_jours_ouvres=1,
++    )
++
++
++class ConsultationFactice:
++    def __init__(self, dates: tuple[date, ...] = (DATE_ARRETE,)) -> None:
++        self._dates = dates
++        self.anomalies_appels: list[dict[str, Any]] = []
++
++    def dates_disponibles(self) -> tuple[date, ...]:
++        return self._dates
++
++    def manifeste(self) -> ManifestePassage:
++        return cast(ManifestePassage, type("M", (), {"date_arrete": DATE_ARRETE})())
++
++    def meteo(self, date_arrete: date | None = None, entite: str | None = None) -> tuple[()]:
++        return ()
++
++    def evolution_meteo(self, date_arrete: date | None = None) -> tuple[()]:
++        return ()
++
++    def anomalies(self, **kwargs: Any) -> ResultatListAnomalies:
++        self.anomalies_appels.append(kwargs)
++        statuts = [
++            StatutAnomalie.en_analyse,
++            StatutAnomalie.nouvelle,
++            StatutAnomalie.en_analyse,
++            StatutAnomalie.en_analyse,
++        ]
++        toutes = tuple(_anomalie(f"T-{i}", s) for i, s in enumerate(statuts))
++        limite = kwargs["limite"]
++        retenues = toutes if limite is None else toutes[:limite]
++        return ResultatListAnomalies(
++            date_arrete=kwargs["date_arrete"], anomalies=retenues, total=len(toutes)
++        )
++
++    def tendances(self, entite: str | None = None, code_kpi: str | None = None) -> pl.DataFrame:
++        return pl.DataFrame(
++            dict(
++                date=[DATE_ARRETE],
++                perimetre=["ENT-A"],
++                code_kpi=["K"],
++                dimension=["d"],
++                numerateur=[3],
++                denominateur=[4],
++            )
++        )
++
++    def previsions(self, date_arrete: date | None = None, entite: str | None = None) -> Any:
++        return (prevision_rouge(),)
++
++    def risques(self, date_arrete: date | None = None, entite: str | None = None) -> Any:
++        return (risque_entree_rouge(),)
++
++
++def _outils(consultation: Any) -> dict[str, Any]:
++    return {o.nom: o for o in outils_consultation(cast(Consultation, consultation))}
++
++
++def test_noms_exacts_et_classes_de_contrats() -> None:
++    outils = outils_consultation(cast(Consultation, ConsultationFactice()))
++    assert tuple(o.nom for o in outils) == NOMS_OUTILS
++    assert set(NOMS_OUTILS) == {
++        "get_meteo",
++        "list_anomalies",
++        "get_tendance",
++        "get_prevision",
++        "get_risques",
++    }
++    for o in outils:
++        assert o.arguments.__module__ == contrats_agent.__name__
++        assert o.description
++
++
++def test_aucun_verbe_d_ecriture() -> None:
++    publiques = {n for n in dir(OutilsConsultation) if not n.startswith("_")}
++    assert publiques == set(NOMS_OUTILS)
++    motif = r"write|create|update|delete|send|post|set_|ecrire|envoyer"
++    assert not any(re.search(motif, n) for n in publiques)
++
++
++def test_modules_importes_en_lecture_seule() -> None:
++    interdits = (
++        "usine.ports.source_tickets",
++        "usine.ports.entrepot",
++        "usine.ports.etape",
++        "usine.ports.fournisseur_llm",
++        "usine.ports.cache_llm",
++        "usine.adaptateurs",
++        "pydantic_ai",
++        "httpx",
++    )
++    for fichier in Path(paquet_agent.__path__[0]).glob("*.py"):
++        source = fichier.read_text(encoding="utf-8")
++        for noeud in ast.walk(ast.parse(source)):
++            if isinstance(noeud, ast.ImportFrom) and noeud.module:
++                modules = [noeud.module]
++            elif isinstance(noeud, ast.Import):
++                modules = [a.name for a in noeud.names]
++            else:
++                continue
++            for module in modules:
++                assert not module.startswith(interdits), f"{fichier.name} importe {module}"
++        assert "url_ticket" not in source
++
++
++def test_date_absente_prend_celle_du_manifeste() -> None:
++    resultat = _outils(ConsultationFactice())["get_meteo"].executer({})
++    assert isinstance(resultat, ResultatGetMeteo)
++    assert resultat.date_arrete == DATE_ARRETE
++
++
++@pytest.mark.parametrize("nom", ["get_meteo", "list_anomalies", "get_prevision", "get_risques"])
++def test_date_sans_passage(nom: str) -> None:
++    resultat = _outils(ConsultationFactice())[nom].executer(dict(date_arrete=AUTRE_DATE))
++    assert resultat == AucuneDonnee(date_arrete=AUTRE_DATE)
++    assert resultat.message == "aucune donnée pour cette date"
++
++
++def test_aucune_date_du_tout() -> None:
++    resultat = _outils(ConsultationFactice(dates=()))["get_risques"].executer({})
++    assert resultat == AucuneDonnee(date_arrete=None)
++
++
++def test_prevision_et_risques() -> None:
++    outils = _outils(ConsultationFactice())
++    assert isinstance(outils["get_prevision"].executer({}), ResultatGetPrevision)
++    assert isinstance(outils["get_risques"].executer({}), ResultatGetRisques)
++
++
++def test_tendance_sans_date() -> None:
++    resultat = _outils(ConsultationFactice(dates=()))["get_tendance"].executer({})
++    assert isinstance(resultat, ResultatGetTendance)
++    assert resultat.points[0].numerateur == 3
++
++
++def test_filtre_statut_et_total() -> None:
++    resultat = _outils(ConsultationFactice())["list_anomalies"].executer(
++        dict(statut="en_analyse", limite=2)
++    )
++    assert isinstance(resultat, ResultatListAnomalies)
++    assert len(resultat.anomalies) == 2
++    assert {a.statut for a in resultat.anomalies} == {StatutAnomalie.en_analyse}
++    assert resultat.total == 3
++
++
++def test_sans_statut_la_limite_est_transmise() -> None:
++    fausse = ConsultationFactice()
++    _outils(fausse)["list_anomalies"].executer(dict(limite=2))
++    assert fausse.anomalies_appels[0]["limite"] == 2
++
++
++def test_arguments_invalides() -> None:
++    with pytest.raises(ValidationError):
++        _outils(ConsultationFactice())["list_anomalies"].executer(dict(limite=0))
++
++
++def test_integration_passage_palier_2() -> None:
++    cas = passage_palier_2()
++    outils = _outils(cas.consultation)
++    for nom in ("get_meteo", "list_anomalies", "get_prevision", "get_risques"):
++        resultat = outils[nom].executer({})
++        assert not isinstance(resultat, AucuneDonnee)
++        assert resultat.date_arrete == cas.consultation.manifeste().date_arrete
++        assert isinstance(outils[nom].executer(dict(date_arrete="1999-01-04")), AucuneDonnee)
++    assert isinstance(outils["get_tendance"].executer({}), ResultatGetTendance)

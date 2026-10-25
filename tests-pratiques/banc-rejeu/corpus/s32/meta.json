@@ -1,0 +1,13 @@
+{
+  "id": "s32",
+  "story": "3.2",
+  "titre": "KPI quotidiens",
+  "commit": "b29755a2966f83440ee5d6dcb83884c9a161667e",
+  "base": "12249fd0a714adaec390c567185b73e68a94135a",
+  "tests_caches": [
+    "tests/unit/domaine/test_kpi.py"
+  ],
+  "depot": "<user>\\Documents\\GitHub\\usine-migration-jira-demo",
+  "total_ref": 23,
+  "base_passed": 0
+}

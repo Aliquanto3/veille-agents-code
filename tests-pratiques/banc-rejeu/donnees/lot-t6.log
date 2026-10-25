@@ -1,0 +1,25 @@
+24 exécutions à faire sur 24
+02:24:27 s32-asv1: cout=0.5786825 tours=27 mur=315.0s cache=20/23 suite_ko=0 ruff=0 expire=False
+02:24:27 s32-ao1: cout=0.9644055999999999 tours=17 mur=235.2s cache=20/23 suite_ko=0 ruff=0 expire=False
+02:28:11 s42-asv1: cout=0.5153493 tours=33 mur=227.4s cache=29/35 suite_ko=0 ruff=0 expire=False
+02:30:13 s42-ao1: cout=1.2349907999999998 tours=33 mur=268.6s cache=30/35 suite_ko=0 ruff=0 expire=False
+02:42:41 s64-asv1: cout=1.0028932000000002 tours=60 mur=665.4s cache=14/18 suite_ko=0 ruff=0 expire=False
+02:42:41 s64-ao1: cout=2.2364000000000006 tours=63 mur=531.3s cache=14/18 suite_ko=0 ruff=0 expire=False
+02:48:01 s78-asv1: cout=0.36550829999999995 tours=21 mur=100.0s cache=22/23 suite_ko=2 ruff=2 expire=False
+02:49:33 s78-ao1: cout=0.7738012000000001 tours=22 mur=181.7s cache=23/23 suite_ko=2 ruff=0 expire=False
+02:51:25 s32-asv2: cout=0.5295624 tours=26 mur=162.1s cache=20/23 suite_ko=0 ruff=1 expire=False
+02:55:01 s32-ao2: cout=0.9968430000000001 tours=19 mur=288.0s cache=20/23 suite_ko=0 ruff=0 expire=False
+02:57:27 s42-asv2: cout=0.5797924 tours=43 mur=290.8s cache=28/35 suite_ko=0 ruff=0 expire=False
+03:00:41 s42-ao2: cout=1.1323522000000001 tours=30 mur=258.9s cache=26/35 suite_ko=0 ruff=0 expire=False
+03:11:02 s64-asv2: cout=0.970783 tours=63 mur=616.3s cache=13/18 suite_ko=0 ruff=0 expire=False
+03:15:13 s64-ao2: cout=2.4556778 tours=74 mur=656.9s cache=15/18 suite_ko=0 ruff=0 expire=False
+03:17:16 s78-asv2: cout=0.4042113 tours=37 mur=139.4s cache=23/23 suite_ko=2 ruff=0 expire=False
+03:22:02 s78-ao2: cout=0.9022113999999999 tours=23 mur=185.8s cache=23/23 suite_ko=0 ruff=0 expire=False
+03:23:03 s32-asv3: cout=1.0759694 tours=40 mur=304.3s cache=20/23 suite_ko=0 ruff=0 expire=False
+03:27:34 s32-ao3: cout=1.2345887999999998 tours=22 mur=289.0s cache=21/23 suite_ko=0 ruff=0 expire=False
+03:27:34 s42-asv3: cout=0.4319351 tours=22 mur=125.6s cache=28/35 suite_ko=0 ruff=0 expire=False
+03:31:25 s42-ao3: cout=1.0357556 tours=26 mur=214.9s cache=31/35 suite_ko=0 ruff=0 expire=False
+03:39:01 s64-asv3: cout=0.9145758 tours=70 mur=492.0s cache=16/18 suite_ko=0 ruff=0 expire=False
+03:45:30 s64-ao3: cout=2.0451185999999995 tours=63 mur=637.8s cache=15/18 suite_ko=0 ruff=0 expire=False
+03:45:30 s78-asv3: cout=0.3537312999999999 tours=19 mur=103.6s cache=23/23 suite_ko=2 ruff=1 expire=False
+03:51:58 s78-ao3: cout=0.9528224000000001 tours=27 mur=216.9s cache=21/23 suite_ko=0 ruff=0 expire=False

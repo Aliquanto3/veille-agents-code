@@ -1,0 +1,9 @@
+[
+  {"id": "s32", "story": "3.2", "titre": "KPI quotidiens", "commit": "b29755a", "spec": "_bmad-output/implementation-artifacts/spec-3-2-kpi-quotidiens.md"},
+  {"id": "s41", "story": "4.1", "titre": "Prévision de sortie du rouge par Baseline", "commit": "a28bb34", "spec": "_bmad-output/implementation-artifacts/spec-4-1-prevision-de-sortie-du-rouge-par-baseline.md"},
+  {"id": "s42", "story": "4.2", "titre": "Risque d'entrée en rouge", "commit": "91b0d8c", "spec": "_bmad-output/implementation-artifacts/spec-4-2-risque-d-entree-en-rouge.md"},
+  {"id": "s64", "story": "6.4", "titre": "Classification incrémentale des Causes racines", "commit": "5eb1888", "spec": "_bmad-output/implementation-artifacts/spec-6-4-classification-incrementale-des-causes-racines.md",
+   "note": "Note du banc : l'ajout aux contrats décrit dans la spec (`ReponseClassification`, contrats 1.4, commit dédié) est déjà fait à la base ; ne le refais pas."},
+  {"id": "s78", "story": "7.8", "titre": "Outils de consultation de l'Agent en lecture seule", "commit": "def3da4", "spec": "_bmad-output/implementation-artifacts/spec-7-8-outils-de-consultation-de-l-agent.md",
+   "note": "Note du banc : l'ajout aux contrats décrit dans la spec (contrats 1.7, filtre `statut`, `AucuneDonnee`, commit dédié) est déjà fait à la base ; ne le refais pas."}
+]

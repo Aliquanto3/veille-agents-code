@@ -1,0 +1,14 @@
+{
+  "id": "s78",
+  "story": "7.8",
+  "titre": "Outils de consultation de l'Agent en lecture seule",
+  "commit": "def3da4a5bee7b7d9e9029146fedb4353b6dd328",
+  "base": "6ccf82a65831813c64dd02cc7e79561e817d7794",
+  "tests_caches": [
+    "tests/unit/ia/agent/__init__.py",
+    "tests/unit/ia/agent/test_outils.py"
+  ],
+  "depot": "<user>\\Documents\\GitHub\\usine-migration-jira-demo",
+  "total_ref": 23,
+  "base_passed": 0
+}

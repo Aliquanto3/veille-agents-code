@@ -1,0 +1,13 @@
+{
+  "id": "s64",
+  "story": "6.4",
+  "titre": "Classification incrémentale des Causes racines",
+  "commit": "5eb18889f11b76e5bc717d95105575b0a755738c",
+  "base": "97deb4b683964909a6350fbc6e8681d585b523ae",
+  "tests_caches": [
+    "tests/unit/ia/test_classification.py"
+  ],
+  "depot": "<user>\\Documents\\GitHub\\usine-migration-jira-demo",
+  "total_ref": 18,
+  "base_passed": 0
+}

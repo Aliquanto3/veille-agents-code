@@ -1,0 +1,17 @@
+16 exécutions à faire sur 16
+22:22:39 s32-as1: cout=0.4126832000000001 tours=20 mur=115.6s cache=20/23 suite_ko=0 ruff=6 expire=False
+22:24:55 s32-bs1: cout=0.4649288 tours=25 mur=258.4s cache=20/23 suite_ko=0 ruff=0 expire=False
+22:26:02 s42-as1: cout=0.36598590000000003 tours=18 mur=102.4s cache=31/35 suite_ko=0 ruff=3 expire=False
+22:30:55 s42-bs1: cout=0.5300384999999999 tours=39 mur=270.3s cache=29/35 suite_ko=0 ruff=0 expire=False
+22:43:34 s64-as1: cout=0.9378745 tours=72 mur=758.6s cache=13/18 suite_ko=0 ruff=6 expire=False
+22:44:23 s64-bs1: cout=0.8537246000000002 tours=71 mur=546.7s cache=14/18 suite_ko=0 ruff=0 expire=False
+22:49:58 s78-as1: cout=0.354334 tours=22 mur=103.9s cache=23/23 suite_ko=2 ruff=0 expire=False
+22:51:29 s78-bs1: cout=0.37200590000000006 tours=23 mur=151.7s cache=23/23 suite_ko=2 ruff=0 expire=False
+22:52:43 s32-as2: cout=0.3945304 tours=18 mur=114.0s cache=20/23 suite_ko=0 ruff=1 expire=False
+22:55:41 s32-bs2: cout=0.45900920000000006 tours=23 mur=202.7s cache=20/23 suite_ko=0 ruff=0 expire=False
+22:57:19 s42-as2: cout=0.5600475 tours=43 mur=194.1s cache=28/35 suite_ko=0 ruff=0 expire=False
+23:00:54 s42-bs2: cout=0.4653904 tours=27 mur=227.4s cache=28/35 suite_ko=0 ruff=0 expire=False
+23:09:13 s64-as2: cout=0.8653884000000001 tours=59 mur=502.4s cache=13/18 suite_ko=0 ruff=0 expire=False
+23:14:09 s64-bs2: cout=0.7129156 tours=52 mur=563.9s cache=14/18 suite_ko=0 ruff=0 expire=False
+23:15:40 s78-as2: cout=0.38680390000000003 tours=32 mur=127.7s cache=23/23 suite_ko=2 ruff=0 expire=False
+23:20:23 s78-bs2: cout=0.3080352 tours=18 mur=124.2s cache=23/23 suite_ko=2 ruff=0 expire=False

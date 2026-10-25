@@ -1,0 +1,14 @@
+{
+  "id": "s41",
+  "story": "4.1",
+  "titre": "Prévision de sortie du rouge par Baseline",
+  "commit": "a28bb346a751122cd8b074b1144379595cd7048d",
+  "base": "affbd8fecd6e9fc1848fbddbf0aa5ef5cc4ccd06",
+  "tests_caches": [
+    "tests/unit/domaine/prevision/__init__.py",
+    "tests/unit/domaine/prevision/test_baseline.py"
+  ],
+  "depot": "<user>\\Documents\\GitHub\\usine-migration-jira-demo",
+  "total_ref": 45,
+  "base_passed": 0
+}

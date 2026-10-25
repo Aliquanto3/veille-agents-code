@@ -1,0 +1,3 @@
+2 exécutions à faire sur 24
+02:18:20 s78-as5: cout=0.26712250000000004 tours=19 mur=151.0s cache=23/23 suite_ko=2 ruff=3 expire=False
+02:18:20 s78-bs5: cout=0.3363224 tours=24 mur=151.0s cache=20/23 suite_ko=2 ruff=0 expire=False

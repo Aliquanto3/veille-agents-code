@@ -1,0 +1,98 @@
+[
+ {
+  "story": "s32",
+  "cond": "a",
+  "modele": "s",
+  "advisor": "o",
+  "consigne": true,
+  "rep": 1
+ },
+ {
+  "story": "s42",
+  "cond": "a",
+  "modele": "s",
+  "advisor": "o",
+  "consigne": true,
+  "rep": 1
+ },
+ {
+  "story": "s64",
+  "cond": "a",
+  "modele": "s",
+  "advisor": "o",
+  "consigne": true,
+  "rep": 1
+ },
+ {
+  "story": "s78",
+  "cond": "a",
+  "modele": "s",
+  "advisor": "o",
+  "consigne": true,
+  "rep": 1
+ },
+ {
+  "story": "s32",
+  "cond": "a",
+  "modele": "s",
+  "advisor": "o",
+  "consigne": true,
+  "rep": 2
+ },
+ {
+  "story": "s42",
+  "cond": "a",
+  "modele": "s",
+  "advisor": "o",
+  "consigne": true,
+  "rep": 2
+ },
+ {
+  "story": "s64",
+  "cond": "a",
+  "modele": "s",
+  "advisor": "o",
+  "consigne": true,
+  "rep": 2
+ },
+ {
+  "story": "s78",
+  "cond": "a",
+  "modele": "s",
+  "advisor": "o",
+  "consigne": true,
+  "rep": 2
+ },
+ {
+  "story": "s32",
+  "cond": "a",
+  "modele": "s",
+  "advisor": "o",
+  "consigne": true,
+  "rep": 3
+ },
+ {
+  "story": "s42",
+  "cond": "a",
+  "modele": "s",
+  "advisor": "o",
+  "consigne": true,
+  "rep": 3
+ },
+ {
+  "story": "s64",
+  "cond": "a",
+  "modele": "s",
+  "advisor": "o",
+  "consigne": true,
+  "rep": 3
+ },
+ {
+  "story": "s78",
+  "cond": "a",
+  "modele": "s",
+  "advisor": "o",
+  "consigne": true,
+  "rep": 3
+ }
+]
