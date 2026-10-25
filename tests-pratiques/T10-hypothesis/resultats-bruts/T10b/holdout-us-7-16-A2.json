@@ -1,0 +1,94 @@
+{
+ "story": "us-7-16",
+ "bras": "A",
+ "essai": 2,
+ "fichiers": [
+  "tests/unit/ui/test_renf_ecrans.py"
+ ],
+ "mutants": [
+  {
+   "id": "us-7-16:ecrans.py:321:0",
+   "cible": "us-7-16:ecrans.py:321",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 2.91
+  },
+  {
+   "id": "us-7-16:outillage.py:55:1",
+   "cible": "us-7-16:outillage.py:55",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 3.01
+  },
+  {
+   "id": "us-7-16:outillage.py:64:2",
+   "cible": "us-7-16:outillage.py:64",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 2.7
+  },
+  {
+   "id": "us-7-16:outillage.py:64:3",
+   "cible": "us-7-16:outillage.py:64",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 2.92
+  },
+  {
+   "id": "us-7-16:outillage.py:72:4",
+   "cible": "us-7-16:outillage.py:72",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 2.91
+  },
+  {
+   "id": "us-7-16:outillage.py:86:5",
+   "cible": "us-7-16:outillage.py:86",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 2.73
+  },
+  {
+   "id": "us-7-16:outillage.py:89:6",
+   "cible": "us-7-16:outillage.py:89",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 2.86
+  },
+  {
+   "id": "us-7-16:outillage.py:89:7",
+   "cible": "us-7-16:outillage.py:89",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 2.97
+  },
+  {
+   "id": "us-7-16:outillage.py:90:8",
+   "cible": "us-7-16:outillage.py:90",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 2.66
+  },
+  {
+   "id": "us-7-16:outillage.py:92:9",
+   "cible": "us-7-16:outillage.py:92",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 2.77
+  },
+  {
+   "id": "us-7-16:outillage.py:92:10",
+   "cible": "us-7-16:outillage.py:92",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 2.82
+  }
+ ],
+ "base": {
+  "rc": 0,
+  "fin": "..............................................................           [100%]",
+  "secondes": 3.05
+ },
+ "tues": 3,
+ "erreurs": 0
+}

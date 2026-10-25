@@ -1,0 +1,199 @@
+{
+ "story": "us-7-14",
+ "bras": "C",
+ "essai": 2,
+ "fichiers": [
+  "tests/unit/ui/test_renf_7_14.py"
+ ],
+ "mutants": [
+  {
+   "id": "us-7-14:carte.py:239:0",
+   "cible": "us-7-14:carte.py:239",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 3.08
+  },
+  {
+   "id": "us-7-14:carte.py:244:1",
+   "cible": "us-7-14:carte.py:244",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 2.59
+  },
+  {
+   "id": "us-7-14:carte.py:244:2",
+   "cible": "us-7-14:carte.py:244",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 2.63
+  },
+  {
+   "id": "us-7-14:carte.py:246:3",
+   "cible": "us-7-14:carte.py:246",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 2.89
+  },
+  {
+   "id": "us-7-14:carte.py:248:4",
+   "cible": "us-7-14:carte.py:248",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 3.07
+  },
+  {
+   "id": "us-7-14:carte.py:248:5",
+   "cible": "us-7-14:carte.py:248",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 3.2
+  },
+  {
+   "id": "us-7-14:carte.py:248:6",
+   "cible": "us-7-14:carte.py:248",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 2.71
+  },
+  {
+   "id": "us-7-14:detail.py:349:7",
+   "cible": "us-7-14:detail.py:349",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 2.89
+  },
+  {
+   "id": "us-7-14:detail.py:349:8",
+   "cible": "us-7-14:detail.py:349",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 2.83
+  },
+  {
+   "id": "us-7-14:detail.py:419:9",
+   "cible": "us-7-14:detail.py:419",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 4.93
+  },
+  {
+   "id": "us-7-14:detail.py:419:10",
+   "cible": "us-7-14:detail.py:419",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 2.98
+  },
+  {
+   "id": "us-7-14:detail.py:419:11",
+   "cible": "us-7-14:detail.py:419",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 2.92
+  },
+  {
+   "id": "us-7-14:detail.py:419:12",
+   "cible": "us-7-14:detail.py:419",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 2.84
+  },
+  {
+   "id": "us-7-14:detail.py:419:13",
+   "cible": "us-7-14:detail.py:419",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 3.11
+  },
+  {
+   "id": "us-7-14:detail.py:419:14",
+   "cible": "us-7-14:detail.py:419",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 3.23
+  },
+  {
+   "id": "us-7-14:detail.py:436:15",
+   "cible": "us-7-14:detail.py:436",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 3.16
+  },
+  {
+   "id": "us-7-14:detail.py:436:16",
+   "cible": "us-7-14:detail.py:436",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 3.17
+  },
+  {
+   "id": "us-7-14:detail.py:436:17",
+   "cible": "us-7-14:detail.py:436",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 3.1
+  },
+  {
+   "id": "us-7-14:detail.py:436:18",
+   "cible": "us-7-14:detail.py:436",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 3.04
+  },
+  {
+   "id": "us-7-14:detail.py:436:19",
+   "cible": "us-7-14:detail.py:436",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 2.61
+  },
+  {
+   "id": "us-7-14:detail.py:436:20",
+   "cible": "us-7-14:detail.py:436",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 2.6
+  },
+  {
+   "id": "us-7-14:detail.py:457:21",
+   "cible": "us-7-14:detail.py:457",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 2.63
+  },
+  {
+   "id": "us-7-14:detail.py:461:22",
+   "cible": "us-7-14:detail.py:461",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 2.65
+  },
+  {
+   "id": "us-7-14:detail.py:461:23",
+   "cible": "us-7-14:detail.py:461",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 2.62
+  },
+  {
+   "id": "us-7-14:detail.py:488:24",
+   "cible": "us-7-14:detail.py:488",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 2.58
+  },
+  {
+   "id": "us-7-14:detail.py:592:25",
+   "cible": "us-7-14:detail.py:592",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 2.6
+  }
+ ],
+ "base": {
+  "rc": 0,
+  "fin": "...................                                                      [100%]",
+  "secondes": 3.27
+ },
+ "tues": 20,
+ "erreurs": 0
+}

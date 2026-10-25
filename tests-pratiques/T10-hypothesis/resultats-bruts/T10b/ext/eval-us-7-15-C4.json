@@ -1,0 +1,158 @@
+{
+ "story": "us-7-15",
+ "bras": "C",
+ "essai": 4,
+ "nouveaux_fichiers": [
+  "tests/unit/ui/test_renf_chaine.py"
+ ],
+ "modifies_suivis": [],
+ "cibles_total": 16,
+ "utilise_hypothesis": false,
+ "nb_given": 0,
+ "lignes_tests": 159,
+ "nb_tests_nouveaux": 16,
+ "union": {
+  "rc": 0,
+  "fin": "147 passed in 4.98s",
+  "secondes": 7.88
+ },
+ "passages": [
+  {
+   "rc": 0,
+   "secondes": 4.04,
+   "echecs": [],
+   "fichiers_en_erreur": [],
+   "fin": "16 passed in 1.33s"
+  },
+  {
+   "rc": 0,
+   "secondes": 3.78,
+   "echecs": [],
+   "fichiers_en_erreur": [],
+   "fin": "16 passed in 1.17s"
+  }
+ ],
+ "tests_faux": [],
+ "tests_instables": [],
+ "fichiers_en_erreur": [],
+ "secondes_nouveaux_tests": 3.78,
+ "rejeu_possible": true,
+ "rejeu": [
+  {
+   "id": "us-7-15:chaine.py:142",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 4.11,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "us-7-15:chaine.py:172",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 4.09,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "us-7-15:chaine.py:189",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 3.99,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "us-7-15:chaine.py:193",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 4.19,
+   "tue_au_second_tirage": false
+  },
+  {
+   "id": "us-7-15:chaine.py:221",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 4.16,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "us-7-15:chaine.py:234",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 3.95,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "us-7-15:chaine.py:254",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 3.9,
+   "tue_au_second_tirage": false
+  },
+  {
+   "id": "us-7-15:chaine.py:256",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 4.12,
+   "tue_au_second_tirage": false
+  },
+  {
+   "id": "us-7-15:chaine.py:258",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 3.83,
+   "tue_au_second_tirage": false
+  },
+  {
+   "id": "us-7-15:chaine.py:262",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 3.87,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "us-7-15:chaine.py:271",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 3.94,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "us-7-15:chaine.py:273",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 4.04,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "us-7-15:vues.py:343",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 4.1,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "us-7-15:serveur.py:107",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 4.32,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "us-7-15:serveur.py:150",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 4.5,
+   "tue_au_second_tirage": false
+  },
+  {
+   "id": "us-7-15:textes.py:41",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 4.34,
+   "tue_au_second_tirage": null
+  }
+ ],
+ "tues": 11,
+ "tues_avec_second_tirage": 11,
+ "erreurs_rejeu": 0,
+ "modifies_suivis_apres": []
+}

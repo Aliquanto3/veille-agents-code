@@ -1,0 +1,25 @@
+{
+ "origine": "1881 0cacac80b0ffdd16cf4d14030e12661f3a577c4bc1744a8f1f942ca3238b34d9",
+ "mutants": {
+  "outillage.py:55": {
+   "identique": true,
+   "signature": "1881 0cacac80b0ffdd16cf4d14030e12661f3a577c4bc1744a8f1f942ca3238b34d9"
+  },
+  "outillage.py:72": {
+   "identique": true,
+   "signature": "1881 0cacac80b0ffdd16cf4d14030e12661f3a577c4bc1744a8f1f942ca3238b34d9"
+  },
+  "outillage.py:87": {
+   "identique": true,
+   "signature": "1881 0cacac80b0ffdd16cf4d14030e12661f3a577c4bc1744a8f1f942ca3238b34d9"
+  },
+  "outillage.py:89": {
+   "identique": true,
+   "signature": "1881 0cacac80b0ffdd16cf4d14030e12661f3a577c4bc1744a8f1f942ca3238b34d9"
+  },
+  "outillage.py:92": {
+   "identique": true,
+   "signature": "1881 0cacac80b0ffdd16cf4d14030e12661f3a577c4bc1744a8f1f942ca3238b34d9"
+  }
+ }
+}

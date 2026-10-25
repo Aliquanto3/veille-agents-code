@@ -1,0 +1,9 @@
+{
+ "origine": "4444cda027ff7378c31733b3ca0d67b47ccbf4aecb9a8f21c251bf4fcb65830d",
+ "mutants": {
+  "replace_in_file.py:27": {
+   "identique": true,
+   "signature": "4444cda027ff7378c31733b3ca0d67b47ccbf4aecb9a8f21c251bf4fcb65830d"
+  }
+ }
+}

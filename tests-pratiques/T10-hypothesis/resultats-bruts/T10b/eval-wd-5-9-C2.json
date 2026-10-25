@@ -1,0 +1,116 @@
+{
+ "story": "wd-5-9",
+ "bras": "C",
+ "essai": 2,
+ "nouveaux_fichiers": [
+  "tests/test_renf_blockers.py"
+ ],
+ "modifies_suivis": [],
+ "cibles_total": 10,
+ "utilise_hypothesis": false,
+ "nb_given": 0,
+ "lignes_tests": 219,
+ "nb_tests_nouveaux": 21,
+ "union": {
+  "rc": 0,
+  "fin": "40 passed in 2.51s",
+  "secondes": 3.23
+ },
+ "passages": [
+  {
+   "rc": 0,
+   "secondes": 2.0,
+   "echecs": [],
+   "fichiers_en_erreur": [],
+   "fin": "21 passed in 1.26s"
+  },
+  {
+   "rc": 0,
+   "secondes": 1.93,
+   "echecs": [],
+   "fichiers_en_erreur": [],
+   "fin": "21 passed in 1.22s"
+  }
+ ],
+ "tests_faux": [],
+ "tests_instables": [],
+ "fichiers_en_erreur": [],
+ "secondes_nouveaux_tests": 1.93,
+ "rejeu_possible": true,
+ "rejeu": [
+  {
+   "id": "wd-5-9:blockers.py:41",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 1.53,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "wd-5-9:blockers.py:43",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 1.45,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "wd-5-9:blockers.py:44",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 1.42,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "wd-5-9:blockers.py:53",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 1.56,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "wd-5-9:blockers.py:65",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 1.57,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "wd-5-9:blockers.py:76",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 1.78,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "wd-5-9:model.py:55",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 1.91,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "wd-5-9:model.py:59",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 1.94,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "wd-5-9:model.py:63",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 1.9,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "wd-5-9:model.py:132",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 1.92,
+   "tue_au_second_tirage": null
+  }
+ ],
+ "tues": 10,
+ "tues_avec_second_tirage": 10,
+ "erreurs_rejeu": 0,
+ "modifies_suivis_apres": []
+}

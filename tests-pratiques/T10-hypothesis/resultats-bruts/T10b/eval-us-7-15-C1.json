@@ -1,0 +1,123 @@
+{
+ "story": "us-7-15",
+ "bras": "C",
+ "essai": 1,
+ "nouveaux_fichiers": [
+  "tests/unit/ui/test_renf_chaine.py"
+ ],
+ "modifies_suivis": [],
+ "cibles_total": 11,
+ "utilise_hypothesis": false,
+ "nb_given": 0,
+ "lignes_tests": 173,
+ "nb_tests_nouveaux": 16,
+ "union": {
+  "rc": 0,
+  "fin": "147 passed in 5.51s",
+  "secondes": 8.77
+ },
+ "passages": [
+  {
+   "rc": 0,
+   "secondes": 4.19,
+   "echecs": [],
+   "fichiers_en_erreur": [],
+   "fin": "16 passed in 1.25s"
+  },
+  {
+   "rc": 0,
+   "secondes": 4.08,
+   "echecs": [],
+   "fichiers_en_erreur": [],
+   "fin": "16 passed in 1.14s"
+  }
+ ],
+ "tests_faux": [],
+ "tests_instables": [],
+ "fichiers_en_erreur": [],
+ "secondes_nouveaux_tests": 4.08,
+ "rejeu_possible": true,
+ "rejeu": [
+  {
+   "id": "us-7-15:chaine.py:142",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 3.51,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "us-7-15:chaine.py:172",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 3.72,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "us-7-15:chaine.py:189",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 3.52,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "us-7-15:chaine.py:221",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 3.93,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "us-7-15:chaine.py:234",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 3.7,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "us-7-15:chaine.py:262",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 3.6,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "us-7-15:chaine.py:271",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 3.79,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "us-7-15:chaine.py:273",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 3.61,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "us-7-15:vues.py:343",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 3.79,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "us-7-15:serveur.py:107",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 3.87,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "us-7-15:textes.py:41",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 3.74,
+   "tue_au_second_tirage": null
+  }
+ ],
+ "tues": 11,
+ "tues_avec_second_tirage": 11,
+ "erreurs_rejeu": 0,
+ "modifies_suivis_apres": []
+}

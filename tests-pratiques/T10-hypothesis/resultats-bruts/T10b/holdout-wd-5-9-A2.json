@@ -1,0 +1,115 @@
+{
+ "story": "wd-5-9",
+ "bras": "A",
+ "essai": 2,
+ "fichiers": [
+  "tests/test_renf_blockers.py"
+ ],
+ "mutants": [
+  {
+   "id": "wd-5-9:blockers.py:41:0",
+   "cible": "wd-5-9:blockers.py:41",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 1.53
+  },
+  {
+   "id": "wd-5-9:blockers.py:41:1",
+   "cible": "wd-5-9:blockers.py:41",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 1.52
+  },
+  {
+   "id": "wd-5-9:blockers.py:44:2",
+   "cible": "wd-5-9:blockers.py:44",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 2.39
+  },
+  {
+   "id": "wd-5-9:blockers.py:44:3",
+   "cible": "wd-5-9:blockers.py:44",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 1.59
+  },
+  {
+   "id": "wd-5-9:blockers.py:44:4",
+   "cible": "wd-5-9:blockers.py:44",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 1.65
+  },
+  {
+   "id": "wd-5-9:blockers.py:44:5",
+   "cible": "wd-5-9:blockers.py:44",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 1.68
+  },
+  {
+   "id": "wd-5-9:blockers.py:44:6",
+   "cible": "wd-5-9:blockers.py:44",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 1.85
+  },
+  {
+   "id": "wd-5-9:blockers.py:44:7",
+   "cible": "wd-5-9:blockers.py:44",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 1.84
+  },
+  {
+   "id": "wd-5-9:blockers.py:44:8",
+   "cible": "wd-5-9:blockers.py:44",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 1.82
+  },
+  {
+   "id": "wd-5-9:blockers.py:65:9",
+   "cible": "wd-5-9:blockers.py:65",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 2.63
+  },
+  {
+   "id": "wd-5-9:blockers.py:65:10",
+   "cible": "wd-5-9:blockers.py:65",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 3.03
+  },
+  {
+   "id": "wd-5-9:model.py:59:11",
+   "cible": "wd-5-9:model.py:59",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 1.82
+  },
+  {
+   "id": "wd-5-9:model.py:59:12",
+   "cible": "wd-5-9:model.py:59",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 1.83
+  },
+  {
+   "id": "wd-5-9:model.py:63:13",
+   "cible": "wd-5-9:model.py:63",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 2.17
+  }
+ ],
+ "base": {
+  "rc": 0,
+  "fin": "...................................                                      [100%]",
+  "secondes": 2.27
+ },
+ "tues": 13,
+ "erreurs": 0
+}

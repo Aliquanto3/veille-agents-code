@@ -1,0 +1,128 @@
+{
+ "story": "us-7-16",
+ "bras": "C",
+ "essai": 2,
+ "prompt": "Tu travailles dans un dépôt Python (le dossier courant). Voici la story à renforcer.\nSpec de la story : `_bmad-output/implementation-artifacts/spec-7-16-agent-avant-apres-pseudonymisation-et-outillage.md` (à lire d'abord).\nFichiers source modifiés par la story :\n- `src/usine/ui/ecrans.py`\n- `src/usine/ui/outillage.py`\n- `src/usine/ui/pseudonymisation.py`\n- `src/usine/ui/vues.py`\n- `src/usine/ui/serveur.py`\n- `src/usine/ui/cli.py`\nTests existants de la story :\n- `tests/unit/ui/test_ecrans_web.py`\n- `tests/unit/ui/test_vues_ecrans.py`\n- `tests/unit/ui/test_serveur.py`\n- `tests/unit/ui/test_chaine.py`\n\nRenforce les tests de cette story : ajoute des tests pytest qui vérifient précisément le comportement attendu (valeurs exactes, bornes, branches d'erreur). Ne modifie pas le code source.\n\nMutations survivantes (fichier:ligne, fonction, diff) :\nM1 `src/usine/ui/ecrans.py:82` (`None`)\n  - @dataclass(frozen=True)\n  + @dataclass(frozen=False)\nM2 `src/usine/ui/ecrans.py:123` (`repondre`)\n  - if self._session is not None and self._session.passage_id != passage_id:\n  + if self._session is not None and self._session.passage_id < passage_id:\nM3 `src/usine/ui/ecrans.py:143` (`vue_reponse_agent`)\n  - hors_perimetre = not rejetee and reponse.texte.strip() == texte_hors_perimetre\n  + hors_perimetre = not rejetee and reponse.texte.strip() >= texte_hors_perimetre\nM4 `src/usine/ui/ecrans.py:168` (`_vue_agent`)\n  - \"titre_questions\": TITRE_QUESTIONS_REPLI if repli else TITRE_QUESTIONS_REEL,\n  + \"titre_questions\": TITRE_QUESTIONS_REPLI if not repli else TITRE_QUESTIONS_REEL,\nM5 `src/usine/ui/ecrans.py:212` (`vue_agent`)\n  - return _vue_agent(False, message=agent.AUCUN_PASSAGE, lien_message=LIEN_CHAINE)\n  + return _vue_agent(True, message=agent.AUCUN_PASSAGE, lien_message=LIEN_CHAINE)\nM6 `src/usine/ui/ecrans.py:321` (`vue_avant_apres`)\n  - tableau=None if manuel is None and chaine is None else _tableau(manuel, chaine),\n  + tableau=None if not manuel is None and chaine is None else _tableau(manuel, chaine),\nM7 `src/usine/ui/outillage.py:55` (`_pastille`)\n  - jeton = Token(\"html_inline\", \"\", 0)\n  + jeton = Token(\"html_inline\", \"\", 1)\nM8 `src/usine/ui/outillage.py:64` (`_pastilles`)\n  - if jeton.type != \"text\" or not _MARQUEUR.search(jeton.content):\n  + if jeton.type != \"text\" and not _MARQUEUR.search(jeton.content):\nM9 `src/usine/ui/outillage.py:66` (`_pastilles`)\n  - continue\n  + break\nM10 `src/usine/ui/outillage.py:72` (`_pastilles`)\n  - texte = Token(\"text\", \"\", 0)\n  + texte = Token(\"text\", \"\", -1)\nM11 `src/usine/ui/outillage.py:86` (`rendre_fiche`)\n  - rang = 0\n  + rang = 1\nM12 `src/usine/ui/outillage.py:87` (`rendre_fiche`)\n  - while rang < len(jetons):\n  + while rang != len(jetons):\nM13 `src/usine/ui/outillage.py:89` (`rendre_fiche`)\n  - if jeton.type == \"heading_open\" and jeton.tag == \"h1\":\n  + if jeton.type <= \"heading_open\" and jeton.tag == \"h1\":\nM14 `src/usine/ui/outillage.py:90` (`rendre_fiche`)\n  - rang += 3  # ouverture, contenu, fermeture\n  + rang += 2  # ouverture, contenu, fermeture\nM15 `src/usine/ui/outillage.py:92` (`rendre_fiche`)\n  - if jeton.type == \"inline\" and jeton.children:\n  + if jeton.type == \"inline\" or jeton.children:\n\nCes mutations du code ne font échouer aucun test existant. Pour chacune qui change un comportement observable, ajoute un test qui échoue sur le code muté et passe sur le code actuel. Si une mutation est équivalente (aucun comportement observable ne change), dis-le sans écrire de test. Ne modifie pas le code source.\n\nÉcris les nouveaux tests dans de nouveaux fichiers `tests/unit/ui/test_renf_*.py` ; ne modifie ni le code source ni les tests existants. Lance les tests avec `python -m pytest -q --tb=short <fichiers>` (l'environnement est prêt, rien à installer). Tous tes tests doivent passer. Termine par la liste des fichiers créés, puis, pour chaque mutation Mn, une ligne : le test qui la tue, ou « équivalente » avec la raison en une phrase.",
+ "rc": 0,
+ "stderr": "",
+ "duree_mur_s": 121.2,
+ "modifies_suivis": [],
+ "crees": [
+  "tests/unit/ui/test_renf_ecrans.py",
+  "tests/unit/ui/test_renf_outillage.py"
+ ],
+ "sortie": {
+  "duration_api_ms": 111188,
+  "stop_reason": "end_turn",
+  "session_id": "cba0ed23-bf54-4b1f-ba11-6d84ee8c7f8e",
+  "total_cost_usd": 0.20005119999999996,
+  "usage": {
+   "input_tokens": 22,
+   "cache_creation_input_tokens": 21538,
+   "cache_read_input_tokens": 272652,
+   "output_tokens": 8659,
+   "output_tokens_details": {
+    "thinking_tokens": 1699
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 21538,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 1072,
+     "cache_read_input_tokens": 33244,
+     "cache_creation_input_tokens": 177,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 177
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-sonnet-5-5": {
+    "inputTokens": 22,
+    "outputTokens": 8659,
+    "cacheReadInputTokens": 272652,
+    "cacheCreationInputTokens": 21538,
+    "webSearchRequests": 0,
+    "costUSD": 0.20005119999999996,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 1699,
+    "canonicalModel": "claude-sonnet-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [
+   {
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_01Pr5gVZdUeYAhrMhL5m9UYt",
+    "tool_input": {
+     "command": "cd tests/unit/ui; grep -n \"ReponseAgent(\\|ManifestePassage\\|^def \\|^from\\|^import\" test_vues_ecrans.py | head -60; grep -n \"class ReponseAgent\\b\" -A25 ../../../src/usine/contrats/llm.py"
+    }
+   },
+   {
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_01X2Dn9sJ3HNmbi3h6fPt8o7",
+    "tool_input": {
+     "command": "sed -i 's/_Lecture(\"b\")/_Lecture(\"20261012T073000Z-bbbbbb\")/; s/_Lecture(\"a\")/_Lecture(\"20261012T073000Z-aaaaaa\")/; s/reponse.texte == \"a\"/reponse.texte == \"20261012T073000Z-aaaaaa\"/' tests/unit/ui/test_renf_ecrans.py && python -m pytest -q --tb=short tests/unit/ui/test_renf_ecrans.py tests/unit/ui/test_renf_outillage.py 2>&1 | tail -15"
+    }
+   }
+  ],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 17,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "J'ai créé deux fichiers de tests et les 10 tests passent sur le code actuel. Je n'ai pas lancé les mutants : je n'ai donc pas vérifié que chaque test échoue bien sur sa mutation. L'analyse ci-dessous vient de la lecture du code.\n\nFichiers créés :\n- `tests/unit/ui/test_renf_ecrans.py`\n- `tests/unit/ui/test_renf_outillage.py`\n\n- M1 : `test_services_ecrans_est_fige` tue la mutation (affecter un champ doit lever `FrozenInstanceError`).\n- M2 : `test_garde_session_rebatit_si_passage_anterieur` la tue (passer d'un Passage `bbbbbb` à `aaaaaa` doit rebâtir et fermer la session).\n- M3 : `test_reponse_texte_superieur_au_hors_perimetre_n_est_pas_hors_perimetre` la tue (un texte `\"zzz\"` supérieur à `\"abc\"` ne doit pas être « hors périmètre »).\n- M4 : `test_titre_questions_selon_le_mode` la tue.\n- M5 : `test_vue_agent_reel_sans_passage` la tue (le mode doit rester `reel`).\n- M6 : `test_avant_apres_tableau_selon_les_cartes_presentes` la tue (manuel seul, chaîne seule, aucune carte).\n- M7 : équivalente. Le `nesting` d'un jeton `html_inline` n'est pas lu par le rendu, qui sort juste le contenu.\n- M8 : `test_marqueur_dans_un_code_en_ligne_reste_du_code` la tue (un marqueur dans `` `✅` `` ne doit pas devenir une pastille).\n- M9 : `test_pastille_suivie_d_autres_jetons_en_ligne` la tue (le `break` perdrait les jetons après le premier jeton non concerné).\n- M10 : équivalente, pour la même raison que M7 (le `nesting` d'un jeton `text` n'est pas lu au rendu).\n- M11 : `test_titre_h1_retire_et_reste_rendu` et `test_premier_jeton_non_titre_est_conserve` la tuent (le premier jeton est sauté, donc le titre apparaît ou le `<p>` d'ouverture disparaît).\n- M12 : équivalente. Un titre h1 occupe toujours trois jetons, donc `rang` tombe exactement sur `len(jetons)` et `!=` se comporte comme `<`.\n- M13 : équivalente. La condition exige aussi `jeton.tag == \"h1\"`, et seul `heading_open` porte ce tag, donc `<=` donne le même résultat que `==`.\n- M14 : `test_titre_h1_retire_et_reste_rendu` la tue (avec `+= 2`, le `</h1>` fermant resterait dans le HTML).\n- M15 : équivalente. Seuls les jetons `inline` ont des enfants, et `_pastilles([])` renvoie `[]`, donc `or` et `and` donnent le même résultat.",
+  "ttft_ms": 2437,
+  "type": "result",
+  "duration_ms": 118582,
+  "uuid": "7564b13b-f2aa-4d39-a3ea-f3b58d665e0d",
+  "ttft_stream_ms": 1578,
+  "time_to_request_ms": 374,
+  "first_content_frame_ms": 1578,
+  "queued_turn_count": 0,
+  "result_index": 0
+ }
+}

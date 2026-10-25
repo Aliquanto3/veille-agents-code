@@ -1,0 +1,120 @@
+{
+ "story": "us-7-15",
+ "bras": "C",
+ "essai": 2,
+ "prompt": "Tu travailles dans un dépôt Python (le dossier courant). Voici la story à renforcer.\nSpec de la story : `_bmad-output/implementation-artifacts/spec-7-15-lancement-de-la-chaine-et-bouton-de-mode.md` (à lire d'abord).\nFichiers source modifiés par la story :\n- `src/usine/ui/chaine.py`\n- `src/usine/ui/vues.py`\n- `src/usine/ui/serveur.py`\n- `src/usine/ui/app.py`\n- `src/usine/ui/textes.py`\nTests existants de la story :\n- `tests/unit/ui/test_chaine.py`\n- `tests/unit/ui/test_serveur.py`\n- `tests/unit/ui/test_vues_ecrans.py`\n- `tests/unit/ui/test_cli.py`\n\nRenforce les tests de cette story : ajoute des tests pytest qui vérifient précisément le comportement attendu (valeurs exactes, bornes, branches d'erreur). Ne modifie pas le code source.\n\nMutations survivantes (fichier:ligne, fonction, diff) :\nM1 `src/usine/ui/chaine.py:142` (`lancer`)\n  - if erreurs is not None:\n  + if not erreurs is not None:\nM2 `src/usine/ui/chaine.py:172` (`_vue`)\n  - statut = \"en_cours\" if code is None else (\"terminee\" if code == 0 else \"echec\")\n  + statut = \"en_cours\" if code is None else (\"terminee\" if code <= 0 else \"echec\")\nM3 `src/usine/ui/chaine.py:189` (`_vue`)\n  - for rang, suivi in enumerate(suivis, start=1)\n  + for rang, suivi in enumerate(suivis, start= 0)\nM4 `src/usine/ui/chaine.py:221` (`_vue`)\n  - journal_vide=JOURNAL_ATTENTE if statut == \"attente\" else JOURNAL_VIDE,\n  + journal_vide=JOURNAL_ATTENTE if not statut == \"attente\" else JOURNAL_VIDE,\nM5 `src/usine/ui/chaine.py:234` (`_bandeau`)\n  - if code == 0:\n  + if code <= 0:\nM6 `src/usine/ui/chaine.py:262` (`_annonce`)\n  - rang = list(Etape).index(courante) + 1\n  + rang = list(Etape).index(courante) << 1\nM7 `src/usine/ui/chaine.py:271` (`_etape_courante`)\n  - if evenement.statut is StatutEtape.en_cours:\n  + if evenement.statut <= StatutEtape.en_cours:\nM8 `src/usine/ui/chaine.py:273` (`_etape_courante`)\n  - elif evenement.etape is courante:\n  + elif evenement.etape >= courante:\nM9 `src/usine/ui/vues.py:343` (`DemandeMode`)\n  - model_config = ConfigDict(frozen=True, extra=\"forbid\")\n  + model_config = ConfigDict(frozen=False, extra=\"forbid\")\nM10 `src/usine/ui/serveur.py:107` (`_meme_origine`)\n  - if parties.hostname not in HOTES_AUTORISES or parties.netloc != request.headers.get(\"host\"):\n  + if parties.hostname not in HOTES_AUTORISES or parties.netloc > request.headers.get(\"host\"):\nM11 `src/usine/ui/textes.py:41` (`None`)\n  - INTERVALLE_SONDAGE = 1.0\n  + INTERVALLE_SONDAGE = 0.0\n\nCes mutations du code ne font échouer aucun test existant. Pour chacune qui change un comportement observable, ajoute un test qui échoue sur le code muté et passe sur le code actuel. Si une mutation est équivalente (aucun comportement observable ne change), dis-le sans écrire de test. Ne modifie pas le code source.\n\nÉcris les nouveaux tests dans de nouveaux fichiers `tests/unit/ui/test_renf_*.py` ; ne modifie ni le code source ni les tests existants. Lance les tests avec `python -m pytest -q --tb=short <fichiers>` (l'environnement est prêt, rien à installer). Tous tes tests doivent passer. Termine par la liste des fichiers créés, puis, pour chaque mutation Mn, une ligne : le test qui la tue, ou « équivalente » avec la raison en une phrase.",
+ "rc": 0,
+ "stderr": "",
+ "duree_mur_s": 56.8,
+ "modifies_suivis": [],
+ "crees": [
+  "tests/unit/ui/test_renf_chaine.py"
+ ],
+ "sortie": {
+  "duration_api_ms": 50115,
+  "stop_reason": "end_turn",
+  "session_id": "8d3c8ec2-392d-44ce-b203-37541a7f38e0",
+  "total_cost_usd": 0.17223720000000003,
+  "usage": {
+   "input_tokens": 12,
+   "cache_creation_input_tokens": 20531,
+   "cache_read_input_tokens": 125192,
+   "output_tokens": 7757,
+   "output_tokens_details": {
+    "thinking_tokens": 1459
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 20531,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 951,
+     "cache_read_input_tokens": 29345,
+     "cache_creation_input_tokens": 2685,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 2685
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-sonnet-5-5": {
+    "inputTokens": 12,
+    "outputTokens": 7757,
+    "cacheReadInputTokens": 125192,
+    "cacheCreationInputTokens": 20531,
+    "webSearchRequests": 0,
+    "costUSD": 0.17223720000000003,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 1459,
+    "canonicalModel": "claude-sonnet-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [
+   {
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_01G2wVnNyRruAk6Dv7EdbNvg",
+    "tool_input": {
+     "command": "cat > tests/unit/ui/test_renf_chaine.py <<'EOF'\n\"\"\"Renforcement Story 7.15 : valeurs exactes, bornes et branches d'erreur de la Chaîne.\"\"\"\n\nfrom pathlib import Path\nfrom typing import Any\n\nimport pytest\nfrom pydantic import ValidationError\n\nfrom tests.unit.ui.test_chaine import (\n    Banc,\n    _evenement,\n    ecrire_progression,\n)\nfrom usine.contrats.passage import Etape, StatutEtape\nfrom usine.ui import lancement, textes\nfrom usine.ui.chaine import GestionChaine, JOURNAL_ATTENTE, JOURNAL_VIDE\nfrom usine.ui.vues import DemandeMode\n\n\nclass _Fichier:\n    def __init__(self) -> None:\n        self.ferme = False\n\n    def close(self) -> None:\n        self.ferme = True\n\n\ndef test_echec_de_popen_ferme_le_fichier_d_erreurs(\n    tmp_path: Path, monkeypatch: pytest.MonkeyPatch\n) -> None:\n    fichier = _Fichier()\n    monkeypatch.setattr(lancement, \"fichier_erreurs\", lambda: fichier)\n\n    def popen(*_a: Any, **_k: Any) -> Any:\n        raise OSError(\"boom\")\n\n    GestionChaine(tmp_path, popen=popen).lancer(False)\n    assert fichier.ferme is True\n\n\ndef test_echec_de_creation_du_fichier_d_erreurs_ne_leve_pas(\n    tmp_path: Path, monkeypatch: pytest.MonkeyPatch\n) -> None:\n    def impossible() -> Any:\n        raise OSError(\"disque plein\")\n\n    monkeypatch.setattr(lancement, \"fichier_erreurs\", impossible)\n    gestion = GestionChaine(tmp_path)\n    gestion.lancer(False)\n    vue = gestion.vue(False, None)\n    assert vue.erreur == \"Lancement de la Chaîne impossible : disque plein\"\n    assert vue.statut == \"attente\"\n\n\ndef test_code_negatif_est_un_echec(racine_: Path) -> None:\n    banc = Banc(racine_)\n    banc.lancer()\n    banc.lanceur.finir(-9)\n    vue = banc.etat()\n    assert vue[\"statut\"] == \"echec\"\n    assert vue[\"bandeau\"][\"variante\"] == \"erreur\"\n    assert \"(code -9)\" in vue[\"bandeau\"][\"texte\"]\n    assert vue[\"annonce\"].startswith(\"Échec de la Chaîne\")\n    assert vue[\"bouton_lancement\"][\"libelle\"] == \"Relancer la Chaîne\"\n\n\ndef test_code_zero_est_un_succes(racine_: Path) -> None:\n    banc = Banc(racine_)\n    banc.lancer()\n    banc.lanceur.finir(0)\n    vue = banc.etat()\n    assert vue[\"statut\"] == \"terminee\"\n    assert vue[\"bandeau\"][\"variante\"] == \"succes\"\n\n\ndef test_numeros_d_etapes_partent_de_un(racine_: Path) -> None:\n    vue = Banc(racine_).etat()\n    assert [e[\"numero\"] for e in vue[\"etapes\"]] == list(range(1, 11))\n\n\ndef test_journal_vide_selon_le_statut(racine_: Path) -> None:\n    banc = Banc(racine_)\n    assert banc.etat()[\"journal_vide\"] == JOURNAL_ATTENTE\n    banc.lancer()\n    assert banc.etat()[\"journal_vide\"] == JOURNAL_VIDE\n\n\n@pytest.mark.parametrize((\"etape\", \"rang\"), [(Etape.extraction, 1), (Etape.kpi, 3)])\ndef test_annonce_rang_de_l_etape(racine_: Path, etape: Etape, rang: int) -> None:\n    banc = Banc(racine_)\n    banc.lancer()\n    ecrire_progression(racine_, _evenement(etape, StatutEtape.en_cours))\n    assert banc.etat()[\"annonce\"] == f\"Étape {rang} sur 10 : {etape.value}\"\n\n\ndef test_etape_echouee_n_est_plus_courante(racine_: Path) -> None:\n    banc = Banc(racine_)\n    banc.lancer()\n    ecrire_progression(\n        racine_,\n        _evenement(Etape.extraction, StatutEtape.en_cours),\n        _evenement(Etape.extraction, StatutEtape.echouee, 1),\n    )\n    assert banc.etat()[\"annonce\"] == \"\"\n\n\ndef test_fin_d_une_autre_etape_ne_termine_pas_la_courante(racine_: Path) -> None:\n    banc = Banc(racine_)\n    banc.lancer()\n    ecrire_progression(\n        racine_,\n        _evenement(Etape.extraction, StatutEtape.en_cours),\n        _evenement(Etape.kpi, StatutEtape.reussie, 1),\n    )\n    assert banc.etat()[\"annonce\"] == \"Étape 1 sur 10 : extraction\"\n\n\ndef test_intervalle_de_sondage_une_seconde(racine_: Path) -> None:\n    assert textes.INTERVALLE_SONDAGE == 1.0\n    assert Banc(racine_).etat()[\"intervalle_ms\"] == 1000\n\n\ndef test_demande_mode_est_figee() -> None:\n    demande = DemandeMode(mode=\"reel\")\n    with pytest.raises(ValidationError):\n        demande.mode = \"repli\"  # type: ignore[misc]\n\n\n@pytest.mark.parametrize(\n    (\"origine\", \"host\", \"statut\"),\n    [\n        (\"http://127.0.0.1\", \"127.0.0.1:8000\", 403),\n        (\"http://127.0.0.1:8000\", \"127.0.0.1:8000\", 200),\n        (\"http://127.0.0.1:9\", \"127.0.0.1:8000\", 403),\n    ],\n)\ndef test_origine_doit_egaler_l_hote_et_le_port(\n    racine_: Path, origine: str, host: str, statut: int\n) -> None:\n    banc = Banc(racine_)\n    reponse = banc.http.post(\n        \"/api/mode\", json={\"mode\": \"repli\"}, headers={\"origin\": origine, \"host\": host}\n    )\n    assert reponse.status_code == statut\n\n\n@pytest.fixture\ndef racine_(tmp_path: Path) -> Path:\n    return tmp_path\nEOF\npython -m pytest -q --tb=short tests/unit/ui/test_renf_chaine.py 2>&1 | tail -25"
+    }
+   }
+  ],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 8,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "Les 15 tests passent sur le code actuel. Je ne les ai pas lancés contre les mutants : chaque affirmation ci-dessous vient de l'analyse du diff, pas d'une exécution du mutant.\n\nFichier créé : `tests/unit/ui/test_renf_chaine.py`\n\n- **M1** : `test_echec_de_popen_ferme_le_fichier_d_erreurs` et `test_echec_de_creation_du_fichier_d_erreurs_ne_leve_pas`. Le muté ne ferme pas le fichier quand `erreurs` existe, et appelle `None.close()` quand il vaut `None`.\n- **M2** : `test_code_negatif_est_un_echec`. Avec le code -9, le muté donne `terminee` au lieu de `echec`.\n- **M3** : `test_numeros_d_etapes_partent_de_un`. Le muté numérote à partir de 0.\n- **M4** : `test_journal_vide_selon_le_statut`. Le texte du journal vide s'inverse entre `attente` et `en_cours`.\n- **M5** : `test_code_negatif_est_un_echec`. Le muté renvoie le bandeau de succès au lieu du bandeau d'erreur « (code -9) ».\n- **M6** : `test_annonce_rang_de_l_etape`. Pour `extraction`, le muté donne le rang 0 au lieu de 1 ; pour `kpi`, 4 au lieu de 3.\n- **M7** : `test_etape_echouee_n_est_plus_courante`. `StatutEtape` est un `StrEnum`, donc `\"echouee\" <= \"en_cours\"` est vrai. Le muté garde l'étape échouée comme courante et l'annonce n'est plus vide.\n- **M8** : `test_fin_d_une_autre_etape_ne_termine_pas_la_courante`. `\"kpi\" >= \"extraction\"` est vrai, donc le muté efface l'étape courante quand une autre étape se termine.\n- **M9** : `test_demande_mode_est_figee`. Le muté laisse assigner `mode` sans `ValidationError`.\n- **M10** : `test_origine_doit_egaler_l_hote_et_le_port`. Avec `Origin` `http://127.0.0.1` et `Host` `127.0.0.1:8000`, l'original répond 403. Le muté laisse passer, car `\"127.0.0.1\" > \"127.0.0.1:8000\"` est faux.\n- **M11** : `test_intervalle_de_sondage_une_seconde`. Elle vérifie `INTERVALLE_SONDAGE == 1.0` et `intervalle_ms == 1000`. Le test existant comparait la valeur à elle-même.\n\nAucune mutation n'est équivalente.",
+  "ttft_ms": 2176,
+  "type": "result",
+  "duration_ms": 55611,
+  "uuid": "4ebf1ec8-dd58-4be8-ad90-9c28e3be5092",
+  "ttft_stream_ms": 1378,
+  "time_to_request_ms": 80,
+  "first_content_frame_ms": 1379,
+  "queued_turn_count": 0,
+  "result_index": 0
+ }
+}

@@ -58,7 +58,7 @@ def main():
     nom = f"{story}-{bras}{essai}"
     meta = STORIES[story]
     a = arbre(story, bras, essai)
-    cibles = json.loads((Path(__file__).parent / "cibles.json").read_text(encoding="utf-8"))[story]["cibles"]
+    cibles = json.loads((Path(__import__("os").environ.get("T10_CIBLES", Path(__file__).parent / "cibles.json"))).read_text(encoding="utf-8"))[story]["cibles"]
     modifies, crees = git_status(a)
     nouveaux = sorted(c for c in crees if c.endswith(".py") and ".hypothesis" not in c)
     res = {"story": story, "bras": bras, "essai": essai, "nouveaux_fichiers": nouveaux, "modifies_suivis": modifies,

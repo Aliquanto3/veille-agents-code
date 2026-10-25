@@ -1,0 +1,108 @@
+{
+ "story": "wd-8-4",
+ "bras": "A",
+ "essai": 2,
+ "fichiers": [
+  "tests/test_renf_quality_gate.py"
+ ],
+ "mutants": [
+  {
+   "id": "wd-8-4:findings.py:367:0",
+   "cible": "wd-8-4:findings.py:367",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 1.01
+  },
+  {
+   "id": "wd-8-4:findings.py:367:1",
+   "cible": "wd-8-4:findings.py:367",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 1.0
+  },
+  {
+   "id": "wd-8-4:findings.py:367:2",
+   "cible": "wd-8-4:findings.py:367",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 1.04
+  },
+  {
+   "id": "wd-8-4:findings.py:367:3",
+   "cible": "wd-8-4:findings.py:367",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 1.0
+  },
+  {
+   "id": "wd-8-4:findings.py:367:4",
+   "cible": "wd-8-4:findings.py:367",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 0.99
+  },
+  {
+   "id": "wd-8-4:findings.py:367:5",
+   "cible": "wd-8-4:findings.py:367",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 0.99
+  },
+  {
+   "id": "wd-8-4:findings.py:370:6",
+   "cible": "wd-8-4:findings.py:370",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 1.06
+  },
+  {
+   "id": "wd-8-4:findings.py:392:7",
+   "cible": "wd-8-4:findings.py:392",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 1.04
+  },
+  {
+   "id": "wd-8-4:findings.py:412:8",
+   "cible": "wd-8-4:findings.py:412",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 1.02
+  },
+  {
+   "id": "wd-8-4:findings.py:412:9",
+   "cible": "wd-8-4:findings.py:412",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 1.05
+  },
+  {
+   "id": "wd-8-4:findings.py:412:10",
+   "cible": "wd-8-4:findings.py:412",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 1.06
+  },
+  {
+   "id": "wd-8-4:findings.py:416:11",
+   "cible": "wd-8-4:findings.py:416",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 1.02
+  },
+  {
+   "id": "wd-8-4:replace_in_file.py:47:12",
+   "cible": "wd-8-4:replace_in_file.py:47",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 1.04
+  }
+ ],
+ "base": {
+  "rc": 0,
+  "fin": ".......................................                                  [100%]",
+  "secondes": 1.07
+ },
+ "tues": 9,
+ "erreurs": 0
+}

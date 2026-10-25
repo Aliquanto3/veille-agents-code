@@ -1,0 +1,135 @@
+{
+ "story": "us-7-16",
+ "bras": "C",
+ "essai": 2,
+ "prompt": "Tu travailles dans un dépôt Python (le dossier courant). Voici la story à renforcer.\nSpec de la story : `_bmad-output/implementation-artifacts/spec-7-16-agent-avant-apres-pseudonymisation-et-outillage.md` (à lire d'abord).\nFichiers source modifiés par la story :\n- `src/usine/ui/ecrans.py`\n- `src/usine/ui/outillage.py`\n- `src/usine/ui/pseudonymisation.py`\n- `src/usine/ui/vues.py`\n- `src/usine/ui/serveur.py`\n- `src/usine/ui/cli.py`\nTests existants de la story :\n- `tests/unit/ui/test_ecrans_web.py`\n- `tests/unit/ui/test_vues_ecrans.py`\n- `tests/unit/ui/test_serveur.py`\n- `tests/unit/ui/test_chaine.py`\n\nRenforce les tests de cette story : ajoute des tests pytest qui vérifient précisément le comportement attendu (valeurs exactes, bornes, branches d'erreur). Ne modifie pas le code source.\n\nMutations survivantes (fichier:ligne, fonction, diff) :\nM1 `src/usine/ui/ecrans.py:82` (`None`)\n  - @dataclass(frozen=True)\n  + @dataclass(frozen=False)\nM2 `src/usine/ui/ecrans.py:123` (`repondre`)\n  - if self._session is not None and self._session.passage_id != passage_id:\n  + if self._session is not None and self._session.passage_id < passage_id:\nM3 `src/usine/ui/ecrans.py:143` (`vue_reponse_agent`)\n  - hors_perimetre = not rejetee and reponse.texte.strip() == texte_hors_perimetre\n  + hors_perimetre = not rejetee and reponse.texte.strip() >= texte_hors_perimetre\nM4 `src/usine/ui/ecrans.py:168` (`_vue_agent`)\n  - \"titre_questions\": TITRE_QUESTIONS_REPLI if repli else TITRE_QUESTIONS_REEL,\n  + \"titre_questions\": TITRE_QUESTIONS_REPLI if not repli else TITRE_QUESTIONS_REEL,\nM5 `src/usine/ui/ecrans.py:212` (`vue_agent`)\n  - return _vue_agent(False, message=agent.AUCUN_PASSAGE, lien_message=LIEN_CHAINE)\n  + return _vue_agent(True, message=agent.AUCUN_PASSAGE, lien_message=LIEN_CHAINE)\nM6 `src/usine/ui/ecrans.py:321` (`vue_avant_apres`)\n  - tableau=None if manuel is None and chaine is None else _tableau(manuel, chaine),\n  + tableau=None if not manuel is None and chaine is None else _tableau(manuel, chaine),\nM7 `src/usine/ui/outillage.py:55` (`_pastille`)\n  - jeton = Token(\"html_inline\", \"\", 0)\n  + jeton = Token(\"html_inline\", \"\", 1)\nM8 `src/usine/ui/outillage.py:64` (`_pastilles`)\n  - if jeton.type != \"text\" or not _MARQUEUR.search(jeton.content):\n  + if jeton.type != \"text\" and not _MARQUEUR.search(jeton.content):\nM9 `src/usine/ui/outillage.py:66` (`_pastilles`)\n  - continue\n  + break\nM10 `src/usine/ui/outillage.py:72` (`_pastilles`)\n  - texte = Token(\"text\", \"\", 0)\n  + texte = Token(\"text\", \"\", -1)\nM11 `src/usine/ui/outillage.py:86` (`rendre_fiche`)\n  - rang = 0\n  + rang = 1\nM12 `src/usine/ui/outillage.py:87` (`rendre_fiche`)\n  - while rang < len(jetons):\n  + while rang != len(jetons):\nM13 `src/usine/ui/outillage.py:89` (`rendre_fiche`)\n  - if jeton.type == \"heading_open\" and jeton.tag == \"h1\":\n  + if jeton.type <= \"heading_open\" and jeton.tag == \"h1\":\nM14 `src/usine/ui/outillage.py:90` (`rendre_fiche`)\n  - rang += 3  # ouverture, contenu, fermeture\n  + rang += 2  # ouverture, contenu, fermeture\nM15 `src/usine/ui/outillage.py:92` (`rendre_fiche`)\n  - if jeton.type == \"inline\" and jeton.children:\n  + if jeton.type == \"inline\" or jeton.children:\n\nCes mutations du code ne font échouer aucun test existant. Pour chacune qui change un comportement observable, ajoute un test qui échoue sur le code muté et passe sur le code actuel. Si une mutation est équivalente (aucun comportement observable ne change), dis-le sans écrire de test. Ne modifie pas le code source.\n\nÉcris les nouveaux tests dans de nouveaux fichiers `tests/unit/ui/test_renf_*.py` ; ne modifie ni le code source ni les tests existants. Lance les tests avec `python -m pytest -q --tb=short <fichiers>` (l'environnement est prêt, rien à installer). Tous tes tests doivent passer. Termine par la liste des fichiers créés, puis, pour chaque mutation Mn, une ligne : le test qui la tue, ou « équivalente » avec la raison en une phrase.",
+ "rc": 0,
+ "stderr": "",
+ "duree_mur_s": 79.6,
+ "modifies_suivis": [],
+ "crees": [
+  "tests/unit/ui/test_renf_ecrans_outillage.py"
+ ],
+ "sortie": {
+  "duration_api_ms": 74932,
+  "stop_reason": "end_turn",
+  "session_id": "e32b5453-86d5-4e70-bcca-5c965efb0b6e",
+  "total_cost_usd": 0.23319520000000002,
+  "usage": {
+   "input_tokens": 16,
+   "cache_creation_input_tokens": 25599,
+   "cache_read_input_tokens": 200772,
+   "output_tokens": 11069,
+   "output_tokens_details": {
+    "thinking_tokens": 2244
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 25599,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 1167,
+     "cache_read_input_tokens": 37208,
+     "cache_creation_input_tokens": 275,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 275
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-sonnet-5-5": {
+    "inputTokens": 16,
+    "outputTokens": 11069,
+    "cacheReadInputTokens": 200772,
+    "cacheCreationInputTokens": 25599,
+    "webSearchRequests": 0,
+    "costUSD": 0.23319520000000002,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 2244,
+    "canonicalModel": "claude-sonnet-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [
+   {
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_011ssWEkuBq7RCAZrnQrqCMk",
+    "tool_input": {
+     "command": "cd tests/unit/ui; grep -n \"GardeSession\\|^def \\|^from\\|^import\" test_vues_ecrans.py | head -80; grep -n \"class Session\" -A25 ../../../src/usine/ui/agent.py; grep -n \"class ReponseAgent\\b\" -A15 ../../../src/usine/contrats/llm.py"
+    }
+   },
+   {
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_01K3bT5HFcPz6zPrpapHyuo6",
+    "tool_input": {
+     "command": "cat > tests/unit/ui/test_renf_ecrans_outillage.py <<'EOF'\n\"\"\"Renfort de la Story 7.16 : GardeSession, badges, modes de l'Agent, tableau, rendu de la fiche.\"\"\"\n\nfrom dataclasses import FrozenInstanceError\nfrom types import SimpleNamespace\nfrom typing import Any, cast\nfrom unittest.mock import MagicMock\n\nimport pytest\n\nfrom usine.contrats.llm import ReponseAgent, StatutControle\nfrom usine.ui import agent, outillage\nfrom usine.ui.ecrans import (\n    TITRE_QUESTIONS_REEL,\n    GardeSession,\n    ServicesEcrans,\n    vue_agent,\n    vue_avant_apres,\n    vue_reponse_agent,\n)\n\n\ndef _services() -> ServicesEcrans:\n    return ServicesEcrans(\n        session_agent=MagicMock(),\n        reponses_repli=MagicMock(),\n        questions_suggerees=(),\n        texte_hors_perimetre=\"x\",\n        apercu_pseudonymisation=MagicMock(),\n        config_demo=MagicMock(),\n        manifestes_avant_apres=MagicMock(),\n        lire_fiche=MagicMock(),\n    )\n\n\ndef test_services_ecrans_immuable() -> None:\n    services = _services()\n    with pytest.raises(FrozenInstanceError):\n        cast(Any, services).texte_hors_perimetre = \"autre\"\n\n\nclass _Session:\n    def __init__(self, passage_id: str) -> None:\n        self.passage_id = passage_id\n        self.fermee = False\n\n    def repondre(self, question: str) -> ReponseAgent:\n        return ReponseAgent(question=question, texte=self.passage_id)\n\n    def fermer(self) -> None:\n        self.fermee = True\n\n\ndef test_garde_session_rebatie_quand_le_passage_change_vers_un_id_plus_petit() -> None:\n    creees: list[_Session] = []\n\n    def fabrique(consultation: Any) -> _Session:\n        session = _Session(consultation.manifeste().passage_id)\n        creees.append(session)\n        return session\n\n    def consultation(passage_id: str) -> Any:\n        return SimpleNamespace(manifeste=lambda: SimpleNamespace(passage_id=passage_id))\n\n    garde = GardeSession(fabrique)\n    assert garde.repondre(consultation(\"p-2\"), \"q\").texte == \"p-2\"\n    assert garde.repondre(consultation(\"p-2\"), \"q\").texte == \"p-2\"\n    assert len(creees) == 1\n    assert garde.repondre(consultation(\"p-1\"), \"q\").texte == \"p-1\"\n    assert len(creees) == 2\n    assert creees[0].fermee\n    assert not creees[1].fermee\n\n\ndef test_badge_hors_perimetre_seulement_si_texte_egal() -> None:\n    hors = \"Hors périmètre\"\n    egal = vue_reponse_agent(ReponseAgent(question=\"q\", texte=f\" {hors} \"), hors)\n    assert egal.badge_code == \"hors_perimetre\"\n    superieur = vue_reponse_agent(ReponseAgent(question=\"q\", texte=\"Zzz\"), hors)\n    assert superieur.badge_code == StatutControle.non_controle.value\n    inferieur = vue_reponse_agent(ReponseAgent(question=\"q\", texte=\"Aaa\"), hors)\n    assert inferieur.badge_code == StatutControle.non_controle.value\n\n\ndef test_vue_agent_repli_sans_passage_titre_et_mode() -> None:\n    vue = vue_agent(repli=True, consultation=None, services=_services())\n    assert vue.mode == \"repli\"\n    assert vue.titre_questions == agent.LIBELLE_CHOIX\n    assert vue.titre_questions != TITRE_QUESTIONS_REEL\n\n\ndef test_vue_agent_reel_sans_passage_est_en_mode_reel() -> None:\n    vue = vue_agent(repli=False, consultation=None, services=_services())\n    assert vue.mode == \"reel\"\n    assert vue.titre_questions == TITRE_QUESTIONS_REEL\n    assert vue.message == agent.AUCUN_PASSAGE\n\n\ndef test_avant_apres_sans_config_ni_mesure_n_a_pas_de_tableau() -> None:\n    vue = vue_avant_apres(minutes=None, mesure=None, dernier=cast(Any, MagicMock()))\n    assert vue.tableau is None\n    assert vue.manuel is None\n    assert vue.chaine is None\n    assert len(vue.avertissements) == 2\n\n\ndef test_fiche_titre_h1_retire_en_entier() -> None:\n    html = outillage.rendre_fiche(\"# Titre unique\\n\\n## Section\\n\\ntexte\\n\")\n    assert \"Titre unique\" not in html\n    assert \"h1\" not in html\n    assert \"<h2>Section</h2>\" in html\n\n\ndef test_fiche_premier_jeton_non_titre_conserve() -> None:\n    html = outillage.rendre_fiche(\"Intro\\n\\n## Section\\n\")\n    assert \"<p>Intro</p>\" in html\n\n\ndef test_fiche_marqueurs_rendus_en_pastilles() -> None:\n    html = outillage.rendre_fiche(\"## S\\n\\navant ✅ milieu ⚠️ fin ❌\\n\")\n    assert '<span class=\"pastille pastille--oui\">Oui</span>' in html\n    assert '<span class=\"pastille pastille--surveiller\">À surveiller</span>' in html\n    assert '<span class=\"pastille pastille--non\">Non</span>' in html\n    assert \"avant \" in html\n    assert \" milieu \" in html\n    assert \" fin \" in html\n\n\ndef test_fiche_jetons_non_texte_conserves_avant_une_pastille() -> None:\n    html = outillage.rendre_fiche(\"## S\\n\\n**gras** ✅ fin `code ✅`\\n\")\n    assert \"<strong>gras</strong>\" in html\n    assert 'pastille--oui\">Oui</span> fin ' in html\n    assert \"<code>code ✅</code>\" in html\nEOF\npython -m pytest -q --tb=short tests/unit/ui/test_renf_ecrans_outillage.py 2>&1 | tail -15"
+    }
+   },
+   {
+    "tool_name": "Write",
+    "tool_use_id": "toolu_01SvPxEg1DsiQSpNMdDEBFLV",
+    "tool_input": {
+     "file_path": "C:\\Users\\<user>\\AppData\\Local\\Temp\\claude\\C--Users-<user>-Documents-GitHub\\791fed94-a8b0-414e-8a6c-8fe967283749\\scratchpad\\t10b\\s\\u16-C2\\tests\\unit\\ui\\test_renf_ecrans_outillage.py",
+     "content": "\"\"\"Renfort de la Story 7.16 : GardeSession, badges, modes de l'Agent, tableau, rendu de la fiche.\"\"\"\n\nfrom dataclasses import FrozenInstanceError\nfrom types import SimpleNamespace\nfrom typing import Any, cast\nfrom unittest.mock import MagicMock\n\nimport pytest\n\nfrom usine.contrats.llm import ReponseAgent, StatutControle\nfrom usine.ui import agent, outillage\nfrom usine.ui.ecrans import (\n    TITRE_QUESTIONS_REEL,\n    GardeSession,\n    ServicesEcrans,\n    vue_agent,\n    vue_avant_apres,\n    vue_reponse_agent,\n)\n\n\ndef _services() -> ServicesEcrans:\n    return ServicesEcrans(\n        session_agent=MagicMock(),\n        reponses_repli=MagicMock(),\n        questions_suggerees=(),\n        texte_hors_perimetre=\"x\",\n        apercu_pseudonymisation=MagicMock(),\n        config_demo=MagicMock(),\n        manifestes_avant_apres=MagicMock(),\n        lire_fiche=MagicMock(),\n    )\n\n\ndef test_services_ecrans_immuable() -> None:\n    services = _services()\n    with pytest.raises(FrozenInstanceError):\n        cast(Any, services).texte_hors_perimetre = \"autre\"\n\n\nclass _Session:\n    def __init__(self, passage_id: str) -> None:\n        self.passage_id = passage_id\n        self.fermee = False\n\n    def repondre(self, question: str) -> ReponseAgent:\n        return ReponseAgent(question=question, texte=self.passage_id)\n\n    def fermer(self) -> None:\n        self.fermee = True\n\n\ndef test_garde_session_rebatie_quand_le_passage_change_vers_un_id_plus_petit() -> None:\n    creees: list[_Session] = []\n\n    def fabrique(consultation: Any) -> _Session:\n        session = _Session(consultation.manifeste().passage_id)\n        creees.append(session)\n        return session\n\n    def consultation(passage_id: str) -> Any:\n        return SimpleNamespace(manifeste=lambda: SimpleNamespace(passage_id=passage_id))\n\n    garde = GardeSession(fabrique)\n    assert garde.repondre(consultation(\"p-2\"), \"q\").texte == \"p-2\"\n    assert garde.repondre(consultation(\"p-2\"), \"q\").texte == \"p-2\"\n    assert len(creees) == 1\n    assert garde.repondre(consultation(\"p-1\"), \"q\").texte == \"p-1\"\n    assert len(creees) == 2\n    assert creees[0].fermee\n    assert not creees[1].fermee\n\n\ndef test_badge_hors_perimetre_seulement_si_texte_egal() -> None:\n    hors = \"Hors périmètre\"\n    egal = vue_reponse_agent(ReponseAgent(question=\"q\", texte=f\" {hors} \"), hors)\n    assert egal.badge_code == \"hors_perimetre\"\n    superieur = vue_reponse_agent(ReponseAgent(question=\"q\", texte=\"Zzz\"), hors)\n    assert superieur.badge_code == StatutControle.non_controle.value\n    inferieur = vue_reponse_agent(ReponseAgent(question=\"q\", texte=\"Aaa\"), hors)\n    assert inferieur.badge_code == StatutControle.non_controle.value\n\n\ndef test_vue_agent_repli_sans_passage_titre_et_mode() -> None:\n    vue = vue_agent(repli=True, consultation=None, services=_services())\n    assert vue.mode == \"repli\"\n    assert vue.titre_questions == agent.LIBELLE_CHOIX\n    assert vue.titre_questions != TITRE_QUESTIONS_REEL\n\n\ndef test_vue_agent_reel_sans_passage_est_en_mode_reel() -> None:\n    vue = vue_agent(repli=False, consultation=None, services=_services())\n    assert vue.mode == \"reel\"\n    assert vue.titre_questions == TITRE_QUESTIONS_REEL\n    assert vue.message == agent.AUCUN_PASSAGE\n\n\ndef test_avant_apres_sans_config_ni_mesure_n_a_pas_de_tableau() -> None:\n    vue = vue_avant_apres(minutes=None, mesure=None, dernier=cast(Any, MagicMock()))\n    assert vue.tableau is None\n    assert vue.manuel is None\n    assert vue.chaine is None\n    assert len(vue.avertissements) == 2\n\n\ndef test_fiche_titre_h1_retire_en_entier() -> None:\n    html = outillage.rendre_fiche(\"# Titre unique\\n\\n## Section\\n\\ntexte\\n\")\n    assert \"Titre unique\" not in html\n    assert \"h1\" not in html\n    assert \"<h2>Section</h2>\" in html\n\n\ndef test_fiche_premier_jeton_non_titre_conserve() -> None:\n    html = outillage.rendre_fiche(\"Intro\\n\\n## Section\\n\")\n    assert \"<p>Intro</p>\" in html\n\n\ndef test_fiche_marqueurs_rendus_en_pastilles() -> None:\n    html = outillage.rendre_fiche(\"## S\\n\\navant ✅ milieu ⚠️ fin ❌\\n\")\n    assert '<span class=\"pastille pastille--oui\">Oui</span>' in html\n    assert '<span class=\"pastille pastille--surveiller\">À surveiller</span>' in html\n    assert '<span class=\"pastille pastille--non\">Non</span>' in html\n    assert \"avant \" in html\n    assert \" milieu \" in html\n    assert \" fin \" in html\n\n\ndef test_fiche_jetons_non_texte_conserves_avant_une_pastille() -> None:\n    html = outillage.rendre_fiche(\"## S\\n\\n**gras** ✅ fin `code ✅`\\n\")\n    assert \"<strong>gras</strong>\" in html\n    assert 'pastille--oui\">Oui</span> fin ' in html\n    assert \"<code>code ✅</code>\" in html\n"
+    }
+   }
+  ],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 10,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "Le fichier créé est `tests/unit/ui/test_renf_ecrans_outillage.py`. Ses 10 tests passent sur le code actuel. Je n'ai pas lancé les mutants, donc aucun test n'a été vu échouer sur le code muté. Les verdicts ci-dessous viennent de la lecture du code.\n\n- **M1**: `test_services_ecrans_immuable`. Assigner un champ lève `FrozenInstanceError`.\n- **M2**: `test_garde_session_rebatie_quand_le_passage_change_vers_un_id_plus_petit`. Avec `p-2` puis `p-1`, `!=` reconstruit la session et ferme l'ancienne. `<` ne la reconstruit pas.\n- **M3**: `test_badge_hors_perimetre_seulement_si_texte_egal`. Un texte `Zzz`, supérieur au texte hors périmètre, ne doit pas recevoir le badge `hors_perimetre`.\n- **M4**: `test_vue_agent_repli_sans_passage_titre_et_mode` vérifie le titre en Mode repli. `test_vue_agent_reel_sans_passage_est_en_mode_reel` vérifie le titre en Mode réel.\n- **M5**: `test_vue_agent_reel_sans_passage_est_en_mode_reel`. Sans Passage en Mode réel, `mode` vaut `\"reel\"`.\n- **M6**: `test_avant_apres_sans_config_ni_mesure_n_a_pas_de_tableau`. Sans configuration ni mesure, mais avec un dernier Passage, `tableau` doit rester `None`.\n- **M7**: équivalente. Le `nesting` d'un jeton `html_inline` est ignoré par le rendu, qui n'utilise que `content`.\n- **M8**: `test_fiche_jetons_non_texte_conserves_avant_une_pastille`. Avec `and`, les jetons non texte comme le gras ou le code en ligne seraient détruits ou transformés en pastille.\n- **M9**: `test_fiche_jetons_non_texte_conserves_avant_une_pastille`. Avec `break`, tout ce qui suit le premier jeton non texte serait perdu.\n- **M10**: équivalente. Le `nesting` d'un jeton `text` est ignoré par le rendu.\n- **M11**: `test_fiche_titre_h1_retire_en_entier` et `test_fiche_premier_jeton_non_titre_conserve`. Avec `rang = 1`, le titre `#` ou l'ouverture du premier paragraphe est mal traité.\n- **M12**: équivalente. Un `heading_open` h1 est toujours suivi de deux jetons, donc `rang` ne dépasse jamais `len(jetons)` et `!=` se comporte comme `<`.\n- **M13**: équivalente. Le seul jeton h1 avec un type inférieur ou égal à `heading_open` est `heading_close`, et le `heading_open` qui le précède saute déjà ces trois jetons.\n- **M14**: `test_fiche_titre_h1_retire_en_entier`. Avec `+= 2`, un `</h1>` orphelin resterait dans le HTML.\n- **M15**: équivalente. Seuls les jetons `inline` ont des enfants, et un `inline` sans enfants donne `_pastilles([]) == []`.",
+  "ttft_ms": 2161,
+  "type": "result",
+  "duration_ms": 78416,
+  "uuid": "92afe679-7cd3-4b1f-8906-527f8daaadee",
+  "ttft_stream_ms": 1373,
+  "time_to_request_ms": 231,
+  "first_content_frame_ms": 1373,
+  "queued_turn_count": 0,
+  "result_index": 0
+ }
+}

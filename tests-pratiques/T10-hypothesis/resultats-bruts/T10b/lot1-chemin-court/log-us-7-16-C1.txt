@@ -1,0 +1,1 @@
+us-7-16-C1 rc 0 cout 0.31564440000000005 tours 19 api_ms 93588 mur_s 94.8 modifies [] crees []

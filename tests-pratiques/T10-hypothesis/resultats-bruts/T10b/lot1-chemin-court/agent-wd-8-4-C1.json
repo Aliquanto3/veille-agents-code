@@ -1,0 +1,128 @@
+{
+ "story": "wd-8-4",
+ "bras": "C",
+ "essai": 1,
+ "prompt": "Tu travailles dans un dépôt Python (le dossier courant). Voici la story à renforcer.\nSpec de la story : `_bmad-output/implementation-artifacts/8-4-bloquer-une-pr-quand-la-couverture-du-nouveau-code-passe-sou.md` (à lire d'abord).\nFichiers source modifiés par la story :\n- `src/wavedevsecops/ci/findings.py`\n- `src/wavedevsecops/scenarios/ops/replace_in_file.py`\n- `src/wavedevsecops/toolrun/__init__.py`\n- `src/wavedevsecops/ci/__init__.py`\nTests existants de la story :\n- `tests/test_quality_gate.py`\n\nRenforce les tests de cette story : ajoute des tests pytest qui vérifient précisément le comportement attendu (valeurs exactes, bornes, branches d'erreur). Ne modifie pas le code source.\n\nMutations survivantes (fichier:ligne, fonction, diff) :\nM1 `src/wavedevsecops/ci/findings.py:367` (`_ranges`)\n  - found.append(str(start) if start == previous else f\"{start}-{previous}\")\n  + found.append(str(start) if not start == previous else f\"{start}-{previous}\")\nM2 `src/wavedevsecops/ci/findings.py:370` (`_ranges`)\n  - found.append(str(start) if start == previous else f\"{start}-{previous}\")\n  + found.append(str(start) if start > previous else f\"{start}-{previous}\")\nM3 `src/wavedevsecops/ci/findings.py:392` (`parse_diff_cover_json`)\n  - measured = total > 0\n  + measured = total > 1\nM4 `src/wavedevsecops/ci/findings.py:393` (`parse_diff_cover_json`)\n  - if measured and not isinstance(percent, int | float):\n  + if not measured and not isinstance(percent, int | float):\nM5 `src/wavedevsecops/ci/findings.py:406` (`parse_diff_cover_json`)\n  - continue\n  + break\nM6 `src/wavedevsecops/ci/findings.py:409` (`parse_diff_cover_json`)\n  - continue\n  + break\nM7 `src/wavedevsecops/ci/findings.py:412` (`parse_diff_cover_json`)\n  - noun = \"ligne\" if count == 1 else \"lignes\"\n  + noun = \"ligne\" if count == 0 else \"lignes\"\nM8 `src/wavedevsecops/ci/findings.py:416` (`parse_diff_cover_json`)\n  - severity=\"error\" if not passed else \"info\",\n  + severity=\"error\" if  passed else \"info\",\nM9 `src/wavedevsecops/ci/findings.py:433` (`parse_coverage_json`)\n  - if not isinstance(totals, dict) or not isinstance(files, dict) or not files:\n  + if not isinstance(totals, dict) and not isinstance(files, dict) or not files:\nM10 `src/wavedevsecops/ci/findings.py:437` (`parse_coverage_json`)\n  - except KeyError, TypeError, ValueError:\n  + except CosmicRayTestingException, TypeError, ValueError:\nM11 `src/wavedevsecops/scenarios/ops/replace_in_file.py:27` (`Args`)\n  - @classmethod\nM12 `src/wavedevsecops/scenarios/ops/replace_in_file.py:35` (`Args`)\n  - @field_validator(\"old\")\nM13 `src/wavedevsecops/scenarios/ops/replace_in_file.py:47` (`apply`)\n  - except (OSError, UnicodeDecodeError):\n  + except (OSError, CosmicRayTestingException):\n(`CosmicRayTestingException` : classe d'exception jamais levée, donc l'`except` concerné n'attrape plus rien.)\n\nCes mutations du code ne font échouer aucun test existant. Pour chacune qui change un comportement observable, ajoute un test qui échoue sur le code muté et passe sur le code actuel. Si une mutation est équivalente (aucun comportement observable ne change), dis-le sans écrire de test. Ne modifie pas le code source.\n\nÉcris les nouveaux tests dans de nouveaux fichiers `tests/test_renf_*.py` ; ne modifie ni le code source ni les tests existants. Lance les tests avec `python -m pytest -q --tb=short <fichiers>` (l'environnement est prêt, rien à installer). Tous tes tests doivent passer. Termine par la liste des fichiers créés, puis, pour chaque mutation Mn, une ligne : le test qui la tue, ou « équivalente » avec la raison en une phrase.",
+ "rc": 0,
+ "stderr": "",
+ "duree_mur_s": 85.0,
+ "modifies_suivis": [],
+ "crees": [
+  "tests/test_renf_quality_gate.py"
+ ],
+ "sortie": {
+  "duration_api_ms": 78851,
+  "stop_reason": "end_turn",
+  "session_id": "140b8997-e1e6-4c9d-962a-45b501b60ae3",
+  "total_cost_usd": 0.21864909999999999,
+  "usage": {
+   "input_tokens": 16,
+   "cache_creation_input_tokens": 22436,
+   "cache_read_input_tokens": 143731,
+   "output_tokens": 11450,
+   "output_tokens_details": {
+    "thinking_tokens": 1029
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 22436,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 1196,
+     "cache_read_input_tokens": 28046,
+     "cache_creation_input_tokens": 360,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 360
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-sonnet-5-5": {
+    "inputTokens": 16,
+    "outputTokens": 11450,
+    "cacheReadInputTokens": 143731,
+    "cacheCreationInputTokens": 22436,
+    "webSearchRequests": 0,
+    "costUSD": 0.21864909999999999,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 1029,
+    "canonicalModel": "claude-sonnet-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [
+   {
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_0157DqBJUvgiPVPGZDJFATdJ",
+    "tool_input": {
+     "command": "cd <user-home>/AppData/Local/Temp/claude/C--Users-<user>-Documents-GitHub/791fed94-a8b0-414e-8a6c-8fe967283749/scratchpad/t10b/s/wd84-C1 && cat > tests/test_renf_quality_gate.py <<'EOF'\n\"\"\"Renfort de la story 8.4 : bornes des lecteurs diff-cover / coverage et de l'op replace_in_file.\"\"\"\n\nfrom __future__ import annotations\n\nimport json\nfrom pathlib import Path\nfrom types import SimpleNamespace\n\nimport pytest\n\nfrom wavedevsecops.ci import findings as parsers\nfrom wavedevsecops.scenarios import SetupError\nfrom wavedevsecops.scenarios.ops import replace_in_file\n\nTREE = Path(\"tree\")\n\n\ndef _diff(total: int, percent: object, stats: dict) -> str:\n    return json.dumps(\n        {\"total_num_lines\": total, \"total_percent_covered\": percent, \"src_stats\": stats}\n    )\n\n\n@pytest.mark.parametrize(\n    (\"lines\", \"expected\"),\n    [\n        ([5], \"5\"),\n        ([5, 7], \"5, 7\"),\n        ([1, 2, 3, 9], \"1-3, 9\"),\n        ([9, 1, 2, 2, 3, 20, 21], \"1-3, 9, 20-21\"),\n        ([4, 6, 8], \"4, 6, 8\"),\n        ([], \"\"),\n    ],\n)\ndef test_ranges_exactes(lines: list[int], expected: str) -> None:\n    assert parsers._ranges(lines) == expected\n\n\ndef test_une_seule_ligne_mesuree_est_mesuree() -> None:\n    found = parsers.parse_diff_cover_json(_diff(1, 100, {}), TREE)\n    assert [f.rule_id for f in found] == [parsers.DIFF_COVERAGE_RULE]\n    assert found[0].severity == \"info\"\n    assert \"100 %\" in found[0].message_text\n\n\ndef test_aucune_ligne_mesuree_sans_pourcentage() -> None:\n    found = parsers.parse_diff_cover_json(_diff(0, None, {}), TREE)\n    assert [f.rule_id for f in found] == [parsers.NO_DIFF_RULE]\n    assert found[0].severity == \"info\"\n    assert \"aucune ligne à mesurer\" in found[0].message_text\n\n\ndef test_pourcentage_invalide_avec_lignes_mesurees_est_refuse() -> None:\n    with pytest.raises(ValueError, match=\"inattendue\"):\n        parsers.parse_diff_cover_json(_diff(3, \"beaucoup\", {}), TREE)\n    with pytest.raises(ValueError, match=\"inattendue\"):\n        parsers.parse_diff_cover_json(_diff(3, None, {}), TREE)\n\n\ndef test_les_entrees_illisibles_ou_sans_ligne_n_arretent_pas_la_lecture() -> None:\n    stats = {\n        \"bad.py\": \"pas un dict\",\n        \"ok.py\": {\"violation_lines\": []},\n        \"none.py\": {\"violation_lines\": None},\n        \"last.py\": {\"violation_lines\": [3]},\n    }\n    found = parsers.parse_diff_cover_json(_diff(10, 50, stats), TREE)\n    uncovered = [f for f in found if f.rule_id == parsers.UNCOVERED_RULE]\n    assert len(uncovered) == 1\n    assert uncovered[0].path == \"last.py\"\n    assert uncovered[0].line == 3\n\n\ndef test_entree_non_dict_suivie_d_une_entree_a_constat() -> None:\n    stats = {\"bad.py\": 3, \"last.py\": {\"violation_lines\": [1, 2]}}\n    found = parsers.parse_diff_cover_json(_diff(10, 50, stats), TREE)\n    assert [f.path for f in found if f.rule_id == parsers.UNCOVERED_RULE] == [\"last.py\"]\n\n\ndef test_singulier_et_pluriel_du_constat_par_fichier() -> None:\n    stats = {\"a.py\": {\"violation_lines\": [7]}, \"b.py\": {\"violation_lines\": [4, 5, 9]}}\n    found = parsers.parse_diff_cover_json(_diff(10, 50, stats), TREE)\n    texts = {f.path: f.message_text for f in found if f.rule_id == parsers.UNCOVERED_RULE}\n    assert texts[\"a.py\"] == \"1 ligne du nouveau code sans test : 7\"\n    assert texts[\"b.py\"] == \"3 lignes du nouveau code sans test : 4-5, 9\"\n\n\ndef test_gravite_des_constats_par_fichier_suit_le_seuil() -> None:\n    stats = {\"a.py\": {\"violation_lines\": [7]}}\n    sous = parsers.parse_diff_cover_json(_diff(10, 79, stats), TREE)\n    assert [f.severity for f in sous] == [\"error\", \"error\"]\n    au_seuil = parsers.parse_diff_cover_json(_diff(10, 80, stats), TREE)\n    assert [f.severity for f in au_seuil] == [\"info\", \"info\"]\n\n\ndef test_coverage_json_totals_illisible_est_refuse_comme_vide() -> None:\n    text = json.dumps({\"totals\": [], \"files\": {\"a.py\": {}}})\n    with pytest.raises(ValueError, match=\"vide ou inattendue\"):\n        parsers.parse_coverage_json(text, TREE)\n    text = json.dumps({\"totals\": {\"percent_covered\": 90}, \"files\": []})\n    with pytest.raises(ValueError, match=\"vide ou inattendue\"):\n        parsers.parse_coverage_json(text, TREE)\n    text = json.dumps({\"totals\": {\"percent_covered\": 90}, \"files\": {}})\n    with pytest.raises(ValueError, match=\"vide ou inattendue\"):\n        parsers.parse_coverage_json(text, TREE)\n\n\ndef test_coverage_json_sans_pourcentage_est_refuse() -> None:\n    for totals in ({}, {\"percent_covered\": None}, {\"percent_covered\": \"x\"}):\n        text = json.dumps({\"totals\": totals, \"files\": {\"a.py\": {}}})\n        with pytest.raises(ValueError, match=\"mesure de couverture est inattendue\"):\n            parsers.parse_coverage_json(text, TREE)\n\n\ndef test_coverage_json_valide() -> None:\n    text = json.dumps({\"totals\": {\"percent_covered\": 87.9}, \"files\": {\"a.py\": {}}})\n    (found,) = parsers.parse_coverage_json(text, TREE)\n    assert found.message_text == \"Couverture de l'ensemble du dépôt : 87 % (information).\"\n\n\ndef test_replace_in_file_refuse_un_texte_vide() -> None:\n    with pytest.raises(ValueError, match=\"vide\"):\n        replace_in_file.Args(op=\"replace_in_file\", path=\"f.txt\", old=\"\", new=\"x\")\n\n\ndef test_replace_in_file_fichier_non_utf8_ou_absent(tmp_path: Path) -> None:\n    ctx = SimpleNamespace(layout=SimpleNamespace(repo=tmp_path))\n    (tmp_path / \"bin.txt\").write_bytes(b\"\\xff\\xfe\\x00\\xff\")\n    for name in (\"bin.txt\", \"absent.txt\"):\n        args = replace_in_file.Args(op=\"replace_in_file\", path=name, old=\"a\", new=\"b\")\n        with pytest.raises(SetupError, match=\"n'a pas pu être lu\"):\n            replace_in_file.apply(args, ctx)  # type: ignore[arg-type]\nEOF\npython -m pytest -q --tb=short tests/test_renf_quality_gate.py 2>&1 | tail -15"
+    }
+   },
+   {
+    "tool_name": "Write",
+    "tool_use_id": "toolu_01RBkdVtptrcyPkysr9pAA8A",
+    "tool_input": {
+     "file_path": "C:\\Users\\<user>\\AppData\\Local\\Temp\\claude\\C--Users-<user>-Documents-GitHub\\791fed94-a8b0-414e-8a6c-8fe967283749\\scratchpad\\t10b\\s\\wd84-C1\\tests\\test_renf_quality_gate.py",
+     "content": "\"\"\"Renfort de la story 8.4 : bornes des lecteurs diff-cover / coverage et de l'op replace_in_file.\"\"\"\n\nfrom __future__ import annotations\n\nimport json\nfrom pathlib import Path\nfrom types import SimpleNamespace\n\nimport pytest\n\nfrom wavedevsecops.ci import findings as parsers\nfrom wavedevsecops.scenarios import SetupError\nfrom wavedevsecops.scenarios.ops import replace_in_file\n\nTREE = Path(\"tree\")\n\n\ndef _diff(total: int, percent: object, stats: dict) -> str:\n    return json.dumps(\n        {\"total_num_lines\": total, \"total_percent_covered\": percent, \"src_stats\": stats}\n    )\n\n\n@pytest.mark.parametrize(\n    (\"lines\", \"expected\"),\n    [\n        ([5], \"5\"),\n        ([5, 7], \"5, 7\"),\n        ([1, 2, 3, 9], \"1-3, 9\"),\n        ([9, 1, 2, 2, 3, 20, 21], \"1-3, 9, 20-21\"),\n        ([4, 6, 8], \"4, 6, 8\"),\n        ([], \"\"),\n    ],\n)\ndef test_ranges_exactes(lines: list[int], expected: str) -> None:\n    assert parsers._ranges(lines) == expected\n\n\ndef test_une_seule_ligne_mesuree_est_mesuree() -> None:\n    found = parsers.parse_diff_cover_json(_diff(1, 100, {}), TREE)\n    assert [f.rule_id for f in found] == [parsers.DIFF_COVERAGE_RULE]\n    assert found[0].severity == \"info\"\n    assert \"100 %\" in found[0].message_text\n\n\ndef test_aucune_ligne_mesuree_sans_pourcentage() -> None:\n    found = parsers.parse_diff_cover_json(_diff(0, None, {}), TREE)\n    assert [f.rule_id for f in found] == [parsers.NO_DIFF_RULE]\n    assert found[0].severity == \"info\"\n    assert \"aucune ligne à mesurer\" in found[0].message_text\n\n\ndef test_pourcentage_invalide_avec_lignes_mesurees_est_refuse() -> None:\n    with pytest.raises(ValueError, match=\"inattendue\"):\n        parsers.parse_diff_cover_json(_diff(3, \"beaucoup\", {}), TREE)\n    with pytest.raises(ValueError, match=\"inattendue\"):\n        parsers.parse_diff_cover_json(_diff(3, None, {}), TREE)\n\n\ndef test_les_entrees_illisibles_ou_sans_ligne_n_arretent_pas_la_lecture() -> None:\n    stats = {\n        \"bad.py\": \"pas un dict\",\n        \"ok.py\": {\"violation_lines\": []},\n        \"none.py\": {\"violation_lines\": None},\n        \"last.py\": {\"violation_lines\": [3]},\n    }\n    found = parsers.parse_diff_cover_json(_diff(10, 50, stats), TREE)\n    uncovered = [f for f in found if f.rule_id == parsers.UNCOVERED_RULE]\n    assert len(uncovered) == 1\n    assert uncovered[0].path == \"last.py\"\n    assert uncovered[0].line == 3\n\n\ndef test_entree_non_dict_suivie_d_une_entree_a_constat() -> None:\n    stats = {\"bad.py\": 3, \"last.py\": {\"violation_lines\": [1, 2]}}\n    found = parsers.parse_diff_cover_json(_diff(10, 50, stats), TREE)\n    assert [f.path for f in found if f.rule_id == parsers.UNCOVERED_RULE] == [\"last.py\"]\n\n\ndef test_singulier_et_pluriel_du_constat_par_fichier() -> None:\n    stats = {\"a.py\": {\"violation_lines\": [7]}, \"b.py\": {\"violation_lines\": [4, 5, 9]}}\n    found = parsers.parse_diff_cover_json(_diff(10, 50, stats), TREE)\n    texts = {f.path: f.message_text for f in found if f.rule_id == parsers.UNCOVERED_RULE}\n    assert texts[\"a.py\"] == \"1 ligne du nouveau code sans test : 7\"\n    assert texts[\"b.py\"] == \"3 lignes du nouveau code sans test : 4-5, 9\"\n\n\ndef test_gravite_des_constats_par_fichier_suit_le_seuil() -> None:\n    stats = {\"a.py\": {\"violation_lines\": [7]}}\n    sous = parsers.parse_diff_cover_json(_diff(10, 79, stats), TREE)\n    assert [f.severity for f in sous] == [\"error\", \"error\"]\n    au_seuil = parsers.parse_diff_cover_json(_diff(10, 80, stats), TREE)\n    assert [f.severity for f in au_seuil] == [\"info\", \"info\"]\n\n\ndef test_coverage_json_totals_illisible_est_refuse_comme_vide() -> None:\n    text = json.dumps({\"totals\": [], \"files\": {\"a.py\": {}}})\n    with pytest.raises(ValueError, match=\"vide ou inattendue\"):\n        parsers.parse_coverage_json(text, TREE)\n    text = json.dumps({\"totals\": {\"percent_covered\": 90}, \"files\": []})\n    with pytest.raises(ValueError, match=\"vide ou inattendue\"):\n        parsers.parse_coverage_json(text, TREE)\n    text = json.dumps({\"totals\": {\"percent_covered\": 90}, \"files\": {}})\n    with pytest.raises(ValueError, match=\"vide ou inattendue\"):\n        parsers.parse_coverage_json(text, TREE)\n\n\ndef test_coverage_json_sans_pourcentage_est_refuse() -> None:\n    for totals in ({}, {\"percent_covered\": None}, {\"percent_covered\": \"x\"}):\n        text = json.dumps({\"totals\": totals, \"files\": {\"a.py\": {}}})\n        with pytest.raises(ValueError, match=\"mesure de couverture est inattendue\"):\n            parsers.parse_coverage_json(text, TREE)\n\n\ndef test_coverage_json_valide() -> None:\n    text = json.dumps({\"totals\": {\"percent_covered\": 87.9}, \"files\": {\"a.py\": {}}})\n    (found,) = parsers.parse_coverage_json(text, TREE)\n    assert found.message_text == \"Couverture de l'ensemble du dépôt : 87 % (information).\"\n\n\ndef test_replace_in_file_refuse_un_texte_vide() -> None:\n    with pytest.raises(ValueError, match=\"vide\"):\n        replace_in_file.Args(op=\"replace_in_file\", path=\"f.txt\", old=\"\", new=\"x\")\n\n\ndef test_replace_in_file_fichier_non_utf8_ou_absent(tmp_path: Path) -> None:\n    ctx = SimpleNamespace(layout=SimpleNamespace(repo=tmp_path))\n    (tmp_path / \"bin.txt\").write_bytes(b\"\\xff\\xfe\\x00\\xff\")\n    for name in (\"bin.txt\", \"absent.txt\"):\n        args = replace_in_file.Args(op=\"replace_in_file\", path=name, old=\"a\", new=\"b\")\n        with pytest.raises(SetupError, match=\"n'a pas pu être lu\"):\n            replace_in_file.apply(args, ctx)  # type: ignore[arg-type]\n"
+    }
+   }
+  ],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 10,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "Les 18 tests de `tests/test_renf_quality_gate.py` passent sur le code actuel. Je n'ai pas relancé les mutants pour confirmer que chaque test échoue sur son code muté ; l'association ci-dessous vient de la lecture du code.\n\nFichier créé : `tests/test_renf_quality_gate.py`. Le code source et les tests existants sont intacts.\n\n- **M1** : `test_ranges_exactes`. Un singleton au milieu (`[4, 6, 8]` donne `\"4, 6, 8\"`) échoue avec la condition inversée.\n- **M2** : `test_ranges_exactes`, cas `[5]` → `\"5\"`. Avec `start > previous`, le code produit `\"5-5\"`.\n- **M3** : `test_une_seule_ligne_mesuree_est_mesuree`. Avec `total=1`, la règle doit être `diff_coverage` et non `diff_coverage_none`.\n- **M4** : `test_pourcentage_invalide_avec_lignes_mesurees_est_refuse`. Un pourcentage invalide avec des lignes mesurées doit lever `ValueError`.\n- **M5** : `test_les_entrees_illisibles_ou_sans_ligne_n_arretent_pas_la_lecture` et `test_entree_non_dict_suivie_d_une_entree_a_constat`. Une entrée non-dict suivie d'une entrée avec un constat ne doit pas arrêter la lecture.\n- **M6** : `test_les_entrees_illisibles_ou_sans_ligne_n_arretent_pas_la_lecture`. Une entrée sans ligne manquante, suivie d'une entrée avec un constat, ne doit pas arrêter la lecture.\n- **M7** : `test_singulier_et_pluriel_du_constat_par_fichier`. « 1 ligne » au singulier, « 3 lignes » au pluriel.\n- **M8** : `test_gravite_des_constats_par_fichier_suit_le_seuil`. Le constat par fichier est `error` à 79 % et `info` à 80 %.\n- **M9** : `test_coverage_json_totals_illisible_est_refuse_comme_vide`. Avec `totals=[]` et `files` non vide, le message doit contenir « vide ou inattendue ». Le code muté lève un message différent.\n- **M10** : `test_coverage_json_sans_pourcentage_est_refuse`. Avec `totals={}`, c'est un `ValueError` attendu, alors que le code muté laisse passer un `KeyError`.\n- **M11** : équivalente. Pydantic enveloppe lui-même en `classmethod` un validateur dont le premier paramètre s'appelle `cls`. Retirer `@classmethod` ne change donc rien d'observable. Je n'ai pas vérifié ce point en retirant le décorateur.\n- **M12** : `test_replace_in_file_refuse_un_texte_vide`. Sans `@field_validator(\"old\")`, un `old` vide serait accepté.\n- **M13** : `test_replace_in_file_fichier_non_utf8_ou_absent`. Un fichier non UTF-8 doit lever `SetupError`, alors que le code muté laisse remonter `UnicodeDecodeError`.\n\nLe premier essai d'écriture du fichier a été bloqué à cause du chemin court Windows (`<user>`). Je l'ai créé avec le chemin long, ce qui désigne le même dossier.",
+  "ttft_ms": 3736,
+  "type": "result",
+  "duration_ms": 83519,
+  "uuid": "2cb468c7-acbb-4833-96e0-b3711c7f6a61",
+  "ttft_stream_ms": 2736,
+  "time_to_request_ms": 1648,
+  "first_content_frame_ms": 2737,
+  "queued_turn_count": 0,
+  "result_index": 0
+ }
+}

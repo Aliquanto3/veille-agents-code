@@ -1,0 +1,62 @@
+===== us-7-14
+Fichier créé : `tests/unit/ui/test_renf_7_14.py`. Les 17 tests passent sur le code actuel. Je n'ai relancé aucune mutation pour confirmer qu'ils échouent sur le code muté. Chaque test a été écrit d'après la lecture du code.
+
+- M1 : `test_libelle_suite_un_seul_reste`
+- M2 : `test_taille_lisible_bornes` (1023 o et 1024 → « 1 Ko »)
+- M3 : `test_taille_lisible_bornes` (1 047 500 → « 1023 Ko »)
+- M4 : `test_taille_lisible_bornes` (104 857 600 → « 100,0 Mo »)
+- M5 : `test_carte_premiere_regle_et_suite_exacte`
+- M6 : `test_carte_premiere_regle_et_suite_exacte` (7 tickets → « +4 »)
+- M7 : équivalente. `Couleur` est un enum, donc `is` et `==` donnent le même résultat sur ses membres.
+- M8 : `test_morceaux_sans_citation`
+- M9 : `test_morceaux_plusieurs_cles` (la 2e clé est au rang 3)
+- M10 : `test_texte_avec_liens_cle_liee_et_reste_echappe`
+- M11 : `test_bloc_prevision_sortie_projetee` et `test_bloc_prevision_autres_statuts`
+- M12 : `test_bloc_prevision_sortie_projetee` (date absente → « — »)
+- M13 : `test_bloc_prevision_sortie_projetee` (sans facteurs → pas de sous-titre)
+- M14 : `test_bloc_prevision_autres_statuts`
+- M15 : équivalente. `Couleur` est ordonné avec `rouge` au maximum, donc `< rouge` revient à `is not rouge`.
+- M16 : `test_section_prevision_filtre_entite_et_narration`
+- M17 : `test_section_prevision_filtre_entite_et_narration` (narration d'une autre Entité, et narration rejetée)
+- M18 : équivalente. `rouge` est la plus grave, donc `>= rouge` revient à `is rouge`.
+- M19 : `test_section_risque_filtre_entite`
+- M20 : équivalente. Toutes les lignes ont les mêmes clés, donc `lignes[0]` et `lignes[-1]` donnent les mêmes colonnes.
+- M21 : équivalente. `StatutControle` est un `StrEnum` comparé alphabétiquement. `rejete` est le plus grand des statuts, donc `>= rejete` revient à `is rejete`.
+- M22 : équivalente. La liste `[morceau]` n'a qu'un élément, donc `[0]` et `[-1]` sont identiques.
+- M23 : équivalente. `Palier` vaut 1 ou 2, donc `<= 1` revient à `== 1`.
+- M24 : équivalente. Même raison : `>= 2` revient à `== 2` pour un palier de 1 ou 2.
+- M25 : équivalente. Même raison : `<= 1` revient à `== 1`.
+- M26 : `test_vue_detail_message_palier_2`
+- M27 : `test_vue_detail_palier_par_defaut_2`
+- M28 : équivalente. `manifeste.palier` vaut 1 ou 2, donc `>= 2` revient à `== 2`.
+- M29 : équivalente. Toute valeur demandée autre que 1 donne 2 dans les deux versions.
+- M30 : équivalente. `palier` vaut 1 ou 2, donc `<= 1` revient à `== 1`.
+- M31 : `test_vue_detail_suite_exacte`
+- M32 : `test_vue_detail_aucun_kpi`
+- M33 : `test_vues_immuables`
+- M34 : équivalente. Avec 3, `vue_detail` retombe sur le palier 2 comme avec 2 (`palier_demande == 1` est faux dans les deux cas).
+- M35 : `test_detail_lecture_impossible_oserror`
+- M36 : `test_routes_hors_schema`
+- M37 : équivalente. Seuls deux noms passent le contrôle `get_args` en amont, et `"rapport_pptx" < "rapport_xlsx"`, donc `>=` choisit les mêmes valeurs que `==`.
+- M38 : `test_routes_hors_schema`
+===== us-7-15
+Les 16 tests de `tests/unit/ui/test_renf_chaine.py` passent sur le code actuel. Je n'ai pas rejoué les mutations : l'attribution des tests aux mutations ci-dessous vient de mon analyse du code, pas d'une exécution sur le code muté.
+
+**Fichier créé :** `tests/unit/ui/test_renf_chaine.py`
+
+- **M1** : `test_echec_de_demarrage_ferme_le_fichier_d_erreurs` vérifie que le fichier d'erreurs est fermé après un `OSError`. `test_echec_avant_fichier_d_erreurs_sans_exception` couvre le cas où `erreurs` vaut `None` : le code muté appellerait `None.close()`.
+- **M2** : `test_code_negatif_est_un_echec` (codes -1 et -9) attend le statut `echec`.
+- **M3** : `test_numeros_d_etapes_commencent_a_un`.
+- **M4** : équivalente. `statut` est affecté à partir de littéraux de chaîne internés, donc `is "en_cours"` se comporte comme `==` en CPython.
+- **M5** : `test_journal_vide_selon_le_statut`.
+- **M6** : `test_code_negatif_est_un_echec` attend le bandeau `erreur` et `(code -1)` dans son texte. `test_code_zero_est_un_succes` couvre le code 0.
+- **M7** : équivalente. Parmi les statuts possibles, seul `"terminee"` est `>= "terminee"` par ordre lexicographique.
+- **M8** : équivalente, pour la même raison que M4 (`is` sur un littéral interné).
+- **M9** : équivalente. Les statuts `terminee` et `echec` sont déjà traités avant cette ligne, et `en_cours` est supérieur à `"attente"`, donc seul `attente` passe.
+- **M10** : `test_annonce_rang_de_l_etape` pour `extraction` (rang 1) et `kpi` (rang 3). `instantanes` (rang 2) ne distingue pas `+1` de `<<1`.
+- **M11** : `test_etape_echouee_n_est_plus_courante`. `StatutEtape` est un `StrEnum` et `"echouee" <= "en_cours"`, donc le code muté garderait l'étape comme courante.
+- **M12** : `test_evenement_termine_sans_etape_courante` provoque un `TypeError` avec le code muté, car il compare à `None`. `test_fin_d_une_autre_etape_garde_la_courante` couvre le cas `narration >= kpi`.
+- **M13** : `test_demande_mode_immuable`.
+- **M14** : `test_origine_de_netloc_different_refusee_et_identique_acceptee`. Le `Host` vaut `127.0.0.1:8000` et l'`Origin` vaut `http://127.0.0.1`. L'`Origin` est plus petit, donc il doit être refusé en 403 et le code muté l'accepterait. Un `Origin` identique reste accepté (200).
+- **M15** : équivalente. `"reel" >= "repli"` est faux et `"repli" >= "repli"` est vrai, donc le résultat est le même que `==` pour les deux valeurs du `Literal`.
+- **M16** : `test_intervalle_exact` attend `intervalle_ms == 1000` et `INTERVALLE_SONDAGE == 1.0`.

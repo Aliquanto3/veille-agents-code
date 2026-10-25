@@ -1,0 +1,120 @@
+{
+ "story": "us-7-14",
+ "bras": "C",
+ "essai": 4,
+ "prompt": "Tu travailles dans un dépôt Python (le dossier courant). Voici la story à renforcer.\nSpec de la story : `_bmad-output/implementation-artifacts/spec-7-14-carte-meteo-detail-d-une-entite-et-livrables.md` (à lire d'abord).\nFichiers source modifiés par la story :\n- `src/usine/ui/carte.py`\n- `src/usine/ui/detail.py`\n- `src/usine/ui/vues.py`\n- `src/usine/ui/serveur.py`\n- `src/usine/ui/cli.py`\n- `src/usine/ui/liens.py`\nTests existants de la story :\n- `tests/unit/ui/test_vues_ecrans.py`\n- `tests/unit/ui/test_serveur.py`\n- `tests/contrat/consultation/test_contrat.py`\n\nRenforce les tests de cette story : ajoute des tests pytest qui vérifient précisément le comportement attendu (valeurs exactes, bornes, branches d'erreur). Ne modifie pas le code source.\n\nMutations survivantes (fichier:ligne, fonction, diff) :\nM1 `src/usine/ui/carte.py:239` (`libelle_suite`)\n  - return f\"+{reste}\" if reste > 0 else None\n  + return f\"+{reste}\" if reste > 1 else None\nM2 `src/usine/ui/carte.py:244` (`taille_lisible`)\n  - if octets < 1024:\n  + if octets < 1025:\nM3 `src/usine/ui/carte.py:246` (`taille_lisible`)\n  - if round(octets / 1024) < 1024:\n  + if round(octets / 1023) < 1024:\nM4 `src/usine/ui/carte.py:248` (`taille_lisible`)\n  - return f\"{octets / (1024 * 1024):.1f} Mo\".replace(\".\", \",\")\n  + return f\"{octets / ( 1023 * 1024):.1f} Mo\".replace(\".\", \",\")\nM5 `src/usine/ui/carte.py:323` (`vue_carte`)\n  - cles = meteo.regles[0].tickets_en_cause if meteo.regles else ()\n  + cles = meteo.regles[ -1].tickets_en_cause if meteo.regles else ()\nM6 `src/usine/ui/carte.py:331` (`vue_carte`)\n  - suite=libelle_suite(len(cles) - TICKETS_MAX),\n  + suite=libelle_suite(len(cles) % TICKETS_MAX),\nM7 `src/usine/ui/carte.py:339` (`vue_carte`)\n  - nombre=sum(1 for meteo in meteos if meteo.couleur is couleur),\n  + nombre=sum(1 for meteo in meteos if meteo.couleur == couleur),\nM8 `src/usine/ui/detail.py:346` (`_morceaux`)\n  - return [(texte, False)]\n  + return [(texte, True)]\nM9 `src/usine/ui/detail.py:349` (`_morceaux`)\n  - return [(morceau, rang % 2 == 1) for rang, morceau in enumerate(morceaux)]\n  + return [(morceau, rang ** 2 == 1) for rang, morceau in enumerate(morceaux)]\nM10 `src/usine/ui/detail.py:360` (`texte_avec_liens`)\n  - lien_ticket(morceau, url_ticket(morceau)) if est_cle else echapper_markdown(morceau)\n  + lien_ticket(morceau, url_ticket(morceau)) if not est_cle else echapper_markdown(morceau)\nM11 `src/usine/ui/detail.py:419` (`_bloc_une_prevision`)\n  - if prevision.statut is StatutPrevision.sortie_projetee:\n  + if not prevision.statut is StatutPrevision.sortie_projetee:\nM12 `src/usine/ui/detail.py:427` (`_bloc_une_prevision`)\n  - titre=f\"Sortie du rouge estimée : {formater_date(estimee) if estimee else INCONNUE}\",\n  + titre=f\"Sortie du rouge estimée : {formater_date(estimee) if not estimee else INCONNUE}\",\nM13 `src/usine/ui/detail.py:433` (`_bloc_une_prevision`)\n  - sous_titre=\"Facteurs explicatifs\" if facteurs else None,\n  + sous_titre=\"Facteurs explicatifs\" if not facteurs else None,\nM14 `src/usine/ui/detail.py:436` (`_bloc_une_prevision`)\n  - if prevision.statut is StatutPrevision.pas_de_sortie_projetee:\n  + if not prevision.statut is StatutPrevision.pas_de_sortie_projetee:\nM15 `src/usine/ui/detail.py:455` (`section_prevision`)\n  - if meteo.couleur is not Couleur.rouge:\n  + if meteo.couleur < Couleur.rouge:\nM16 `src/usine/ui/detail.py:457` (`section_prevision`)\n  - propres = [p for p in previsions if p.entite == meteo.entite]\n  + propres = [p for p in previsions if p.entite >= meteo.entite]\nM17 `src/usine/ui/detail.py:461` (`section_prevision`)\n  - n for n in narrations if n.entite == meteo.entite and n.statut_controle in STATUTS_ACCEPTES\n  + n for n in narrations if n.entite == meteo.entite or n.statut_controle in STATUTS_ACCEPTES\nM18 `src/usine/ui/detail.py:486` (`section_risque`)\n  - if meteo.couleur is Couleur.rouge:\n  + if meteo.couleur >= Couleur.rouge:\nM19 `src/usine/ui/detail.py:488` (`section_risque`)\n  - propres = [r for r in risques if r.entite == meteo.entite]\n  + propres = [r for r in risques if r.entite >= meteo.entite]\nM20 `src/usine/ui/detail.py:492` (`section_risque`)\n  - colonnes = list(lignes[0])\n  + colonnes = list(lignes[ -1])\nM21 `src/usine/ui/detail.py:504` (`_vue_explication`)\n  - if explication.statut_controle is StatutControle.rejete:\n  + if explication.statut_controle >= StatutControle.rejete:\nM22 `src/usine/ui/detail.py:517` (`_vue_explication`)\n  - ticket=vues_tickets([morceau], url_ticket)[0] if est_cle else None,\n  + ticket=vues_tickets([morceau], url_ticket)[ -1] if est_cle else None,\nM23 `src/usine/ui/detail.py:538` (`section_explication`)\n  - if palier == 1:\n  + if palier <= 1:\nM24 `src/usine/ui/detail.py:555` (`_segment_palier`)\n  - VueOptionPalier(valeur=2, libelle=\"Palier 2\", actif=palier == 2),\n  + VueOptionPalier(valeur=2, libelle=\"Palier 2\", actif=palier >= 2),\nM25 `src/usine/ui/detail.py:556` (`_segment_palier`)\n  - VueOptionPalier(valeur=1, libelle=\"Palier 1\", actif=palier == 1),\n  + VueOptionPalier(valeur=1, libelle=\"Palier 1\", actif=palier <= 1),\nM26 `src/usine/ui/detail.py:572` (`vue_detail_message`)\n  - palier=2,\n  + palier= 1,\nM27 `src/usine/ui/detail.py:592` (`vue_detail`)\n  - def vue_detail(consultation: LectureDetail, entite: str, palier_demande: Palier = 2) -> VueDetail:\n  + def vue_detail(consultation: LectureDetail, entite: str, palier_demande: Palier = 1) -> VueDetail:\nM28 `src/usine/ui/detail.py:607` (`vue_detail`)\n  - avec_segment = manifeste.palier == 2\n  + avec_segment = manifeste.palier >= 2\nM29 `src/usine/ui/detail.py:608` (`vue_detail`)\n  - palier: Palier = 1 if not avec_segment or palier_demande == 1 else 2\n  + palier: Palier = 1 if not avec_segment or palier_demande <= 1 else 2\nM30 `src/usine/ui/detail.py:615` (`vue_detail`)\n  - masquer_prevision = avec_segment and palier == 1\n  + masquer_prevision = avec_segment and palier <= 1\nM31 `src/usine/ui/detail.py:633` (`vue_detail`)\n  - libelle_suite=libelle_suite(len(regle.tickets_en_cause) - TICKETS_MAX),\n  + libelle_suite=libelle_suite(len(regle.tickets_en_cause) % TICKETS_MAX),\nM32 `src/usine/ui/detail.py:639` (`vue_detail`)\n  - aucun_kpi=None if kpi else AUCUN_KPI,\n  + aucun_kpi=None if not kpi else AUCUN_KPI,\nM33 `src/usine/ui/vues.py:64` (`_Vue`)\n  - model_config = ConfigDict(frozen=True)\n  + model_config = ConfigDict(frozen=False)\nM34 `src/usine/ui/serveur.py:122` (`detail`)\n  - return vue_detail(consultation, entite, 1 if palier == \"1\" else 2)\n  + return vue_detail(consultation, entite, 1 if palier == \"1\" else 3)\nM35 `src/usine/ui/serveur.py:125` (`detail`)\n  - except OSError as exc:\n  + except CosmicRayTestingException as exc:\nM36 `src/usine/ui/serveur.py:140` (`creer_application`)\n  - application.add_api_route(\"/entites\", premiere_entite, include_in_schema=False)\n  + application.add_api_route(\"/entites\", premiere_entite, include_in_schema=True)\nM37 `src/usine/ui/serveur.py:145` (`livrable`)\n  - nom_valide: NomLivrable = \"rapport_xlsx\" if nom == \"rapport_xlsx\" else \"rapport_pptx\"\n  + nom_valide: NomLivrable = \"rapport_xlsx\" if nom >= \"rapport_xlsx\" else \"rapport_pptx\"\nM38 `src/usine/ui/serveur.py:166` (`creer_application`)\n  - \"/livrables/{nom}\", livrable, methods=[\"GET\", \"HEAD\"], include_in_schema=False\n  + \"/livrables/{nom}\", livrable, methods=[\"GET\", \"HEAD\"], include_in_schema=True\n(`CosmicRayTestingException` : classe d'exception jamais levée, donc l'`except` concerné n'attrape plus rien.)\n\nCes mutations du code ne font échouer aucun test existant. Pour chacune qui change un comportement observable, ajoute un test qui échoue sur le code muté et passe sur le code actuel. Si une mutation est équivalente (aucun comportement observable ne change), dis-le sans écrire de test. Ne modifie pas le code source.\n\nÉcris les nouveaux tests dans de nouveaux fichiers `tests/unit/ui/test_renf_*.py` ; ne modifie ni le code source ni les tests existants. Lance les tests avec `python -m pytest -q --tb=short <fichiers>` (l'environnement est prêt, rien à installer). Tous tes tests doivent passer. Termine par la liste des fichiers créés, puis, pour chaque mutation Mn, une ligne : le test qui la tue, ou « équivalente » avec la raison en une phrase.",
+ "rc": 0,
+ "stderr": "",
+ "duree_mur_s": 87.5,
+ "modifies_suivis": [],
+ "crees": [
+  "tests/unit/ui/test_renf_7_14.py"
+ ],
+ "sortie": {
+  "duration_api_ms": 81459,
+  "stop_reason": "end_turn",
+  "session_id": "c2d7b9fd-f87c-4ae4-adc6-e949b24add6e",
+  "total_cost_usd": 0.3352489,
+  "usage": {
+   "input_tokens": 14,
+   "cache_creation_input_tokens": 45959,
+   "cache_read_input_tokens": 205649,
+   "output_tokens": 13082,
+   "output_tokens_details": {
+    "thinking_tokens": 2862
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 45959,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 1534,
+     "cache_read_input_tokens": 47811,
+     "cache_creation_input_tokens": 4118,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 4118
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-sonnet-5-5": {
+    "inputTokens": 14,
+    "outputTokens": 13082,
+    "cacheReadInputTokens": 205649,
+    "cacheCreationInputTokens": 45959,
+    "webSearchRequests": 0,
+    "costUSD": 0.3352489,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 2862,
+    "canonicalModel": "claude-sonnet-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [
+   {
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_01YPcJ1ztMY1eaywcd39tD8A",
+    "tool_input": {
+     "command": "cat > tests/unit/ui/test_renf_7_14.py <<'EOF'\n\"\"\"Renforcement Story 7.14 : bornes, branches et valeurs exactes (mutations survivantes).\"\"\"\n\nfrom datetime import date\nfrom typing import Literal\n\nimport polars as pl\nimport pytest\nfrom fastapi.testclient import TestClient\nfrom pydantic import ValidationError\n\nfrom tests.unit.ui.test_detail import (\n    _explication,\n    _meteo,\n    _narration,\n    _prevision,\n    _regle,\n    _risque,\n)\nfrom tests.unit.ui.test_vues_ecrans import _Double, _url, client\nfrom usine.contrats.llm import StatutControle\nfrom usine.contrats.meteo import CodeIndicateur, Couleur\nfrom usine.contrats.prevision import StatutPrevision\nfrom usine.ui import carte, detail\nfrom usine.ui.cli import application_web  # noqa: F401  (import de contrôle)\nfrom usine.ui.detail import (\n    AUCUN_KPI,\n    NON_PROJETABLE,\n    PAS_DE_SORTIE,\n    PREVISION_NON_CALCULEE_ENTITE,\n    RISQUE_SANS_OBJET,\n    _morceaux,\n    section_prevision,\n    section_risque,\n    texte_avec_liens,\n    vue_detail,\n    vue_detail_message,\n)\nfrom usine.ui.liens import lien_ticket\nfrom usine.ui.serveur import HOTE, LectureEcrans, creer_application\n\n\ndef _rouge(entite: str = \"ENT-A\"):\n    return _meteo(entite, regles=(_regle(CodeIndicateur.ind_2, (\"DEMO-1\",)),))\n\n\n# --- carte.py ---\n\n\ndef test_libelle_suite_un_seul_reste() -> None:  # M1\n    assert carte.libelle_suite(1) == \"+1\"\n    assert carte.libelle_suite(0) is None\n    assert carte.libelle_suite(-2) is None\n\n\ndef test_taille_lisible_bornes() -> None:  # M2, M3, M4\n    assert carte.taille_lisible(1023) == \"1023 o\"\n    assert carte.taille_lisible(1024) == \"1 Ko\"\n    assert carte.taille_lisible(1_047_500) == \"1023 Ko\"\n    assert carte.taille_lisible(104_857_600) == \"100,0 Mo\"\n\n\ndef test_carte_premiere_regle_et_suite_exacte() -> None:  # M5, M6\n    sept = tuple(f\"DEMO-{n}\" for n in range(1, 8))\n    meteo = _meteo(\n        \"ENT-B\",\n        regles=(\n            _regle(CodeIndicateur.ind_2, sept),\n            _regle(CodeIndicateur.ind_3, (\"AUTRE-1\",)),\n        ),\n    )\n    ligne = client(_Double(meteos=(meteo,))).get(\"/api/carte\").json()[\"lignes\"][0]\n    assert [t[\"cle\"] for t in ligne[\"tickets\"]] == [\"DEMO-1\", \"DEMO-2\", \"DEMO-3\"]\n    assert ligne[\"suite\"] == \"+4\"\n\n\ndef test_vue_detail_suite_exacte() -> None:  # M31\n    sept = tuple(f\"DEMO-{n}\" for n in range(1, 8))\n    meteo = _meteo(\"ENT-B\", regles=(_regle(CodeIndicateur.ind_2, sept),))\n    vue = vue_detail(_Double(meteos=(meteo,)), \"ENT-B\")\n    assert vue.regles[0].libelle_suite == \"+4\"\n    assert len(vue.regles[0].tickets_suite) == 4\n\n\n# --- detail.py : découpage et liens ---\n\n\ndef test_morceaux_sans_citation() -> None:  # M8\n    assert _morceaux(\"ENT-A bloque\", ()) == [(\"ENT-A bloque\", False)]\n    assert texte_avec_liens(\"a_b\", (), _url) == \"a\\\\_b\"\n\n\ndef test_morceaux_plusieurs_cles() -> None:  # M9\n    assert _morceaux(\"DEMO-1 et DEMO-2\", (\"DEMO-1\", \"DEMO-2\")) == [\n        (\"\", False),\n        (\"DEMO-1\", True),\n        (\" et \", False),\n        (\"DEMO-2\", True),\n        (\"\", False),\n    ]\n\n\ndef test_texte_avec_liens_cle_liee_et_reste_echappe() -> None:  # M10\n    attendu = f\"a\\\\_b {lien_ticket('DEMO-1', _url('DEMO-1'))} c\\\\_d\"\n    assert texte_avec_liens(\"a_b DEMO-1 c_d\", (\"DEMO-1\",), _url) == attendu\n    assert texte_avec_liens(\"a_b DEMO-1\", (\"DEMO-1\",), lambda _c: None) == \"a\\\\_b DEMO-1\"\n\n\n# --- detail.py : Prévision ---\n\n\ndef _section(prevision, meteo=None, narrations=()):\n    return section_prevision(meteo or _rouge(), (prevision,), True, narrations)\n\n\ndef test_bloc_prevision_sortie_projetee() -> None:  # M11, M12, M13\n    bloc = _section(_prevision(StatutPrevision.sortie_projetee)).blocs[0]\n    assert bloc.titre == \"Sortie du rouge estimée : 20/10/2026\"\n    assert bloc.sous_titre == \"Facteurs explicatifs\"\n    assert len(bloc.sous_items) == 2\n    sans_date = _prevision(StatutPrevision.sortie_projetee).model_copy(\n        update={\"date_sortie_estimee\": None, \"facteurs\": ()}\n    )\n    bloc = _section(sans_date).blocs[0]\n    assert bloc.titre == f\"Sortie du rouge estimée : {carte.INCONNUE}\"\n    assert bloc.sous_titre is None\n    assert bloc.sous_items == []\n\n\ndef test_bloc_prevision_autres_statuts() -> None:  # M11, M14\n    bloc = _section(_prevision(StatutPrevision.pas_de_sortie_projetee)).blocs[0]\n    assert bloc.titre == PAS_DE_SORTIE\n    assert bloc.items\n    bloc = _section(_prevision(StatutPrevision.regle_non_projetable)).blocs[0]\n    assert bloc.titre == f\"{NON_PROJETABLE} (IND-2)\"\n    assert bloc.items == []\n\n\ndef test_section_prevision_filtre_entite_et_narration() -> None:  # M16, M17\n    autre = _prevision(StatutPrevision.sortie_projetee, \"ENT-Z\")\n    assert section_prevision(_rouge(\"ENT-A\"), (autre,), True).message == (\n        PREVISION_NON_CALCULEE_ENTITE\n    )\n    propre = _prevision(StatutPrevision.sortie_projetee, \"ENT-A\")\n    etrangere = _narration(StatutControle.conforme, \"ENT-Z\")\n    section = section_prevision(_rouge(\"ENT-A\"), (propre,), True, (etrangere,))\n    assert section.blocs[0].texte is None\n    assert section.blocs[0].titre.startswith(\"Sortie du rouge estimée\")\n    rejetee = _narration(StatutControle.rejete, \"ENT-A\")\n    section = section_prevision(_rouge(\"ENT-A\"), (propre,), True, (rejetee,))\n    assert section.blocs[0].texte is None\n\n\n# --- detail.py : Risque ---\n\n\ndef test_section_risque_filtre_entite() -> None:  # M19\n    section = section_risque(_meteo(\"ENT-A\"), (_risque(\"ENT-Z\"),), True)\n    assert section.message == detail.AUCUN_RISQUE\n    assert section.tableau is None\n    assert section_risque(_rouge(), (_risque(\"ENT-A\"),), True).message == RISQUE_SANS_OBJET\n    propre = section_risque(_meteo(\"ENT-A\"), (_risque(\"ENT-A\"), _risque(\"ENT-Z\")), True)\n    assert len(propre.tableau.lignes) == 1\n\n\n# --- detail.py : vue_detail ---\n\n\ndef test_vue_detail_message_palier_2() -> None:  # M26\n    assert vue_detail_message(\"x\").palier == 2\n\n\ndef test_vue_detail_palier_par_defaut_2() -> None:  # M27\n    vue = vue_detail(_Double(), \"ENT-B\")\n    assert vue.palier == 2\n    assert vue.prevision is not None\n    assert vue.explication.explications\n\n\ndef test_vue_detail_aucun_kpi() -> None:  # M32\n    class _SansKpi(_Double):\n        def kpi(self, date_arrete: date | None = None, entite: str | None = None) -> pl.DataFrame:\n            return super().kpi().clear()\n\n    vue = vue_detail(_SansKpi(), \"ENT-B\")\n    assert vue.kpi == []\n    assert vue.aucun_kpi == AUCUN_KPI\n    avec = vue_detail(_Double(), \"ENT-B\")\n    assert avec.aucun_kpi is None\n    assert len(avec.kpi) == 2\n\n\n# --- vues.py ---\n\n\ndef test_vues_immuables() -> None:  # M33\n    vue = carte.vue_carte_message(\"x\")\n    with pytest.raises(ValidationError):\n        vue.message = \"y\"\n\n\n# --- serveur.py ---\n\n\ndef test_detail_lecture_impossible_oserror() -> None:  # M35\n    def illisible(_repli: bool) -> LectureEcrans:\n        raise PermissionError(13, \"accès refusé\", \"sorties/passages\")\n\n    http = TestClient(\n        creer_application(repli=False, lire_manifeste=lambda _r: None, lire_consultation=illisible),\n        base_url=f\"http://{HOTE}\",\n    )\n    reponse = http.get(\"/api/entites/ENT-A\")\n    assert reponse.status_code == 200\n    assert reponse.json()[\"erreur\"].startswith(\"Lecture du Passage impossible\")\n    assert reponse.json()[\"message\"] is None\n\n\ndef test_routes_hors_schema() -> None:  # M36, M38\n    application = creer_application(\n        repli=False, lire_manifeste=lambda _r: None, lire_consultation=lambda _r: None\n    )\n    chemins = application.openapi()[\"paths\"]\n    assert \"/entites\" not in chemins\n    assert \"/livrables/{nom}\" not in chemins\n    assert \"/api/carte\" in chemins\n\n\n_: Literal[1] = 1\nEOF\npython -m pytest -q --tb=short tests/unit/ui/test_renf_7_14.py 2>&1 | tail -30"
+    }
+   }
+  ],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 10,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "Fichier créé : `tests/unit/ui/test_renf_7_14.py`. Les 17 tests passent sur le code actuel. Je n'ai relancé aucune mutation pour confirmer qu'ils échouent sur le code muté. Chaque test a été écrit d'après la lecture du code.\n\n- M1 : `test_libelle_suite_un_seul_reste`\n- M2 : `test_taille_lisible_bornes` (1023 o et 1024 → « 1 Ko »)\n- M3 : `test_taille_lisible_bornes` (1 047 500 → « 1023 Ko »)\n- M4 : `test_taille_lisible_bornes` (104 857 600 → « 100,0 Mo »)\n- M5 : `test_carte_premiere_regle_et_suite_exacte`\n- M6 : `test_carte_premiere_regle_et_suite_exacte` (7 tickets → « +4 »)\n- M7 : équivalente. `Couleur` est un enum, donc `is` et `==` donnent le même résultat sur ses membres.\n- M8 : `test_morceaux_sans_citation`\n- M9 : `test_morceaux_plusieurs_cles` (la 2e clé est au rang 3)\n- M10 : `test_texte_avec_liens_cle_liee_et_reste_echappe`\n- M11 : `test_bloc_prevision_sortie_projetee` et `test_bloc_prevision_autres_statuts`\n- M12 : `test_bloc_prevision_sortie_projetee` (date absente → « — »)\n- M13 : `test_bloc_prevision_sortie_projetee` (sans facteurs → pas de sous-titre)\n- M14 : `test_bloc_prevision_autres_statuts`\n- M15 : équivalente. `Couleur` est ordonné avec `rouge` au maximum, donc `< rouge` revient à `is not rouge`.\n- M16 : `test_section_prevision_filtre_entite_et_narration`\n- M17 : `test_section_prevision_filtre_entite_et_narration` (narration d'une autre Entité, et narration rejetée)\n- M18 : équivalente. `rouge` est la plus grave, donc `>= rouge` revient à `is rouge`.\n- M19 : `test_section_risque_filtre_entite`\n- M20 : équivalente. Toutes les lignes ont les mêmes clés, donc `lignes[0]` et `lignes[-1]` donnent les mêmes colonnes.\n- M21 : équivalente. `StatutControle` est un `StrEnum` comparé alphabétiquement. `rejete` est le plus grand des statuts, donc `>= rejete` revient à `is rejete`.\n- M22 : équivalente. La liste `[morceau]` n'a qu'un élément, donc `[0]` et `[-1]` sont identiques.\n- M23 : équivalente. `Palier` vaut 1 ou 2, donc `<= 1` revient à `== 1`.\n- M24 : équivalente. Même raison : `>= 2` revient à `== 2` pour un palier de 1 ou 2.\n- M25 : équivalente. Même raison : `<= 1` revient à `== 1`.\n- M26 : `test_vue_detail_message_palier_2`\n- M27 : `test_vue_detail_palier_par_defaut_2`\n- M28 : équivalente. `manifeste.palier` vaut 1 ou 2, donc `>= 2` revient à `== 2`.\n- M29 : équivalente. Toute valeur demandée autre que 1 donne 2 dans les deux versions.\n- M30 : équivalente. `palier` vaut 1 ou 2, donc `<= 1` revient à `== 1`.\n- M31 : `test_vue_detail_suite_exacte`\n- M32 : `test_vue_detail_aucun_kpi`\n- M33 : `test_vues_immuables`\n- M34 : équivalente. Avec 3, `vue_detail` retombe sur le palier 2 comme avec 2 (`palier_demande == 1` est faux dans les deux cas).\n- M35 : `test_detail_lecture_impossible_oserror`\n- M36 : `test_routes_hors_schema`\n- M37 : équivalente. Seuls deux noms passent le contrôle `get_args` en amont, et `\"rapport_pptx\" < \"rapport_xlsx\"`, donc `>=` choisit les mêmes valeurs que `==`.\n- M38 : `test_routes_hors_schema`",
+  "ttft_ms": 3774,
+  "type": "result",
+  "duration_ms": 86338,
+  "uuid": "b2bc6e88-7301-4b4a-8071-b1462935c42e",
+  "ttft_stream_ms": 2929,
+  "time_to_request_ms": 729,
+  "first_content_frame_ms": 2929,
+  "queued_turn_count": 0,
+  "result_index": 0
+ }
+}

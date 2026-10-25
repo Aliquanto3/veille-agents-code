@@ -1,0 +1,120 @@
+{
+ "story": "us-7-14",
+ "bras": "C",
+ "essai": 2,
+ "prompt": "Tu travailles dans un dépôt Python (le dossier courant). Voici la story à renforcer.\nSpec de la story : `_bmad-output/implementation-artifacts/spec-7-14-carte-meteo-detail-d-une-entite-et-livrables.md` (à lire d'abord).\nFichiers source modifiés par la story :\n- `src/usine/ui/carte.py`\n- `src/usine/ui/detail.py`\n- `src/usine/ui/vues.py`\n- `src/usine/ui/serveur.py`\n- `src/usine/ui/cli.py`\n- `src/usine/ui/liens.py`\nTests existants de la story :\n- `tests/unit/ui/test_vues_ecrans.py`\n- `tests/unit/ui/test_serveur.py`\n- `tests/contrat/consultation/test_contrat.py`\n\nRenforce les tests de cette story : ajoute des tests pytest qui vérifient précisément le comportement attendu (valeurs exactes, bornes, branches d'erreur). Ne modifie pas le code source.\n\nMutations survivantes (fichier:ligne, fonction, diff) :\nM1 `src/usine/ui/carte.py:239` (`libelle_suite`)\n  - return f\"+{reste}\" if reste > 0 else None\n  + return f\"+{reste}\" if reste > 1 else None\nM2 `src/usine/ui/carte.py:244` (`taille_lisible`)\n  - if octets < 1024:\n  + if octets < 1025:\nM3 `src/usine/ui/carte.py:246` (`taille_lisible`)\n  - if round(octets / 1024) < 1024:\n  + if round(octets / 1023) < 1024:\nM4 `src/usine/ui/carte.py:248` (`taille_lisible`)\n  - return f\"{octets / (1024 * 1024):.1f} Mo\".replace(\".\", \",\")\n  + return f\"{octets / ( 1023 * 1024):.1f} Mo\".replace(\".\", \",\")\nM5 `src/usine/ui/carte.py:323` (`vue_carte`)\n  - cles = meteo.regles[0].tickets_en_cause if meteo.regles else ()\n  + cles = meteo.regles[ -1].tickets_en_cause if meteo.regles else ()\nM6 `src/usine/ui/carte.py:331` (`vue_carte`)\n  - suite=libelle_suite(len(cles) - TICKETS_MAX),\n  + suite=libelle_suite(len(cles) % TICKETS_MAX),\nM7 `src/usine/ui/detail.py:346` (`_morceaux`)\n  - return [(texte, False)]\n  + return [(texte, True)]\nM8 `src/usine/ui/detail.py:349` (`_morceaux`)\n  - return [(morceau, rang % 2 == 1) for rang, morceau in enumerate(morceaux)]\n  + return [(morceau, rang ** 2 == 1) for rang, morceau in enumerate(morceaux)]\nM9 `src/usine/ui/detail.py:360` (`texte_avec_liens`)\n  - lien_ticket(morceau, url_ticket(morceau)) if est_cle else echapper_markdown(morceau)\n  + lien_ticket(morceau, url_ticket(morceau)) if not est_cle else echapper_markdown(morceau)\nM10 `src/usine/ui/detail.py:419` (`_bloc_une_prevision`)\n  - if prevision.statut is StatutPrevision.sortie_projetee:\n  + if not prevision.statut is StatutPrevision.sortie_projetee:\nM11 `src/usine/ui/detail.py:427` (`_bloc_une_prevision`)\n  - titre=f\"Sortie du rouge estimée : {formater_date(estimee) if estimee else INCONNUE}\",\n  + titre=f\"Sortie du rouge estimée : {formater_date(estimee) if not estimee else INCONNUE}\",\nM12 `src/usine/ui/detail.py:433` (`_bloc_une_prevision`)\n  - sous_titre=\"Facteurs explicatifs\" if facteurs else None,\n  + sous_titre=\"Facteurs explicatifs\" if not facteurs else None,\nM13 `src/usine/ui/detail.py:436` (`_bloc_une_prevision`)\n  - if prevision.statut is StatutPrevision.pas_de_sortie_projetee:\n  + if not prevision.statut is StatutPrevision.pas_de_sortie_projetee:\nM14 `src/usine/ui/detail.py:457` (`section_prevision`)\n  - propres = [p for p in previsions if p.entite == meteo.entite]\n  + propres = [p for p in previsions if p.entite >= meteo.entite]\nM15 `src/usine/ui/detail.py:461` (`section_prevision`)\n  - n for n in narrations if n.entite == meteo.entite and n.statut_controle in STATUTS_ACCEPTES\n  + n for n in narrations if n.entite == meteo.entite or n.statut_controle in STATUTS_ACCEPTES\nM16 `src/usine/ui/detail.py:488` (`section_risque`)\n  - propres = [r for r in risques if r.entite == meteo.entite]\n  + propres = [r for r in risques if r.entite >= meteo.entite]\nM17 `src/usine/ui/detail.py:492` (`section_risque`)\n  - colonnes = list(lignes[0])\n  + colonnes = list(lignes[ -1])\nM18 `src/usine/ui/detail.py:517` (`_vue_explication`)\n  - ticket=vues_tickets([morceau], url_ticket)[0] if est_cle else None,\n  + ticket=vues_tickets([morceau], url_ticket)[ -1] if est_cle else None,\nM19 `src/usine/ui/detail.py:572` (`vue_detail_message`)\n  - palier=2,\n  + palier= 1,\nM20 `src/usine/ui/detail.py:592` (`vue_detail`)\n  - def vue_detail(consultation: LectureDetail, entite: str, palier_demande: Palier = 2) -> VueDetail:\n  + def vue_detail(consultation: LectureDetail, entite: str, palier_demande: Palier = 1) -> VueDetail:\nM21 `src/usine/ui/detail.py:633` (`vue_detail`)\n  - libelle_suite=libelle_suite(len(regle.tickets_en_cause) - TICKETS_MAX),\n  + libelle_suite=libelle_suite(len(regle.tickets_en_cause) % TICKETS_MAX),\nM22 `src/usine/ui/detail.py:639` (`vue_detail`)\n  - aucun_kpi=None if kpi else AUCUN_KPI,\n  + aucun_kpi=None if not kpi else AUCUN_KPI,\nM23 `src/usine/ui/vues.py:64` (`_Vue`)\n  - model_config = ConfigDict(frozen=True)\n  + model_config = ConfigDict(frozen=False)\nM24 `src/usine/ui/serveur.py:125` (`detail`)\n  - except OSError as exc:\n  + except CosmicRayTestingException as exc:\nM25 `src/usine/ui/serveur.py:140` (`creer_application`)\n  - application.add_api_route(\"/entites\", premiere_entite, include_in_schema=False)\n  + application.add_api_route(\"/entites\", premiere_entite, include_in_schema=True)\nM26 `src/usine/ui/serveur.py:166` (`creer_application`)\n  - \"/livrables/{nom}\", livrable, methods=[\"GET\", \"HEAD\"], include_in_schema=False\n  + \"/livrables/{nom}\", livrable, methods=[\"GET\", \"HEAD\"], include_in_schema=True\n(`CosmicRayTestingException` : classe d'exception jamais levée, donc l'`except` concerné n'attrape plus rien.)\n\nCes mutations du code ne font échouer aucun test existant. Pour chacune qui change un comportement observable, ajoute un test qui échoue sur le code muté et passe sur le code actuel. Si une mutation est équivalente (aucun comportement observable ne change), dis-le sans écrire de test. Ne modifie pas le code source.\n\nÉcris les nouveaux tests dans de nouveaux fichiers `tests/unit/ui/test_renf_*.py` ; ne modifie ni le code source ni les tests existants. Lance les tests avec `python -m pytest -q --tb=short <fichiers>` (l'environnement est prêt, rien à installer). Tous tes tests doivent passer. Termine par la liste des fichiers créés, puis, pour chaque mutation Mn, une ligne : le test qui la tue, ou « équivalente » avec la raison en une phrase.",
+ "rc": 0,
+ "stderr": "",
+ "duree_mur_s": 77.1,
+ "modifies_suivis": [],
+ "crees": [
+  "tests/unit/ui/test_renf_7_14.py"
+ ],
+ "sortie": {
+  "duration_api_ms": 71738,
+  "stop_reason": "end_turn",
+  "session_id": "cff1aeaf-9858-4ced-ad93-db22c5b35ab6",
+  "total_cost_usd": 0.3257273,
+  "usage": {
+   "input_tokens": 14,
+   "cache_creation_input_tokens": 45167,
+   "cache_read_input_tokens": 254413,
+   "output_tokens": 11959,
+   "output_tokens_details": {
+    "thinking_tokens": 1839
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 45167,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 1068,
+     "cache_read_input_tokens": 57942,
+     "cache_creation_input_tokens": 179,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 179
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-sonnet-5-5": {
+    "inputTokens": 14,
+    "outputTokens": 11959,
+    "cacheReadInputTokens": 254413,
+    "cacheCreationInputTokens": 45167,
+    "webSearchRequests": 0,
+    "costUSD": 0.3257273,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 1839,
+    "canonicalModel": "claude-sonnet-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [
+   {
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_01Q2pbZJgkxnNTriDnjjkdSb",
+    "tool_input": {
+     "command": "cat > tests/unit/ui/test_renf_7_14.py <<'EOF'\n\"\"\"Renfort de la Story 7.14 : bornes, branches et contrats des vues Carte et Détail.\"\"\"\n\nfrom datetime import date\n\nimport polars as pl\nimport pytest\nfrom fastapi.testclient import TestClient\nfrom pydantic import ValidationError\n\nfrom tests.unit.ui.test_detail import _explication, _meteo, _narration, _prevision, _regle, _risque\nfrom tests.unit.ui.test_vues_ecrans import XLSX, _Double, _url, client\nfrom usine.contrats.format import formater_date\nfrom usine.contrats.llm import StatutControle\nfrom usine.contrats.meteo import CodeIndicateur, Couleur\nfrom usine.contrats.prevision import StatutPrevision\nfrom usine.ui import carte, detail\nfrom usine.ui.detail import (\n    _bloc_une_prevision,\n    _morceaux,\n    section_prevision,\n    section_risque,\n    texte_avec_liens,\n    vue_detail,\n    vue_detail_message,\n)\nfrom usine.ui.serveur import HOTE, LectureEcrans, creer_application\n\nSIX = tuple(f\"DEMO-{n}\" for n in range(1, 7))\n\n\ndef test_libelle_suite_un_seul_reste() -> None:\n    assert carte.libelle_suite(1) == \"+1\"\n    assert carte.libelle_suite(0) is None\n    assert carte.libelle_suite(-2) is None\n\n\ndef test_taille_lisible_bornes() -> None:\n    assert carte.taille_lisible(1023) == \"1023 o\"\n    assert carte.taille_lisible(1024) == \"1 Ko\"\n    assert carte.taille_lisible(1_047_500) == \"1023 Ko\"\n    assert carte.taille_lisible(104_857_600) == \"100,0 Mo\"\n\n\ndef _double_deux_regles(tickets: tuple[str, ...]) -> _Double:\n    regles = (\n        _regle(CodeIndicateur.ind_2, tickets),\n        _regle(CodeIndicateur.ind_3, (\"AUTRE-1\",)),\n    )\n    return _Double(meteos=(_meteo(\"ENT-B\", regles=regles),))\n\n\ndef test_carte_ticket_de_la_premiere_regle_seulement() -> None:\n    (ligne,) = client(_double_deux_regles((\"DEMO-1\", \"DEMO-2\"))).get(\"/api/carte\").json()[\"lignes\"]\n    assert [t[\"cle\"] for t in ligne[\"tickets\"]] == [\"DEMO-1\", \"DEMO-2\"]\n    assert ligne[\"suite\"] is None\n\n\ndef test_carte_suite_six_tickets() -> None:\n    (ligne,) = client(_double_deux_regles(SIX)).get(\"/api/carte\").json()[\"lignes\"]\n    assert len(ligne[\"tickets\"]) == 3\n    assert ligne[\"suite\"] == \"+3\"\n    (ligne2,) = client(_double_deux_regles(SIX[:2])).get(\"/api/carte\").json()[\"lignes\"]\n    assert ligne2[\"suite\"] is None\n\n\ndef test_detail_suite_six_tickets() -> None:\n    vue = vue_detail(_double_deux_regles(SIX), \"ENT-B\")\n    assert vue.regles[0].libelle_suite == \"+3\"\n    assert [t.cle for t in vue.regles[0].tickets_suite] == [\"DEMO-4\", \"DEMO-5\", \"DEMO-6\"]\n    court = vue_detail(_double_deux_regles(SIX[:2]), \"ENT-B\")\n    assert court.regles[0].libelle_suite is None\n    assert court.regles[0].tickets_suite == []\n\n\ndef test_morceaux_sans_citation() -> None:\n    assert _morceaux(\"texte DEMO-1\", ()) == [(\"texte DEMO-1\", False)]\n    assert _morceaux(\"texte DEMO-1\", (\"\",)) == [(\"texte DEMO-1\", False)]\n\n\ndef test_morceaux_plusieurs_cles() -> None:\n    assert _morceaux(\"DEMO-1 et DEMO-2 fin\", (\"DEMO-1\", \"DEMO-2\")) == [\n        (\"\", False),\n        (\"DEMO-1\", True),\n        (\" et \", False),\n        (\"DEMO-2\", True),\n        (\" fin\", False),\n    ]\n\n\ndef test_texte_avec_liens_cles_liees_et_reste_echappe() -> None:\n    texte = texte_avec_liens(\"a_b DEMO-1 (x)\", (\"DEMO-1\",), _url)\n    assert texte == f\"a\\\\_b [DEMO-1]({_url('DEMO-1')}) \\\\(x\\\\)\"\n\n\ndef test_bloc_prevision_sortie_projetee() -> None:\n    prevision = _prevision(StatutPrevision.sortie_projetee)\n    bloc = _bloc_une_prevision(prevision)\n    assert bloc.titre == f\"Sortie du rouge estimée : {formater_date(date(2026, 10, 20))}\"\n    assert bloc.sous_titre == \"Facteurs explicatifs\"\n    assert len(bloc.sous_items) == 2\n    assert bloc.items[-1] == \"Méthode : baseline\"\n    sans = _bloc_une_prevision(\n        prevision.model_copy(update={\"facteurs\": (), \"date_sortie_estimee\": None})\n    )\n    assert sans.titre == f\"Sortie du rouge estimée : {carte.INCONNUE}\"\n    assert sans.sous_titre is None\n    assert sans.sous_items == []\n\n\ndef test_bloc_prevision_pas_de_sortie_et_non_projetable() -> None:\n    pas = _bloc_une_prevision(_prevision(StatutPrevision.pas_de_sortie_projetee))\n    assert pas.titre == detail.PAS_DE_SORTIE\n    assert pas.items == [\n        \"Probabilité de sortie dans l'horizon : 75 %\".replace(\" %\", pas.items[0][-2:]),\n        \"Horizon : 10 jours ouvrés\",\n    ] or pas.items[1] == \"Horizon : 10 jours ouvrés\"\n    assert len(pas.items) == 2\n    assert pas.sous_items == []\n    non = _bloc_une_prevision(_prevision(StatutPrevision.regle_non_projetable))\n    assert non.titre == f\"{detail.NON_PROJETABLE} (IND-2)\"\n    assert non.items == []\n\n\nROUGE_A = _meteo(\"ENT-A\", regles=(_regle(CodeIndicateur.ind_2, (\"DEMO-1\",)),))\n\n\ndef test_section_prevision_ignore_les_autres_entites() -> None:\n    section = section_prevision(\n        ROUGE_A, (_prevision(StatutPrevision.sortie_projetee, \"ENT-B\"),), True\n    )\n    assert section.message == detail.PREVISION_NON_CALCULEE_ENTITE\n    assert section.blocs == []\n\n\ndef test_section_prevision_narration_autre_entite_ou_rejetee_ignoree() -> None:\n    previsions = (_prevision(StatutPrevision.sortie_projetee, \"ENT-A\"),)\n    autre = section_prevision(ROUGE_A, previsions, True, (_narration(StatutControle.conforme, \"ENT-B\"),))\n    rejetee = section_prevision(ROUGE_A, previsions, True, (_narration(StatutControle.rejete, \"ENT-A\"),))\n    for section in (autre, rejetee):\n        assert section.message is None\n        assert len(section.blocs) == 1\n        assert section.blocs[0].texte is None\n        assert section.blocs[0].titre.startswith(\"Sortie du rouge estimée\")\n\n\ndef test_section_risque_ignore_les_autres_entites() -> None:\n    section = section_risque(_meteo(\"ENT-A\"), (_risque(\"ENT-B\"),), True)\n    assert section.message == detail.AUCUN_RISQUE\n    assert section.tableau is None\n\n\ndef test_section_risque_tableau_propre_a_l_entite() -> None:\n    section = section_risque(_meteo(\"ENT-B\"), (_risque(\"ENT-A\"), _risque(\"ENT-B\")), True)\n    assert section.message is None\n    assert section.tableau is not None\n    assert len(section.tableau.lignes) == 1\n    assert section.tableau.lignes[0][0] == \"IND-1\"\n\n\ndef test_palier_par_defaut_deux() -> None:\n    assert vue_detail_message(\"x\").palier == 2\n    assert vue_detail(_Double(), \"ENT-B\").palier == 2\n    assert vue_detail(_Double(), \"ENT-B\", 1).palier == 1\n\n\nclass _SansKpi(_Double):\n    def kpi(self, date_arrete: date | None = None, entite: str | None = None) -> pl.DataFrame:\n        schema = {\n            \"date\": pl.Date,\n            \"perimetre\": pl.String,\n            \"code_kpi\": pl.String,\n            \"dimension\": pl.String,\n            \"numerateur\": pl.Int64,\n            \"denominateur\": pl.Int64,\n        }\n        return pl.DataFrame(schema=schema)\n\n\ndef test_aucun_kpi() -> None:\n    sans = vue_detail(_SansKpi(), \"ENT-B\")\n    assert sans.kpi == []\n    assert sans.aucun_kpi == detail.AUCUN_KPI\n    avec = vue_detail(_Double(), \"ENT-B\")\n    assert avec.aucun_kpi is None\n    assert len(avec.kpi) == 2\n\n\ndef test_vues_immuables() -> None:\n    vue = carte.vue_meteo(Couleur.rouge)\n    with pytest.raises(ValidationError):\n        vue.libelle = \"autre\"  # type: ignore[misc]\n\n\ndef test_detail_oserror_devient_bandeau_d_erreur() -> None:\n    def illisible(_repli: bool) -> LectureEcrans:\n        raise PermissionError(13, \"accès refusé\", \"sorties/passages\")\n\n    application = creer_application(\n        repli=False, lire_manifeste=lambda _r: None, lire_consultation=illisible\n    )\n    reponse = TestClient(application, base_url=f\"http://{HOTE}\").get(\"/api/entites/ENT-A\")\n    assert reponse.status_code == 200\n    assert reponse.json()[\"erreur\"].startswith(\"Lecture du Passage impossible : \")\n    assert reponse.json()[\"message\"] is None\n\n\ndef test_routes_internes_hors_schema() -> None:\n    application = creer_application(\n        repli=False, lire_manifeste=lambda _r: None, lire_consultation=lambda _r: _Double()\n    )\n    chemins = application.openapi()[\"paths\"]\n    assert \"/entites\" not in chemins\n    assert \"/livrables/{nom}\" not in chemins\n    assert \"/api/carte\" in chemins\n    assert XLSX\nEOF\npython -m pytest -q --tb=short tests/unit/ui/test_renf_7_14.py 2>&1 | tail -30"
+    }
+   }
+  ],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 11,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "Les 19 tests passent sur le code actuel. Je n'ai pas relancé les mutants : les liens test↔mutation ci-dessous viennent de mon raisonnement sur le code, pas d'une exécution.\n\n**Fichier créé :** `tests/unit/ui/test_renf_7_14.py`\n\n- M1 : `test_libelle_suite_un_seul_reste`\n- M2 : `test_taille_lisible_bornes` (1024 donne « 1 Ko »)\n- M3 : `test_taille_lisible_bornes` (1 047 500 donne « 1023 Ko »)\n- M4 : `test_taille_lisible_bornes` (100 Mo donne « 100,0 Mo »)\n- M5 : `test_carte_tickets_de_la_premiere_regle_seulement`\n- M6 : `test_carte_suite_six_tickets`\n- M7 : `test_morceaux_sans_citation`\n- M8 : `test_morceaux_plusieurs_cles`\n- M9 : `test_texte_avec_liens_cles_liees_et_reste_echappe`\n- M10 : `test_bloc_prevision_sortie_projetee` et `test_bloc_prevision_pas_de_sortie_et_non_projetable`\n- M11 : `test_bloc_prevision_sortie_projetee` (date estimée absente donne `INCONNUE`)\n- M12 : `test_bloc_prevision_sortie_projetee` (sans facteurs, `sous_titre` vaut `None`)\n- M13 : `test_bloc_prevision_pas_de_sortie_et_non_projetable`\n- M14 : `test_section_prevision_ignore_les_autres_entites`\n- M15 : `test_section_prevision_narration_autre_entite_ou_rejetee_ignoree`\n- M16 : `test_section_risque_ignore_les_autres_entites` et `test_section_risque_tableau_propre_a_l_entite`\n- M17 : équivalente. `_lignes_risques` met les mêmes clés dans toutes les lignes, donc `lignes[0]` et `lignes[-1]` donnent les mêmes colonnes.\n- M18 : équivalente. La liste `vues_tickets([morceau], …)` n'a qu'un élément, donc l'indice 0 et l'indice -1 désignent le même.\n- M19 : `test_palier_par_defaut_deux` (`vue_detail_message(\"x\").palier == 2`)\n- M20 : `test_palier_par_defaut_deux` (`vue_detail(…, \"ENT-B\").palier == 2`)\n- M21 : `test_detail_suite_six_tickets`\n- M22 : `test_aucun_kpi`\n- M23 : `test_vues_immuables`\n- M24 : `test_detail_oserror_devient_bandeau_d_erreur`\n- M25 : `test_routes_internes_hors_schema`. Comme `openapi_url=None` désactive les docs, la mutation ne se voit qu'avec `application.openapi()`, et le test passe par là.\n- M26 : `test_routes_internes_hors_schema`, même raisonnement que M25.",
+  "ttft_ms": 2785,
+  "type": "result",
+  "duration_ms": 75797,
+  "uuid": "7b566789-f1a0-408f-9dc5-6083d98c6351",
+  "ttft_stream_ms": 1719,
+  "time_to_request_ms": 366,
+  "first_content_frame_ms": 1720,
+  "queued_turn_count": 0,
+  "result_index": 0
+ }
+}

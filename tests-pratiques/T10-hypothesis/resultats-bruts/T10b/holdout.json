@@ -1,0 +1,974 @@
+{
+ "wd-5-9": [
+  {
+   "id": "wd-5-9:blockers.py:41:0",
+   "cible": "wd-5-9:blockers.py:41",
+   "module": "src/wavedevsecops/web/blockers.py",
+   "ligne": 41,
+   "operateur": "core/ExceptionReplacer",
+   "moins": [
+    "        except (ScenarioError, OSError, UnicodeDecodeError) as error:"
+   ],
+   "plus": [
+    "        except (ScenarioError, CosmicRayTestingException, UnicodeDecodeError) as error:"
+   ]
+  },
+  {
+   "id": "wd-5-9:blockers.py:41:1",
+   "cible": "wd-5-9:blockers.py:41",
+   "module": "src/wavedevsecops/web/blockers.py",
+   "ligne": 41,
+   "operateur": "core/ExceptionReplacer",
+   "moins": [
+    "        except (ScenarioError, OSError, UnicodeDecodeError) as error:"
+   ],
+   "plus": [
+    "        except (ScenarioError, OSError, CosmicRayTestingException) as error:"
+   ]
+  },
+  {
+   "id": "wd-5-9:blockers.py:44:2",
+   "cible": "wd-5-9:blockers.py:44",
+   "module": "src/wavedevsecops/web/blockers.py",
+   "ligne": 44,
+   "operateur": "core/ReplaceComparisonOperator_Eq_LtE",
+   "moins": [
+    "        if scenario.catalogue and (scenario.mode == \"A\" or scenario.scenario_id not in titles):"
+   ],
+   "plus": [
+    "        if scenario.catalogue and (scenario.mode <= \"A\" or scenario.scenario_id not in titles):"
+   ]
+  },
+  {
+   "id": "wd-5-9:blockers.py:44:3",
+   "cible": "wd-5-9:blockers.py:44",
+   "module": "src/wavedevsecops/web/blockers.py",
+   "ligne": 44,
+   "operateur": "core/ReplaceComparisonOperator_Eq_GtE",
+   "moins": [
+    "        if scenario.catalogue and (scenario.mode == \"A\" or scenario.scenario_id not in titles):"
+   ],
+   "plus": [
+    "        if scenario.catalogue and (scenario.mode >= \"A\" or scenario.scenario_id not in titles):"
+   ]
+  },
+  {
+   "id": "wd-5-9:blockers.py:44:4",
+   "cible": "wd-5-9:blockers.py:44",
+   "module": "src/wavedevsecops/web/blockers.py",
+   "ligne": 44,
+   "operateur": "core/ReplaceComparisonOperator_Eq_NotEq",
+   "moins": [
+    "        if scenario.catalogue and (scenario.mode == \"A\" or scenario.scenario_id not in titles):"
+   ],
+   "plus": [
+    "        if scenario.catalogue and (scenario.mode != \"A\" or scenario.scenario_id not in titles):"
+   ]
+  },
+  {
+   "id": "wd-5-9:blockers.py:44:5",
+   "cible": "wd-5-9:blockers.py:44",
+   "module": "src/wavedevsecops/web/blockers.py",
+   "ligne": 44,
+   "operateur": "core/ReplaceComparisonOperator_Eq_Lt",
+   "moins": [
+    "        if scenario.catalogue and (scenario.mode == \"A\" or scenario.scenario_id not in titles):"
+   ],
+   "plus": [
+    "        if scenario.catalogue and (scenario.mode < \"A\" or scenario.scenario_id not in titles):"
+   ]
+  },
+  {
+   "id": "wd-5-9:blockers.py:44:6",
+   "cible": "wd-5-9:blockers.py:44",
+   "module": "src/wavedevsecops/web/blockers.py",
+   "ligne": 44,
+   "operateur": "core/ReplaceComparisonOperator_Eq_Gt",
+   "moins": [
+    "        if scenario.catalogue and (scenario.mode == \"A\" or scenario.scenario_id not in titles):"
+   ],
+   "plus": [
+    "        if scenario.catalogue and (scenario.mode > \"A\" or scenario.scenario_id not in titles):"
+   ]
+  },
+  {
+   "id": "wd-5-9:blockers.py:44:7",
+   "cible": "wd-5-9:blockers.py:44",
+   "module": "src/wavedevsecops/web/blockers.py",
+   "ligne": 44,
+   "operateur": "core/ReplaceComparisonOperator_Eq_IsNot",
+   "moins": [
+    "        if scenario.catalogue and (scenario.mode == \"A\" or scenario.scenario_id not in titles):"
+   ],
+   "plus": [
+    "        if scenario.catalogue and (scenario.mode is not \"A\" or scenario.scenario_id not in titles):"
+   ]
+  },
+  {
+   "id": "wd-5-9:blockers.py:44:8",
+   "cible": "wd-5-9:blockers.py:44",
+   "module": "src/wavedevsecops/web/blockers.py",
+   "ligne": 44,
+   "operateur": "core/ReplaceAndWithOr",
+   "moins": [
+    "        if scenario.catalogue and (scenario.mode == \"A\" or scenario.scenario_id not in titles):"
+   ],
+   "plus": [
+    "        if scenario.catalogue or (scenario.mode == \"A\" or scenario.scenario_id not in titles):"
+   ]
+  },
+  {
+   "id": "wd-5-9:blockers.py:65:9",
+   "cible": "wd-5-9:blockers.py:65",
+   "module": "src/wavedevsecops/web/blockers.py",
+   "ligne": 65,
+   "operateur": "core/ReplaceComparisonOperator_Is_IsNot",
+   "moins": [
+    "        if delivered and title is None:"
+   ],
+   "plus": [
+    "        if delivered and title is not None:"
+   ]
+  },
+  {
+   "id": "wd-5-9:blockers.py:65:10",
+   "cible": "wd-5-9:blockers.py:65",
+   "module": "src/wavedevsecops/web/blockers.py",
+   "ligne": 65,
+   "operateur": "core/ReplaceAndWithOr",
+   "moins": [
+    "        if delivered and title is None:"
+   ],
+   "plus": [
+    "        if delivered or title is None:"
+   ]
+  },
+  {
+   "id": "wd-5-9:model.py:59:11",
+   "cible": "wd-5-9:model.py:59",
+   "module": "src/wavedevsecops/scenarios/model.py",
+   "ligne": 59,
+   "operateur": "core/NumberReplacer",
+   "moins": [
+    "    station: int = Field(ge=1, le=4)"
+   ],
+   "plus": [
+    "    station: int = Field(ge=1, le= 5)"
+   ]
+  },
+  {
+   "id": "wd-5-9:model.py:59:12",
+   "cible": "wd-5-9:model.py:59",
+   "module": "src/wavedevsecops/scenarios/model.py",
+   "ligne": 59,
+   "operateur": "core/NumberReplacer",
+   "moins": [
+    "    station: int = Field(ge=1, le=4)"
+   ],
+   "plus": [
+    "    station: int = Field(ge= 0, le=4)"
+   ]
+  },
+  {
+   "id": "wd-5-9:model.py:63:13",
+   "cible": "wd-5-9:model.py:63",
+   "module": "src/wavedevsecops/scenarios/model.py",
+   "ligne": 63,
+   "operateur": "core/NumberReplacer",
+   "moins": [
+    "    reason_text: str = Field(min_length=1)"
+   ],
+   "plus": [
+    "    reason_text: str = Field(min_length= 2)"
+   ]
+  }
+ ],
+ "wd-8-4": [
+  {
+   "id": "wd-8-4:findings.py:367:0",
+   "cible": "wd-8-4:findings.py:367",
+   "module": "src/wavedevsecops/ci/findings.py",
+   "ligne": 367,
+   "operateur": "core/ReplaceComparisonOperator_Eq_LtE",
+   "moins": [
+    "            found.append(str(start) if start == previous else f\"{start}-{previous}\")"
+   ],
+   "plus": [
+    "            found.append(str(start) if start <= previous else f\"{start}-{previous}\")"
+   ]
+  },
+  {
+   "id": "wd-8-4:findings.py:367:1",
+   "cible": "wd-8-4:findings.py:367",
+   "module": "src/wavedevsecops/ci/findings.py",
+   "ligne": 367,
+   "operateur": "core/ReplaceComparisonOperator_Eq_IsNot",
+   "moins": [
+    "            found.append(str(start) if start == previous else f\"{start}-{previous}\")"
+   ],
+   "plus": [
+    "            found.append(str(start) if start is not previous else f\"{start}-{previous}\")"
+   ]
+  },
+  {
+   "id": "wd-8-4:findings.py:367:2",
+   "cible": "wd-8-4:findings.py:367",
+   "module": "src/wavedevsecops/ci/findings.py",
+   "ligne": 367,
+   "operateur": "core/ReplaceComparisonOperator_Eq_GtE",
+   "moins": [
+    "            found.append(str(start) if start == previous else f\"{start}-{previous}\")"
+   ],
+   "plus": [
+    "            found.append(str(start) if start >= previous else f\"{start}-{previous}\")"
+   ]
+  },
+  {
+   "id": "wd-8-4:findings.py:367:3",
+   "cible": "wd-8-4:findings.py:367",
+   "module": "src/wavedevsecops/ci/findings.py",
+   "ligne": 367,
+   "operateur": "core/ReplaceComparisonOperator_Eq_Lt",
+   "moins": [
+    "            found.append(str(start) if start == previous else f\"{start}-{previous}\")"
+   ],
+   "plus": [
+    "            found.append(str(start) if start < previous else f\"{start}-{previous}\")"
+   ]
+  },
+  {
+   "id": "wd-8-4:findings.py:367:4",
+   "cible": "wd-8-4:findings.py:367",
+   "module": "src/wavedevsecops/ci/findings.py",
+   "ligne": 367,
+   "operateur": "core/ReplaceComparisonOperator_Eq_NotEq",
+   "moins": [
+    "            found.append(str(start) if start == previous else f\"{start}-{previous}\")"
+   ],
+   "plus": [
+    "            found.append(str(start) if start != previous else f\"{start}-{previous}\")"
+   ]
+  },
+  {
+   "id": "wd-8-4:findings.py:367:5",
+   "cible": "wd-8-4:findings.py:367",
+   "module": "src/wavedevsecops/ci/findings.py",
+   "ligne": 367,
+   "operateur": "core/ReplaceComparisonOperator_Eq_Gt",
+   "moins": [
+    "            found.append(str(start) if start == previous else f\"{start}-{previous}\")"
+   ],
+   "plus": [
+    "            found.append(str(start) if start > previous else f\"{start}-{previous}\")"
+   ]
+  },
+  {
+   "id": "wd-8-4:findings.py:370:6",
+   "cible": "wd-8-4:findings.py:370",
+   "module": "src/wavedevsecops/ci/findings.py",
+   "ligne": 370,
+   "operateur": "core/ReplaceComparisonOperator_Eq_GtE",
+   "moins": [
+    "        found.append(str(start) if start == previous else f\"{start}-{previous}\")"
+   ],
+   "plus": [
+    "        found.append(str(start) if start >= previous else f\"{start}-{previous}\")"
+   ]
+  },
+  {
+   "id": "wd-8-4:findings.py:392:7",
+   "cible": "wd-8-4:findings.py:392",
+   "module": "src/wavedevsecops/ci/findings.py",
+   "ligne": 392,
+   "operateur": "core/ReplaceComparisonOperator_Gt_NotEq",
+   "moins": [
+    "    measured = total > 0"
+   ],
+   "plus": [
+    "    measured = total != 0"
+   ]
+  },
+  {
+   "id": "wd-8-4:findings.py:412:8",
+   "cible": "wd-8-4:findings.py:412",
+   "module": "src/wavedevsecops/ci/findings.py",
+   "ligne": 412,
+   "operateur": "core/NumberReplacer",
+   "moins": [
+    "        noun = \"ligne\" if count == 1 else \"lignes\""
+   ],
+   "plus": [
+    "        noun = \"ligne\" if count == 2 else \"lignes\""
+   ]
+  },
+  {
+   "id": "wd-8-4:findings.py:412:9",
+   "cible": "wd-8-4:findings.py:412",
+   "module": "src/wavedevsecops/ci/findings.py",
+   "ligne": 412,
+   "operateur": "core/ReplaceComparisonOperator_Eq_LtE",
+   "moins": [
+    "        noun = \"ligne\" if count == 1 else \"lignes\""
+   ],
+   "plus": [
+    "        noun = \"ligne\" if count <= 1 else \"lignes\""
+   ]
+  },
+  {
+   "id": "wd-8-4:findings.py:412:10",
+   "cible": "wd-8-4:findings.py:412",
+   "module": "src/wavedevsecops/ci/findings.py",
+   "ligne": 412,
+   "operateur": "core/ReplaceComparisonOperator_Eq_Lt",
+   "moins": [
+    "        noun = \"ligne\" if count == 1 else \"lignes\""
+   ],
+   "plus": [
+    "        noun = \"ligne\" if count < 1 else \"lignes\""
+   ]
+  },
+  {
+   "id": "wd-8-4:findings.py:416:11",
+   "cible": "wd-8-4:findings.py:416",
+   "module": "src/wavedevsecops/ci/findings.py",
+   "ligne": 416,
+   "operateur": "core/AddNot",
+   "moins": [
+    "                severity=\"error\" if not passed else \"info\","
+   ],
+   "plus": [
+    "                severity=\"error\" if not not passed else \"info\","
+   ]
+  },
+  {
+   "id": "wd-8-4:replace_in_file.py:47:12",
+   "cible": "wd-8-4:replace_in_file.py:47",
+   "module": "src/wavedevsecops/scenarios/ops/replace_in_file.py",
+   "ligne": 47,
+   "operateur": "core/ExceptionReplacer",
+   "moins": [
+    "    except (OSError, UnicodeDecodeError):"
+   ],
+   "plus": [
+    "    except (CosmicRayTestingException, UnicodeDecodeError):"
+   ]
+  }
+ ],
+ "us-7-14": [
+  {
+   "id": "us-7-14:carte.py:239:0",
+   "cible": "us-7-14:carte.py:239",
+   "module": "src/usine/ui/carte.py",
+   "ligne": 239,
+   "operateur": "core/ReplaceComparisonOperator_Gt_NotEq",
+   "moins": [
+    "    return f\"+{reste}\" if reste > 0 else None"
+   ],
+   "plus": [
+    "    return f\"+{reste}\" if reste != 0 else None"
+   ]
+  },
+  {
+   "id": "us-7-14:carte.py:244:1",
+   "cible": "us-7-14:carte.py:244",
+   "module": "src/usine/ui/carte.py",
+   "ligne": 244,
+   "operateur": "core/NumberReplacer",
+   "moins": [
+    "    if octets < 1024:"
+   ],
+   "plus": [
+    "    if octets < 1023:"
+   ]
+  },
+  {
+   "id": "us-7-14:carte.py:244:2",
+   "cible": "us-7-14:carte.py:244",
+   "module": "src/usine/ui/carte.py",
+   "ligne": 244,
+   "operateur": "core/ReplaceComparisonOperator_Lt_LtE",
+   "moins": [
+    "    if octets < 1024:"
+   ],
+   "plus": [
+    "    if octets <= 1024:"
+   ]
+  },
+  {
+   "id": "us-7-14:carte.py:246:3",
+   "cible": "us-7-14:carte.py:246",
+   "module": "src/usine/ui/carte.py",
+   "ligne": 246,
+   "operateur": "core/NumberReplacer",
+   "moins": [
+    "    if round(octets / 1024) < 1024:"
+   ],
+   "plus": [
+    "    if round(octets / 1024) < 1023:"
+   ]
+  },
+  {
+   "id": "us-7-14:carte.py:248:4",
+   "cible": "us-7-14:carte.py:248",
+   "module": "src/usine/ui/carte.py",
+   "ligne": 248,
+   "operateur": "core/NumberReplacer",
+   "moins": [
+    "    return f\"{octets / (1024 * 1024):.1f} Mo\".replace(\".\", \",\")"
+   ],
+   "plus": [
+    "    return f\"{octets / (1024 * 1025):.1f} Mo\".replace(\".\", \",\")"
+   ]
+  },
+  {
+   "id": "us-7-14:carte.py:248:5",
+   "cible": "us-7-14:carte.py:248",
+   "module": "src/usine/ui/carte.py",
+   "ligne": 248,
+   "operateur": "core/NumberReplacer",
+   "moins": [
+    "    return f\"{octets / (1024 * 1024):.1f} Mo\".replace(\".\", \",\")"
+   ],
+   "plus": [
+    "    return f\"{octets / ( 1025 * 1024):.1f} Mo\".replace(\".\", \",\")"
+   ]
+  },
+  {
+   "id": "us-7-14:carte.py:248:6",
+   "cible": "us-7-14:carte.py:248",
+   "module": "src/usine/ui/carte.py",
+   "ligne": 248,
+   "operateur": "core/NumberReplacer",
+   "moins": [
+    "    return f\"{octets / (1024 * 1024):.1f} Mo\".replace(\".\", \",\")"
+   ],
+   "plus": [
+    "    return f\"{octets / (1024 * 1023):.1f} Mo\".replace(\".\", \",\")"
+   ]
+  },
+  {
+   "id": "us-7-14:detail.py:349:7",
+   "cible": "us-7-14:detail.py:349",
+   "module": "src/usine/ui/detail.py",
+   "ligne": 349,
+   "operateur": "core/NumberReplacer",
+   "moins": [
+    "    return [(morceau, rang % 2 == 1) for rang, morceau in enumerate(morceaux)]"
+   ],
+   "plus": [
+    "    return [(morceau, rang % 3 == 1) for rang, morceau in enumerate(morceaux)]"
+   ]
+  },
+  {
+   "id": "us-7-14:detail.py:349:8",
+   "cible": "us-7-14:detail.py:349",
+   "module": "src/usine/ui/detail.py",
+   "ligne": 349,
+   "operateur": "core/ReplaceComparisonOperator_Eq_GtE",
+   "moins": [
+    "    return [(morceau, rang % 2 == 1) for rang, morceau in enumerate(morceaux)]"
+   ],
+   "plus": [
+    "    return [(morceau, rang % 2 >= 1) for rang, morceau in enumerate(morceaux)]"
+   ]
+  },
+  {
+   "id": "us-7-14:detail.py:419:9",
+   "cible": "us-7-14:detail.py:419",
+   "module": "src/usine/ui/detail.py",
+   "ligne": 419,
+   "operateur": "core/ReplaceComparisonOperator_Is_NotEq",
+   "moins": [
+    "    if prevision.statut is StatutPrevision.sortie_projetee:"
+   ],
+   "plus": [
+    "    if prevision.statut != StatutPrevision.sortie_projetee:"
+   ]
+  },
+  {
+   "id": "us-7-14:detail.py:419:10",
+   "cible": "us-7-14:detail.py:419",
+   "module": "src/usine/ui/detail.py",
+   "ligne": 419,
+   "operateur": "core/ReplaceComparisonOperator_Is_LtE",
+   "moins": [
+    "    if prevision.statut is StatutPrevision.sortie_projetee:"
+   ],
+   "plus": [
+    "    if prevision.statut <= StatutPrevision.sortie_projetee:"
+   ]
+  },
+  {
+   "id": "us-7-14:detail.py:419:11",
+   "cible": "us-7-14:detail.py:419",
+   "module": "src/usine/ui/detail.py",
+   "ligne": 419,
+   "operateur": "core/ReplaceComparisonOperator_Is_IsNot",
+   "moins": [
+    "    if prevision.statut is StatutPrevision.sortie_projetee:"
+   ],
+   "plus": [
+    "    if prevision.statut is not StatutPrevision.sortie_projetee:"
+   ]
+  },
+  {
+   "id": "us-7-14:detail.py:419:12",
+   "cible": "us-7-14:detail.py:419",
+   "module": "src/usine/ui/detail.py",
+   "ligne": 419,
+   "operateur": "core/ReplaceComparisonOperator_Is_Gt",
+   "moins": [
+    "    if prevision.statut is StatutPrevision.sortie_projetee:"
+   ],
+   "plus": [
+    "    if prevision.statut > StatutPrevision.sortie_projetee:"
+   ]
+  },
+  {
+   "id": "us-7-14:detail.py:419:13",
+   "cible": "us-7-14:detail.py:419",
+   "module": "src/usine/ui/detail.py",
+   "ligne": 419,
+   "operateur": "core/ReplaceComparisonOperator_Is_Lt",
+   "moins": [
+    "    if prevision.statut is StatutPrevision.sortie_projetee:"
+   ],
+   "plus": [
+    "    if prevision.statut < StatutPrevision.sortie_projetee:"
+   ]
+  },
+  {
+   "id": "us-7-14:detail.py:419:14",
+   "cible": "us-7-14:detail.py:419",
+   "module": "src/usine/ui/detail.py",
+   "ligne": 419,
+   "operateur": "core/ReplaceComparisonOperator_Is_GtE",
+   "moins": [
+    "    if prevision.statut is StatutPrevision.sortie_projetee:"
+   ],
+   "plus": [
+    "    if prevision.statut >= StatutPrevision.sortie_projetee:"
+   ]
+  },
+  {
+   "id": "us-7-14:detail.py:436:15",
+   "cible": "us-7-14:detail.py:436",
+   "module": "src/usine/ui/detail.py",
+   "ligne": 436,
+   "operateur": "core/ReplaceComparisonOperator_Is_IsNot",
+   "moins": [
+    "    if prevision.statut is StatutPrevision.pas_de_sortie_projetee:"
+   ],
+   "plus": [
+    "    if prevision.statut is not StatutPrevision.pas_de_sortie_projetee:"
+   ]
+  },
+  {
+   "id": "us-7-14:detail.py:436:16",
+   "cible": "us-7-14:detail.py:436",
+   "module": "src/usine/ui/detail.py",
+   "ligne": 436,
+   "operateur": "core/ReplaceComparisonOperator_Is_GtE",
+   "moins": [
+    "    if prevision.statut is StatutPrevision.pas_de_sortie_projetee:"
+   ],
+   "plus": [
+    "    if prevision.statut >= StatutPrevision.pas_de_sortie_projetee:"
+   ]
+  },
+  {
+   "id": "us-7-14:detail.py:436:17",
+   "cible": "us-7-14:detail.py:436",
+   "module": "src/usine/ui/detail.py",
+   "ligne": 436,
+   "operateur": "core/ReplaceComparisonOperator_Is_NotEq",
+   "moins": [
+    "    if prevision.statut is StatutPrevision.pas_de_sortie_projetee:"
+   ],
+   "plus": [
+    "    if prevision.statut != StatutPrevision.pas_de_sortie_projetee:"
+   ]
+  },
+  {
+   "id": "us-7-14:detail.py:436:18",
+   "cible": "us-7-14:detail.py:436",
+   "module": "src/usine/ui/detail.py",
+   "ligne": 436,
+   "operateur": "core/ReplaceComparisonOperator_Is_LtE",
+   "moins": [
+    "    if prevision.statut is StatutPrevision.pas_de_sortie_projetee:"
+   ],
+   "plus": [
+    "    if prevision.statut <= StatutPrevision.pas_de_sortie_projetee:"
+   ]
+  },
+  {
+   "id": "us-7-14:detail.py:436:19",
+   "cible": "us-7-14:detail.py:436",
+   "module": "src/usine/ui/detail.py",
+   "ligne": 436,
+   "operateur": "core/ReplaceComparisonOperator_Is_Gt",
+   "moins": [
+    "    if prevision.statut is StatutPrevision.pas_de_sortie_projetee:"
+   ],
+   "plus": [
+    "    if prevision.statut > StatutPrevision.pas_de_sortie_projetee:"
+   ]
+  },
+  {
+   "id": "us-7-14:detail.py:436:20",
+   "cible": "us-7-14:detail.py:436",
+   "module": "src/usine/ui/detail.py",
+   "ligne": 436,
+   "operateur": "core/ReplaceComparisonOperator_Is_Lt",
+   "moins": [
+    "    if prevision.statut is StatutPrevision.pas_de_sortie_projetee:"
+   ],
+   "plus": [
+    "    if prevision.statut < StatutPrevision.pas_de_sortie_projetee:"
+   ]
+  },
+  {
+   "id": "us-7-14:detail.py:457:21",
+   "cible": "us-7-14:detail.py:457",
+   "module": "src/usine/ui/detail.py",
+   "ligne": 457,
+   "operateur": "core/ReplaceComparisonOperator_Eq_LtE",
+   "moins": [
+    "    propres = [p for p in previsions if p.entite == meteo.entite]"
+   ],
+   "plus": [
+    "    propres = [p for p in previsions if p.entite <= meteo.entite]"
+   ]
+  },
+  {
+   "id": "us-7-14:detail.py:461:22",
+   "cible": "us-7-14:detail.py:461",
+   "module": "src/usine/ui/detail.py",
+   "ligne": 461,
+   "operateur": "core/ReplaceComparisonOperator_Eq_LtE",
+   "moins": [
+    "        n for n in narrations if n.entite == meteo.entite and n.statut_controle in STATUTS_ACCEPTES"
+   ],
+   "plus": [
+    "        n for n in narrations if n.entite <= meteo.entite and n.statut_controle in STATUTS_ACCEPTES"
+   ]
+  },
+  {
+   "id": "us-7-14:detail.py:461:23",
+   "cible": "us-7-14:detail.py:461",
+   "module": "src/usine/ui/detail.py",
+   "ligne": 461,
+   "operateur": "core/ReplaceComparisonOperator_Eq_GtE",
+   "moins": [
+    "        n for n in narrations if n.entite == meteo.entite and n.statut_controle in STATUTS_ACCEPTES"
+   ],
+   "plus": [
+    "        n for n in narrations if n.entite >= meteo.entite and n.statut_controle in STATUTS_ACCEPTES"
+   ]
+  },
+  {
+   "id": "us-7-14:detail.py:488:24",
+   "cible": "us-7-14:detail.py:488",
+   "module": "src/usine/ui/detail.py",
+   "ligne": 488,
+   "operateur": "core/ReplaceComparisonOperator_Eq_LtE",
+   "moins": [
+    "    propres = [r for r in risques if r.entite == meteo.entite]"
+   ],
+   "plus": [
+    "    propres = [r for r in risques if r.entite <= meteo.entite]"
+   ]
+  },
+  {
+   "id": "us-7-14:detail.py:592:25",
+   "cible": "us-7-14:detail.py:592",
+   "module": "src/usine/ui/detail.py",
+   "ligne": 592,
+   "operateur": "core/NumberReplacer",
+   "moins": [
+    "def vue_detail(consultation: LectureDetail, entite: str, palier_demande: Palier = 2) -> VueDetail:"
+   ],
+   "plus": [
+    "def vue_detail(consultation: LectureDetail, entite: str, palier_demande: Palier = 3) -> VueDetail:"
+   ]
+  }
+ ],
+ "us-7-15": [
+  {
+   "id": "us-7-15:chaine.py:142:0",
+   "cible": "us-7-15:chaine.py:142",
+   "module": "src/usine/ui/chaine.py",
+   "ligne": 142,
+   "operateur": "core/ReplaceComparisonOperator_IsNot_Is",
+   "moins": [
+    "                if erreurs is not None:"
+   ],
+   "plus": [
+    "                if erreurs is None:"
+   ]
+  },
+  {
+   "id": "us-7-15:chaine.py:189:1",
+   "cible": "us-7-15:chaine.py:189",
+   "module": "src/usine/ui/chaine.py",
+   "ligne": 189,
+   "operateur": "core/NumberReplacer",
+   "moins": [
+    "            for rang, suivi in enumerate(suivis, start=1)"
+   ],
+   "plus": [
+    "            for rang, suivi in enumerate(suivis, start= 2)"
+   ]
+  },
+  {
+   "id": "us-7-15:chaine.py:221:2",
+   "cible": "us-7-15:chaine.py:221",
+   "module": "src/usine/ui/chaine.py",
+   "ligne": 221,
+   "operateur": "core/ReplaceComparisonOperator_Eq_LtE",
+   "moins": [
+    "            journal_vide=JOURNAL_ATTENTE if statut == \"attente\" else JOURNAL_VIDE,"
+   ],
+   "plus": [
+    "            journal_vide=JOURNAL_ATTENTE if statut <= \"attente\" else JOURNAL_VIDE,"
+   ]
+  },
+  {
+   "id": "us-7-15:chaine.py:221:3",
+   "cible": "us-7-15:chaine.py:221",
+   "module": "src/usine/ui/chaine.py",
+   "ligne": 221,
+   "operateur": "core/ReplaceComparisonOperator_Eq_Lt",
+   "moins": [
+    "            journal_vide=JOURNAL_ATTENTE if statut == \"attente\" else JOURNAL_VIDE,"
+   ],
+   "plus": [
+    "            journal_vide=JOURNAL_ATTENTE if statut < \"attente\" else JOURNAL_VIDE,"
+   ]
+  },
+  {
+   "id": "us-7-15:chaine.py:221:4",
+   "cible": "us-7-15:chaine.py:221",
+   "module": "src/usine/ui/chaine.py",
+   "ligne": 221,
+   "operateur": "core/ReplaceComparisonOperator_Eq_IsNot",
+   "moins": [
+    "            journal_vide=JOURNAL_ATTENTE if statut == \"attente\" else JOURNAL_VIDE,"
+   ],
+   "plus": [
+    "            journal_vide=JOURNAL_ATTENTE if statut is not \"attente\" else JOURNAL_VIDE,"
+   ]
+  },
+  {
+   "id": "us-7-15:chaine.py:221:5",
+   "cible": "us-7-15:chaine.py:221",
+   "module": "src/usine/ui/chaine.py",
+   "ligne": 221,
+   "operateur": "core/ReplaceComparisonOperator_Eq_GtE",
+   "moins": [
+    "            journal_vide=JOURNAL_ATTENTE if statut == \"attente\" else JOURNAL_VIDE,"
+   ],
+   "plus": [
+    "            journal_vide=JOURNAL_ATTENTE if statut >= \"attente\" else JOURNAL_VIDE,"
+   ]
+  },
+  {
+   "id": "us-7-15:chaine.py:221:6",
+   "cible": "us-7-15:chaine.py:221",
+   "module": "src/usine/ui/chaine.py",
+   "ligne": 221,
+   "operateur": "core/ReplaceComparisonOperator_Eq_NotEq",
+   "moins": [
+    "            journal_vide=JOURNAL_ATTENTE if statut == \"attente\" else JOURNAL_VIDE,"
+   ],
+   "plus": [
+    "            journal_vide=JOURNAL_ATTENTE if statut != \"attente\" else JOURNAL_VIDE,"
+   ]
+  },
+  {
+   "id": "us-7-15:chaine.py:221:7",
+   "cible": "us-7-15:chaine.py:221",
+   "module": "src/usine/ui/chaine.py",
+   "ligne": 221,
+   "operateur": "core/ReplaceComparisonOperator_Eq_Gt",
+   "moins": [
+    "            journal_vide=JOURNAL_ATTENTE if statut == \"attente\" else JOURNAL_VIDE,"
+   ],
+   "plus": [
+    "            journal_vide=JOURNAL_ATTENTE if statut > \"attente\" else JOURNAL_VIDE,"
+   ]
+  },
+  {
+   "id": "us-7-15:chaine.py:273:8",
+   "cible": "us-7-15:chaine.py:273",
+   "module": "src/usine/ui/chaine.py",
+   "ligne": 273,
+   "operateur": "core/ReplaceComparisonOperator_Is_LtE",
+   "moins": [
+    "        elif evenement.etape is courante:"
+   ],
+   "plus": [
+    "        elif evenement.etape <= courante:"
+   ]
+  },
+  {
+   "id": "us-7-15:textes.py:41:9",
+   "cible": "us-7-15:textes.py:41",
+   "module": "src/usine/ui/textes.py",
+   "ligne": 41,
+   "operateur": "core/NumberReplacer",
+   "moins": [
+    "INTERVALLE_SONDAGE = 1.0"
+   ],
+   "plus": [
+    "INTERVALLE_SONDAGE = 2.0"
+   ]
+  }
+ ],
+ "us-7-16": [
+  {
+   "id": "us-7-16:ecrans.py:321:0",
+   "cible": "us-7-16:ecrans.py:321",
+   "module": "src/usine/ui/ecrans.py",
+   "ligne": 321,
+   "operateur": "core/ReplaceComparisonOperator_Is_IsNot",
+   "moins": [
+    "        tableau=None if manuel is None and chaine is None else _tableau(manuel, chaine),"
+   ],
+   "plus": [
+    "        tableau=None if manuel is not None and chaine is None else _tableau(manuel, chaine),"
+   ]
+  },
+  {
+   "id": "us-7-16:outillage.py:55:1",
+   "cible": "us-7-16:outillage.py:55",
+   "module": "src/usine/ui/outillage.py",
+   "ligne": 55,
+   "operateur": "core/NumberReplacer",
+   "moins": [
+    "    jeton = Token(\"html_inline\", \"\", 0)"
+   ],
+   "plus": [
+    "    jeton = Token(\"html_inline\", \"\", -1)"
+   ]
+  },
+  {
+   "id": "us-7-16:outillage.py:64:2",
+   "cible": "us-7-16:outillage.py:64",
+   "module": "src/usine/ui/outillage.py",
+   "ligne": 64,
+   "operateur": "core/ReplaceComparisonOperator_NotEq_Lt",
+   "moins": [
+    "        if jeton.type != \"text\" or not _MARQUEUR.search(jeton.content):"
+   ],
+   "plus": [
+    "        if jeton.type < \"text\" or not _MARQUEUR.search(jeton.content):"
+   ]
+  },
+  {
+   "id": "us-7-16:outillage.py:64:3",
+   "cible": "us-7-16:outillage.py:64",
+   "module": "src/usine/ui/outillage.py",
+   "ligne": 64,
+   "operateur": "core/ReplaceComparisonOperator_NotEq_Gt",
+   "moins": [
+    "        if jeton.type != \"text\" or not _MARQUEUR.search(jeton.content):"
+   ],
+   "plus": [
+    "        if jeton.type > \"text\" or not _MARQUEUR.search(jeton.content):"
+   ]
+  },
+  {
+   "id": "us-7-16:outillage.py:72:4",
+   "cible": "us-7-16:outillage.py:72",
+   "module": "src/usine/ui/outillage.py",
+   "ligne": 72,
+   "operateur": "core/NumberReplacer",
+   "moins": [
+    "                texte = Token(\"text\", \"\", 0)"
+   ],
+   "plus": [
+    "                texte = Token(\"text\", \"\", 1)"
+   ]
+  },
+  {
+   "id": "us-7-16:outillage.py:86:5",
+   "cible": "us-7-16:outillage.py:86",
+   "module": "src/usine/ui/outillage.py",
+   "ligne": 86,
+   "operateur": "core/NumberReplacer",
+   "moins": [
+    "    rang = 0"
+   ],
+   "plus": [
+    "    rang = -1"
+   ]
+  },
+  {
+   "id": "us-7-16:outillage.py:89:6",
+   "cible": "us-7-16:outillage.py:89",
+   "module": "src/usine/ui/outillage.py",
+   "ligne": 89,
+   "operateur": "core/ReplaceComparisonOperator_Eq_LtE",
+   "moins": [
+    "        if jeton.type == \"heading_open\" and jeton.tag == \"h1\":"
+   ],
+   "plus": [
+    "        if jeton.type == \"heading_open\" and jeton.tag <= \"h1\":"
+   ]
+  },
+  {
+   "id": "us-7-16:outillage.py:89:7",
+   "cible": "us-7-16:outillage.py:89",
+   "module": "src/usine/ui/outillage.py",
+   "ligne": 89,
+   "operateur": "core/ReplaceComparisonOperator_Eq_GtE",
+   "moins": [
+    "        if jeton.type == \"heading_open\" and jeton.tag == \"h1\":"
+   ],
+   "plus": [
+    "        if jeton.type >= \"heading_open\" and jeton.tag == \"h1\":"
+   ]
+  },
+  {
+   "id": "us-7-16:outillage.py:90:8",
+   "cible": "us-7-16:outillage.py:90",
+   "module": "src/usine/ui/outillage.py",
+   "ligne": 90,
+   "operateur": "core/NumberReplacer",
+   "moins": [
+    "            rang += 3  # ouverture, contenu, fermeture"
+   ],
+   "plus": [
+    "            rang += 4  # ouverture, contenu, fermeture"
+   ]
+  },
+  {
+   "id": "us-7-16:outillage.py:92:9",
+   "cible": "us-7-16:outillage.py:92",
+   "module": "src/usine/ui/outillage.py",
+   "ligne": 92,
+   "operateur": "core/ReplaceComparisonOperator_Eq_GtE",
+   "moins": [
+    "        if jeton.type == \"inline\" and jeton.children:"
+   ],
+   "plus": [
+    "        if jeton.type >= \"inline\" and jeton.children:"
+   ]
+  },
+  {
+   "id": "us-7-16:outillage.py:92:10",
+   "cible": "us-7-16:outillage.py:92",
+   "module": "src/usine/ui/outillage.py",
+   "ligne": 92,
+   "operateur": "core/ReplaceComparisonOperator_Eq_LtE",
+   "moins": [
+    "        if jeton.type == \"inline\" and jeton.children:"
+   ],
+   "plus": [
+    "        if jeton.type <= \"inline\" and jeton.children:"
+   ]
+  }
+ ]
+}

@@ -5,8 +5,8 @@ import os
 from pathlib import Path
 
 ICI = Path(__file__).parent
-BRUTS = ICI / "resultats-bruts"
-RACINE_T = Path("T:/")          # `subst T:` sur le dossier jetable t10 du scratchpad
+BRUTS = Path(os.environ.get("T10_BRUTS", ICI / "resultats-bruts"))   # T10b : resultats-bruts/T10b
+RACINE_T = Path(os.environ.get("T10_RACINE", "T:/"))   # T10 : `subst T:` ; T10b : dossier jetable court du scratchpad (sans subst)
 GITHUB = Path(os.environ.get("T10_GITHUB", Path.home() / "Documents" / "GitHub"))
 DEPOTS = {"wd": GITHUB / "wavedevsecops", "us": GITHUB / "usine-migration-jira-demo"}
 UI = "src/usine/ui"

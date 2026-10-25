@@ -1,0 +1,87 @@
+{
+ "story": "us-7-15",
+ "bras": "C",
+ "essai": 2,
+ "fichiers": [
+  "tests/unit/ui/test_renf_chaine.py"
+ ],
+ "mutants": [
+  {
+   "id": "us-7-15:chaine.py:142:0",
+   "cible": "us-7-15:chaine.py:142",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 3.81
+  },
+  {
+   "id": "us-7-15:chaine.py:189:1",
+   "cible": "us-7-15:chaine.py:189",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 3.91
+  },
+  {
+   "id": "us-7-15:chaine.py:221:2",
+   "cible": "us-7-15:chaine.py:221",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 4.05
+  },
+  {
+   "id": "us-7-15:chaine.py:221:3",
+   "cible": "us-7-15:chaine.py:221",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 3.94
+  },
+  {
+   "id": "us-7-15:chaine.py:221:4",
+   "cible": "us-7-15:chaine.py:221",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 3.97
+  },
+  {
+   "id": "us-7-15:chaine.py:221:5",
+   "cible": "us-7-15:chaine.py:221",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 3.79
+  },
+  {
+   "id": "us-7-15:chaine.py:221:6",
+   "cible": "us-7-15:chaine.py:221",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 4.36
+  },
+  {
+   "id": "us-7-15:chaine.py:221:7",
+   "cible": "us-7-15:chaine.py:221",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 4.4
+  },
+  {
+   "id": "us-7-15:chaine.py:273:8",
+   "cible": "us-7-15:chaine.py:273",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 4.86
+  },
+  {
+   "id": "us-7-15:textes.py:41:9",
+   "cible": "us-7-15:textes.py:41",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 4.79
+  }
+ ],
+ "base": {
+  "rc": 0,
+  "fin": "...............                                                          [100%]",
+  "secondes": 3.76
+ },
+ "tues": 8,
+ "erreurs": 0
+}

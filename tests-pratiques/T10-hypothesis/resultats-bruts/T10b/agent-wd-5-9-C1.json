@@ -1,0 +1,127 @@
+{
+ "story": "wd-5-9",
+ "bras": "C",
+ "essai": 1,
+ "prompt": "Tu travailles dans un dépôt Python (le dossier courant). Voici la story à renforcer.\nSpec de la story : `_bmad-output/implementation-artifacts/5-9-encart-ce-qui-l-aurait-bloqué-dans-les-scénarios-b.md` (à lire d'abord).\nFichiers source modifiés par la story :\n- `src/wavedevsecops/web/blockers.py`\n- `src/wavedevsecops/scenarios/model.py`\n- `src/wavedevsecops/scenarios/loader.py`\nTests existants de la story :\n- `tests/test_blockers.py`\n\nRenforce les tests de cette story : ajoute des tests pytest qui vérifient précisément le comportement attendu (valeurs exactes, bornes, branches d'erreur). Ne modifie pas le code source.\n\nMutations survivantes (fichier:ligne, fonction, diff) :\nM1 `src/wavedevsecops/web/blockers.py:41` (`catalogue_scenario_titles`)\n  - except (ScenarioError, OSError, UnicodeDecodeError) as error:\n  + except (CosmicRayTestingException, OSError, UnicodeDecodeError) as error:\nM2 `src/wavedevsecops/web/blockers.py:43` (`catalogue_scenario_titles`)\n  - continue\n  + break\nM3 `src/wavedevsecops/web/blockers.py:44` (`catalogue_scenario_titles`)\n  - if scenario.catalogue and (scenario.mode == \"A\" or scenario.scenario_id not in titles):\n  + if scenario.catalogue and (scenario.mode == \"A\" and scenario.scenario_id not in titles):\nM4 `src/wavedevsecops/web/blockers.py:53` (`blockers_body`)\n  - settings = settings or get_settings()\n  + settings = settings and get_settings()\nM5 `src/wavedevsecops/web/blockers.py:65` (`blockers_body`)\n  - if delivered and title is None:\n  + if not delivered and title is None:\nM6 `src/wavedevsecops/web/blockers.py:76` (`blockers_body`)\n  - soon_text = chain.map.soon_text if chain.map else SOON_FALLBACK_TEXT\n  + soon_text = chain.map.soon_text if not chain.map else SOON_FALLBACK_TEXT\nM7 `src/wavedevsecops/scenarios/model.py:55` (`Blocker`)\n  - model_config = ConfigDict(frozen=True, extra=\"forbid\")\n  + model_config = ConfigDict(frozen=False, extra=\"forbid\")\nM8 `src/wavedevsecops/scenarios/model.py:59` (`Blocker`)\n  - station: int = Field(ge=1, le=4)\n  + station: int = Field(ge=1, le= 3)\nM9 `src/wavedevsecops/scenarios/model.py:63` (`Blocker`)\n  - reason_text: str = Field(min_length=1)\n  + reason_text: str = Field(min_length= 0)\nM10 `src/wavedevsecops/scenarios/model.py:132` (`semantic_errors`)\n  - elif barriers[blocker.barrier_id] != blocker.station:\n  + elif barriers[blocker.barrier_id] < blocker.station:\n(`CosmicRayTestingException` : classe d'exception jamais levée, donc l'`except` concerné n'attrape plus rien.)\n\nCes mutations du code ne font échouer aucun test existant. Pour chacune qui change un comportement observable, ajoute un test qui échoue sur le code muté et passe sur le code actuel. Si une mutation est équivalente (aucun comportement observable ne change), dis-le sans écrire de test. Ne modifie pas le code source.\n\nÉcris les nouveaux tests dans de nouveaux fichiers `tests/test_renf_*.py` ; ne modifie ni le code source ni les tests existants. Lance les tests avec `python -m pytest -q --tb=short <fichiers>` (l'environnement est prêt, rien à installer). Tous tes tests doivent passer. Termine par la liste des fichiers créés, puis, pour chaque mutation Mn, une ligne : le test qui la tue, ou « équivalente » avec la raison en une phrase.",
+ "rc": 0,
+ "stderr": "",
+ "duree_mur_s": 66.0,
+ "modifies_suivis": [],
+ "crees": [
+  "tests/test_renf_blockers.py"
+ ],
+ "sortie": {
+  "duration_api_ms": 59782,
+  "stop_reason": "end_turn",
+  "session_id": "a944f91b-c571-44d2-9c0e-70e4e1437d40",
+  "total_cost_usd": 0.23522220000000002,
+  "usage": {
+   "input_tokens": 22,
+   "cache_creation_input_tokens": 27932,
+   "cache_read_input_tokens": 284602,
+   "output_tokens": 9499,
+   "output_tokens_details": {
+    "thinking_tokens": 1158
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 27932,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 842,
+     "cache_read_input_tokens": 33743,
+     "cache_creation_input_tokens": 159,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 159
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-sonnet-5-5": {
+    "inputTokens": 22,
+    "outputTokens": 9499,
+    "cacheReadInputTokens": 284602,
+    "cacheCreationInputTokens": 27932,
+    "webSearchRequests": 0,
+    "costUSD": 0.23522220000000002,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 1158,
+    "canonicalModel": "claude-sonnet-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [
+   {
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_01GrsxrzLno4sUkqb1oiikLu",
+    "tool_input": {
+     "command": "cat > tests/test_renf_blockers.py <<'EOF'\n\"\"\"Renfort story 5.9 : branches d'erreur du catalogue, réglages, repli « Bientôt », schéma et lint.\"\"\"\n\nfrom __future__ import annotations\n\nimport logging\nfrom types import SimpleNamespace\n\nimport pytest\nfrom pydantic import ValidationError\n\nfrom wavedevsecops.config import Settings\nfrom wavedevsecops.scenarios import ScenarioError, parse_scenario\nfrom wavedevsecops.scenarios.model import Blocker\nfrom wavedevsecops.web import blockers as bm\nfrom wavedevsecops.web.blockers import blockers_body, catalogue_scenario_titles\nfrom wavedevsecops.web.catalogue import load_chain_texts\n\n\ndef _fake(sid: str, mode: str, title: str, catalogue: bool = True):\n    return SimpleNamespace(\n        scenario=SimpleNamespace(\n            scenario_id=sid, mode=mode, title_text=title, catalogue=catalogue\n        )\n    )\n\n\ndef _titles(monkeypatch: pytest.MonkeyPatch, entries: list) -> dict[str, str]:\n    \"\"\"`entries` : objets chargés, ou exception levée au chargement de ce fichier.\"\"\"\n    paths = [SimpleNamespace(name=f\"f{i}.yaml\", index=i) for i in range(len(entries))]\n    monkeypatch.setattr(bm, \"scenario_files\", lambda settings: paths)\n\n    def load(path, settings):\n        entry = entries[path.index]\n        if isinstance(entry, Exception):\n            raise entry\n        return entry\n\n    monkeypatch.setattr(bm, \"load_scenario\", load)\n    return catalogue_scenario_titles(Settings())\n\n\n@pytest.mark.parametrize(\"error\", [ScenarioError(\"x\"), OSError(\"x\"), UnicodeDecodeError(\"utf-8\", b\"\", 0, 1, \"x\")])\ndef test_fichier_illisible_ignore_et_suite_chargee(monkeypatch, caplog, error) -> None:\n    with caplog.at_level(logging.WARNING):\n        titles = _titles(monkeypatch, [error, _fake(\"a\", \"A\", \"Titre A\"), _fake(\"b\", \"A\", \"Titre B\")])\n    assert titles == {\"a\": \"Titre A\", \"b\": \"Titre B\"}\n    assert \"f0.yaml\" in caplog.text\n\n\ndef test_mode_b_seul_est_liste(monkeypatch) -> None:\n    assert _titles(monkeypatch, [_fake(\"x\", \"B\", \"Titre B\")]) == {\"x\": \"Titre B\"}\n\n\ndef test_mode_a_l_emporte_quel_que_soit_l_ordre(monkeypatch) -> None:\n    assert _titles(monkeypatch, [_fake(\"x\", \"B\", \"B\"), _fake(\"x\", \"A\", \"A\")]) == {\"x\": \"A\"}\n    assert _titles(monkeypatch, [_fake(\"x\", \"A\", \"A\"), _fake(\"x\", \"B\", \"B\")]) == {\"x\": \"A\"}\n\n\ndef test_scenario_hors_catalogue_ignore(monkeypatch) -> None:\n    assert _titles(monkeypatch, [_fake(\"x\", \"A\", \"A\", catalogue=False)]) == {}\n\n\ndef test_reglages_explicites_utilises_sinon_ceux_du_processus(monkeypatch) -> None:\n    seen: list = []\n    default, explicit = object(), object()\n    monkeypatch.setattr(bm, \"get_settings\", lambda: default)\n    monkeypatch.setattr(bm, \"load_chain_texts\", lambda s=None: seen.append(s))\n    scenario = SimpleNamespace(blocked_by=[object()])\n    assert blockers_body(scenario, explicit) is None\n    assert blockers_body(scenario) is None\n    assert seen == [explicit, default]\n\n\ndef _blocker_scenario(station: int = 1):\n    return SimpleNamespace(\n        key=\"essai.B\",\n        blocked_by=[\n            Blocker(barrier_id=\"secret-scan\", station=station, scenario_id=\"absent\", reason_text=\"r\")\n        ],\n    )\n\n\ndef _patch_chain(monkeypatch, station: int, **changes):\n    chain = load_chain_texts(Settings())\n    stations = [s.model_copy(update=changes) if s.number == station else s for s in chain.stations]\n    return chain, stations\n\n\ndef test_avertissement_seulement_si_livree_et_sans_titre(monkeypatch, caplog) -> None:\n    chain, stations = _patch_chain(monkeypatch, 1, delivered=True)\n    patched = chain.model_copy(update={\"stations\": stations})\n    monkeypatch.setattr(bm, \"load_chain_texts\", lambda s=None: patched)\n    monkeypatch.setattr(bm, \"catalogue_scenario_titles\", lambda s: {})\n    with caplog.at_level(logging.WARNING):\n        (item,) = blockers_body(_blocker_scenario(), Settings())[\"items\"]\n    assert \"essai.B\" in caplog.text and \"absent\" in caplog.text\n    assert item[\"delivered\"] is True and item[\"scenario\"] is None\n\n    caplog.clear()\n    monkeypatch.setattr(bm, \"catalogue_scenario_titles\", lambda s: {\"absent\": \"T\"})\n    with caplog.at_level(logging.WARNING):\n        (item,) = blockers_body(_blocker_scenario(), Settings())[\"items\"]\n    assert caplog.text == \"\"\n    assert item[\"scenario\"] == {\"id\": \"absent\", \"title_text\": \"T\"}\n\n    stations = [s.model_copy(update={\"delivered\": False}) if s.number == 1 else s for s in chain.stations]\n    patched = chain.model_copy(update={\"stations\": stations})\n    monkeypatch.setattr(bm, \"catalogue_scenario_titles\", lambda s: {})\n    caplog.clear()\n    with caplog.at_level(logging.WARNING):\n        blockers_body(_blocker_scenario(), Settings())\n    assert caplog.text == \"\"\n\n\ndef _soon(monkeypatch, chain_map):\n    chain = load_chain_texts(Settings())\n    stations = [\n        s.model_copy(update={\"delivered\": False, \"milestone\": \"\"}) if s.number == 1 else s\n        for s in chain.stations\n    ]\n    patched = chain.model_copy(update={\"stations\": stations, \"map\": chain_map})\n    monkeypatch.setattr(bm, \"load_chain_texts\", lambda s=None: patched)\n    return blockers_body(_blocker_scenario(), Settings())[\"items\"][0][\"soon_text\"]\n\n\ndef test_sans_jalon_texte_de_la_carte_sinon_bientot(monkeypatch) -> None:\n    real = load_chain_texts(Settings()).map\n    assert real is not None\n    custom = real.model_copy(update={\"soon_text\": \"Plus tard\"})\n    assert _soon(monkeypatch, custom) == \"Plus tard\"\n    assert _soon(monkeypatch, None) == \"Bientôt\"\n\n\n# ---------------------------------------------------------------------------------- schéma, lint\ndef _blocker(**changes):\n    data = {\"barrier_id\": \"secret-scan\", \"station\": 1, \"scenario_id\": \"x\", \"reason_text\": \"r\"}\n    return Blocker(**{**data, **changes})\n\n\ndef test_blocker_est_fige() -> None:\n    blocker = _blocker()\n    with pytest.raises(ValidationError):\n        blocker.station = 2\n\n\ndef test_station_bornes() -> None:\n    assert _blocker(station=4).station == 4\n    assert _blocker(station=1).station == 1\n    for bad in (0, 5):\n        with pytest.raises(ValidationError):\n            _blocker(station=bad)\n\n\ndef test_phrase_vide_refusee() -> None:\n    with pytest.raises(ValidationError):\n        _blocker(reason_text=\"\")\n    assert _blocker(reason_text=\"a\").reason_text == \"a\"\n\n\ndef test_lint_station_declaree_inferieure_a_celle_de_la_chaine() -> None:\n    text = (\n        \"schema_version: 1\\nscenario_id: essai\\nmode: B\\ntitle_text: E\\ntracks: [llm]\\n\"\n        \"blocked_by:\\n  - barrier_id: protection\\n    station: 1\\n    scenario_id: x\\n    reason_text: r\\n\"\n    )\n    with pytest.raises(ScenarioError) as error:\n        parse_scenario(text, \"essai.B.yaml\", barriers={\"protection\": 2})\n    assert \"est en station 2, non 1\" in str(error.value)\n    assert parse_scenario(text.replace(\"station: 1\", \"station: 2\"), \"essai.B.yaml\", barriers={\"protection\": 2})\nEOF\npython -m pytest -q --tb=short tests/test_renf_blockers.py 2>&1 | tail -20"
+    }
+   },
+   {
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_01CkdGCpudRNwFxrTbHZvpkV",
+    "tool_input": {
+     "command": "sed -i 's/ScenarioError(\"x\")/ScenarioError(\"x\", [])/' tests/test_renf_blockers.py && python -m pytest -q --tb=short tests/test_renf_blockers.py 2>&1 | tail -20"
+    }
+   }
+  ],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 13,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "Fichier créé : `tests/test_renf_blockers.py`. Ses 13 tests passent sur le code actuel. Je ne les ai pas lancés sur le code muté : les correspondances ci-dessous viennent de la lecture du code.\n\n- **M1** : `test_fichier_illisible_ignore_et_suite_chargee`. Avec `CosmicRayTestingException`, `ScenarioError`, `OSError` et `UnicodeDecodeError` ne sont plus attrapées, et le test les passe tous les trois.\n- **M2** : `test_fichier_illisible_ignore_et_suite_chargee`. Le fichier en échec est en premier, et `break` empêcherait de charger les deux scénarios suivants.\n- **M3** : `test_mode_b_seul_est_liste` et `test_mode_a_l_emporte_quel_que_soit_l_ordre`. Un scénario B seul disparaîtrait avec `and`. Un A rencontré après un B n'écraserait plus le titre.\n- **M4** : `test_reglages_explicites_utilises_sinon_ceux_du_processus`. Avec `and`, les réglages explicites sont remplacés par ceux de `get_settings()`, et `None` reste `None`.\n- **M5** : `test_avertissement_seulement_si_livree_et_sans_titre`. Il vérifie l'avertissement quand la station est livrée sans titre. Il vérifie l'absence d'avertissement quand le titre existe et quand la station n'est pas livrée.\n- **M6** : `test_sans_jalon_texte_de_la_carte_sinon_bientot`. Il couvre `map` présent avec un `soon_text` personnalisé, puis `map=None` qui donne « Bientôt ».\n- **M7** : `test_blocker_est_fige`. L'assignation doit lever `ValidationError`.\n- **M8** : `test_station_bornes`. La station 4 est acceptée, les stations 0 et 5 sont refusées.\n- **M9** : `test_phrase_vide_refusee`. Un `reason_text` vide est refusé.\n- **M10** : `test_lint_station_declaree_inferieure_a_celle_de_la_chaine`. La barrière `protection` est en station 2 dans la chaîne et déclarée en station 1. Le test attend le message « est en station 2, non 1 ». Avec `<`, aucune erreur n'est levée.\n\nAucune mutation n'est équivalente.",
+  "ttft_ms": 2379,
+  "type": "result",
+  "duration_ms": 64638,
+  "uuid": "f747d66e-72c6-4aaa-9a0d-4c3e4aaac5b0",
+  "ttft_stream_ms": 1564,
+  "time_to_request_ms": 192,
+  "first_content_frame_ms": 1564,
+  "queued_turn_count": 0,
+  "result_index": 0
+ }
+}

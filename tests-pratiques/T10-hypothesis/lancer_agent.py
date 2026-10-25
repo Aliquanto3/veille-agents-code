@@ -19,10 +19,30 @@ DELAI_S = 1800
 
 CONSIGNE = ("Renforce les tests de cette story : ajoute des tests pytest qui vérifient précisément le comportement attendu "
             "(valeurs exactes, bornes, branches d'erreur). Ne modifie pas le code source.")
+CONSIGNE_C = ("Ces mutations du code ne font échouer aucun test existant. Pour chacune qui change un comportement observable, "
+              "ajoute un test qui échoue sur le code muté et passe sur le code actuel. Si une mutation est équivalente "
+              "(aucun comportement observable ne change), dis-le sans écrire de test. Ne modifie pas le code source.")
+FIN_C = (" Termine par la liste des fichiers créés, puis, pour chaque mutation Mn, une ligne : le test qui la tue, "
+         "ou « équivalente » avec la raison en une phrase.")
 HYPOTHESIS = (" Utilise Hypothesis (tests de propriétés) là où une propriété générale existe ; "
               "garde des exemples ciblés pour le reste.")
 
 
+
+
+def liste_survivants(story: str) -> list[str]:
+    """T10b : survivants cibles de la story, un diff d'une ligne chacun (cibles.json de T10)."""
+    import json
+    from pathlib import Path
+    cibles = json.loads((Path(__import__("os").environ.get("T10_CIBLES", Path(__file__).parent / "cibles.json"))).read_text(encoding="utf-8"))[story]["cibles"]
+    out = ["Mutations survivantes (fichier:ligne, fonction, diff) :"]
+    for i, c in enumerate(cibles, 1):
+        out.append(f"M{i} `{c['module']}:{c['ligne']}` (`{c['fonction']}`)")
+        out += [f"  - {m.strip()}" for m in c["moins"] if m.strip()]
+        out += [f"  + {m.strip()}" for m in c["plus"] if m.strip()]
+    if any("CosmicRayTestingException" in "".join(c["plus"]) for c in cibles):
+        out.append("(`CosmicRayTestingException` : classe d'exception jamais levée, donc l'`except` concerné n'attrape plus rien.)")
+    return out
 
 
 def construire_prompt(story: str, bras: str, essai: int) -> str:
@@ -39,10 +59,11 @@ def construire_prompt(story: str, bras: str, essai: int) -> str:
         *[f"- `{t}`" for t in m["tests"]],
         "",
         CONSIGNE + (HYPOTHESIS if bras == "B" else ""),
+        *(["", *liste_survivants(story), "", CONSIGNE_C] if bras == "C" else []),
         "",
         f"Écris les nouveaux tests dans de nouveaux fichiers `{m['dossier_tests']}/test_renf_*.py` ; ne modifie ni le code source ni les tests existants. "
         "Lance les tests avec `python -m pytest -q --tb=short <fichiers>` (l'environnement est prêt, rien à installer). "
-        "Tous tes tests doivent passer. Termine par la liste des fichiers créés.",
+        "Tous tes tests doivent passer." + (FIN_C if bras == "C" else " Termine par la liste des fichiers créés."),
     ]
     return "\n".join(p)
 

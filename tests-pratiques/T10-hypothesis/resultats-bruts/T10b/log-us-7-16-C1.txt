@@ -1,0 +1,1 @@
+us-7-16-C1 rc 0 cout 0.23417329999999997 tours 13 api_ms 75924 mur_s 76.9 modifies [] crees ['tests/unit/ui/test_renf_ecrans_agent.py', 'tests/unit/ui/test_renf_outillage.py']
