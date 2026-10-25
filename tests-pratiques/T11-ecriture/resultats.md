@@ -163,7 +163,7 @@ Dépense totale du test : environ 7,2 $ d'équivalent API (32 sorties et X1 : 4,
 
 - `notation.html`, `correspondance.json` (hors dépôt).
 - `textes/X1` à `X4` (sources, lecteurs, prompt et métriques de génération de X1) ; `textes/X3/source.md` est le fichier d'Anaël, inchangé.
-- `sorties/<texte>/<condition>-<essai>.md`, `.meta.json` (coût, tours, skills invoquées, fichiers lus), `.flux.jsonl` (flux brut).
+- `sorties/<texte>/<condition>-<essai>.md`, `.meta.json` (coût, tours, skills invoquées, fichiers lus). Les flux bruts `.flux.jsonl` sont les sorties `stream-json` complètes des sessions, donc l'équivalent de transcriptions : ils restent en local, hors dépôt depuis le 2026-10-25. `.meta.json` garde ce qu'on en tire, dont la preuve d'invocation des skills.
 - `juge/<texte>/<condition>-<essai>.json`, `donnees/` (`tics.json`, `tableaux.md`, `resume.json`, `ecarts_juge.txt`, journaux).
 - `securite/` : rapports SkillSpector, sha256 du PDF.
 - `scripts/` : `config.py`, `lancer_claude.py`, `preparer.py`, `generer_x1.py` (X1 et X2), `extraire_x4.py`, `lancer_conditions.py`, `juge.py`, `mesurer_tics.py`, `tics_en.py`, `generer_notation.py`, `agreger.py`, `relancer_nouveaux.py`, `nettoyer.ps1`.
