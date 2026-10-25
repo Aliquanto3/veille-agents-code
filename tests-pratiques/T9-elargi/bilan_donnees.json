@@ -1,27 +1,27 @@
 {
- "agents_retenus": 453,
- "stories_ecartees_en_cours": 2,
- "stories_avec_numero": 269,
+ "agents_retenus": 567,
+ "stories_ecartees_en_cours": 4,
+ "stories_avec_numero": 365,
  "ecartes": {
   "sans_spec_ante_dev": 26
  },
- "stories_etiquetees": 243,
+ "stories_etiquetees": 339,
  "lignes_post_dev_retirees": 0,
- "positifs_derapage": 25,
- "positifs_cout80": 51,
- "positifs_derapage_par_agent": 26,
- "positifs_haut20": 47,
+ "positifs_derapage": 32,
+ "positifs_cout80": 71,
+ "positifs_derapage_par_agent": 30,
+ "positifs_haut20": 67,
  "defaut_revue": {
-  "n_lisible": 241,
-  "positifs": 184
+  "n_lisible": 336,
+  "positifs": 246
  },
  "source_spec": {
-  "epics": 237,
+  "epics": 333,
   "fichier": 6
  },
  "source_epics": {
-  "avant": 243,
-  "jour": 0
+  "avant": 338,
+  "jour": 1
  },
  "par_depot": {
   "service-public-slm-fine-tuning": {
@@ -32,6 +32,14 @@
    "derapages": 5,
    "cout80": 8
   },
+  "service-public-slm-fine-tuning/avant-kit": {
+   "n": 32,
+   "stories_numerotees": 32,
+   "mediane_appels": 68.5,
+   "p80_cout_usd": 8.39,
+   "derapages": 1,
+   "cout80": 7
+  },
   "usine-migration-jira-demo": {
    "n": 12,
    "stories_numerotees": 12,
@@ -39,6 +47,14 @@
    "p80_cout_usd": 2.81,
    "derapages": 4,
    "cout80": 3
+  },
+  "usine-migration-jira-demo/avant-kit": {
+   "n": 64,
+   "stories_numerotees": 64,
+   "mediane_appels": 46.5,
+   "p80_cout_usd": 4.33,
+   "derapages": 6,
+   "cout80": 13
   },
   "wavedevsecops": {
    "n": 64,
@@ -63,6 +79,29 @@
    "p80_cout_usd": 5.35,
    "derapages": 7,
    "cout80": 14
+  }
+ },
+ "stories_dans_les_deux_eres": {
+  "total": 0,
+  "etiquetees": 0,
+  "ere_retenue_avant_kit": 0
+ },
+ "par_ere": {
+  "kit": {
+   "stories_numerotees": 269,
+   "etiquetees": 243,
+   "derapages": 25,
+   "defaut_revue_lisible": 241,
+   "source_spec_fichier": 6,
+   "source_epics_jour": 0
+  },
+  "avant-kit": {
+   "stories_numerotees": 96,
+   "etiquetees": 96,
+   "derapages": 7,
+   "defaut_revue_lisible": 95,
+   "source_spec_fichier": 0,
+   "source_epics_jour": 1
   }
  }
 }

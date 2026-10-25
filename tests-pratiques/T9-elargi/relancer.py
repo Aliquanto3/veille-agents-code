@@ -12,7 +12,10 @@ Commande exacte (depuis ce dossier ; ajouter une racine ``--transcriptions`` par
 
 Options : ``--travail <dossier>`` (defaut ``~/.cache/veille-t9-elargi``), ``--sans-racine-locale`` (ignorer
 ``~/.claude/projects``), ``--sans-scoring`` (extraction, etiquettes et analyse seulement, sans appel payant),
-``--forcer-scores`` (refaire tous les scores), ``--racine-depots`` (clones git, defaut ``~/Documents/GitHub``).
+``--forcer-scores`` (refaire tous les scores), ``--racine-depots`` (clones git, defaut ``~/Documents/GitHub``),
+``--avant-kit`` (ajoute les stories d'avant le kit, developpees par des agents ``general-purpose`` : seuils par groupe
+``<depot>`` ou ``<depot>/avant-kit`` ; ``analyse.py`` tourne alors aussi sur l'ere kit seule : ``resultats_kit.json`` et
+``tableaux_kit.md``).
 """
 
 from __future__ import annotations
@@ -40,6 +43,7 @@ def main() -> int:
     ap.add_argument("--racine-depots", type=Path, default=Path.home() / "Documents" / "GitHub")
     ap.add_argument("--sans-scoring", action="store_true")
     ap.add_argument("--forcer-scores", action="store_true")
+    ap.add_argument("--avant-kit", action="store_true")
     o = ap.parse_args()
     o.travail.mkdir(parents=True, exist_ok=True)
 
@@ -48,6 +52,8 @@ def main() -> int:
         ext += ["--transcriptions", str(t)]
     if o.sans_racine_locale:
         ext.append("--sans-racine-locale")
+    if o.avant_kit:
+        ext.append("--avant-kit")
     lancer(*ext)
     lancer(str(ICI / "construire_donnees.py"), "--travail", str(o.travail), "--racine-depots", str(o.racine_depots))
     if not o.sans_scoring:
@@ -59,6 +65,8 @@ def main() -> int:
             lancer(str(ICI / "scorer.py"), "--bras", "llm", "--modele", "openai/gpt-6-luna", "--textes", textes,
                    "--out", str(ICI / f"scores_luna_{r}.json"), "--fils", "2", *forcer)
     lancer(str(ICI / "analyse.py"))
+    if o.avant_kit:
+        lancer(str(ICI / "analyse.py"), "--ere", "kit")
     print("termine : resultats.json et tableaux.md mis a jour ; reporter les chiffres dans resultats.md")
     return 0
 

@@ -16,11 +16,16 @@ intra-depot, AUC et precision/rappel par depot, ecart d'AUC a l'heuristique de r
 > 0,7 et au moins 0,05 au-dessus de la reference. Analyse de puissance : positifs necessaires pour detecter AUC = 0,65 contre
 0,5 (Hanley et McNeil, verifiee par simulation binormale).
 
-Usage : uv run --no-project --with numpy --with scikit-learn --with scipy python analyse.py
+Groupes : les seuils des etiquettes, le centrage de l'heuristique et l'AUC intra-groupe se font par ``groupe`` (colonne de
+``etiquettes.csv`` : ``<depot>`` pour l'ere kit, ``<depot>/avant-kit`` pour les stories d'avant le kit ; sans colonne, le depot).
+``--ere kit`` restreint l'analyse aux stories de l'ere kit (sorties ``resultats_kit.json`` et ``tableaux_kit.md``).
+
+Usage : uv run --no-project --with numpy --with scikit-learn --with scipy python analyse.py [--ere kit]
 """
 
 from __future__ import annotations
 
+import argparse
 import csv
 import json
 import sys
@@ -200,10 +205,17 @@ def charger_scores(nom):
 
 def main() -> int:
     sys.stdout.reconfigure(encoding="utf-8")  # type: ignore[union-attr]
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--ere", choices=["toutes", "kit"], default="toutes", help="kit : seulement les stories de l'ere kit (groupe sans /avant-kit)")
+    suffixe = "" if ap.parse_args().ere == "toutes" else "_kit"
     with open(ICI / "etiquettes.csv", encoding="utf-8") as f:
         lignes = list(csv.DictReader(f))
+    for r in lignes:
+        r.setdefault("groupe", r["depot"])
+    if suffixe:
+        lignes = [r for r in lignes if not r["groupe"].endswith("/avant-kit")]
     cles = [r["cle"] for r in lignes]
-    depots = [r["depot"] for r in lignes]
+    depots = [r["groupe"] for r in lignes]
     n = len(lignes)
     liste_depots = sorted(set(depots))
     appels = np.array([float(r["appels"]) for r in lignes])
@@ -351,8 +363,8 @@ def main() -> int:
         res["budget"] = json.loads((ICI / "budget.json").read_text(encoding="utf-8"))
     except OSError:
         res["budget"] = None
-    (ICI / "resultats.json").write_text(json.dumps(res, ensure_ascii=False, indent=1), encoding="utf-8")
-    (ICI / "tableaux.md").write_text(tableaux_md(res), encoding="utf-8")
+    (ICI / f"resultats{suffixe}.json").write_text(json.dumps(res, ensure_ascii=False, indent=1), encoding="utf-8")
+    (ICI / f"tableaux{suffixe}.md").write_text(tableaux_md(res), encoding="utf-8")
 
     print(f"n={n} positifs={res['positifs']}")
     for e in tous:

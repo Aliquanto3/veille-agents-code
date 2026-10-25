@@ -18,6 +18,34 @@ Relance par `relancer.py` avec les transcriptions de ce poste et de deux autres 
 - **Inutilisable en pratique** : en alertant sur les 20 % de stories qu'il juge les plus risquées, Jev a une précision de 11 à 14 % pour un taux de base de 10 % ; il ne trie presque pas.
 - Décision inchangée : ne rien brancher. Puissance : 25 dérapages pour ~32 visés ; même à 32, une AUC de 0,63 resterait sous le critère de 0,7.
 
+## Relance avec les stories d'avant le kit (339 stories, 32 dérapages)
+
+Relance par `relancer.py --avant-kit` (mêmes trois racines et racine locale, 0,05 $ d'OpenRouter de plus, 0,18 $ en cumul). Avant le 2026-10-13, les stories d'`usine-migration-jira-demo` et de `service-public-slm-fine-tuning` étaient développées sous `bmad-build-auto` par des agents `general-purpose` ; `extraire_agents.py --avant-kit` les retient d'après la description (`Implement/Implémenter story X.Y`, `Implémentation`, `Re-implement`, `Finir Story`, `Story X.Y correctifs`, et les reprises `Reprise`/`Resume story`). Classement vérifié sur les premiers messages et les outils d'un échantillon : les `Story X.Y ...` (orchestrateurs qui lancent un agent `Implement`), les relecteurs et les lots de données sont exclus ; **les `Follow-up review story X.Y` sont des revues de suivi, pas des reprises : exclues** (contrairement à ce qu'on supposait). Les `Resume`/`Reprise` sont des orchestrateurs partiels qui codent un peu : gardés, leurs appels gonflent légèrement certaines stories. Les agents `Implement` d'autres dépôts (wavelocalai, banc agentic-harness) sont hors périmètre.
+
+**Groupes.** Médiane, 80e centile et étiquettes se calculent par groupe (dépôt, ère), la colonne `groupe` de `etiquettes.csv` valant `<dépôt>` ou `<dépôt>/avant-kit`. 111 agents d'avant le kit retenus, **96 stories numérotées, toutes étiquetées** (aucune dans les deux ères : l'ère du premier agent n'a pas eu à trancher). Sans l'option, les scripts redonnent exactement `tableaux.md` et `etiquettes.csv` de la relance précédente (vérifié) ; `analyse.py --ere kit` écrit `tableaux_kit.md`, identique à cette relance.
+
+| Groupe | Stories | Médiane d'appels | 80e centile du coût | Dérapages | Coût élevé |
+|---|---|---|---|---|---|
+| usine-migration-jira-demo/avant-kit | 64 | 46,5 | 4,33 $ | 6 | 13 |
+| service-public-slm-fine-tuning/avant-kit | 32 | 68,5 | 8,39 $ | 1 | 7 |
+| Ère kit (cinq dépôts, inchangée) | 243 | 26 à 95,5 | 1,03 à 5,35 $ | 25 | 51 |
+| **Total** | **339** | | | **32** | **71** |
+
+Défaut de revue : 246 positifs sur 336 stories lisibles (73 %). Une story d'avant le kit a pris l'epics « du jour » faute de commit antérieur.
+
+| Étiquette (AUC [IC 95 %]) | Longueur | Jev latest | Jev 1,13 | gpt-6-luna (moy.) |
+|---|---|---|---|---|
+| Dérapage, ensemble (32 / 339) | 0,566 [0,45 ; 0,69] | 0,617 [0,52 ; 0,70] | 0,616 [0,52 ; 0,71] | 0,563 |
+| Dérapage, ère kit seule (25 / 243) | 0,559 | 0,632 | 0,631 | 0,532 |
+| Coût, ensemble (71 / 339) | 0,588 | 0,602 | 0,607 | 0,603 |
+| Coût, ère kit seule (51 / 243) | 0,590 | 0,595 | 0,614 | 0,592 |
+| Défaut de revue, ensemble (246 / 336) | 0,600 | 0,513 | 0,575 | 0,597 |
+| Défaut de revue, ère kit seule (184 / 241) | 0,559 | 0,520 | 0,577 | 0,587 |
+
+Écart à la longueur sur l'ensemble : dérapage +0,05 [−0,05 ; +0,15] (Jev latest) et +0,05 [−0,06 ; +0,16] (Jev 1,13), luna −0,00 ; coût +0,01 à +0,02 ; défaut de revue −0,09 à 0,00. Meilleur chiffre de toutes les étiquettes : 0,631 (Jev 1,13, appels au-dessus du 80e centile).
+
+**Décision : critère non atteint, rien à brancher.** Aucun bras ne dépasse 0,7 (maximum 0,617 sur le dérapage) et aucun IC de l'écart à la longueur n'exclut 0. Les modèles ne gagnent rien sur la longueur en ajoutant 96 stories d'un autre processus. **Puissance** : 32 dérapages pour 33 requis (AUC 0,65 contre 0,5, puissance 79 % au lieu de 49 %) : le test détecte désormais une AUC de 0,66 et la lecture « pas de signal de 0,65 ou plus » tient. En revanche, le critère de la veille (+0,05 sur la longueur) exige environ 294 dérapages (hypothèse de corrélation r = 0,5 entre bras), donc **il en manque environ 262**, soit plus de 3 000 stories au taux actuel : il ne se tranchera pas avec ce type de données. Limites propres à cette relance : le `CONTEXTE` du prompt de scoring (« 1 story sur 15 », médianes de 26 à 87) n'a pas été remis à jour (budget inchangé, comparabilité des scores déjà obtenus) ; les groupes d'avant le kit mêlent des reprises à des développements d'un seul agent.
+
 ## 1. Ce qui change par rapport à T9
 
 | | T9 | T9 élargi |

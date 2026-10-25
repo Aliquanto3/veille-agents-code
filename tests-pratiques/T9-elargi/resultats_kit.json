@@ -1,0 +1,3122 @@
+{
+ "n": 243,
+ "depots": {
+  "service-public-slm-fine-tuning": 38,
+  "usine-migration-jira-demo": 12,
+  "wavedevsecops": 64,
+  "wavelibrarian": 65,
+  "wavelocalai": 64
+ },
+ "positifs": {
+  "derapage": 25,
+  "cout80": 51,
+  "defaut_revue": 184,
+  "derapage_par_agent": 26,
+  "haut20": 47
+ },
+ "n_par_etiquette": {
+  "derapage": 243,
+  "cout80": 243,
+  "defaut_revue": 241,
+  "derapage_par_agent": 243,
+  "haut20": 243
+ },
+ "positifs_par_depot": {
+  "derapage": {
+   "service-public-slm-fine-tuning": [
+    5,
+    38
+   ],
+   "usine-migration-jira-demo": [
+    4,
+    12
+   ],
+   "wavedevsecops": [
+    4,
+    64
+   ],
+   "wavelibrarian": [
+    5,
+    65
+   ],
+   "wavelocalai": [
+    7,
+    64
+   ]
+  },
+  "cout80": {
+   "service-public-slm-fine-tuning": [
+    8,
+    38
+   ],
+   "usine-migration-jira-demo": [
+    3,
+    12
+   ],
+   "wavedevsecops": [
+    13,
+    64
+   ],
+   "wavelibrarian": [
+    13,
+    65
+   ],
+   "wavelocalai": [
+    14,
+    64
+   ]
+  },
+  "defaut_revue": {
+   "service-public-slm-fine-tuning": [
+    35,
+    37
+   ],
+   "usine-migration-jira-demo": [
+    6,
+    11
+   ],
+   "wavedevsecops": [
+    42,
+    64
+   ],
+   "wavelibrarian": [
+    53,
+    65
+   ],
+   "wavelocalai": [
+    48,
+    64
+   ]
+  },
+  "derapage_par_agent": {
+   "service-public-slm-fine-tuning": [
+    6,
+    38
+   ],
+   "usine-migration-jira-demo": [
+    1,
+    12
+   ],
+   "wavedevsecops": [
+    7,
+    64
+   ],
+   "wavelibrarian": [
+    3,
+    65
+   ],
+   "wavelocalai": [
+    9,
+    64
+   ]
+  },
+  "haut20": {
+   "service-public-slm-fine-tuning": [
+    8,
+    38
+   ],
+   "usine-migration-jira-demo": [
+    3,
+    12
+   ],
+   "wavedevsecops": [
+    12,
+    64
+   ],
+   "wavelibrarian": [
+    12,
+    65
+   ],
+   "wavelocalai": [
+    12,
+    64
+   ]
+  }
+ },
+ "cout": {
+  "jev_latest": {
+   "cout_total_usd": 0.0258,
+   "cout_par_story_et_run_usd": 0.000106,
+   "runs": 1
+  },
+  "jev_1_13": {
+   "cout_total_usd": 0.0258,
+   "cout_par_story_et_run_usd": 0.000106,
+   "runs": 1
+  },
+  "luna": {
+   "cout_total_usd": 0.1251,
+   "cout_par_story_et_run_usd": 0.000257,
+   "runs": 2
+  }
+ },
+ "latence": {
+  "jev_latest": {
+   "p50_s": 0.26,
+   "p90_s": 0.34
+  },
+  "jev_1_13": {
+   "p50_s": 0.26,
+   "p90_s": 0.66
+  },
+  "luna": {
+   "p50_s": 3.23,
+   "p90_s": 4.25
+  }
+ },
+ "stabilite": {
+  "luna": {
+   "p_cout80": {
+    "spearman_entre_runs": 0.791,
+    "ecart_moyen_abs_proba": 0.096
+   },
+   "p_defaut_revue": {
+    "spearman_entre_runs": 0.669,
+    "ecart_moyen_abs_proba": 0.029
+   },
+   "p_derapage": {
+    "spearman_entre_runs": 0.784,
+    "ecart_moyen_abs_proba": 0.083
+   }
+  }
+ },
+ "scores_manquants": {
+  "jev_latest": 0,
+  "jev_1_13": 0,
+  "luna": 0
+ },
+ "calibration_proba_moyenne": {
+  "jev_latest": {
+   "p_cout80": 0.452,
+   "p_defaut_revue": 0.676,
+   "p_derapage": 0.279
+  },
+  "jev_1_13": {
+   "p_cout80": 0.51,
+   "p_defaut_revue": 0.715,
+   "p_derapage": 0.337
+  },
+  "luna_r1": {
+   "p_cout80": 0.466,
+   "p_defaut_revue": 0.795,
+   "p_derapage": 0.28
+  },
+  "luna_r2": {
+   "p_cout80": 0.465,
+   "p_defaut_revue": 0.802,
+   "p_derapage": 0.271
+  },
+  "luna_moyenne": {
+   "p_cout80": 0.465,
+   "p_defaut_revue": 0.799,
+   "p_derapage": 0.276
+  }
+ },
+ "taux_observes": {
+  "derapage": 0.103,
+  "cout80": 0.21,
+  "defaut_revue": 0.763,
+  "derapage_par_agent": 0.107,
+  "haut20": 0.193
+ },
+ "table": {
+  "heuristique_longueur": {
+   "derapage": {
+    "auc": 0.559,
+    "ic95": [
+     0.422,
+     0.703
+    ],
+    "alertes20": {
+     "alertes": 48,
+     "vrais_positifs": 9,
+     "precision": 0.188,
+     "rappel": 0.36
+    },
+    "auc_intra_depot": 0.56,
+    "par_depot": {
+     "service-public-slm-fine-tuning": {
+      "n": 38,
+      "positifs": 5,
+      "auc": 0.812,
+      "alertes20": {
+       "alertes": 7,
+       "vrais_positifs": 3,
+       "precision": 0.429,
+       "rappel": 0.6
+      }
+     },
+     "usine-migration-jira-demo": {
+      "n": 12,
+      "positifs": 4,
+      "auc": 0.781,
+      "alertes20": {
+       "alertes": 2,
+       "vrais_positifs": 1,
+       "precision": 0.5,
+       "rappel": 0.25
+      }
+     },
+     "wavedevsecops": {
+      "n": 64,
+      "positifs": 4,
+      "auc": 0.517,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 0,
+       "precision": 0.0,
+       "rappel": 0.0
+      }
+     },
+     "wavelibrarian": {
+      "n": 65,
+      "positifs": 5,
+      "auc": 0.617,
+      "alertes20": {
+       "alertes": 13,
+       "vrais_positifs": 3,
+       "precision": 0.231,
+       "rappel": 0.6
+      }
+     },
+     "wavelocalai": {
+      "n": 64,
+      "positifs": 7,
+      "auc": 0.271,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 1,
+       "precision": 0.083,
+       "rappel": 0.143
+      }
+     }
+    }
+   },
+   "cout80": {
+    "auc": 0.59,
+    "ic95": [
+     0.492,
+     0.685
+    ],
+    "alertes20": {
+     "alertes": 48,
+     "vrais_positifs": 18,
+     "precision": 0.375,
+     "rappel": 0.353
+    },
+    "auc_intra_depot": 0.591,
+    "par_depot": {
+     "service-public-slm-fine-tuning": {
+      "n": 38,
+      "positifs": 8,
+      "auc": 0.854,
+      "alertes20": {
+       "alertes": 7,
+       "vrais_positifs": 5,
+       "precision": 0.714,
+       "rappel": 0.625
+      }
+     },
+     "usine-migration-jira-demo": {
+      "n": 12,
+      "positifs": 3,
+      "auc": 0.852,
+      "alertes20": {
+       "alertes": 2,
+       "vrais_positifs": 1,
+       "precision": 0.5,
+       "rappel": 0.333
+      }
+     },
+     "wavedevsecops": {
+      "n": 64,
+      "positifs": 13,
+      "auc": 0.643,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 4,
+       "precision": 0.333,
+       "rappel": 0.308
+      }
+     },
+     "wavelibrarian": {
+      "n": 65,
+      "positifs": 13,
+      "auc": 0.549,
+      "alertes20": {
+       "alertes": 13,
+       "vrais_positifs": 5,
+       "precision": 0.385,
+       "rappel": 0.385
+      }
+     },
+     "wavelocalai": {
+      "n": 64,
+      "positifs": 14,
+      "auc": 0.371,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 2,
+       "precision": 0.167,
+       "rappel": 0.143
+      }
+     }
+    }
+   },
+   "defaut_revue": {
+    "auc": 0.559,
+    "ic95": [
+     0.459,
+     0.654
+    ],
+    "alertes20": {
+     "alertes": 47,
+     "vrais_positifs": 32,
+     "precision": 0.681,
+     "rappel": 0.174
+    },
+    "auc_intra_depot": 0.557,
+    "par_depot": {
+     "service-public-slm-fine-tuning": {
+      "n": 37,
+      "positifs": 35,
+      "auc": 0.857,
+      "alertes20": {
+       "alertes": 7,
+       "vrais_positifs": 7,
+       "precision": 1.0,
+       "rappel": 0.2
+      }
+     },
+     "usine-migration-jira-demo": {
+      "n": 11,
+      "positifs": 6,
+      "auc": 0.767,
+      "alertes20": {
+       "alertes": 2,
+       "vrais_positifs": 1,
+       "precision": 0.5,
+       "rappel": 0.167
+      }
+     },
+     "wavedevsecops": {
+      "n": 64,
+      "positifs": 42,
+      "auc": 0.408,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 6,
+       "precision": 0.5,
+       "rappel": 0.143
+      }
+     },
+     "wavelibrarian": {
+      "n": 65,
+      "positifs": 53,
+      "auc": 0.722,
+      "alertes20": {
+       "alertes": 13,
+       "vrais_positifs": 11,
+       "precision": 0.846,
+       "rappel": 0.208
+      }
+     },
+     "wavelocalai": {
+      "n": 64,
+      "positifs": 48,
+      "auc": 0.512,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 6,
+       "precision": 0.5,
+       "rappel": 0.125
+      }
+     }
+    }
+   },
+   "derapage_par_agent": {
+    "auc": 0.568,
+    "ic95": [
+     0.421,
+     0.716
+    ],
+    "alertes20": {
+     "alertes": 48,
+     "vrais_positifs": 11,
+     "precision": 0.229,
+     "rappel": 0.423
+    },
+    "auc_intra_depot": 0.579,
+    "par_depot": {
+     "service-public-slm-fine-tuning": {
+      "n": 38,
+      "positifs": 6,
+      "auc": 0.854,
+      "alertes20": {
+       "alertes": 7,
+       "vrais_positifs": 4,
+       "precision": 0.571,
+       "rappel": 0.667
+      }
+     },
+     "usine-migration-jira-demo": {
+      "n": 12,
+      "positifs": 1,
+      "auc": null,
+      "alertes20": {
+       "alertes": 2,
+       "vrais_positifs": 0,
+       "precision": 0.0,
+       "rappel": 0.0
+      }
+     },
+     "wavedevsecops": {
+      "n": 64,
+      "positifs": 7,
+      "auc": 0.589,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 2,
+       "precision": 0.167,
+       "rappel": 0.286
+      }
+     },
+     "wavelibrarian": {
+      "n": 65,
+      "positifs": 3,
+      "auc": 0.946,
+      "alertes20": {
+       "alertes": 13,
+       "vrais_positifs": 3,
+       "precision": 0.231,
+       "rappel": 1.0
+      }
+     },
+     "wavelocalai": {
+      "n": 64,
+      "positifs": 9,
+      "auc": 0.271,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 2,
+       "precision": 0.167,
+       "rappel": 0.222
+      }
+     }
+    }
+   },
+   "haut20": {
+    "auc": 0.602,
+    "ic95": [
+     0.499,
+     0.704
+    ],
+    "alertes20": {
+     "alertes": 48,
+     "vrais_positifs": 17,
+     "precision": 0.354,
+     "rappel": 0.362
+    },
+    "auc_intra_depot": 0.605,
+    "par_depot": {
+     "service-public-slm-fine-tuning": {
+      "n": 38,
+      "positifs": 8,
+      "auc": 0.892,
+      "alertes20": {
+       "alertes": 7,
+       "vrais_positifs": 6,
+       "precision": 0.857,
+       "rappel": 0.75
+      }
+     },
+     "usine-migration-jira-demo": {
+      "n": 12,
+      "positifs": 3,
+      "auc": 0.667,
+      "alertes20": {
+       "alertes": 2,
+       "vrais_positifs": 0,
+       "precision": 0.0,
+       "rappel": 0.0
+      }
+     },
+     "wavedevsecops": {
+      "n": 64,
+      "positifs": 12,
+      "auc": 0.688,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 3,
+       "precision": 0.25,
+       "rappel": 0.25
+      }
+     },
+     "wavelibrarian": {
+      "n": 65,
+      "positifs": 12,
+      "auc": 0.588,
+      "alertes20": {
+       "alertes": 13,
+       "vrais_positifs": 5,
+       "precision": 0.385,
+       "rappel": 0.417
+      }
+     },
+     "wavelocalai": {
+      "n": 64,
+      "positifs": 12,
+      "auc": 0.335,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 2,
+       "precision": 0.167,
+       "rappel": 0.167
+      }
+     }
+    }
+   }
+  },
+  "heuristique_lr": {
+   "derapage": {
+    "auc": 0.493,
+    "ic95": [
+     0.367,
+     0.617
+    ],
+    "alertes20": {
+     "alertes": 48,
+     "vrais_positifs": 6,
+     "precision": 0.125,
+     "rappel": 0.24
+    },
+    "auc_intra_depot": 0.453,
+    "par_depot": {
+     "service-public-slm-fine-tuning": {
+      "n": 38,
+      "positifs": 5,
+      "auc": 0.782,
+      "alertes20": {
+       "alertes": 7,
+       "vrais_positifs": 3,
+       "precision": 0.429,
+       "rappel": 0.6
+      }
+     },
+     "usine-migration-jira-demo": {
+      "n": 12,
+      "positifs": 4,
+      "auc": 0.031,
+      "alertes20": {
+       "alertes": 2,
+       "vrais_positifs": 0,
+       "precision": 0.0,
+       "rappel": 0.0
+      }
+     },
+     "wavedevsecops": {
+      "n": 64,
+      "positifs": 4,
+      "auc": 0.487,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 1,
+       "precision": 0.083,
+       "rappel": 0.25
+      }
+     },
+     "wavelibrarian": {
+      "n": 65,
+      "positifs": 5,
+      "auc": 0.513,
+      "alertes20": {
+       "alertes": 13,
+       "vrais_positifs": 2,
+       "precision": 0.154,
+       "rappel": 0.4
+      }
+     },
+     "wavelocalai": {
+      "n": 64,
+      "positifs": 7,
+      "auc": 0.348,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 0,
+       "precision": 0.0,
+       "rappel": 0.0
+      }
+     }
+    }
+   },
+   "cout80": {
+    "auc": 0.525,
+    "ic95": [
+     0.426,
+     0.615
+    ],
+    "alertes20": {
+     "alertes": 48,
+     "vrais_positifs": 13,
+     "precision": 0.271,
+     "rappel": 0.255
+    },
+    "auc_intra_depot": 0.529,
+    "par_depot": {
+     "service-public-slm-fine-tuning": {
+      "n": 38,
+      "positifs": 8,
+      "auc": 0.854,
+      "alertes20": {
+       "alertes": 7,
+       "vrais_positifs": 5,
+       "precision": 0.714,
+       "rappel": 0.625
+      }
+     },
+     "usine-migration-jira-demo": {
+      "n": 12,
+      "positifs": 3,
+      "auc": 0.926,
+      "alertes20": {
+       "alertes": 2,
+       "vrais_positifs": 2,
+       "precision": 1.0,
+       "rappel": 0.667
+      }
+     },
+     "wavedevsecops": {
+      "n": 64,
+      "positifs": 13,
+      "auc": 0.492,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 1,
+       "precision": 0.083,
+       "rappel": 0.077
+      }
+     },
+     "wavelibrarian": {
+      "n": 65,
+      "positifs": 13,
+      "auc": 0.499,
+      "alertes20": {
+       "alertes": 13,
+       "vrais_positifs": 2,
+       "precision": 0.154,
+       "rappel": 0.154
+      }
+     },
+     "wavelocalai": {
+      "n": 64,
+      "positifs": 14,
+      "auc": 0.317,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 2,
+       "precision": 0.167,
+       "rappel": 0.143
+      }
+     }
+    }
+   },
+   "defaut_revue": {
+    "auc": 0.518,
+    "ic95": [
+     0.43,
+     0.602
+    ],
+    "alertes20": {
+     "alertes": 48,
+     "vrais_positifs": 38,
+     "precision": 0.792,
+     "rappel": 0.207
+    },
+    "auc_intra_depot": 0.532,
+    "par_depot": {
+     "service-public-slm-fine-tuning": {
+      "n": 37,
+      "positifs": 35,
+      "auc": 0.857,
+      "alertes20": {
+       "alertes": 7,
+       "vrais_positifs": 7,
+       "precision": 1.0,
+       "rappel": 0.2
+      }
+     },
+     "usine-migration-jira-demo": {
+      "n": 11,
+      "positifs": 6,
+      "auc": 0.7,
+      "alertes20": {
+       "alertes": 2,
+       "vrais_positifs": 1,
+       "precision": 0.5,
+       "rappel": 0.167
+      }
+     },
+     "wavedevsecops": {
+      "n": 64,
+      "positifs": 42,
+      "auc": 0.384,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 7,
+       "precision": 0.583,
+       "rappel": 0.167
+      }
+     },
+     "wavelibrarian": {
+      "n": 65,
+      "positifs": 53,
+      "auc": 0.67,
+      "alertes20": {
+       "alertes": 13,
+       "vrais_positifs": 13,
+       "precision": 1.0,
+       "rappel": 0.245
+      }
+     },
+     "wavelocalai": {
+      "n": 64,
+      "positifs": 48,
+      "auc": 0.507,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 9,
+       "precision": 0.75,
+       "rappel": 0.188
+      }
+     }
+    }
+   },
+   "derapage_par_agent": {
+    "auc": 0.486,
+    "ic95": [
+     0.351,
+     0.622
+    ],
+    "alertes20": {
+     "alertes": 48,
+     "vrais_positifs": 6,
+     "precision": 0.125,
+     "rappel": 0.231
+    },
+    "auc_intra_depot": 0.454,
+    "par_depot": {
+     "service-public-slm-fine-tuning": {
+      "n": 38,
+      "positifs": 6,
+      "auc": 0.823,
+      "alertes20": {
+       "alertes": 7,
+       "vrais_positifs": 4,
+       "precision": 0.571,
+       "rappel": 0.667
+      }
+     },
+     "usine-migration-jira-demo": {
+      "n": 12,
+      "positifs": 1,
+      "auc": null,
+      "alertes20": {
+       "alertes": 2,
+       "vrais_positifs": 0,
+       "precision": 0.0,
+       "rappel": 0.0
+      }
+     },
+     "wavedevsecops": {
+      "n": 64,
+      "positifs": 7,
+      "auc": 0.363,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 0,
+       "precision": 0.0,
+       "rappel": 0.0
+      }
+     },
+     "wavelibrarian": {
+      "n": 65,
+      "positifs": 3,
+      "auc": 0.613,
+      "alertes20": {
+       "alertes": 13,
+       "vrais_positifs": 1,
+       "precision": 0.077,
+       "rappel": 0.333
+      }
+     },
+     "wavelocalai": {
+      "n": 64,
+      "positifs": 9,
+      "auc": 0.267,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 1,
+       "precision": 0.083,
+       "rappel": 0.111
+      }
+     }
+    }
+   },
+   "haut20": {
+    "auc": 0.547,
+    "ic95": [
+     0.441,
+     0.649
+    ],
+    "alertes20": {
+     "alertes": 48,
+     "vrais_positifs": 13,
+     "precision": 0.271,
+     "rappel": 0.277
+    },
+    "auc_intra_depot": 0.556,
+    "par_depot": {
+     "service-public-slm-fine-tuning": {
+      "n": 38,
+      "positifs": 8,
+      "auc": 0.879,
+      "alertes20": {
+       "alertes": 7,
+       "vrais_positifs": 5,
+       "precision": 0.714,
+       "rappel": 0.625
+      }
+     },
+     "usine-migration-jira-demo": {
+      "n": 12,
+      "positifs": 3,
+      "auc": 0.667,
+      "alertes20": {
+       "alertes": 2,
+       "vrais_positifs": 1,
+       "precision": 0.5,
+       "rappel": 0.333
+      }
+     },
+     "wavedevsecops": {
+      "n": 64,
+      "positifs": 12,
+      "auc": 0.598,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 2,
+       "precision": 0.167,
+       "rappel": 0.167
+      }
+     },
+     "wavelibrarian": {
+      "n": 65,
+      "positifs": 12,
+      "auc": 0.533,
+      "alertes20": {
+       "alertes": 13,
+       "vrais_positifs": 4,
+       "precision": 0.308,
+       "rappel": 0.333
+      }
+     },
+     "wavelocalai": {
+      "n": 64,
+      "positifs": 12,
+      "auc": 0.298,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 2,
+       "precision": 0.167,
+       "rappel": 0.167
+      }
+     }
+    }
+   }
+  },
+  "jev_latest": {
+   "derapage": {
+    "auc": 0.632,
+    "ic95": [
+     0.533,
+     0.729
+    ],
+    "alertes20": {
+     "alertes": 47,
+     "vrais_positifs": 5,
+     "precision": 0.106,
+     "rappel": 0.2
+    },
+    "auc_intra_depot": 0.618,
+    "par_depot": {
+     "service-public-slm-fine-tuning": {
+      "n": 38,
+      "positifs": 5,
+      "auc": 0.882,
+      "alertes20": {
+       "alertes": 7,
+       "vrais_positifs": 3,
+       "precision": 0.429,
+       "rappel": 0.6
+      }
+     },
+     "usine-migration-jira-demo": {
+      "n": 12,
+      "positifs": 4,
+      "auc": 0.516,
+      "alertes20": {
+       "alertes": 1,
+       "vrais_positifs": 0,
+       "precision": 0.0,
+       "rappel": 0.0
+      }
+     },
+     "wavedevsecops": {
+      "n": 64,
+      "positifs": 4,
+      "auc": 0.575,
+      "alertes20": {
+       "alertes": 11,
+       "vrais_positifs": 0,
+       "precision": 0.0,
+       "rappel": 0.0
+      }
+     },
+     "wavelibrarian": {
+      "n": 65,
+      "positifs": 5,
+      "auc": 0.668,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 2,
+       "precision": 0.167,
+       "rappel": 0.4
+      }
+     },
+     "wavelocalai": {
+      "n": 64,
+      "positifs": 7,
+      "auc": 0.486,
+      "alertes20": {
+       "alertes": 11,
+       "vrais_positifs": 2,
+       "precision": 0.182,
+       "rappel": 0.286
+      }
+     }
+    }
+   },
+   "cout80": {
+    "auc": 0.595,
+    "ic95": [
+     0.509,
+     0.674
+    ],
+    "alertes20": {
+     "alertes": 43,
+     "vrais_positifs": 12,
+     "precision": 0.279,
+     "rappel": 0.235
+    },
+    "auc_intra_depot": 0.597,
+    "par_depot": {
+     "service-public-slm-fine-tuning": {
+      "n": 38,
+      "positifs": 8,
+      "auc": 0.875,
+      "alertes20": {
+       "alertes": 7,
+       "vrais_positifs": 5,
+       "precision": 0.714,
+       "rappel": 0.625
+      }
+     },
+     "usine-migration-jira-demo": {
+      "n": 12,
+      "positifs": 3,
+      "auc": 0.556,
+      "alertes20": {
+       "alertes": 2,
+       "vrais_positifs": 0,
+       "precision": 0.0,
+       "rappel": 0.0
+      }
+     },
+     "wavedevsecops": {
+      "n": 64,
+      "positifs": 13,
+      "auc": 0.604,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 3,
+       "precision": 0.25,
+       "rappel": 0.231
+      }
+     },
+     "wavelibrarian": {
+      "n": 65,
+      "positifs": 13,
+      "auc": 0.675,
+      "alertes20": {
+       "alertes": 11,
+       "vrais_positifs": 4,
+       "precision": 0.364,
+       "rappel": 0.308
+      }
+     },
+     "wavelocalai": {
+      "n": 64,
+      "positifs": 14,
+      "auc": 0.359,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 1,
+       "precision": 0.083,
+       "rappel": 0.071
+      }
+     }
+    }
+   },
+   "defaut_revue": {
+    "auc": 0.52,
+    "ic95": [
+     0.431,
+     0.608
+    ],
+    "alertes20": {
+     "alertes": 38,
+     "vrais_positifs": 29,
+     "precision": 0.763,
+     "rappel": 0.158
+    },
+    "auc_intra_depot": 0.526,
+    "par_depot": {
+     "service-public-slm-fine-tuning": {
+      "n": 37,
+      "positifs": 35,
+      "auc": 0.75,
+      "alertes20": {
+       "alertes": 4,
+       "vrais_positifs": 4,
+       "precision": 1.0,
+       "rappel": 0.114
+      }
+     },
+     "usine-migration-jira-demo": {
+      "n": 11,
+      "positifs": 6,
+      "auc": 0.467,
+      "alertes20": {
+       "alertes": 1,
+       "vrais_positifs": 0,
+       "precision": 0.0,
+       "rappel": 0.0
+      }
+     },
+     "wavedevsecops": {
+      "n": 64,
+      "positifs": 42,
+      "auc": 0.366,
+      "alertes20": {
+       "alertes": 10,
+       "vrais_positifs": 6,
+       "precision": 0.6,
+       "rappel": 0.143
+      }
+     },
+     "wavelibrarian": {
+      "n": 65,
+      "positifs": 53,
+      "auc": 0.683,
+      "alertes20": {
+       "alertes": 10,
+       "vrais_positifs": 9,
+       "precision": 0.9,
+       "rappel": 0.17
+      }
+     },
+     "wavelocalai": {
+      "n": 64,
+      "positifs": 48,
+      "auc": 0.585,
+      "alertes20": {
+       "alertes": 3,
+       "vrais_positifs": 3,
+       "precision": 1.0,
+       "rappel": 0.062
+      }
+     }
+    }
+   },
+   "derapage_par_agent": {
+    "auc": 0.608,
+    "ic95": [
+     0.487,
+     0.727
+    ],
+    "alertes20": {
+     "alertes": 47,
+     "vrais_positifs": 8,
+     "precision": 0.17,
+     "rappel": 0.308
+    },
+    "auc_intra_depot": 0.594,
+    "par_depot": {
+     "service-public-slm-fine-tuning": {
+      "n": 38,
+      "positifs": 6,
+      "auc": 0.924,
+      "alertes20": {
+       "alertes": 7,
+       "vrais_positifs": 4,
+       "precision": 0.571,
+       "rappel": 0.667
+      }
+     },
+     "usine-migration-jira-demo": {
+      "n": 12,
+      "positifs": 1,
+      "auc": null,
+      "alertes20": {
+       "alertes": 1,
+       "vrais_positifs": 0,
+       "precision": 0.0,
+       "rappel": 0.0
+      }
+     },
+     "wavedevsecops": {
+      "n": 64,
+      "positifs": 7,
+      "auc": 0.63,
+      "alertes20": {
+       "alertes": 11,
+       "vrais_positifs": 2,
+       "precision": 0.182,
+       "rappel": 0.286
+      }
+     },
+     "wavelibrarian": {
+      "n": 65,
+      "positifs": 3,
+      "auc": 0.683,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 1,
+       "precision": 0.083,
+       "rappel": 0.333
+      }
+     },
+     "wavelocalai": {
+      "n": 64,
+      "positifs": 9,
+      "auc": 0.355,
+      "alertes20": {
+       "alertes": 11,
+       "vrais_positifs": 1,
+       "precision": 0.091,
+       "rappel": 0.111
+      }
+     }
+    }
+   },
+   "haut20": {
+    "auc": 0.641,
+    "ic95": [
+     0.557,
+     0.723
+    ],
+    "alertes20": {
+     "alertes": 47,
+     "vrais_positifs": 13,
+     "precision": 0.277,
+     "rappel": 0.277
+    },
+    "auc_intra_depot": 0.639,
+    "par_depot": {
+     "service-public-slm-fine-tuning": {
+      "n": 38,
+      "positifs": 8,
+      "auc": 0.958,
+      "alertes20": {
+       "alertes": 7,
+       "vrais_positifs": 6,
+       "precision": 0.857,
+       "rappel": 0.75
+      }
+     },
+     "usine-migration-jira-demo": {
+      "n": 12,
+      "positifs": 3,
+      "auc": 0.574,
+      "alertes20": {
+       "alertes": 1,
+       "vrais_positifs": 0,
+       "precision": 0.0,
+       "rappel": 0.0
+      }
+     },
+     "wavedevsecops": {
+      "n": 64,
+      "positifs": 12,
+      "auc": 0.645,
+      "alertes20": {
+       "alertes": 11,
+       "vrais_positifs": 3,
+       "precision": 0.273,
+       "rappel": 0.25
+      }
+     },
+     "wavelibrarian": {
+      "n": 65,
+      "positifs": 12,
+      "auc": 0.632,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 3,
+       "precision": 0.25,
+       "rappel": 0.25
+      }
+     },
+     "wavelocalai": {
+      "n": 64,
+      "positifs": 12,
+      "auc": 0.451,
+      "alertes20": {
+       "alertes": 11,
+       "vrais_positifs": 2,
+       "precision": 0.182,
+       "rappel": 0.167
+      }
+     }
+    }
+   }
+  },
+  "jev_1_13": {
+   "derapage": {
+    "auc": 0.631,
+    "ic95": [
+     0.525,
+     0.741
+    ],
+    "alertes20": {
+     "alertes": 44,
+     "vrais_positifs": 6,
+     "precision": 0.136,
+     "rappel": 0.24
+    },
+    "auc_intra_depot": 0.621,
+    "par_depot": {
+     "service-public-slm-fine-tuning": {
+      "n": 38,
+      "positifs": 5,
+      "auc": 0.888,
+      "alertes20": {
+       "alertes": 6,
+       "vrais_positifs": 3,
+       "precision": 0.5,
+       "rappel": 0.6
+      }
+     },
+     "usine-migration-jira-demo": {
+      "n": 12,
+      "positifs": 4,
+      "auc": 0.438,
+      "alertes20": {
+       "alertes": 2,
+       "vrais_positifs": 0,
+       "precision": 0.0,
+       "rappel": 0.0
+      }
+     },
+     "wavedevsecops": {
+      "n": 64,
+      "positifs": 4,
+      "auc": 0.571,
+      "alertes20": {
+       "alertes": 10,
+       "vrais_positifs": 0,
+       "precision": 0.0,
+       "rappel": 0.0
+      }
+     },
+     "wavelibrarian": {
+      "n": 65,
+      "positifs": 5,
+      "auc": 0.813,
+      "alertes20": {
+       "alertes": 13,
+       "vrais_positifs": 3,
+       "precision": 0.231,
+       "rappel": 0.6
+      }
+     },
+     "wavelocalai": {
+      "n": 64,
+      "positifs": 7,
+      "auc": 0.424,
+      "alertes20": {
+       "alertes": 11,
+       "vrais_positifs": 1,
+       "precision": 0.091,
+       "rappel": 0.143
+      }
+     }
+    }
+   },
+   "cout80": {
+    "auc": 0.614,
+    "ic95": [
+     0.528,
+     0.698
+    ],
+    "alertes20": {
+     "alertes": 48,
+     "vrais_positifs": 15,
+     "precision": 0.312,
+     "rappel": 0.294
+    },
+    "auc_intra_depot": 0.623,
+    "par_depot": {
+     "service-public-slm-fine-tuning": {
+      "n": 38,
+      "positifs": 8,
+      "auc": 0.89,
+      "alertes20": {
+       "alertes": 6,
+       "vrais_positifs": 4,
+       "precision": 0.667,
+       "rappel": 0.5
+      }
+     },
+     "usine-migration-jira-demo": {
+      "n": 12,
+      "positifs": 3,
+      "auc": 0.685,
+      "alertes20": {
+       "alertes": 2,
+       "vrais_positifs": 0,
+       "precision": 0.0,
+       "rappel": 0.0
+      }
+     },
+     "wavedevsecops": {
+      "n": 64,
+      "positifs": 13,
+      "auc": 0.54,
+      "alertes20": {
+       "alertes": 11,
+       "vrais_positifs": 2,
+       "precision": 0.182,
+       "rappel": 0.154
+      }
+     },
+     "wavelibrarian": {
+      "n": 65,
+      "positifs": 13,
+      "auc": 0.76,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 5,
+       "precision": 0.417,
+       "rappel": 0.385
+      }
+     },
+     "wavelocalai": {
+      "n": 64,
+      "positifs": 14,
+      "auc": 0.401,
+      "alertes20": {
+       "alertes": 11,
+       "vrais_positifs": 2,
+       "precision": 0.182,
+       "rappel": 0.143
+      }
+     }
+    }
+   },
+   "defaut_revue": {
+    "auc": 0.577,
+    "ic95": [
+     0.489,
+     0.661
+    ],
+    "alertes20": {
+     "alertes": 41,
+     "vrais_positifs": 33,
+     "precision": 0.805,
+     "rappel": 0.179
+    },
+    "auc_intra_depot": 0.573,
+    "par_depot": {
+     "service-public-slm-fine-tuning": {
+      "n": 37,
+      "positifs": 35,
+      "auc": 0.843,
+      "alertes20": {
+       "alertes": 6,
+       "vrais_positifs": 6,
+       "precision": 1.0,
+       "rappel": 0.171
+      }
+     },
+     "usine-migration-jira-demo": {
+      "n": 11,
+      "positifs": 6,
+      "auc": 0.2,
+      "alertes20": {
+       "alertes": 1,
+       "vrais_positifs": 0,
+       "precision": 0.0,
+       "rappel": 0.0
+      }
+     },
+     "wavedevsecops": {
+      "n": 64,
+      "positifs": 42,
+      "auc": 0.521,
+      "alertes20": {
+       "alertes": 8,
+       "vrais_positifs": 7,
+       "precision": 0.875,
+       "rappel": 0.167
+      }
+     },
+     "wavelibrarian": {
+      "n": 65,
+      "positifs": 53,
+      "auc": 0.656,
+      "alertes20": {
+       "alertes": 6,
+       "vrais_positifs": 5,
+       "precision": 0.833,
+       "rappel": 0.094
+      }
+     },
+     "wavelocalai": {
+      "n": 64,
+      "positifs": 48,
+      "auc": 0.628,
+      "alertes20": {
+       "alertes": 8,
+       "vrais_positifs": 6,
+       "precision": 0.75,
+       "rappel": 0.125
+      }
+     }
+    }
+   },
+   "derapage_par_agent": {
+    "auc": 0.608,
+    "ic95": [
+     0.472,
+     0.738
+    ],
+    "alertes20": {
+     "alertes": 44,
+     "vrais_positifs": 9,
+     "precision": 0.205,
+     "rappel": 0.346
+    },
+    "auc_intra_depot": 0.593,
+    "par_depot": {
+     "service-public-slm-fine-tuning": {
+      "n": 38,
+      "positifs": 6,
+      "auc": 0.922,
+      "alertes20": {
+       "alertes": 6,
+       "vrais_positifs": 4,
+       "precision": 0.667,
+       "rappel": 0.667
+      }
+     },
+     "usine-migration-jira-demo": {
+      "n": 12,
+      "positifs": 1,
+      "auc": null,
+      "alertes20": {
+       "alertes": 2,
+       "vrais_positifs": 0,
+       "precision": 0.0,
+       "rappel": 0.0
+      }
+     },
+     "wavedevsecops": {
+      "n": 64,
+      "positifs": 7,
+      "auc": 0.607,
+      "alertes20": {
+       "alertes": 10,
+       "vrais_positifs": 2,
+       "precision": 0.2,
+       "rappel": 0.286
+      }
+     },
+     "wavelibrarian": {
+      "n": 65,
+      "positifs": 3,
+      "auc": 0.847,
+      "alertes20": {
+       "alertes": 13,
+       "vrais_positifs": 2,
+       "precision": 0.154,
+       "rappel": 0.667
+      }
+     },
+     "wavelocalai": {
+      "n": 64,
+      "positifs": 9,
+      "auc": 0.343,
+      "alertes20": {
+       "alertes": 11,
+       "vrais_positifs": 2,
+       "precision": 0.182,
+       "rappel": 0.222
+      }
+     }
+    }
+   },
+   "haut20": {
+    "auc": 0.649,
+    "ic95": [
+     0.56,
+     0.735
+    ],
+    "alertes20": {
+     "alertes": 44,
+     "vrais_positifs": 14,
+     "precision": 0.318,
+     "rappel": 0.298
+    },
+    "auc_intra_depot": 0.652,
+    "par_depot": {
+     "service-public-slm-fine-tuning": {
+      "n": 38,
+      "positifs": 8,
+      "auc": 0.946,
+      "alertes20": {
+       "alertes": 6,
+       "vrais_positifs": 5,
+       "precision": 0.833,
+       "rappel": 0.625
+      }
+     },
+     "usine-migration-jira-demo": {
+      "n": 12,
+      "positifs": 3,
+      "auc": 0.5,
+      "alertes20": {
+       "alertes": 2,
+       "vrais_positifs": 0,
+       "precision": 0.0,
+       "rappel": 0.0
+      }
+     },
+     "wavedevsecops": {
+      "n": 64,
+      "positifs": 12,
+      "auc": 0.616,
+      "alertes20": {
+       "alertes": 10,
+       "vrais_positifs": 3,
+       "precision": 0.3,
+       "rappel": 0.25
+      }
+     },
+     "wavelibrarian": {
+      "n": 65,
+      "positifs": 12,
+      "auc": 0.751,
+      "alertes20": {
+       "alertes": 13,
+       "vrais_positifs": 4,
+       "precision": 0.308,
+       "rappel": 0.333
+      }
+     },
+     "wavelocalai": {
+      "n": 64,
+      "positifs": 12,
+      "auc": 0.425,
+      "alertes20": {
+       "alertes": 11,
+       "vrais_positifs": 2,
+       "precision": 0.182,
+       "rappel": 0.167
+      }
+     }
+    }
+   }
+  },
+  "luna_r1": {
+   "derapage": {
+    "auc": 0.524,
+    "ic95": [
+     0.404,
+     0.648
+    ],
+    "alertes20": {
+     "alertes": 46,
+     "vrais_positifs": 5,
+     "precision": 0.109,
+     "rappel": 0.2
+    },
+    "auc_intra_depot": 0.542,
+    "par_depot": {
+     "service-public-slm-fine-tuning": {
+      "n": 38,
+      "positifs": 5,
+      "auc": 0.842,
+      "alertes20": {
+       "alertes": 7,
+       "vrais_positifs": 2,
+       "precision": 0.286,
+       "rappel": 0.4
+      }
+     },
+     "usine-migration-jira-demo": {
+      "n": 12,
+      "positifs": 4,
+      "auc": 0.719,
+      "alertes20": {
+       "alertes": 2,
+       "vrais_positifs": 1,
+       "precision": 0.5,
+       "rappel": 0.25
+      }
+     },
+     "wavedevsecops": {
+      "n": 64,
+      "positifs": 4,
+      "auc": 0.515,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 1,
+       "precision": 0.083,
+       "rappel": 0.25
+      }
+     },
+     "wavelibrarian": {
+      "n": 65,
+      "positifs": 5,
+      "auc": 0.515,
+      "alertes20": {
+       "alertes": 11,
+       "vrais_positifs": 1,
+       "precision": 0.091,
+       "rappel": 0.2
+      }
+     },
+     "wavelocalai": {
+      "n": 64,
+      "positifs": 7,
+      "auc": 0.293,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 0,
+       "precision": 0.0,
+       "rappel": 0.0
+      }
+     }
+    }
+   },
+   "cout80": {
+    "auc": 0.579,
+    "ic95": [
+     0.489,
+     0.666
+    ],
+    "alertes20": {
+     "alertes": 34,
+     "vrais_positifs": 12,
+     "precision": 0.353,
+     "rappel": 0.235
+    },
+    "auc_intra_depot": 0.585,
+    "par_depot": {
+     "service-public-slm-fine-tuning": {
+      "n": 38,
+      "positifs": 8,
+      "auc": 0.842,
+      "alertes20": {
+       "alertes": 6,
+       "vrais_positifs": 4,
+       "precision": 0.667,
+       "rappel": 0.5
+      }
+     },
+     "usine-migration-jira-demo": {
+      "n": 12,
+      "positifs": 3,
+      "auc": 0.667,
+      "alertes20": {
+       "alertes": 2,
+       "vrais_positifs": 1,
+       "precision": 0.5,
+       "rappel": 0.333
+      }
+     },
+     "wavedevsecops": {
+      "n": 64,
+      "positifs": 13,
+      "auc": 0.59,
+      "alertes20": {
+       "alertes": 11,
+       "vrais_positifs": 4,
+       "precision": 0.364,
+       "rappel": 0.308
+      }
+     },
+     "wavelibrarian": {
+      "n": 65,
+      "positifs": 13,
+      "auc": 0.598,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 5,
+       "precision": 0.417,
+       "rappel": 0.385
+      }
+     },
+     "wavelocalai": {
+      "n": 64,
+      "positifs": 14,
+      "auc": 0.399,
+      "alertes20": {
+       "alertes": 10,
+       "vrais_positifs": 1,
+       "precision": 0.1,
+       "rappel": 0.071
+      }
+     }
+    }
+   },
+   "defaut_revue": {
+    "auc": 0.609,
+    "ic95": [
+     0.526,
+     0.689
+    ],
+    "alertes20": {
+     "alertes": 25,
+     "vrais_positifs": 23,
+     "precision": 0.92,
+     "rappel": 0.125
+    },
+    "auc_intra_depot": 0.601,
+    "par_depot": {
+     "service-public-slm-fine-tuning": {
+      "n": 37,
+      "positifs": 35,
+      "auc": 0.871,
+      "alertes20": {
+       "alertes": 6,
+       "vrais_positifs": 6,
+       "precision": 1.0,
+       "rappel": 0.171
+      }
+     },
+     "usine-migration-jira-demo": {
+      "n": 11,
+      "positifs": 6,
+      "auc": 0.583,
+      "alertes20": {
+       "alertes": 2,
+       "vrais_positifs": 2,
+       "precision": 1.0,
+       "rappel": 0.333
+      }
+     },
+     "wavedevsecops": {
+      "n": 64,
+      "positifs": 42,
+      "auc": 0.464,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 8,
+       "precision": 0.667,
+       "rappel": 0.19
+      }
+     },
+     "wavelibrarian": {
+      "n": 65,
+      "positifs": 53,
+      "auc": 0.771,
+      "alertes20": {
+       "alertes": 13,
+       "vrais_positifs": 13,
+       "precision": 1.0,
+       "rappel": 0.245
+      }
+     },
+     "wavelocalai": {
+      "n": 64,
+      "positifs": 48,
+      "auc": 0.618,
+      "alertes20": {
+       "alertes": 11,
+       "vrais_positifs": 10,
+       "precision": 0.909,
+       "rappel": 0.208
+      }
+     }
+    }
+   },
+   "derapage_par_agent": {
+    "auc": 0.542,
+    "ic95": [
+     0.427,
+     0.654
+    ],
+    "alertes20": {
+     "alertes": 46,
+     "vrais_positifs": 5,
+     "precision": 0.109,
+     "rappel": 0.192
+    },
+    "auc_intra_depot": 0.525,
+    "par_depot": {
+     "service-public-slm-fine-tuning": {
+      "n": 38,
+      "positifs": 6,
+      "auc": 0.88,
+      "alertes20": {
+       "alertes": 7,
+       "vrais_positifs": 3,
+       "precision": 0.429,
+       "rappel": 0.5
+      }
+     },
+     "usine-migration-jira-demo": {
+      "n": 12,
+      "positifs": 1,
+      "auc": null,
+      "alertes20": {
+       "alertes": 2,
+       "vrais_positifs": 0,
+       "precision": 0.0,
+       "rappel": 0.0
+      }
+     },
+     "wavedevsecops": {
+      "n": 64,
+      "positifs": 7,
+      "auc": 0.629,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 2,
+       "precision": 0.167,
+       "rappel": 0.286
+      }
+     },
+     "wavelibrarian": {
+      "n": 65,
+      "positifs": 3,
+      "auc": 0.522,
+      "alertes20": {
+       "alertes": 11,
+       "vrais_positifs": 0,
+       "precision": 0.0,
+       "rappel": 0.0
+      }
+     },
+     "wavelocalai": {
+      "n": 64,
+      "positifs": 9,
+      "auc": 0.217,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 0,
+       "precision": 0.0,
+       "rappel": 0.0
+      }
+     }
+    }
+   },
+   "haut20": {
+    "auc": 0.606,
+    "ic95": [
+     0.516,
+     0.697
+    ],
+    "alertes20": {
+     "alertes": 46,
+     "vrais_positifs": 15,
+     "precision": 0.326,
+     "rappel": 0.319
+    },
+    "auc_intra_depot": 0.608,
+    "par_depot": {
+     "service-public-slm-fine-tuning": {
+      "n": 38,
+      "positifs": 8,
+      "auc": 0.923,
+      "alertes20": {
+       "alertes": 7,
+       "vrais_positifs": 5,
+       "precision": 0.714,
+       "rappel": 0.625
+      }
+     },
+     "usine-migration-jira-demo": {
+      "n": 12,
+      "positifs": 3,
+      "auc": 0.593,
+      "alertes20": {
+       "alertes": 2,
+       "vrais_positifs": 0,
+       "precision": 0.0,
+       "rappel": 0.0
+      }
+     },
+     "wavedevsecops": {
+      "n": 64,
+      "positifs": 12,
+      "auc": 0.688,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 4,
+       "precision": 0.333,
+       "rappel": 0.333
+      }
+     },
+     "wavelibrarian": {
+      "n": 65,
+      "positifs": 12,
+      "auc": 0.627,
+      "alertes20": {
+       "alertes": 11,
+       "vrais_positifs": 4,
+       "precision": 0.364,
+       "rappel": 0.333
+      }
+     },
+     "wavelocalai": {
+      "n": 64,
+      "positifs": 12,
+      "auc": 0.315,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 0,
+       "precision": 0.0,
+       "rappel": 0.0
+      }
+     }
+    }
+   }
+  },
+  "luna_r2": {
+   "derapage": {
+    "auc": 0.532,
+    "ic95": [
+     0.418,
+     0.644
+    ],
+    "alertes20": {
+     "alertes": 36,
+     "vrais_positifs": 3,
+     "precision": 0.083,
+     "rappel": 0.12
+    },
+    "auc_intra_depot": 0.534,
+    "par_depot": {
+     "service-public-slm-fine-tuning": {
+      "n": 38,
+      "positifs": 5,
+      "auc": 0.809,
+      "alertes20": {
+       "alertes": 5,
+       "vrais_positifs": 3,
+       "precision": 0.6,
+       "rappel": 0.6
+      }
+     },
+     "usine-migration-jira-demo": {
+      "n": 12,
+      "positifs": 4,
+      "auc": 0.75,
+      "alertes20": {
+       "alertes": 1,
+       "vrais_positifs": 0,
+       "precision": 0.0,
+       "rappel": 0.0
+      }
+     },
+     "wavedevsecops": {
+      "n": 64,
+      "positifs": 4,
+      "auc": 0.456,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 0,
+       "precision": 0.0,
+       "rappel": 0.0
+      }
+     },
+     "wavelibrarian": {
+      "n": 65,
+      "positifs": 5,
+      "auc": 0.555,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 1,
+       "precision": 0.083,
+       "rappel": 0.2
+      }
+     },
+     "wavelocalai": {
+      "n": 64,
+      "positifs": 7,
+      "auc": 0.271,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 0,
+       "precision": 0.0,
+       "rappel": 0.0
+      }
+     }
+    }
+   },
+   "cout80": {
+    "auc": 0.591,
+    "ic95": [
+     0.507,
+     0.676
+    ],
+    "alertes20": {
+     "alertes": 34,
+     "vrais_positifs": 10,
+     "precision": 0.294,
+     "rappel": 0.196
+    },
+    "auc_intra_depot": 0.599,
+    "par_depot": {
+     "service-public-slm-fine-tuning": {
+      "n": 38,
+      "positifs": 8,
+      "auc": 0.781,
+      "alertes20": {
+       "alertes": 6,
+       "vrais_positifs": 3,
+       "precision": 0.5,
+       "rappel": 0.375
+      }
+     },
+     "usine-migration-jira-demo": {
+      "n": 12,
+      "positifs": 3,
+      "auc": 0.833,
+      "alertes20": {
+       "alertes": 2,
+       "vrais_positifs": 1,
+       "precision": 0.5,
+       "rappel": 0.333
+      }
+     },
+     "wavedevsecops": {
+      "n": 64,
+      "positifs": 13,
+      "auc": 0.565,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 3,
+       "precision": 0.25,
+       "rappel": 0.231
+      }
+     },
+     "wavelibrarian": {
+      "n": 65,
+      "positifs": 13,
+      "auc": 0.747,
+      "alertes20": {
+       "alertes": 13,
+       "vrais_positifs": 5,
+       "precision": 0.385,
+       "rappel": 0.385
+      }
+     },
+     "wavelocalai": {
+      "n": 64,
+      "positifs": 14,
+      "auc": 0.331,
+      "alertes20": {
+       "alertes": 11,
+       "vrais_positifs": 1,
+       "precision": 0.091,
+       "rappel": 0.071
+      }
+     }
+    }
+   },
+   "defaut_revue": {
+    "auc": 0.543,
+    "ic95": [
+     0.453,
+     0.629
+    ],
+    "alertes20": {
+     "alertes": 27,
+     "vrais_positifs": 20,
+     "precision": 0.741,
+     "rappel": 0.109
+    },
+    "auc_intra_depot": 0.513,
+    "par_depot": {
+     "service-public-slm-fine-tuning": {
+      "n": 37,
+      "positifs": 35,
+      "auc": 0.814,
+      "alertes20": {
+       "alertes": 6,
+       "vrais_positifs": 6,
+       "precision": 1.0,
+       "rappel": 0.171
+      }
+     },
+     "usine-migration-jira-demo": {
+      "n": 11,
+      "positifs": 6,
+      "auc": 0.383,
+      "alertes20": {
+       "alertes": 0,
+       "vrais_positifs": 0,
+       "precision": null,
+       "rappel": 0.0
+      }
+     },
+     "wavedevsecops": {
+      "n": 64,
+      "positifs": 42,
+      "auc": 0.378,
+      "alertes20": {
+       "alertes": 10,
+       "vrais_positifs": 6,
+       "precision": 0.6,
+       "rappel": 0.143
+      }
+     },
+     "wavelibrarian": {
+      "n": 65,
+      "positifs": 53,
+      "auc": 0.726,
+      "alertes20": {
+       "alertes": 11,
+       "vrais_positifs": 11,
+       "precision": 1.0,
+       "rappel": 0.208
+      }
+     },
+     "wavelocalai": {
+      "n": 64,
+      "positifs": 48,
+      "auc": 0.51,
+      "alertes20": {
+       "alertes": 10,
+       "vrais_positifs": 6,
+       "precision": 0.6,
+       "rappel": 0.125
+      }
+     }
+    }
+   },
+   "derapage_par_agent": {
+    "auc": 0.568,
+    "ic95": [
+     0.45,
+     0.69
+    ],
+    "alertes20": {
+     "alertes": 36,
+     "vrais_positifs": 6,
+     "precision": 0.167,
+     "rappel": 0.231
+    },
+    "auc_intra_depot": 0.554,
+    "par_depot": {
+     "service-public-slm-fine-tuning": {
+      "n": 38,
+      "positifs": 6,
+      "auc": 0.862,
+      "alertes20": {
+       "alertes": 5,
+       "vrais_positifs": 4,
+       "precision": 0.8,
+       "rappel": 0.667
+      }
+     },
+     "usine-migration-jira-demo": {
+      "n": 12,
+      "positifs": 1,
+      "auc": null,
+      "alertes20": {
+       "alertes": 1,
+       "vrais_positifs": 0,
+       "precision": 0.0,
+       "rappel": 0.0
+      }
+     },
+     "wavedevsecops": {
+      "n": 64,
+      "positifs": 7,
+      "auc": 0.593,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 2,
+       "precision": 0.167,
+       "rappel": 0.286
+      }
+     },
+     "wavelibrarian": {
+      "n": 65,
+      "positifs": 3,
+      "auc": 0.712,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 1,
+       "precision": 0.083,
+       "rappel": 0.333
+      }
+     },
+     "wavelocalai": {
+      "n": 64,
+      "positifs": 9,
+      "auc": 0.265,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 0,
+       "precision": 0.0,
+       "rappel": 0.0
+      }
+     }
+    }
+   },
+   "haut20": {
+    "auc": 0.614,
+    "ic95": [
+     0.528,
+     0.701
+    ],
+    "alertes20": {
+     "alertes": 36,
+     "vrais_positifs": 9,
+     "precision": 0.25,
+     "rappel": 0.191
+    },
+    "auc_intra_depot": 0.621,
+    "par_depot": {
+     "service-public-slm-fine-tuning": {
+      "n": 38,
+      "positifs": 8,
+      "auc": 0.894,
+      "alertes20": {
+       "alertes": 5,
+       "vrais_positifs": 4,
+       "precision": 0.8,
+       "rappel": 0.5
+      }
+     },
+     "usine-migration-jira-demo": {
+      "n": 12,
+      "positifs": 3,
+      "auc": 0.722,
+      "alertes20": {
+       "alertes": 1,
+       "vrais_positifs": 0,
+       "precision": 0.0,
+       "rappel": 0.0
+      }
+     },
+     "wavedevsecops": {
+      "n": 64,
+      "positifs": 12,
+      "auc": 0.625,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 4,
+       "precision": 0.333,
+       "rappel": 0.333
+      }
+     },
+     "wavelibrarian": {
+      "n": 65,
+      "positifs": 12,
+      "auc": 0.708,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 3,
+       "precision": 0.25,
+       "rappel": 0.25
+      }
+     },
+     "wavelocalai": {
+      "n": 64,
+      "positifs": 12,
+      "auc": 0.325,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 1,
+       "precision": 0.083,
+       "rappel": 0.083
+      }
+     }
+    }
+   }
+  },
+  "luna_moyenne": {
+   "derapage": {
+    "auc": 0.532,
+    "ic95": [
+     0.419,
+     0.65
+    ],
+    "alertes20": {
+     "alertes": 47,
+     "vrais_positifs": 4,
+     "precision": 0.085,
+     "rappel": 0.16
+    },
+    "auc_intra_depot": 0.55,
+    "par_depot": {
+     "service-public-slm-fine-tuning": {
+      "n": 38,
+      "positifs": 5,
+      "auc": 0.83,
+      "alertes20": {
+       "alertes": 7,
+       "vrais_positifs": 3,
+       "precision": 0.429,
+       "rappel": 0.6
+      }
+     },
+     "usine-migration-jira-demo": {
+      "n": 12,
+      "positifs": 4,
+      "auc": 0.797,
+      "alertes20": {
+       "alertes": 2,
+       "vrais_positifs": 1,
+       "precision": 0.5,
+       "rappel": 0.25
+      }
+     },
+     "wavedevsecops": {
+      "n": 64,
+      "positifs": 4,
+      "auc": 0.473,
+      "alertes20": {
+       "alertes": 11,
+       "vrais_positifs": 0,
+       "precision": 0.0,
+       "rappel": 0.0
+      }
+     },
+     "wavelibrarian": {
+      "n": 65,
+      "positifs": 5,
+      "auc": 0.595,
+      "alertes20": {
+       "alertes": 13,
+       "vrais_positifs": 1,
+       "precision": 0.077,
+       "rappel": 0.2
+      }
+     },
+     "wavelocalai": {
+      "n": 64,
+      "positifs": 7,
+      "auc": 0.259,
+      "alertes20": {
+       "alertes": 11,
+       "vrais_positifs": 0,
+       "precision": 0.0,
+       "rappel": 0.0
+      }
+     }
+    }
+   },
+   "cout80": {
+    "auc": 0.592,
+    "ic95": [
+     0.501,
+     0.674
+    ],
+    "alertes20": {
+     "alertes": 48,
+     "vrais_positifs": 15,
+     "precision": 0.312,
+     "rappel": 0.294
+    },
+    "auc_intra_depot": 0.593,
+    "par_depot": {
+     "service-public-slm-fine-tuning": {
+      "n": 38,
+      "positifs": 8,
+      "auc": 0.794,
+      "alertes20": {
+       "alertes": 7,
+       "vrais_positifs": 4,
+       "precision": 0.571,
+       "rappel": 0.5
+      }
+     },
+     "usine-migration-jira-demo": {
+      "n": 12,
+      "positifs": 3,
+      "auc": 0.778,
+      "alertes20": {
+       "alertes": 2,
+       "vrais_positifs": 1,
+       "precision": 0.5,
+       "rappel": 0.333
+      }
+     },
+     "wavedevsecops": {
+      "n": 64,
+      "positifs": 13,
+      "auc": 0.581,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 3,
+       "precision": 0.25,
+       "rappel": 0.231
+      }
+     },
+     "wavelibrarian": {
+      "n": 65,
+      "positifs": 13,
+      "auc": 0.695,
+      "alertes20": {
+       "alertes": 13,
+       "vrais_positifs": 5,
+       "precision": 0.385,
+       "rappel": 0.385
+      }
+     },
+     "wavelocalai": {
+      "n": 64,
+      "positifs": 14,
+      "auc": 0.348,
+      "alertes20": {
+       "alertes": 11,
+       "vrais_positifs": 1,
+       "precision": 0.091,
+       "rappel": 0.071
+      }
+     }
+    }
+   },
+   "defaut_revue": {
+    "auc": 0.587,
+    "ic95": [
+     0.501,
+     0.674
+    ],
+    "alertes20": {
+     "alertes": 48,
+     "vrais_positifs": 39,
+     "precision": 0.812,
+     "rappel": 0.212
+    },
+    "auc_intra_depot": 0.569,
+    "par_depot": {
+     "service-public-slm-fine-tuning": {
+      "n": 37,
+      "positifs": 35,
+      "auc": 0.857,
+      "alertes20": {
+       "alertes": 7,
+       "vrais_positifs": 7,
+       "precision": 1.0,
+       "rappel": 0.2
+      }
+     },
+     "usine-migration-jira-demo": {
+      "n": 11,
+      "positifs": 6,
+      "auc": 0.467,
+      "alertes20": {
+       "alertes": 2,
+       "vrais_positifs": 1,
+       "precision": 0.5,
+       "rappel": 0.167
+      }
+     },
+     "wavedevsecops": {
+      "n": 64,
+      "positifs": 42,
+      "auc": 0.418,
+      "alertes20": {
+       "alertes": 9,
+       "vrais_positifs": 6,
+       "precision": 0.667,
+       "rappel": 0.143
+      }
+     },
+     "wavelibrarian": {
+      "n": 65,
+      "positifs": 53,
+      "auc": 0.791,
+      "alertes20": {
+       "alertes": 12,
+       "vrais_positifs": 12,
+       "precision": 1.0,
+       "rappel": 0.226
+      }
+     },
+     "wavelocalai": {
+      "n": 64,
+      "positifs": 48,
+      "auc": 0.564,
+      "alertes20": {
+       "alertes": 8,
+       "vrais_positifs": 7,
+       "precision": 0.875,
+       "rappel": 0.146
+      }
+     }
+    }
+   },
+   "derapage_par_agent": {
+    "auc": 0.551,
+    "ic95": [
+     0.427,
+     0.673
+    ],
+    "alertes20": {
+     "alertes": 47,
+     "vrais_positifs": 6,
+     "precision": 0.128,
+     "rappel": 0.231
+    },
+    "auc_intra_depot": 0.536,
+    "par_depot": {
+     "service-public-slm-fine-tuning": {
+      "n": 38,
+      "positifs": 6,
+      "auc": 0.875,
+      "alertes20": {
+       "alertes": 7,
+       "vrais_positifs": 4,
+       "precision": 0.571,
+       "rappel": 0.667
+      }
+     },
+     "usine-migration-jira-demo": {
+      "n": 12,
+      "positifs": 1,
+      "auc": null,
+      "alertes20": {
+       "alertes": 2,
+       "vrais_positifs": 0,
+       "precision": 0.0,
+       "rappel": 0.0
+      }
+     },
+     "wavedevsecops": {
+      "n": 64,
+      "positifs": 7,
+      "auc": 0.604,
+      "alertes20": {
+       "alertes": 11,
+       "vrais_positifs": 2,
+       "precision": 0.182,
+       "rappel": 0.286
+      }
+     },
+     "wavelibrarian": {
+      "n": 65,
+      "positifs": 3,
+      "auc": 0.648,
+      "alertes20": {
+       "alertes": 13,
+       "vrais_positifs": 0,
+       "precision": 0.0,
+       "rappel": 0.0
+      }
+     },
+     "wavelocalai": {
+      "n": 64,
+      "positifs": 9,
+      "auc": 0.223,
+      "alertes20": {
+       "alertes": 11,
+       "vrais_positifs": 0,
+       "precision": 0.0,
+       "rappel": 0.0
+      }
+     }
+    }
+   },
+   "haut20": {
+    "auc": 0.611,
+    "ic95": [
+     0.522,
+     0.696
+    ],
+    "alertes20": {
+     "alertes": 47,
+     "vrais_positifs": 14,
+     "precision": 0.298,
+     "rappel": 0.298
+    },
+    "auc_intra_depot": 0.625,
+    "par_depot": {
+     "service-public-slm-fine-tuning": {
+      "n": 38,
+      "positifs": 8,
+      "auc": 0.912,
+      "alertes20": {
+       "alertes": 7,
+       "vrais_positifs": 6,
+       "precision": 0.857,
+       "rappel": 0.75
+      }
+     },
+     "usine-migration-jira-demo": {
+      "n": 12,
+      "positifs": 3,
+      "auc": 0.685,
+      "alertes20": {
+       "alertes": 2,
+       "vrais_positifs": 0,
+       "precision": 0.0,
+       "rappel": 0.0
+      }
+     },
+     "wavedevsecops": {
+      "n": 64,
+      "positifs": 12,
+      "auc": 0.661,
+      "alertes20": {
+       "alertes": 11,
+       "vrais_positifs": 4,
+       "precision": 0.364,
+       "rappel": 0.333
+      }
+     },
+     "wavelibrarian": {
+      "n": 65,
+      "positifs": 12,
+      "auc": 0.704,
+      "alertes20": {
+       "alertes": 13,
+       "vrais_positifs": 4,
+       "precision": 0.308,
+       "rappel": 0.333
+      }
+     },
+     "wavelocalai": {
+      "n": 64,
+      "positifs": 12,
+      "auc": 0.302,
+      "alertes20": {
+       "alertes": 11,
+       "vrais_positifs": 1,
+       "precision": 0.091,
+       "rappel": 0.083
+      }
+     }
+    }
+   }
+  }
+ },
+ "comparaisons": {
+  "derapage": {
+   "reference": "heuristique_longueur",
+   "auc_reference": 0.559,
+   "bras": {
+    "jev_latest": {
+     "auc": 0.632,
+     "delta_vs_ref": 0.073,
+     "delta_ic95": [
+      -0.051,
+      0.201
+     ],
+     "critere": false
+    },
+    "jev_1_13": {
+     "auc": 0.631,
+     "delta_vs_ref": 0.072,
+     "delta_ic95": [
+      -0.05,
+      0.195
+     ],
+     "critere": false
+    },
+    "luna_r1": {
+     "auc": 0.524,
+     "delta_vs_ref": -0.035,
+     "delta_ic95": [
+      -0.158,
+      0.084
+     ],
+     "critere": false
+    },
+    "luna_r2": {
+     "auc": 0.532,
+     "delta_vs_ref": -0.027,
+     "delta_ic95": [
+      -0.12,
+      0.07
+     ],
+     "critere": false
+    },
+    "luna_moyenne": {
+     "auc": 0.532,
+     "delta_vs_ref": -0.027,
+     "delta_ic95": [
+      -0.131,
+      0.078
+     ],
+     "critere": false
+    }
+   }
+  },
+  "cout80": {
+   "reference": "heuristique_longueur",
+   "auc_reference": 0.59,
+   "bras": {
+    "jev_latest": {
+     "auc": 0.595,
+     "delta_vs_ref": 0.004,
+     "delta_ic95": [
+      -0.071,
+      0.081
+     ],
+     "critere": false
+    },
+    "jev_1_13": {
+     "auc": 0.614,
+     "delta_vs_ref": 0.023,
+     "delta_ic95": [
+      -0.054,
+      0.105
+     ],
+     "critere": false
+    },
+    "luna_r1": {
+     "auc": 0.579,
+     "delta_vs_ref": -0.012,
+     "delta_ic95": [
+      -0.104,
+      0.075
+     ],
+     "critere": false
+    },
+    "luna_r2": {
+     "auc": 0.591,
+     "delta_vs_ref": 0.0,
+     "delta_ic95": [
+      -0.079,
+      0.084
+     ],
+     "critere": false
+    },
+    "luna_moyenne": {
+     "auc": 0.592,
+     "delta_vs_ref": 0.002,
+     "delta_ic95": [
+      -0.074,
+      0.082
+     ],
+     "critere": false
+    }
+   }
+  },
+  "defaut_revue": {
+   "reference": "heuristique_longueur",
+   "auc_reference": 0.559,
+   "bras": {
+    "jev_latest": {
+     "auc": 0.52,
+     "delta_vs_ref": -0.04,
+     "delta_ic95": [
+      -0.133,
+      0.053
+     ],
+     "critere": false
+    },
+    "jev_1_13": {
+     "auc": 0.577,
+     "delta_vs_ref": 0.017,
+     "delta_ic95": [
+      -0.069,
+      0.103
+     ],
+     "critere": false
+    },
+    "luna_r1": {
+     "auc": 0.609,
+     "delta_vs_ref": 0.049,
+     "delta_ic95": [
+      -0.028,
+      0.123
+     ],
+     "critere": false
+    },
+    "luna_r2": {
+     "auc": 0.543,
+     "delta_vs_ref": -0.017,
+     "delta_ic95": [
+      -0.089,
+      0.059
+     ],
+     "critere": false
+    },
+    "luna_moyenne": {
+     "auc": 0.587,
+     "delta_vs_ref": 0.027,
+     "delta_ic95": [
+      -0.041,
+      0.095
+     ],
+     "critere": false
+    }
+   }
+  },
+  "derapage_par_agent": {
+   "reference": "heuristique_longueur",
+   "auc_reference": 0.568,
+   "bras": {
+    "jev_latest": {
+     "auc": 0.608,
+     "delta_vs_ref": 0.04,
+     "delta_ic95": [
+      -0.044,
+      0.126
+     ],
+     "critere": false
+    },
+    "jev_1_13": {
+     "auc": 0.608,
+     "delta_vs_ref": 0.04,
+     "delta_ic95": [
+      -0.032,
+      0.121
+     ],
+     "critere": false
+    },
+    "luna_r1": {
+     "auc": 0.542,
+     "delta_vs_ref": -0.026,
+     "delta_ic95": [
+      -0.129,
+      0.067
+     ],
+     "critere": false
+    },
+    "luna_r2": {
+     "auc": 0.568,
+     "delta_vs_ref": 0.0,
+     "delta_ic95": [
+      -0.077,
+      0.078
+     ],
+     "critere": false
+    },
+    "luna_moyenne": {
+     "auc": 0.551,
+     "delta_vs_ref": -0.018,
+     "delta_ic95": [
+      -0.098,
+      0.058
+     ],
+     "critere": false
+    }
+   }
+  },
+  "haut20": {
+   "reference": "heuristique_longueur",
+   "auc_reference": 0.602,
+   "bras": {
+    "jev_latest": {
+     "auc": 0.641,
+     "delta_vs_ref": 0.04,
+     "delta_ic95": [
+      -0.046,
+      0.131
+     ],
+     "critere": false
+    },
+    "jev_1_13": {
+     "auc": 0.649,
+     "delta_vs_ref": 0.048,
+     "delta_ic95": [
+      -0.037,
+      0.136
+     ],
+     "critere": false
+    },
+    "luna_r1": {
+     "auc": 0.606,
+     "delta_vs_ref": 0.005,
+     "delta_ic95": [
+      -0.078,
+      0.083
+     ],
+     "critere": false
+    },
+    "luna_r2": {
+     "auc": 0.614,
+     "delta_vs_ref": 0.012,
+     "delta_ic95": [
+      -0.064,
+      0.091
+     ],
+     "critere": false
+    },
+    "luna_moyenne": {
+     "auc": 0.611,
+     "delta_vs_ref": 0.009,
+     "delta_ic95": [
+      -0.067,
+      0.083
+     ],
+     "critere": false
+    }
+   }
+  }
+ },
+ "diagnostics_continus": {
+  "heuristique_longueur": {
+   "spearman_derapage_avec_longueur": 0.881,
+   "spearman_derapage_avec_appels": 0.194,
+   "spearman_derapage_avec_appels_intra_depot": 0.321,
+   "spearman_cout80_avec_cout": 0.231,
+   "spearman_cout80_avec_cout_intra_depot": 0.371
+  },
+  "heuristique_lr": {
+   "spearman_derapage_avec_longueur": 0.191,
+   "spearman_derapage_avec_appels": 0.12,
+   "spearman_derapage_avec_appels_intra_depot": -0.093,
+   "spearman_cout80_avec_cout": 0.182,
+   "spearman_cout80_avec_cout_intra_depot": 0.24
+  },
+  "jev_latest": {
+   "spearman_derapage_avec_longueur": 0.563,
+   "spearman_derapage_avec_appels": 0.202,
+   "spearman_derapage_avec_appels_intra_depot": 0.188,
+   "spearman_cout80_avec_cout": 0.298,
+   "spearman_cout80_avec_cout_intra_depot": 0.281
+  },
+  "jev_1_13": {
+   "spearman_derapage_avec_longueur": 0.522,
+   "spearman_derapage_avec_appels": 0.242,
+   "spearman_derapage_avec_appels_intra_depot": 0.207,
+   "spearman_cout80_avec_cout": 0.277,
+   "spearman_cout80_avec_cout_intra_depot": 0.296
+  },
+  "luna_r1": {
+   "spearman_derapage_avec_longueur": 0.562,
+   "spearman_derapage_avec_appels": 0.313,
+   "spearman_derapage_avec_appels_intra_depot": 0.292,
+   "spearman_cout80_avec_cout": 0.32,
+   "spearman_cout80_avec_cout_intra_depot": 0.307
+  },
+  "luna_r2": {
+   "spearman_derapage_avec_longueur": 0.621,
+   "spearman_derapage_avec_appels": 0.241,
+   "spearman_derapage_avec_appels_intra_depot": 0.276,
+   "spearman_cout80_avec_cout": 0.297,
+   "spearman_cout80_avec_cout_intra_depot": 0.332
+  },
+  "luna_moyenne": {
+   "spearman_derapage_avec_longueur": 0.626,
+   "spearman_derapage_avec_appels": 0.282,
+   "spearman_derapage_avec_appels_intra_depot": 0.303,
+   "spearman_cout80_avec_cout": 0.328,
+   "spearman_cout80_avec_cout_intra_depot": 0.359
+  }
+ },
+ "spearman_longueur_appels": 0.13,
+ "spearman_longueur_cout": 0.166,
+ "sensibilites": {
+  "stories_sonnet_seul": {
+   "n": 217,
+   "derapage": {
+    "positifs": 18,
+    "heuristique_longueur": 0.47,
+    "jev_latest": 0.596,
+    "luna_r1": 0.48
+   },
+   "cout80": {
+    "positifs": 36,
+    "heuristique_longueur": 0.527,
+    "jev_latest": 0.558,
+    "luna_r1": 0.553
+   }
+  },
+  "version_epics": {
+   "avant": 243,
+   "jour": 0
+  }
+ },
+ "puissance": {
+  "derapage": {
+   "positifs": 25,
+   "negatifs": 218,
+   "prevalence": 0.103,
+   "positifs_necessaires_auc065": 33,
+   "stories_necessaires_auc065": 321,
+   "puissance_actuelle_auc065": 0.687,
+   "auc_detectable_actuelle_80pct": 0.675,
+   "positifs_necessaires_ecart_005_vs_heuristique": 296
+  },
+  "cout80": {
+   "positifs": 51,
+   "negatifs": 192,
+   "prevalence": 0.21,
+   "positifs_necessaires_auc065": 37,
+   "stories_necessaires_auc065": 176,
+   "puissance_actuelle_auc065": 0.909,
+   "auc_detectable_actuelle_80pct": 0.63,
+   "positifs_necessaires_ecart_005_vs_heuristique": 322
+  },
+  "defaut_revue": {
+   "positifs": 184,
+   "negatifs": 57,
+   "prevalence": 0.763,
+   "positifs_necessaires_auc065": 115,
+   "stories_necessaires_auc065": 151,
+   "puissance_actuelle_auc065": 0.949,
+   "auc_detectable_actuelle_80pct": 0.62,
+   "positifs_necessaires_ecart_005_vs_heuristique": 823
+  },
+  "derapage_par_agent": {
+   "positifs": 26,
+   "negatifs": 217,
+   "prevalence": 0.107,
+   "positifs_necessaires_auc065": 34,
+   "stories_necessaires_auc065": 318,
+   "puissance_actuelle_auc065": 0.702,
+   "auc_detectable_actuelle_80pct": 0.67,
+   "positifs_necessaires_ecart_005_vs_heuristique": 297
+  },
+  "haut20": {
+   "positifs": 47,
+   "negatifs": 196,
+   "prevalence": 0.193,
+   "positifs_necessaires_auc065": 37,
+   "stories_necessaires_auc065": 191,
+   "puissance_actuelle_auc065": 0.891,
+   "auc_detectable_actuelle_80pct": 0.635,
+   "positifs_necessaires_ecart_005_vs_heuristique": 317
+  },
+  "verification_simulation": {
+   "etiquette": "derapage",
+   "positifs": 33,
+   "negatifs": 287,
+   "puissance_simulee": 0.794
+  },
+  "hypotheses_ecart": "ecart de 0,05 (AUC 0,70 contre 0,65) entre deux bras correles (r = 0,5 supposee), 5 % bilateral, puissance 80 %",
+  "hypotheses": "AUC 0,65 contre 0,5, test bilateral alpha 5 %, puissance 80 %, variance de Hanley et McNeil, prevalence observee"
+ },
+ "budget": {
+  "cumul_usd": 0.1778427,
+  "par_bras": {
+   "jev:~typesafe/jev-latest": 0.0260918,
+   "llm:openai/gpt-6-luna": 0.12591495,
+   "jev:typesafe/jev-1.13": 0.02583598
+  }
+ }
+}

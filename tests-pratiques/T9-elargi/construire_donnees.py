@@ -1,7 +1,8 @@
 """T9 elargi : construit le jeu de stories etiquetees (spec pre-developpement + etiquettes) a partir de ``agents.json``.
 
 Entrees
-- ``<travail>/agents.json`` (``extraire_agents.py``) : agents ``dev-story`` avec depot, numero de story, appels, cout, debut.
+- ``<travail>/agents.json`` (``extraire_agents.py``) : agents ``dev-story`` (ere ``kit``) et, avec ``--avant-kit``, agents
+  ``general-purpose`` de developpement d'avant le kit (ere ``avant-kit``), avec depot, numero de story, appels, cout, debut.
 - Depots publics clones sous ``--racine-depots`` (defaut ``~/Documents/GitHub``) : ``_bmad-output/planning-artifacts/epics.md``
   (spec de chaque story) et ``_bmad-output/implementation-artifacts`` (revue ; spec de repli).
 
@@ -10,13 +11,15 @@ Sorties
 - ``etiquettes.csv`` (a cote du script) : cle, depot, appels, cout, etiquettes, caracteristiques numeriques ; aucun texte.
 - ``bilan_donnees.json`` : agregats (nombre de stories, de positifs, d'ecartees, par depot).
 
-Etiquettes (par depot : les seuils se calculent sur toutes les stories numerotees du depot, avant ecartement)
-- ``derapage``     : somme des appels propres des agents dev-story de la story > 2 x mediane des sommes par story du depot ;
-- ``cout80``       : cout (USD equivalent API) des agents dev-story de la story > 80e centile du depot (comparaison stricte) ;
+Etiquettes (par groupe : les seuils se calculent sur toutes les stories numerotees du groupe, avant ecartement ; le groupe est
+``<depot>`` pour l'ere kit et ``<depot>/avant-kit`` pour l'ere d'avant, car les deux processus n'ont pas le meme cout ; une story
+presente dans les deux eres garde l'ere de son premier agent et additionne les appels et couts de tous ses agents)
+- ``derapage``     : somme des appels propres des agents dev-story de la story > 2 x mediane des sommes par story du groupe ;
+- ``cout80``       : cout (USD equivalent API) des agents dev-story de la story > 80e centile du groupe (comparaison stricte) ;
 - ``defaut_revue`` : la revue a consigne au moins un constat de severite medium ou high retenu et traite (ni rejete, ni
                      reporte) ; vide si aucune revue lisible ;
-- exploratoires ``derapage_par_agent`` (le plus long agent > 2 x mediane par agent du depot) et ``haut20``
-  (appels > 80e centile du depot).
+- exploratoires ``derapage_par_agent`` (le plus long agent > 2 x mediane par agent du groupe) et ``haut20``
+  (appels > 80e centile du groupe).
 
 Anti-fuite : la spec est la section « Story X.Y » de ``epics.md`` au dernier commit anterieur au premier appel de
 l'agent (``source_epics = avant``) ; faute de commit anterieur, la version de la fin du jour de demarrage (``jour``).
@@ -175,7 +178,12 @@ def main() -> int:
     for a in agents:
         if not a["story"] or (a["depot"], a["story"]) in en_cours:
             continue
-        s = stories.setdefault((a["depot"], a["story"]), {"appels": 0, "agents": 0, "cout": 0.0, "debut": a["debut"], "appels_agent": [], "familles": set()})
+        ere = a.get("ere", "kit")
+        s = stories.setdefault((a["depot"], a["story"]), {"appels": 0, "agents": 0, "cout": 0.0, "debut": a["debut"], "appels_agent": [], "familles": set(),
+                                                          "ere": ere, "eres": set()})
+        s["eres"].add(ere)
+        if a["debut"] < s["debut"]:  # l'ere est celle du premier agent de la story
+            s["ere"] = ere
         s["appels"] += a["appels"]
         s["agents"] += 1
         s["cout"] += a["cout"]
@@ -183,10 +191,14 @@ def main() -> int:
         s["appels_agent"].append(a["appels"])
         s["familles"].add(a.get("fam") or "?")
     bilan["stories_avec_numero"] = len(stories)
+    avant_kit = any(a.get("ere", "kit") == "avant-kit" for a in agents)
+
+    def groupe_de(depot: str, s: dict) -> str:
+        return depot if s["ere"] == "kit" else f"{depot}/avant-kit"
 
     par_depot = defaultdict(list)
     for (depot, _), s in stories.items():
-        par_depot[depot].append(s)
+        par_depot[groupe_de(depot, s)].append(s)
     seuils = {}
     for d, lst in par_depot.items():
         seuils[d] = {
@@ -249,9 +261,10 @@ def main() -> int:
             continue
         k = f"{depot}/{cle}"
         textes[k] = sec
-        t = seuils[depot]
+        groupe = groupe_de(depot, s)
+        t = seuils[groupe]
         lignes_csv.append({
-            "cle": k, "depot": depot, "story": cle, "debut": s["debut"], "source_epics": source, "source_spec": source_spec,
+            "cle": k, "depot": depot, "groupe": groupe, "story": cle, "debut": s["debut"], "source_epics": source, "source_spec": source_spec,
             "appels": s["appels"], "agents": s["agents"], "cout_usd": round(s["cout"], 3), "familles": "+".join(sorted(s["familles"])),
             "mediane_depot": t["mediane_appels"], "p80_cout_depot": round(t["p80_cout"], 3),
             "derapage": int(s["appels"] > o.facteur * t["mediane_appels"]),
@@ -279,11 +292,23 @@ def main() -> int:
     bilan["defaut_revue"] = {"n_lisible": len(rev), "positifs": sum(rev)}
     bilan["source_spec"] = {k: sum(1 for r in lignes_csv if r["source_spec"] == k) for k in ("epics", "fichier")}
     bilan["source_epics"] = {k: sum(1 for r in lignes_csv if r["source_epics"] == k) for k in ("avant", "jour")}
-    bilan["par_depot"] = {d: {"n": sum(1 for r in lignes_csv if r["depot"] == d), "stories_numerotees": seuils[d]["n"],
+    bilan["par_depot"] = {d: {"n": sum(1 for r in lignes_csv if r["groupe"] == d), "stories_numerotees": seuils[d]["n"],
                               "mediane_appels": seuils[d]["mediane_appels"], "p80_cout_usd": round(seuils[d]["p80_cout"], 2),
-                              "derapages": sum(r["derapage"] for r in lignes_csv if r["depot"] == d),
-                              "cout80": sum(r["cout80"] for r in lignes_csv if r["depot"] == d)}
-                          for d in sorted({r["depot"] for r in lignes_csv})}
+                              "derapages": sum(r["derapage"] for r in lignes_csv if r["groupe"] == d),
+                              "cout80": sum(r["cout80"] for r in lignes_csv if r["groupe"] == d)}
+                          for d in sorted({r["groupe"] for r in lignes_csv})}
+    if avant_kit:
+        etiquetees = {r["cle"] for r in lignes_csv}
+        deux = [(d, c) for (d, c), s in stories.items() if len(s["eres"]) > 1]
+        bilan["stories_dans_les_deux_eres"] = {"total": len(deux), "etiquetees": sum(1 for d, c in deux if f"{d}/{c}" in etiquetees),
+                                               "ere_retenue_avant_kit": sum(1 for d, c in deux if stories[(d, c)]["ere"] == "avant-kit")}
+        bilan["par_ere"] = {e: {"stories_numerotees": sum(1 for s in stories.values() if s["ere"] == e),
+                                "etiquetees": sum(1 for r in lignes_csv if r["groupe"].endswith("/avant-kit") == (e == "avant-kit")),
+                                "derapages": sum(r["derapage"] for r in lignes_csv if r["groupe"].endswith("/avant-kit") == (e == "avant-kit")),
+                                "defaut_revue_lisible": sum(1 for r in lignes_csv if r["defaut_revue"] is not None and r["groupe"].endswith("/avant-kit") == (e == "avant-kit")),
+                                "source_spec_fichier": sum(1 for r in lignes_csv if r["source_spec"] == "fichier" and r["groupe"].endswith("/avant-kit") == (e == "avant-kit")),
+                                "source_epics_jour": sum(1 for r in lignes_csv if r["source_epics"] == "jour" and r["groupe"].endswith("/avant-kit") == (e == "avant-kit"))}
+                           for e in ("kit", "avant-kit")}
     (ICI / "bilan_donnees.json").write_text(json.dumps(bilan, ensure_ascii=False, indent=1), encoding="utf-8")
     print(json.dumps(bilan, ensure_ascii=False, indent=1))
     return 0
