@@ -754,7 +754,7 @@
       "candidats": "BMAD complet (clarifier + planifier), voie légère façon OpenSpec, aucun cadrage (entrée d'epics.md seule)",
       "meilleur": "Aucun cadrage (dev-story direct) pour une petite story à l'entrée détaillée ; BMAD complet sinon",
       "strict": false,
-      "explication": "Sur 22 petites stories : sans cadrage −0,6 point de tests cachés contre BMAD complet, IC [−8,4 ; +7,4], pour 0,35 $ contre 1,32 $ (−73 %) : non-infériorité démontrée à 10 points, pas à 5, donc pas de gagnant strict. La voie légère façon OpenSpec fait moins bien que les deux (T13). Entrées brèves (6 stories) : BMAD garde un avantage de 8 à 12 points, non concluant : y garder le cadrage.",
+      "explication": "Sur 22 petites stories : sans cadrage −0,6 point de tests cachés contre BMAD complet, IC [−8,4 ; +7,4], pour 0,35 $ contre 1,32 $ (−73 %) : non-infériorité démontrée à 10 points, pas à 5, donc pas de gagnant strict. La voie légère façon OpenSpec fait moins bien que les deux (T13). Entrées brèves (6 stories) : BMAD garde un avantage de 11,5 points sur toutes les données (IC [−23 ; −1]), 8 points sur les seuls nouveaux runs (IC [−24 ; +8]) : y garder le cadrage.",
       "preuve": "T13, T13 bis"
     },
     {
