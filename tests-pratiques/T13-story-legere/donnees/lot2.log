@@ -1,0 +1,11 @@
+10 tâches
+09:30:56 l63-D1 dev: cout=0.41410480000000005 tours=31 mur=133.1s cache=6/8 ruff=0/0 hors=0
+09:33:08 u51-D1 dev: cout=0.48554480000000005 tours=29 mur=257.2s cache=4/6 ruff=0/0 hors=1
+09:35:28 l65-D1 dev: cout=0.4884487 tours=33 mur=254.6s cache=7/8 ruff=0/0 hors=1
+09:35:28 u25-D1 dev: cout=0.3160143 tours=18 mur=78.5s cache=7/13 ruff=0/0 hors=1
+09:36:22 l27-D1 dev: cout=0.27541020000000005 tours=19 mur=74.2s cache=7/9 ruff=0/0 hors=0
+09:37:33 u75-D1 dev: cout=0.21679229999999997 tours=20 mur=94.5s cache=3/8 ruff=1/0 hors=0
+09:37:56 l51-D1 dev: cout=0.2661719 tours=20 mur=81.1s cache=10/14 ruff=0/0 hors=1
+09:39:07 l23-D1 dev: cout=0.2678233 tours=19 mur=79.4s cache=7/7 ruff=0/0 hors=0
+09:42:19 u45-D1 dev: cout=0.37910119999999997 tours=23 mur=199.2s cache=3/3 ruff=0/0 hors=3
+09:42:36 w91-D1 dev: cout=0.2727787 tours=26 mur=121.8s cache=2/6 ruff=-1/-1 hors=2

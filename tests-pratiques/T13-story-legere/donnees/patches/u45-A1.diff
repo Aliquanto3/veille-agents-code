@@ -1,0 +1,277 @@
+diff --git a/src/usine/domaine/prevision/risque.py b/src/usine/domaine/prevision/risque.py
+index 6955135..58bcced 100644
+--- a/src/usine/domaine/prevision/risque.py
++++ b/src/usine/domaine/prevision/risque.py
+@@ -9,8 +9,9 @@ de l'Entité finissant à la Date d'arrêté D, ajuste une droite des moindres c
+ 
+ et la projette de 1 à `horizon` Jours ouvrés après D. Le premier h où p(h) déclenche la règle
+ rouge de la Grille donne un `RisqueEntreeRouge` (franchissement estimé à D + h Jours ouvrés),
+-rendu avec la valeur projetée p(h). Un indicateur inactif, sans seuil rouge, non évaluable sur
+-un Jour ouvré de la fenêtre ou à l'historique d'un seul Jour ouvré est écarté avec son motif.
++publié avec la valeur projetée p(h) (`valeur_projetee_*`, fraction réduite). Un indicateur
++inactif, sans seuil rouge, non évaluable sur un Jour ouvré de la fenêtre ou à l'historique d'un
++seul Jour ouvré est écarté avec son motif.
+ 
+ Ce n'est pas la Baseline (vélocité nette sur `SerieStock`, `baseline`) : les primitives
+ communes (avance en Jours ouvrés, test de seuil) viennent de `commun` (AD-18).
+@@ -59,7 +60,10 @@ class ParametresRisque:
+ 
+ @dataclass(frozen=True)
+ class RisqueProjete:
+-    """Risque d'entrée en rouge et valeur projetée au franchissement (hors contrat gelé)."""
++    """Risque d'entrée en rouge et valeur projetée p(h) au franchissement.
++
++    `valeur_projetee` est aussi reportée, en fraction réduite, dans `risque.valeur_projetee_*`.
++    """
+ 
+     risque: RisqueEntreeRouge
+     valeur_projetee: Fraction
+@@ -159,6 +163,8 @@ def risques_entree_rouge(
+                 seuil_numerateur=seuil.numerator,
+                 seuil_denominateur=seuil.denominator,
+                 version_grille=meteo.version_grille,
++                valeur_projetee_numerateur=projetee.numerator,
++                valeur_projetee_denominateur=projetee.denominator,
+             )
+             risques.append(RisqueProjete(risque=risque, valeur_projetee=projetee))
+ 
+diff --git a/tests/unit/domaine/prevision/test_recette_scenarios.py b/tests/unit/domaine/prevision/test_recette_scenarios.py
+new file mode 100644
+index 0000000..ff5af5c
+--- /dev/null
++++ b/tests/unit/domaine/prevision/test_recette_scenarios.py
+@@ -0,0 +1,211 @@
++"""Recette de la Prévision sur les Scénarios de démo (Story 4.5, SM-6).
++
++Au dernier Jour ouvré de l'historique, ENT-A sort du rouge dans l'horizon, ENT-B n'en sort pas
++et ENT-C porte un Risque d'entrée en rouge IND-4. Le Passage est exécuté par la Chaîne
++(`executer_passage`, étapes `instantanes`, `meteo` et `prevision` réelles) et les attendus sont
++lus dans le `previsions.json` publié. Un écart se corrige dans le générateur, jamais dans la
++Baseline ni dans la Grille (SM-C3).
++"""
++
++from datetime import date, timedelta
++from fractions import Fraction
++from pathlib import Path
++
++import polars as pl
++import pytest
++
++from tests.doublures.source_en_memoire import SourceEnMemoire
++from tests.unit.chaine.environnement import horloge_pas_a_pas
++from tests.unit.generateur.test_calage import (
++    GRAINE,
++    GRAINES_LENTES,
++    GRILLE_LIVREE,
++    PROGRAMME_LIVRE,
++    RACINE,
++    _corpus_versionne,
++)
++from usine.chaine.ecrivain import EcrivainPassage
++from usine.chaine.etapes import (
++    EtapeBouchon,
++    EtapeInstantanes,
++    EtapeMeteo,
++    EtapePrevision,
++    EtapeSautee,
++    prevision_du_passage,
++)
++from usine.chaine.execution import executer_passage
++from usine.composition import ETAPES_LLM
++from usine.config import charger_yaml
++from usine.consultation.passage import ConsultationPassage
++from usine.contrats.calendrier import jours_ouvres
++from usine.contrats.config import ConfigChaine, ConfigProgramme, ConfigUsine, GrilleMeteo
++from usine.contrats.meteo import CodeIndicateur, Couleur
++from usine.contrats.passage import DonneesPassage, Etape
++from usine.contrats.prevision import ContenuPrevisions, StatutPrevision
++from usine.contrats.versions import version_donnees, version_grille
++from usine.domaine.meteo import verifier_grille
++from usine.domaine.prevision.baseline import ParametresBaseline
++from usine.domaine.prevision.commun import avancer, declenche
++from usine.domaine.prevision.risque import ParametresRisque, risques_entree_rouge
++from usine.generateur.journal import generer
++from usine.ports.etape import Etape as PortEtape
++
++DATE_LUNDI = date(2026, 10, 12)
++DATE_MERCREDI = date(2026, 10, 14)
++CHAINE_LIVREE = RACINE / "config" / "chaine.yaml"
++
++
++def _executer(
++    graine: int, date_generation: date, tmp_path: Path
++) -> tuple[date, date, ConsultationPassage]:
++    """Génère le Journal, exécute le Passage à D ; rend D, le premier jour et le Passage publié."""
++    programme = charger_yaml(PROGRAMME_LIVRE, ConfigProgramme)
++    chaine = charger_yaml(CHAINE_LIVREE, ConfigChaine)
++    grille = verifier_grille(charger_yaml(GRILLE_LIVREE, GrilleMeteo), str(GRILLE_LIVREE))
++    generation = generer(programme, graine, date_generation, corpus=_corpus_versionne())
++    d = generation.entete.date_injection
++    premier_jour = generation.entete.ancrage_semaines
++    entites = [e.code for e in programme.entites]
++    empreinte_grille = version_grille(GRILLE_LIVREE.read_bytes())
++    empreinte_donnees = version_donnees(f"{graine}-{date_generation}".encode(), None)
++    horloge = horloge_pas_a_pas()
++    registre: dict[Etape, PortEtape] = {
++        Etape.extraction: EtapeBouchon(),
++        Etape.instantanes: EtapeInstantanes(SourceEnMemoire(generation.evenements), premier_jour),
++        Etape.kpi: EtapeBouchon(),
++        Etape.meteo: EtapeMeteo(
++            grille,
++            empreinte_grille,
++            entites,
++            premier_jour,
++            programme,
++            decalage=chaine.decalage_comparaison,
++        ),
++        Etape.prevision: EtapePrevision(
++            prevision_du_passage(
++                grille,
++                entites,
++                premier_jour,
++                baseline=ParametresBaseline(**chaine.prevision.baseline.model_dump()),
++                risque=ParametresRisque(**chaine.prevision.risque.model_dump()),
++            ),
++            empreinte_donnees,
++            horloge,
++        ),
++        Etape.rendu: EtapeBouchon(),
++    }
++    registre.update({etape: EtapeSautee() for etape in ETAPES_LLM})
++    racine_sorties = tmp_path / "sorties"
++    ecrivain = EcrivainPassage(racine_sorties, horloge)
++    compteur = iter(range(1000))
++    executer_passage(
++        registre,
++        ConfigUsine(chaine=chaine, programme=programme, grille_meteo=grille),
++        d,
++        ecrivain,
++        lambda repertoire: ConsultationPassage(
++            repertoire, racine_passages=racine_sorties / "passages", date_arrete=d
++        ),
++        horloge,
++        lambda: format(next(compteur), "06x"),
++        DonneesPassage("journal", empreinte_grille, empreinte_donnees),
++    )
++    publie = ecrivain.repertoire_publie
++    assert publie is not None
++    return d, premier_jour, ConsultationPassage(publie, racine_passages=racine_sorties / "passages")
++
++
++def _passage(graine: int, date_generation: date, tmp_path: Path) -> tuple[date, ContenuPrevisions]:
++    """D et le contenu de `previsions.json` publié par le Passage."""
++    d, _, consultation = _executer(graine, date_generation, tmp_path)
++    return d, ContenuPrevisions(
++        previsions=consultation.previsions(d), risques=consultation.risques(d)
++    )
++
++
++def _verifier_sm6(d: date, contenu: ContenuPrevisions) -> None:
++    """Attendus de SM-6 à D ; chaque échec nomme l'Entité, D et l'observé."""
++    par_entite = {p.entite: p for p in contenu.previsions if p.date_arrete == d}
++    a, b = par_entite.get("ENT-A"), par_entite.get("ENT-B")
++    assert a is not None, f"ENT-A le {d} : aucune Prévision (Entités : {sorted(par_entite)})"
++    assert a.statut is StatutPrevision.sortie_projetee, f"ENT-A le {d} : statut {a.statut}"
++    limite = avancer(d, ParametresBaseline().horizon)
++    assert a.date_sortie_estimee is not None and a.date_sortie_estimee <= limite, (
++        f"ENT-A le {d} : sortie estimée {a.date_sortie_estimee}, horizon {limite}"
++    )
++    assert a.regles_non_projetables == (), f"ENT-A le {d} : {a.regles_non_projetables}"
++    assert b is not None, f"ENT-B le {d} : aucune Prévision (Entités : {sorted(par_entite)})"
++    assert b.statut is StatutPrevision.pas_de_sortie_projetee, f"ENT-B le {d} : statut {b.statut}"
++    assert b.regles_non_projetables == (), f"ENT-B le {d} : {b.regles_non_projetables}"
++    assert "ENT-C" not in par_entite, f"ENT-C le {d} : Prévision inattendue (Entité non rouge)"
++    observes = sorted(
++        r.indicateur.value for r in contenu.risques if r.entite == "ENT-C" and r.date_arrete == d
++    )
++    assert CodeIndicateur.ind_4.value in observes, (
++        f"ENT-C le {d} : aucun Risque IND-4 (observés : {observes})"
++    )
++
++
++def test_sm6_generation_lundi(tmp_path: Path) -> None:
++    d, contenu = _passage(GRAINE, DATE_LUNDI, tmp_path)
++    assert d == date(2026, 10, 9)
++    _verifier_sm6(d, contenu)
++
++
++def test_sm6_generation_mercredi(tmp_path: Path) -> None:
++    d, contenu = _passage(GRAINE, DATE_MERCREDI, tmp_path)
++    assert d == date(2026, 10, 13)
++    _verifier_sm6(d, contenu)
++
++
++@pytest.mark.lent
++@pytest.mark.parametrize("graine", GRAINES_LENTES)
++def test_sm6_autres_graines(tmp_path: Path, graine: int) -> None:
++    d, contenu = _passage(graine, DATE_LUNDI, tmp_path)
++    _verifier_sm6(d, contenu)
++
++
++@pytest.mark.lent
++@pytest.mark.parametrize(
++    "date_generation",
++    [DATE_LUNDI + timedelta(days=n) for n in (1, 3, 4, 5)],
++    ids=["mardi", "jeudi", "vendredi", "samedi"],
++)
++def test_sm6_dates_partielles(tmp_path: Path, date_generation: date) -> None:
++    d, contenu = _passage(GRAINE, date_generation, tmp_path)
++    _verifier_sm6(d, contenu)
++
++
++def test_valeur_projetee_publiee_depuis_le_domaine(tmp_path: Path) -> None:
++    """AC 3 : chaque Risque de C porte `valeur_projetee_*`, égale au calcul de `risque.py`."""
++    d, premier_jour, consultation = _executer(GRAINE, DATE_LUNDI, tmp_path)
++    grille = charger_yaml(GRILLE_LIVREE, GrilleMeteo)
++    publies = [r for r in consultation.risques(d) if r.entite == "ENT-C"]
++    assert publies, f"ENT-C le {d} : aucun Risque publié"
++    tables = pl.concat(
++        [consultation.indicateurs(jour) for jour in jours_ouvres(premier_jour, d)],
++        how="vertical",
++    )
++    meteo_c = next(m for m in consultation.meteo(d) if m.entite == "ENT-C")
++    attendus = {
++        p.risque.indicateur: p
++        for p in risques_entree_rouge(
++            tables.filter(pl.col("entite") == "ENT-C"), meteo_c, grille
++        ).risques
++    }
++    for r in publies:
++        assert r.valeur_projetee_numerateur is not None, f"ENT-C {r.indicateur} le {d}"
++        assert r.valeur_projetee_denominateur is not None, f"ENT-C {r.indicateur} le {d}"
++        valeur = Fraction(r.valeur_projetee_numerateur, r.valeur_projetee_denominateur)
++        assert valeur == attendus[r.indicateur].valeur_projetee
++        operateur, seuil = grille.indicateurs[r.indicateur].seuils[Couleur.rouge]
++        assert declenche(valeur, operateur, seuil), (
++            f"ENT-C {r.indicateur} le {d} : {valeur} ne déclenche pas {operateur} {seuil}"
++        )
++
++
++def test_parametres_de_chaine_egaux_aux_defauts() -> None:
++    """SM-C3 : `chaine.yaml` ne règle pas la Baseline pour la recette."""
++    chaine = charger_yaml(CHAINE_LIVREE, ConfigChaine)
++    assert ParametresBaseline(**chaine.prevision.baseline.model_dump()) == ParametresBaseline()
++    assert ParametresRisque(**chaine.prevision.risque.model_dump()) == ParametresRisque()
+diff --git a/tests/unit/domaine/prevision/test_risque.py b/tests/unit/domaine/prevision/test_risque.py
+index ea7d0aa..ef5c194 100644
+--- a/tests/unit/domaine/prevision/test_risque.py
++++ b/tests/unit/domaine/prevision/test_risque.py
+@@ -157,8 +157,18 @@ def test_franchissement_ind_3_et_tendance_non_lineaire_ind_1() -> None:
+         seuil_numerateur=20,
+         seuil_denominateur=1,
+         version_grille=VERSION_GRILLE,
++        valeur_projetee_numerateur=20,
++        valeur_projetee_denominateur=1,
+     )
+     assert ind_3.valeur_projetee == Fraction(20)
++    for projete in resultat.risques:
++        assert projete.risque.valeur_projetee_numerateur is not None
++        assert projete.risque.valeur_projetee_denominateur is not None
++        publiee = Fraction(
++            projete.risque.valeur_projetee_numerateur,
++            projete.risque.valeur_projetee_denominateur,
++        )
++        assert publiee == projete.valeur_projetee
+ 
+     assert ind_1.risque.date_franchissement_estimee == date(2026, 10, 16)
+     assert ind_1.valeur_projetee == Fraction(101, 33)

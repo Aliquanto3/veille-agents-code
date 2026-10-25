@@ -236,12 +236,14 @@ Ajouté le 2026-10-25. Les protocoles, données brutes et scripts sont dans `tes
 | T9, T9 élargi | Jev et autres modèles pour prédire le dérapage d'une story (226 stories) | AUC 0,61 à 0,65, comme la longueur de la spec | Rien à brancher |
 | T10 | Hypothesis contre tests d'exemples (75 survivants de mutation) | Exemples 53 %, Hypothesis 45 %, coût égal | Rien à ajouter ; demander explicitement le renforcement des tests |
 | T10b | Mutation guidée : survivants montrés à l'agent | 134/134 non équivalents tués (59 % sans les montrer), 0,22 $ par story, 35 équivalents sur 35 bien reconnus | Étape optionnelle de revue : mutation puis tests écrits par un agent |
+| T11 | Réécriture de textes : clarity, humanizer, les deux enchaînés (4 textes, 32 réécritures) | Aucun fait inventé, chiffres intacts ; textes de départ trop peu chargés en tics pour départager ; enchaînement +0,31 $ sans gain | En attente de la note à l'aveugle d'Anaël |
+| T13 | Cadrage d'une petite story : BMAD complet, voie légère façon OpenSpec, aucun cadrage (10 stories, 3 dépôts) | Voie légère −46 % de coût (0,74 $ contre 1,38 $) mais −10 points aux tests cachés (62 % contre 72 %, IC [−19 ; −3]) ; sans cadrage : 70 % pour 0,34 $ (bras ajouté en cours de test) | BMAD reste la voie par défaut ; pas de voie légère ; « sans cadrage » à confirmer (T13 bis) avant de toucher au kit |
 
 **Ce que les tests changent aux recommandations de la section 6.**
 - **Confirmé** : Sonnet pour implémenter, Opus en recours (T6) ; le contexte fixe est le premier poste (T1) ; les outils de compression ne valent rien sur ce profil (T1) ; aucun outil tiers de navigateur ou de design ne bat l'option la plus simple (T7) ; le local ne remplace pas Haiku (T8).
-- **Renversé** : la protection des tests par phase (6.3) n'est pas nécessaire sur Claude 5.5 (T4 bis) ; le second avis d'une autre famille (6.3) n'apporte pas assez (T5, T5 élargi) ; la porte empirique (6.3) ne filtre rien (T5) ; `/advisor` (T6) ; le property-based testing (constat 3 du résumé) n'aide pas un agent à mieux tester que des exemples (T10).
+- **Renversé** : la protection des tests par phase (6.3) n'est pas nécessaire sur Claude 5.5 (T4 bis) ; le second avis d'une autre famille (6.3) n'apporte pas assez (T5, T5 élargi) ; la porte empirique (6.3) ne filtre rien (T5) ; `/advisor` (T6) ; le property-based testing (constat 3 du résumé) n'aide pas un agent à mieux tester que des exemples (T10) ; une voie « story légère » façon OpenSpec à côté de BMAD (évoquée par le bilan) coûte 46 % de moins mais réussit 10 points de moins aux tests cachés (T13).
 - **Nouveau** : la mutation n'est pas seulement un diagnostic, elle sert de consigne : montrer les survivants à l'agent bouche tous les trous non équivalents pour quelques centimes (T10b). C'est le gain le plus net de la série.
-- **Reste ouvert** : la note à l'aveugle du design (T7) ; les prédictions de dérapage (T9, il faudrait ~480 stories) ; voir la partie « Après les tests » de la page HTML pour le bilan outil par outil.
+- **Reste ouvert** : les notes à l'aveugle du design (T7) et de l'écriture (T11) ; le cadrage minimal des petites stories (T13 bis). Les prédictions de dérapage sont conclues (T9 élargi, 339 stories : rien à brancher) ; voir la partie « Après les tests » de la page HTML pour le bilan outil par outil.
 
 ## 8. Questions ouvertes
 

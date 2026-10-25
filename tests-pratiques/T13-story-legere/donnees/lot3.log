@@ -1,0 +1,5 @@
+2 tâches
+09:46:59 l51-A2 cadrage: cout=0.827565 tours=24 mur=145.7s chars=10176 vide=False
+09:46:59 l51-A2 dev: cout=0.23287689999999997 tours=18 mur=82.7s cache=9/14 ruff=0/0 hors=0
+09:46:59 l51-B2 cadrage: cout=0.35061299999999995 tours=13 mur=61.5s chars=7095 vide=False
+09:46:59 l51-B2 dev: cout=0.2244556 tours=13 mur=77.0s cache=6/14 ruff=11/2 hors=0

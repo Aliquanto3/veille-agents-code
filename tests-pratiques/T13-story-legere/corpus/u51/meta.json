@@ -1,0 +1,38 @@
+{
+  "id": "u51",
+  "repo": "usine-migration-jira-demo",
+  "pkg": "usine",
+  "label": "5.1",
+  "commit": "00b07955a9bc3f13d673d6ad1e12e6fee1c68946",
+  "base": "affbd8fecd6e9fc1848fbddbf0aa5ef5cc4ccd06",
+  "fichiers_commit": [
+    "_bmad-output/implementation-artifacts/deferred-work.md",
+    "_bmad-output/implementation-artifacts/epic-5-context.md",
+    "_bmad-output/implementation-artifacts/spec-5-1-etapes-deterministes-completes-et-passage-autoportant.md",
+    "src/usine/chaine/etapes.py",
+    "src/usine/composition.py",
+    "tests/unit/chaine/environnement.py",
+    "tests/unit/chaine/test_etapes.py",
+    "tests/unit/chaine/test_execution.py",
+    "tests/unit/consultation/test_passage.py"
+  ],
+  "tests_caches": [
+    "tests/unit/chaine/test_etapes.py"
+  ],
+  "tests_executes": [
+    "tests/unit/chaine/test_etapes.py"
+  ],
+  "spec_origine": "_bmad-output/implementation-artifacts/spec-5-1-etapes-deterministes-completes-et-passage-autoportant.md",
+  "src_modifies": [
+    "src/usine/chaine/etapes.py",
+    "src/usine/composition.py"
+  ],
+  "c_disponible": true,
+  "total_ref": 6,
+  "base_passed": 0,
+  "base_failed": 1,
+  "duree_ref_s": 12.3,
+  "tests_appui": [
+    "tests/unit/chaine/environnement.py"
+  ]
+}

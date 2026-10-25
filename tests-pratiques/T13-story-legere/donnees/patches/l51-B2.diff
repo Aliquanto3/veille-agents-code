@@ -1,0 +1,277 @@
+diff --git a/src/wavelibrarian/scoring/calibration.py b/src/wavelibrarian/scoring/calibration.py
+new file mode 100644
+index 0000000..c773337
+--- /dev/null
++++ b/src/wavelibrarian/scoring/calibration.py
+@@ -0,0 +1,96 @@
++"""Annotations humaines : chargement, validation et rapprochement avec les Réponses (§4.6)."""
++
++import json
++import logging
++from pathlib import Path
++from typing import Any, cast
++
++from wavelibrarian.config.defaults import charger_yaml
++from wavelibrarian.core.errors import ConfigError
++from wavelibrarian.core.types import JUDGED_CRITERIA, Criterion
++
++logger = logging.getLogger(__name__)
++
++Index = dict[tuple[str, str, Criterion], bool]
++
++
++def _verdict(valeur: Any, chemin: str, fichier: Path) -> bool:
++    if isinstance(valeur, bool):
++        return valeur
++    if valeur in ("yes", "no"):
++        return valeur == "yes"
++    raise ConfigError(chemin, f"verdict invalide dans {fichier.name} : {valeur!r} (attendu : yes ou no)")
++
++
++def _charger_fichier(fichier: Path, index: Index) -> None:
++    doc = charger_yaml(fichier)
++    if not isinstance(doc, dict):
++        raise ConfigError("annotator", f"{fichier.name} : document YAML attendu (annotator, annotations)")
++    annotateur = doc.get("annotator")
++    if annotateur != fichier.stem:
++        raise ConfigError(
++            "annotator",
++            f"{fichier.name} : l'annotateur {annotateur!r} diffère du nom du fichier {fichier.stem!r}",
++        )
++    annotations = doc.get("annotations") or []
++    if not isinstance(annotations, list):
++        raise ConfigError("annotations", f"{fichier.name} : liste attendue")
++    for i, item in enumerate(annotations):
++        base = f"annotations[{i}]"
++        if not isinstance(item, dict):
++            raise ConfigError(base, f"{fichier.name} : annotation attendue sous forme de mapping")
++        answer_id = item.get("answer_id")
++        if not isinstance(answer_id, str) or not answer_id:
++            raise ConfigError(f"{base}.answer_id", f"{fichier.name} : answer_id manquant ou invalide")
++        critere = item.get("criterion")
++        if critere not in JUDGED_CRITERIA:
++            raise ConfigError(
++                f"{base}.criterion",
++                f"{fichier.name} : Critère invalide {critere!r} (attendu : {', '.join(JUDGED_CRITERIA)})",
++            )
++        verdict = _verdict(item.get("verdict"), f"{base}.verdict", fichier)
++        cle = (annotateur, answer_id, cast(Criterion, critere))
++        if cle in index:
++            raise ConfigError(
++                f"{base}.answer_id",
++                f"{fichier.name} : doublon pour {answer_id!r} et le Critère {critere!r}",
++            )
++        index[cle] = verdict
++
++
++def charger_dossier(dossier: Path) -> Index:
++    """Charge les `*.yaml` du dossier (ordre alphabétique), indexés par (annotateur, answer_id, Critère)."""
++    index: Index = {}
++    for fichier in sorted(dossier.glob("*.yaml")):
++        _charger_fichier(fichier, index)
++    return index
++
++
++def answer_ids_de_answers_jsonl(chemin: Path) -> set[str]:
++    """Lit le champ `answer_id` de chaque ligne non vide d'un `answers.jsonl`."""
++    ids: set[str] = set()
++    try:
++        texte = chemin.read_text(encoding="utf-8")
++    except OSError as exc:
++        raise ConfigError(str(chemin), f"fichier illisible : {exc}") from exc
++    for n, ligne in enumerate(texte.splitlines(), start=1):
++        if not ligne.strip():
++            continue
++        chemin_erreur = f"answers.jsonl:{n}"
++        try:
++            doc = json.loads(ligne)
++        except json.JSONDecodeError as exc:
++            raise ConfigError(chemin_erreur, f"ligne illisible : {exc}") from exc
++        if not isinstance(doc, dict) or not isinstance(doc.get("answer_id"), str):
++            raise ConfigError(chemin_erreur, "ligne sans champ answer_id textuel")
++        ids.add(doc["answer_id"])
++    return ids
++
++
++def rapprocher(annotations: Index, answer_ids: set[str]) -> tuple[Index, list[str]]:
++    """Filtre les annotations sur les `answer_id` connus ; renvoie aussi les absents (triés, uniques)."""
++    filtre = {cle: v for cle, v in annotations.items() if cle[1] in answer_ids}
++    absents = sorted({cle[1] for cle in annotations if cle[1] not in answer_ids})
++    if absents:
++        logger.warning("annotations ignorées, answer_id absents d'answers.jsonl : %s", ", ".join(absents))
++    return filtre, absents
+diff --git a/src/wavelibrarian/stats/kappa.py b/src/wavelibrarian/stats/kappa.py
+new file mode 100644
+index 0000000..831e1cb
+--- /dev/null
++++ b/src/wavelibrarian/stats/kappa.py
+@@ -0,0 +1,21 @@
++"""Kappa de Cohen binaire (fonction pure, sans dépendance)."""
++
++from collections.abc import Sequence
++
++
++def cohen_kappa(a: Sequence[bool], b: Sequence[bool]) -> float | None:
++    """κ = (po − pe) / (1 − pe) ; `None` si le kappa est indéfini (pe = 1 ou vecteurs vides)."""
++    if len(a) != len(b):
++        raise ValueError(f"vecteurs de longueurs différentes : {len(a)} et {len(b)}")
++    n = len(a)
++    if n == 0:
++        return None
++    oui_oui = sum(1 for x, y in zip(a, b, strict=True) if x and y)
++    non_non = sum(1 for x, y in zip(a, b, strict=True) if not x and not y)
++    po = (oui_oui + non_non) / n
++    pa = sum(1 for x in a if x) / n
++    pb = sum(1 for y in b if y) / n
++    pe = pa * pb + (1 - pa) * (1 - pb)
++    if pe == 1:
++        return None
++    return (po - pe) / (1 - pe)
+diff --git a/tests/unit/scoring/test_calibration.py b/tests/unit/scoring/test_calibration.py
+new file mode 100644
+index 0000000..9a3d32a
+--- /dev/null
++++ b/tests/unit/scoring/test_calibration.py
+@@ -0,0 +1,110 @@
++import json
++import logging
++from pathlib import Path
++
++import pytest
++import yaml
++
++from wavelibrarian.core.errors import ConfigError
++from wavelibrarian.scoring.calibration import (
++    answer_ids_de_answers_jsonl,
++    charger_dossier,
++    rapprocher,
++)
++
++RUN = "20261018-031500-a1b2c3/naive-haiku/standard/all"
++
++
++def _ecrire(dossier: Path, nom: str, annotations: list[dict], annotateur: str | None = None) -> None:
++    doc = {"annotator": annotateur or nom, "annotations": annotations}
++    (dossier / f"{nom}.yaml").write_text(yaml.safe_dump(doc), encoding="utf-8")
++
++
++def _ann(q: str = "q-001", critere: str = "correctness", verdict="yes", phase: str = "base") -> dict:
++    return {"answer_id": f"{RUN}/{phase}/{q}", "criterion": critere, "verdict": verdict, "note": ""}
++
++
++def test_deux_annotateurs(tmp_path):
++    _ecrire(tmp_path, "anael", [_ann(verdict="yes"), _ann(critere="faithfulness", verdict="no")])
++    _ecrire(tmp_path, "collegue", [_ann(verdict=False)])
++    index = charger_dossier(tmp_path)
++    assert index == {
++        ("anael", f"{RUN}/base/q-001", "correctness"): True,
++        ("anael", f"{RUN}/base/q-001", "faithfulness"): False,
++        ("collegue", f"{RUN}/base/q-001", "correctness"): False,
++    }
++
++
++def test_yaml_yes_non_quote(tmp_path):
++    (tmp_path / "anael.yaml").write_text(
++        "annotator: anael\nannotations:\n"
++        "  - answer_id: a\n    criterion: correctness\n    verdict: yes\n"
++        "  - answer_id: b\n    criterion: correctness\n    verdict: no\n",
++        encoding="utf-8",
++    )
++    index = charger_dossier(tmp_path)
++    assert index[("anael", "a", "correctness")] is True
++    assert index[("anael", "b", "correctness")] is False
++
++
++def test_dossier_vide(tmp_path):
++    assert charger_dossier(tmp_path) == {}
++
++
++def test_critere_hors_liste(tmp_path):
++    _ecrire(tmp_path, "anael", [_ann("q-1"), _ann("q-2"), _ann("q-3"), _ann(critere="citation_correctness")])
++    with pytest.raises(ConfigError) as exc:
++        charger_dossier(tmp_path)
++    assert exc.value.path == "annotations[3].criterion"
++
++
++def test_verdict_invalide(tmp_path):
++    _ecrire(tmp_path, "anael", [_ann(verdict="peut-être")])
++    with pytest.raises(ConfigError) as exc:
++        charger_dossier(tmp_path)
++    assert exc.value.path == "annotations[0].verdict"
++
++
++def test_doublon(tmp_path):
++    _ecrire(tmp_path, "anael", [_ann(), _ann(critere="completeness"), _ann(verdict="no")])
++    with pytest.raises(ConfigError) as exc:
++        charger_dossier(tmp_path)
++    assert exc.value.path == "annotations[2].answer_id"
++
++
++def test_annotateur_different_du_fichier(tmp_path):
++    _ecrire(tmp_path, "anael", [_ann()], annotateur="autre")
++    with pytest.raises(ConfigError) as exc:
++        charger_dossier(tmp_path)
++    assert exc.value.path == "annotator"
++
++
++def test_answer_ids_de_answers_jsonl(tmp_path):
++    chemin = tmp_path / "answers.jsonl"
++    chemin.write_text(
++        json.dumps({"answer_id": "a"}) + "\n\n" + json.dumps({"answer_id": "b", "x": 1}) + "\n",
++        encoding="utf-8",
++    )
++    assert answer_ids_de_answers_jsonl(chemin) == {"a", "b"}
++
++
++def test_answers_jsonl_ligne_illisible(tmp_path):
++    chemin = tmp_path / "answers.jsonl"
++    chemin.write_text(json.dumps({"answer_id": "a"}) + "\n\n{pas du json\n", encoding="utf-8")
++    with pytest.raises(ConfigError) as exc:
++        answer_ids_de_answers_jsonl(chemin)
++    assert exc.value.path == "answers.jsonl:3"
++
++
++def test_rapprocher_orpheline(tmp_path, caplog):
++    _ecrire(
++        tmp_path,
++        "anael",
++        [_ann(), _ann(phase="after_update"), _ann(critere="completeness", phase="after_update")],
++    )
++    index = charger_dossier(tmp_path)
++    with caplog.at_level(logging.WARNING):
++        filtre, absents = rapprocher(index, {f"{RUN}/base/q-001"})
++    assert list(filtre) == [("anael", f"{RUN}/base/q-001", "correctness")]
++    assert absents == [f"{RUN}/after_update/q-001"]
++    assert f"{RUN}/after_update/q-001" in caplog.text
+diff --git a/tests/unit/stats/test_kappa.py b/tests/unit/stats/test_kappa.py
+new file mode 100644
+index 0000000..df6989a
+--- /dev/null
++++ b/tests/unit/stats/test_kappa.py
+@@ -0,0 +1,26 @@
++import pytest
++
++from wavelibrarian.stats.kappa import cohen_kappa
++
++
++def test_table_connue():
++    a = [True] * 20 + [True] * 5 + [False] * 10 + [False] * 15
++    b = [True] * 20 + [False] * 5 + [True] * 10 + [False] * 15
++    # po = 35/50 = 0,7 ; pa = 0,5 ; pb = 0,6 ; pe = 0,3 + 0,2 = 0,5 ; κ = 0,2 / 0,5
++    assert abs(cohen_kappa(a, b) - 0.4) < 1e-12
++
++
++def test_vecteurs_identiques():
++    v = [True, False, True, True, False]
++    assert cohen_kappa(v, list(v)) == 1
++
++
++def test_une_seule_classe_ou_vide():
++    assert cohen_kappa([True] * 4, [True] * 4) is None
++    assert cohen_kappa([False] * 4, [False] * 4) is None
++    assert cohen_kappa([], []) is None
++
++
++def test_longueurs_differentes():
++    with pytest.raises(ValueError, match="longueurs"):
++        cohen_kappa([True] * 3, [True] * 4)

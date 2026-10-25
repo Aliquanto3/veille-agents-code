@@ -1,0 +1,33 @@
+{
+  "id": "l51",
+  "repo": "wavelibrarian",
+  "pkg": "wavelibrarian",
+  "label": "5.1",
+  "commit": "2229b27c5d8329734074de23688825e3a57bc919",
+  "base": "ddd19521a84362d134380ee35c4fdbffb4435f86",
+  "fichiers_commit": [
+    "_bmad-output/implementation-artifacts/5-1-annotations-humaines-et-kappa-de-cohen.md",
+    "src/wavelibrarian/scoring/calibration.py",
+    "src/wavelibrarian/stats/kappa.py",
+    "tests/unit/scoring/test_calibration.py",
+    "tests/unit/stats/test_kappa.py"
+  ],
+  "tests_caches": [
+    "tests/unit/scoring/test_calibration.py",
+    "tests/unit/stats/test_kappa.py"
+  ],
+  "tests_executes": [
+    "tests/unit/scoring/test_calibration.py",
+    "tests/unit/stats/test_kappa.py"
+  ],
+  "spec_origine": "_bmad-output/implementation-artifacts/5-1-annotations-humaines-et-kappa-de-cohen.md",
+  "src_modifies": [
+    "src/wavelibrarian/scoring/calibration.py",
+    "src/wavelibrarian/stats/kappa.py"
+  ],
+  "c_disponible": true,
+  "total_ref": 14,
+  "base_passed": 0,
+  "base_failed": 2,
+  "duree_ref_s": 4.2
+}

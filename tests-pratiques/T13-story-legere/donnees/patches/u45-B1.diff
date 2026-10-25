@@ -1,0 +1,196 @@
+diff --git a/src/usine/domaine/prevision/risque.py b/src/usine/domaine/prevision/risque.py
+index 6955135..4b9d075 100644
+--- a/src/usine/domaine/prevision/risque.py
++++ b/src/usine/domaine/prevision/risque.py
+@@ -158,6 +158,8 @@ def risques_entree_rouge(
+                 denominateur=courant.denominateur,
+                 seuil_numerateur=seuil.numerator,
+                 seuil_denominateur=seuil.denominator,
++                valeur_projetee_numerateur=projetee.numerator,
++                valeur_projetee_denominateur=projetee.denominator,
+                 version_grille=meteo.version_grille,
+             )
+             risques.append(RisqueProjete(risque=risque, valeur_projetee=projetee))
+diff --git a/tests/unit/chaine/test_recette_prevision.py b/tests/unit/chaine/test_recette_prevision.py
+new file mode 100644
+index 0000000..c2fb676
+--- /dev/null
++++ b/tests/unit/chaine/test_recette_prevision.py
+@@ -0,0 +1,147 @@
++"""Recette de la Prévision sur les Scénarios de démo (story 4.5, FR-20, FR-21, SM-6).
++
++Journal généré (graine 42), Grille et Programme livrés, paramètres par défaut : au dernier Jour
++ouvré, A sort dans l'horizon, B ne sort pas et C est signalée. Un écart se corrige dans le
++générateur, jamais par un réglage de la Baseline, de la Grille ou des paramètres (SM-C3).
++"""
++
++from dataclasses import dataclass
++from datetime import date
++from typing import cast
++
++import polars as pl
++import pytest
++
++from tests.unit.chaine.environnement import DATE_GENERATION, RACINE_DEPOT
++from usine.chaine.etapes import prevision_du_passage
++from usine.config import charger_yaml
++from usine.contrats.calendrier import jours_ouvres
++from usine.contrats.config import ConfigChaine, ConfigProgramme, ConfigUsine, GrilleMeteo
++from usine.contrats.meteo import Couleur, MeteoEntite
++from usine.contrats.passage import ContextePassage
++from usine.contrats.prevision import ContenuPrevisions, StatutPrevision
++from usine.domaine.instantanes import tickets_etats
++from usine.domaine.meteo import indicateurs, meteo
++from usine.domaine.prevision.baseline import ParametresBaseline
++from usine.domaine.prevision.commun import avancer
++from usine.generateur.corpus import CHEMIN_CORPUS, charger_corpus
++from usine.generateur.journal import generer
++from usine.generateur.scenarios import SCENARIOS_PAR_DEFAUT
++from usine.ports.consultation import Consultation
++
++GRAINE = 42
++PASSAGE_ID = "20261012T073000Z-abc123"
++
++
++class _ConsultationPrevision:
++    """Consultation réduite à `tickets_etats`, `indicateurs` et `meteo` d'un jour."""
++
++    def __init__(
++        self, etats: pl.DataFrame, tables: pl.DataFrame, meteos: tuple[MeteoEntite, ...]
++    ) -> None:
++        self._etats = etats
++        self._tables = tables
++        self._meteos = meteos
++
++    def tickets_etats(self, date_arrete: date | None = None) -> pl.DataFrame:
++        return self._etats.filter(pl.col("date") == date_arrete)
++
++    def indicateurs(
++        self, date_arrete: date | None = None, entite: str | None = None
++    ) -> pl.DataFrame:
++        return self._tables.filter(pl.col("date") == date_arrete)
++
++    def meteo(
++        self, date_arrete: date | None = None, entite: str | None = None
++    ) -> tuple[MeteoEntite, ...]:
++        return tuple(m for m in self._meteos if m.date_arrete == date_arrete)
++
++
++@dataclass(frozen=True)
++class _Recette:
++    dernier_jour: date
++    contenu: ContenuPrevisions
++    couleurs: dict[str, Couleur]
++
++
++@pytest.fixture(scope="module")
++def recette() -> _Recette:
++    programme = charger_yaml(RACINE_DEPOT / "config" / "programme.yaml", ConfigProgramme)
++    grille = charger_yaml(RACINE_DEPOT / "config" / "grille_meteo.yaml", GrilleMeteo)
++    corpus = charger_corpus(RACINE_DEPOT / CHEMIN_CORPUS)
++    generation = generer(programme, GRAINE, DATE_GENERATION, corpus=corpus)
++    assert generation.scenarios == SCENARIOS_PAR_DEFAUT
++    ancrage = generation.entete.ancrage_semaines
++    jours = jours_ouvres(ancrage, generation.entete.date_injection)
++    codes = tuple(e.code for e in programme.entites)
++    etats = tickets_etats(generation.evenements, jours)
++    tables: list[pl.DataFrame] = []
++    meteos: list[MeteoEntite] = []
++    for jour in jours:
++        jusque = etats.filter(pl.col("date") <= jour)
++        tables.append(
++            indicateurs(jusque, jour, codes, grille, programme=programme, ancrage=ancrage)
++        )
++        meteos.extend(
++            meteo(jusque, jour, codes, grille, "grille", programme=programme, ancrage=ancrage)
++        )
++    dernier = jours[-1]
++    consultation = _ConsultationPrevision(etats, pl.concat(tables, how="vertical"), tuple(meteos))
++    ctx = ContextePassage(
++        dernier,
++        PASSAGE_ID,
++        ConfigUsine(chaine=ConfigChaine(palier=1)),
++        cast(Consultation, consultation),
++    )
++    contenu = prevision_du_passage(grille, codes, ancrage)(ctx)
++    couleurs = {m.entite: m.couleur for m in meteos if m.date_arrete == dernier}
++    return _Recette(dernier, contenu, couleurs)
++
++
++def _previsions_a_d(recette: _Recette, entite: str) -> list:  # type: ignore[type-arg]
++    return [
++        p
++        for p in recette.contenu.previsions
++        if p.entite == entite and p.date_arrete == recette.dernier_jour
++    ]
++
++
++def _risques_a_d(recette: _Recette, entite: str) -> list:  # type: ignore[type-arg]
++    return [
++        r
++        for r in recette.contenu.risques
++        if r.entite == entite and r.date_arrete == recette.dernier_jour
++    ]
++
++
++def test_a_sort_dans_l_horizon(recette: _Recette) -> None:
++    (prevision,) = _previsions_a_d(recette, "ENT-A")
++    assert prevision.statut is StatutPrevision.sortie_projetee
++    assert prevision.date_sortie_estimee is not None
++    limite = avancer(recette.dernier_jour, ParametresBaseline().horizon)
++    assert prevision.date_sortie_estimee <= limite
++
++
++def test_b_sans_sortie_projetee(recette: _Recette) -> None:
++    assert recette.couleurs["ENT-B"] is Couleur.rouge
++    (prevision,) = _previsions_a_d(recette, "ENT-B")
++    assert prevision.statut is StatutPrevision.pas_de_sortie_projetee
++    assert prevision.date_sortie_estimee is None
++
++
++def test_c_signalee(recette: _Recette) -> None:
++    assert recette.couleurs["ENT-C"] is not Couleur.rouge
++    assert _previsions_a_d(recette, "ENT-C") == []
++    assert _risques_a_d(recette, "ENT-C")
++
++
++def test_valeur_projetee_publiee(recette: _Recette) -> None:
++    risques = _risques_a_d(recette, "ENT-C")
++    assert risques
++    for risque in risques:
++        assert risque.valeur_projetee_numerateur is not None
++        assert risque.valeur_projetee_denominateur is not None
++        assert risque.valeur_projetee_denominateur > 0
++    publie = recette.contenu.model_dump_json()
++    assert "valeur_projetee_numerateur" in publie
++    assert "valeur_projetee_denominateur" in publie
+diff --git a/tests/unit/domaine/prevision/test_risque.py b/tests/unit/domaine/prevision/test_risque.py
+index ea7d0aa..95c2cb7 100644
+--- a/tests/unit/domaine/prevision/test_risque.py
++++ b/tests/unit/domaine/prevision/test_risque.py
+@@ -156,6 +156,8 @@ def test_franchissement_ind_3_et_tendance_non_lineaire_ind_1() -> None:
+         denominateur=1,
+         seuil_numerateur=20,
+         seuil_denominateur=1,
++        valeur_projetee_numerateur=20,
++        valeur_projetee_denominateur=1,
+         version_grille=VERSION_GRILLE,
+     )
+     assert ind_3.valeur_projetee == Fraction(20)
+@@ -166,6 +168,16 @@ def test_franchissement_ind_3_et_tendance_non_lineaire_ind_1() -> None:
+     assert (ind_1.risque.seuil_numerateur, ind_1.risque.seuil_denominateur) == (3, 1)
+ 
+ 
++def test_valeur_projetee_dans_le_contrat() -> None:
++    for projete in _calculer(_reference()).risques:
++        risque = projete.risque
++        assert risque.valeur_projetee_numerateur == projete.valeur_projetee.numerator
++        assert risque.valeur_projetee_denominateur == projete.valeur_projetee.denominator
++        publie = risque.model_dump_json()
++        assert "valeur_projetee_numerateur" in publie
++        assert "valeur_projetee_denominateur" in publie
++
++
+ def test_tendance_ind_1_juste_sous_le_seuil_avec_horizon_4() -> None:
+     """p(4) = 464/165 < 3 : aucun risque IND-1 avec un horizon de 4 JO."""
+     resultat = risques_entree_rouge(_reference(), _meteo(), GRILLE, ParametresRisque(horizon=4))

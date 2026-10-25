@@ -64,10 +64,10 @@
       "note": "Pour écrire tes skills ; la mesure avec et sans skill qu'il propose est celle qu'ont faite T7 et le banc de rejeu, et elle a départagé des choix que l'analyse ne tranchait pas."
     },
     "openspec": {
-      "decision": "À trancher",
-      "statut": "ouvert",
-      "preuve": "analyse",
-      "note": "Voie « story légère » possible pour les changements d'un fichier ; à trancher par le banc de rejeu (10 petites stories, BMAD complet contre OpenSpec)."
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "T13 (10 petites stories, 3 dépôts)",
+      "note": "La voie légère coûte 46 % de moins que BMAD complet (0,74 $ contre 1,38 $ par story, cadrage compris) mais réussit 10 points de moins aux tests cachés (62 % contre 72 %, IC [−19 ; −3]) : BMAD reste la voie par défaut, petites stories comprises. Piste ouverte : sans aucun cadrage (entrée d'epics.md seule), dev-story fait 70 % pour 0,34 $."
     },
     "feature-dev": {
       "decision": "Écarter",
@@ -748,6 +748,14 @@
       "strict": false,
       "explication": "Aucune condition n'invente de fait selon le juge (relecture plus sévère : un « que je publie aujourd'hui » ajouté sans skill, 3 fois sur 8) ; chiffres et renvois intacts partout. Les textes avaient trop peu de tics pour que humanizer fasse la différence ; l'enchaînement coûte 2,5 fois plus sans gain mesuré.",
       "preuve": "T11"
+    },
+    {
+      "nom": "Cadrer une petite story",
+      "candidats": "BMAD complet (clarifier + planifier), voie légère façon OpenSpec, aucun cadrage (entrée d'epics.md seule)",
+      "meilleur": "BMAD complet (provisoire)",
+      "strict": false,
+      "explication": "La voie légère est moins chère (−46 %) mais moins bonne (−10 points, IC [−19 ; −3]) : pas de gagnant strict. Sans cadrage, la réussite est proche de BMAD (−2,7 points, IC [−13 ; +8]) pour 76 % de moins, sur des epics déjà écrits en Given/When/Then : non-infériorité non démontrée, à confirmer (T13 bis).",
+      "preuve": "T13"
     }
   ],
   "setup": [
@@ -851,6 +859,11 @@
       "test": "T10 et T10b, renforcement des tests",
       "manque": "5 stories, un modèle ; les mutants rejoués sont ceux montrés à l'agent (le 100 % est optimiste par construction : 71 % sur des mutants non montrés).",
       "elargir": "Sur le prochain run réel : brancher l'étape et compter les défauts trouvés ensuite (rétrospective) avec et sans elle ; 10 stories suffisent pour le coût et le délai."
+    },
+    {
+      "test": "T13, cadrage des petites stories",
+      "manque": "Une répétition par bras, 10 stories, 3 dépôts ; le bras « sans cadrage » a été ajouté en cours de test (hors protocole) et ses epics contenaient déjà des critères Given/When/Then.",
+      "elargir": "T13 bis : sans cadrage contre BMAD complet, 10 autres stories, 2 répétitions (~35 $), avant de toucher à la chaîne agent-cost-kit."
     }
   ],
   "tests": [
@@ -913,6 +926,10 @@
     {
       "id": "T10b",
       "fichier": "tests-pratiques/T10-hypothesis/resultats-T10b.md"
+    },
+    {
+      "id": "T13",
+      "fichier": "tests-pratiques/T13-story-legere/resultats.md"
     }
   ],
   "essentiel": [

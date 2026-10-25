@@ -1,0 +1,13 @@
+22 tâches
+07:49:49 l63-A1 dev: cout=0.31438169999999993 tours=19 mur=94.6s cache=7/8 ruff=0/0 hors=0
+07:51:07 l63-B1 cadrage: cout=0.3821308 tours=14 mur=68.8s chars=6239 vide=False
+07:51:07 l63-B1 dev: cout=0.2923305 tours=18 mur=100.3s cache=5/8 ruff=0/0 hors=0
+08:02:24 u51-A1 cadrage: cout=1.722565 tours=36 mur=220.9s chars=12364 vide=False
+08:02:24 u51-A1 dev: cout=0.6758183 tours=48 mur=488.5s cache=0/6 ruff=0/0 hors=1
+08:02:24 u51-B1 cadrage: cout=0.6408212000000001 tours=19 mur=101.7s chars=6923 vide=False
+08:02:24 u51-B1 dev: cout=0.5041962000000001 tours=46 mur=417.0s cache=0/6 ruff=0/0 hors=1
+08:05:26 u51-C1 dev: cout=0.49278440000000007 tours=32 mur=201.9s cache=0/6 ruff=0/0 hors=0
+08:07:42 l65-A1 cadrage: cout=0.8609908 tours=23 mur=155.6s chars=10373 vide=False
+08:07:42 l65-A1 dev: cout=0.4718113999999999 tours=35 mur=142.8s cache=5/8 ruff=0/0 hors=0
+08:09:53 l65-B1 cadrage: cout=0.3528024 tours=13 mur=63.1s chars=6671 vide=False
+08:09:53 l65-B1 dev: cout=0.5042142999999999 tours=38 mur=180.1s cache=5/8 ruff=0/0 hors=1

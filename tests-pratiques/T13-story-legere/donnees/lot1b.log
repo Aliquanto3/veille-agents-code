@@ -1,0 +1,29 @@
+22 tâches
+08:25:08 u25-A1 dev: cout=0.5629085 tours=47 mur=362.4s cache=11/13 ruff=0/0 hors=1
+08:25:08 u25-B1 cadrage: cout=0.3854322 tours=12 mur=74.5s chars=6295 vide=False
+08:25:08 u25-B1 dev: cout=0.37056030000000006 tours=31 mur=156.0s cache=6/13 ruff=0/0 hors=1
+08:29:01 u25-C1 dev: cout=0.5219227 tours=44 mur=332.4s cache=12/13 ruff=0/0 hors=1
+08:30:04 l27-A1 cadrage: cout=0.7215537999999999 tours=24 mur=158.1s chars=8529 vide=False
+08:30:04 l27-A1 dev: cout=0.27100460000000004 tours=22 mur=120.2s cache=8/9 ruff=0/0 hors=0
+08:32:32 l27-B1 cadrage: cout=0.3340856 tours=13 mur=91.2s chars=6522 vide=False
+08:32:32 l27-B1 dev: cout=0.27721870000000004 tours=21 mur=103.5s cache=6/9 ruff=0/0 hors=0
+08:41:46 u75-A1 cadrage: cout=0.6771083999999999 tours=18 mur=141.1s chars=8249 vide=False
+08:41:46 u75-A1 dev: cout=0.3898826 tours=37 mur=507.4s cache=5/8 ruff=0/0 hors=0
+08:41:46 u75-B1 cadrage: cout=0.3649292 tours=10 mur=94.8s chars=6440 vide=False
+08:41:46 u75-B1 dev: cout=0.32496749999999996 tours=30 mur=434.5s cache=4/8 ruff=0/0 hors=0
+08:45:29 l51-A1 cadrage: cout=0.8095700000000001 tours=22 mur=138.2s chars=10533 vide=False
+08:45:29 l51-A1 dev: cout=0.22609259999999998 tours=14 mur=72.1s cache=8/14 ruff=0/0 hors=0
+08:45:29 l51-B1 cadrage: cout=0.38403699999999996 tours=13 mur=107.9s chars=7130 vide=False
+08:45:29 l51-B1 dev: cout=0.1876482 tours=9 mur=67.4s cache=10/14 ruff=0/0 hors=0
+08:47:56 l23-A1 cadrage: cout=0.6379530000000001 tours=16 mur=86.0s chars=8751 vide=False
+08:47:56 l23-A1 dev: cout=0.23482020000000003 tours=19 mur=77.7s cache=7/7 ruff=0/0 hors=0
+08:49:04 l23-B1 cadrage: cout=0.38886879999999996 tours=13 mur=98.0s chars=6161 vide=False
+08:49:04 l23-B1 dev: cout=0.2771235 tours=18 mur=104.8s cache=7/7 ruff=0/0 hors=0
+09:00:47 u45-A1 cadrage: cout=1.911979000000001 tours=38 mur=248.3s chars=10670 vide=False
+09:00:47 u45-A1 dev: cout=0.5342066000000001 tours=23 mur=471.0s cache=3/3 ruff=0/0 hors=0
+09:00:47 u45-B1 cadrage: cout=0.39229819999999993 tours=12 mur=68.9s chars=7061 vide=False
+09:00:47 u45-B1 dev: cout=0.3623282 tours=29 mur=313.9s cache=3/3 ruff=0/0 hors=1
+09:01:39 w91-A1 cadrage: cout=0.8398664 tours=26 mur=120.8s chars=9376 vide=False
+09:01:39 w91-A1 dev: cout=0.3010573 tours=23 mur=128.1s cache=2/6 ruff=-1/-1 hors=1
+09:20:30 w91-B1 cadrage: cout=0.36756019999999995 tours=10 mur=78.2s chars=6542 vide=False
+09:20:30 w91-B1 dev: cout=0.4959300000000001 tours=49 mur=1011.2s cache=2/6 ruff=-1/-1 hors=4

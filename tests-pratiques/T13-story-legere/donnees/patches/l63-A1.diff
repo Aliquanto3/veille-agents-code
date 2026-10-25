@@ -1,0 +1,313 @@
+diff --git a/src/wavelibrarian/architectures/hyde.py b/src/wavelibrarian/architectures/hyde.py
+new file mode 100644
+index 0000000..c137761
+--- /dev/null
++++ b/src/wavelibrarian/architectures/hyde.py
+@@ -0,0 +1,87 @@
++"""Architecture `hyde` : recherche dense avec le vecteur d'une réponse hypothétique (FR-20)."""
++
++from typing import Annotated, Any, ClassVar
++
++import numpy as np
++from numpy.typing import NDArray
++from pydantic import Field
++
++from wavelibrarian.architectures.naive_rag import NaiveRag
++from wavelibrarian.components.context import build_arch_answer
++from wavelibrarian.core.types import ArchAnswer, ModelRefMeta, QuestionInput
++from wavelibrarian.ports.gateway import LLMRequest, Message
++from wavelibrarian.registry import register
++
++_SYSTEM = (
++    "Rédige un court passage de document qui répondrait à la question, dans la langue de la "
++    "question, comme s'il en était extrait. Écris directement le passage, sans préambule ni "
++    "commentaire. Si tu n'es pas sûr des faits, reste plausible : ce texte ne sert qu'à la "
++    "recherche et ne sera jamais montré."
++)
++
++
++@register("architecture", "hyde")
++class Hyde(NaiveRag):
++    """Même index que `naive_rag` ; la recherche utilise l'embedding d'une réponse hypothétique,
++    éventuellement moyenné avec celui de la Question. Contexte et génération sont inchangés."""
++
++    name = "hyde"
++    query_params: ClassVar[frozenset[str]] = frozenset(
++        {"k", "mix_question", "hyde_model", "hyde_max_tokens"}
++    )
++
++    class Params(NaiveRag.Params):
++        mix_question: bool = False
++        hyde_model: Annotated[str | None, ModelRefMeta("generator_models[0]")] = None
++        hyde_max_tokens: int = Field(default=256, gt=0)
++
++    def __init__(self, params: Any, ctx: Any) -> None:
++        super().__init__(params, ctx)
++        self.hyde_model_id: str = params.hyde_model or ctx.profile.defaults.generator_models[0]
++
++    def _hypothese(self, question: QuestionInput) -> str:
++        """Réponse hypothétique : un appel `complete` au rôle `hyde` (span de la passerelle)."""
++        requete = LLMRequest(
++            model_id=self.hyde_model_id,
++            role="hyde",
++            step="hyde",
++            system=_SYSTEM,
++            messages=(Message(role="user", content=question.text),),
++            max_tokens=self.params.hyde_max_tokens,  # type: ignore[attr-defined]
++            seed=self.ctx.seed,  # type: ignore[attr-defined]
++            inputs={"text": question.text},
++        )
++        return str(self.ctx.gateway.complete(requete).text)  # type: ignore[attr-defined]
++
++    def _vecteur(self, question: QuestionInput) -> NDArray[np.float32]:
++        """Vecteur de recherche ; un seul appel `embed_queries` par Question."""
++        hyp = self._hypothese(question).strip() or question.text
++        if not self.params.mix_question:  # type: ignore[attr-defined]
++            return np.asarray(self.embedder.embed_queries([hyp])[0], dtype=np.float32)
++        v_h, v_q = self.embedder.embed_queries([hyp, question.text])
++        v_h = np.asarray(v_h, dtype=np.float32)
++        somme = v_h + np.asarray(v_q, dtype=np.float32)
++        norme = float(np.linalg.norm(somme))
++        return (somme / norme).astype(np.float32) if norme > 0 else v_h
++
++    def answer(self, question: QuestionInput) -> ArchAnswer:
++        if self._index is None:
++            raise RuntimeError("`load` doit précéder `answer`")
++        vecteur = self._vecteur(question)
++        classes = self.retriever.retrieve(  # type: ignore[attr-defined]
++            question.text,
++            self.params.k,
++            self._index,
++            query_vector=vecteur,  # type: ignore[attr-defined]
++        )
++        # La réponse hypothétique ne sert qu'au vecteur : elle n'entre ni dans le Contexte ni
++        # dans la génération.
++        contexte = self.context_builder.build([s.passage for s in classes])
++        resultat = self.generator.generate(question, contexte)
++        return build_arch_answer(
++            contexte,
++            resultat,
++            classes,
++            "ranked",
++            tokenizer=self.ctx.tokenizer_for(self.generator.model_id),
++        )
+diff --git a/tests/unit/architectures/test_story_6_3.py b/tests/unit/architectures/test_story_6_3.py
+new file mode 100644
+index 0000000..ed754ed
+--- /dev/null
++++ b/tests/unit/architectures/test_story_6_3.py
+@@ -0,0 +1,214 @@
++"""Story 6.3 : Architecture `hyde` (recherche avec l'embedding d'une réponse hypothétique)."""
++
++import json
++from pathlib import Path
++from typing import Any
++
++import numpy as np
++import pytest
++
++from wavelibrarian import registry
++from wavelibrarian.architectures.hyde import Hyde
++from wavelibrarian.architectures.naive_rag import NaiveRag
++from wavelibrarian.core.types import ParsedCorpus, QuestionInput
++from wavelibrarian.llm.providers.fake import FakeProvider
++from wavelibrarian.ports.components import ComponentSpec
++from wavelibrarian.ports.gateway import LLMRequest
++from wavelibrarian.runner.context import Context as RunCtx
++from wavelibrarian.runner.index_cache import IndexCache
++
++PETITS = {"name": "fixed_tokens", "params": {"size": 40, "overlap": 5}}
++HYP = "Texte hypothétique unique zorglub quasar."
++
++
++@pytest.fixture
++def ctx(tmp_path: Path):  # type: ignore[no-untyped-def]
++    provider = FakeProvider()
++    c = RunCtx.from_profile(
++        "test", wl_home=tmp_path / "wl", run_id="r-1", seed=1, providers={"fake": provider}
++    )
++    c.parser = "markdown"
++    c.provider = provider  # type: ignore[attr-defined]
++    with c:
++        yield c
++
++
++def _arch(ctx: RunCtx, **params: Any) -> Any:
++    params.setdefault("embedder", {"name": "fake"})
++    params.setdefault("chunker", PETITS)
++    return ctx.build("architecture", ComponentSpec(name="hyde", params=params))
++
++
++def _question() -> QuestionInput:
++    return QuestionInput(question_id="q-001", text="Que sait-on de la guilde Orvane ?", lang="fr")
++
++
++def _repondre(arch: Any, ctx: RunCtx) -> Any:
++    with ctx.scope(post="query", question_id="q-001"):
++        return arch.answer(_question())
++
++
++def _spans(ctx: RunCtx) -> list[dict[str, Any]]:
++    lignes = (ctx.run_dir / "traces.jsonl").read_text(encoding="utf-8").splitlines()
++    return [json.loads(x) for x in lignes]
++
++
++def _prete(ctx: RunCtx, corpus: ParsedCorpus, tmp_path: Path, **params: Any) -> Any:
++    arch, _ = IndexCache(tmp_path / "home").build(ctx, lambda: _arch(ctx, **params), corpus)
++    return arch
++
++
++def _espionner_retriever(arch: Any) -> list[Any]:
++    vus: list[Any] = []
++    origine = arch.retriever.retrieve
++
++    def espion(query: str, k: int, index: Any, query_vector: Any = None) -> Any:
++        vus.append(query_vector)
++        return origine(query, k, index, query_vector)
++
++    arch.retriever.retrieve = espion
++    return vus
++
++
++def test_enregistrement_et_params() -> None:
++    assert registry.get("architecture", "hyde") is Hyde
++    assert issubclass(Hyde, NaiveRag)
++    assert Hyde.name == "hyde"
++    assert Hyde.capabilities == NaiveRag.capabilities
++    assert {"k", "mix_question", "hyde_model", "hyde_max_tokens"} == set(Hyde.query_params)
++    p = Hyde.Params()
++    assert (p.mix_question, p.hyde_model, p.hyde_max_tokens) == (False, None, 256)
++
++
++def test_span_hyde_distinct_de_generate_au_poste_query(
++    ctx: RunCtx, minicorpus: ParsedCorpus, tmp_path: Path
++) -> None:
++    vues: list[LLMRequest] = []
++
++    def sortie(req: LLMRequest) -> str:
++        vues.append(req)
++        return HYP
++
++    ctx.provider.script("hyde", "hyde", sortie)  # type: ignore[attr-defined]
++    arch = _prete(ctx, minicorpus, tmp_path)
++    assert arch.hyde_model_id == ctx.profile.defaults.generator_models[0]
++    _repondre(arch, ctx)
++    assert len(vues) == 1
++    assert vues[0].role == "hyde" and vues[0].step == "hyde"
++    assert vues[0].max_tokens == 256 and vues[0].inputs == {"text": _question().text}
++    spans = [s for s in _spans(ctx) if s.get("wl.post") == "query"]
++    hyde = [s for s in spans if s.get("wl.step") == "hyde"]
++    generate = [s for s in spans if s.get("wl.step") == "generate"]
++    assert len(hyde) == 1 and len(generate) == 1
++    assert hyde[0] != generate[0]
++
++
++def test_vecteur_passe_au_retriever_est_celui_de_l_hypothese(
++    ctx: RunCtx, minicorpus: ParsedCorpus, tmp_path: Path
++) -> None:
++    ctx.provider.script("hyde", "hyde", HYP)  # type: ignore[attr-defined]
++    arch = _prete(ctx, minicorpus, tmp_path)
++    vus = _espionner_retriever(arch)
++    _repondre(arch, ctx)
++    with ctx.scope(post="query"):
++        attendu = arch.embedder.embed_queries([HYP])[0]
++    assert len(vus) == 1
++    np.testing.assert_allclose(vus[0], attendu)
++
++
++def test_mix_question_moyenne_renormalisee_en_un_seul_appel(
++    ctx: RunCtx, minicorpus: ParsedCorpus, tmp_path: Path
++) -> None:
++    ctx.provider.script("hyde", "hyde", HYP)  # type: ignore[attr-defined]
++    arch = _prete(ctx, minicorpus, tmp_path, mix_question=True)
++    vus = _espionner_retriever(arch)
++    appels: list[list[str]] = []
++    origine = arch.embedder.embed_queries
++
++    def espion(textes: Any) -> Any:
++        appels.append(list(textes))
++        return origine(textes)
++
++    arch.embedder.embed_queries = espion
++    _repondre(arch, ctx)
++    assert appels == [[HYP, _question().text]]
++    with ctx.scope(post="query"):
++        v_h, v_q = origine([HYP, _question().text])
++    somme = v_h + v_q
++    np.testing.assert_allclose(vus[0], somme / np.linalg.norm(somme), rtol=1e-5)
++    assert float(np.linalg.norm(vus[0])) == pytest.approx(1.0, abs=1e-5)
++
++
++def test_mix_question_norme_nulle_replie_sur_l_hypothese(
++    ctx: RunCtx, minicorpus: ParsedCorpus, tmp_path: Path
++) -> None:
++    ctx.provider.script("hyde", "hyde", HYP)  # type: ignore[attr-defined]
++    arch = _prete(ctx, minicorpus, tmp_path, mix_question=True)
++    v = np.ones(64, np.float32) / 8
++    arch.embedder.embed_queries = lambda textes: np.stack([v, -v])
++    with ctx.scope(post="query"):
++        resultat = arch._vecteur(_question())
++    np.testing.assert_allclose(resultat, v)
++
++
++def test_hypothese_vide_replie_sur_la_question(
++    ctx: RunCtx, minicorpus: ParsedCorpus, tmp_path: Path
++) -> None:
++    ctx.provider.script("hyde", "hyde", "   ")  # type: ignore[attr-defined]
++    arch = _prete(ctx, minicorpus, tmp_path)
++    vus = _espionner_retriever(arch)
++    _repondre(arch, ctx)
++    with ctx.scope(post="query"):
++        attendu = arch.embedder.embed_queries([_question().text])[0]
++    np.testing.assert_allclose(vus[0], attendu)
++
++
++def test_params_de_requete_hors_de_la_cle_d_index(ctx: RunCtx) -> None:
++    base = _arch(ctx).index_key()
++    assert _arch(ctx, mix_question=True).index_key() == base
++    assert _arch(ctx, k=3).index_key() == base
++    assert _arch(ctx, hyde_model="autre-modele").index_key() == base
++    assert _arch(ctx, hyde_max_tokens=64).index_key() == base
++    assert _arch(ctx, chunker={"name": "fixed_tokens"}).index_key() != base
++
++
++def test_hypothese_absente_du_contexte_et_citations_valides(
++    ctx: RunCtx, minicorpus: ParsedCorpus, tmp_path: Path
++) -> None:
++    ctx.provider.script("hyde", "hyde", HYP)  # type: ignore[attr-defined]
++    ctx.provider.script(  # type: ignore[attr-defined]
++        "generate", "generate*", '{"answer": "R.", "citations": ["S1"], "abstain": false}'
++    )
++    rep = _repondre(_prete(ctx, minicorpus, tmp_path), ctx)
++    assert all("zorglub" not in t for t in rep.context_texts)
++    assert "zorglub" not in rep.text
++    assert rep.citations
++    ancrages = {a for s in rep.retrieved for a in s.passage.anchor_ids}
++    assert {c.anchor_id for c in rep.citations} <= ancrages
++
++
++def test_hypothese_scenarisee_place_le_passage_au_rang_1(
++    ctx: RunCtx, minicorpus: ParsedCorpus, tmp_path: Path
++) -> None:
++    arch = _prete(ctx, minicorpus, tmp_path)
++    cible = sorted(arch._index.passages.values(), key=lambda p: p.passage_id)[-1]
++    ctx.provider.script("hyde", "hyde", cible.text)  # type: ignore[attr-defined]
++    rep = _repondre(arch, ctx)
++    assert rep.retrieved[0].passage.passage_id == cible.passage_id
++
++
++def test_cycle_index_load_answer_et_update_herite(
++    ctx: RunCtx, minicorpus: ParsedCorpus, tmp_path: Path
++) -> None:
++    assert Hyde.update is NaiveRag.update
++    arch = _arch(ctx)
++    with ctx.scope(post="indexing"):
++        arch.index(minicorpus, tmp_path / "i")
++    neuve = _arch(ctx)
++    neuve.load(tmp_path / "i")
++    assert neuve.embedder_dim() == 64
++    assert len(_repondre(neuve, ctx).retrieved) == 5
++    cache = IndexCache(tmp_path / "home2")
++    _, cle = cache.build(ctx, lambda: _arch(ctx), minicorpus)
++    m = json.loads((cache.path(cle) / "manifest.json").read_text(encoding="utf-8"))
++    assert m["embedder_dim"] == 64

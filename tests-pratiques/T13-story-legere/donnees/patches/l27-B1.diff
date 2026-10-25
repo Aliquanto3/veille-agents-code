@@ -1,0 +1,208 @@
+diff --git a/src/wavelibrarian/cli.py b/src/wavelibrarian/cli.py
+index af4003a..5a2023a 100644
+--- a/src/wavelibrarian/cli.py
++++ b/src/wavelibrarian/cli.py
+@@ -25,6 +25,7 @@ from wavelibrarian.corpus.declare import declare
+ from wavelibrarian.corpus.ingest import ingest, nom_parser_resolu, parsers_par_format
+ from wavelibrarian.corpus.profile import profile as profil_corpus
+ from wavelibrarian.corpus.scenario import corpus_apres as scenario_corpus_apres
++from wavelibrarian.corpus.tiers import tirer_chemins
+ from wavelibrarian.evalset import check, generate, io
+ from wavelibrarian.llm.preflight import preflight
+ from wavelibrarian.measure.tokenizers import make_tokenizer
+@@ -273,6 +274,33 @@ corpus_app = typer.Typer(help="Déclarer, ingérer et profiler un Corpus.", no_a
+ app.add_typer(corpus_app, name="corpus")
+ 
+ 
++@corpus_app.command("paliers")
++def corpus_paliers(
++    corpus_yaml: Annotated[Path, typer.Argument(help="Fichier `corpus.yaml` du Corpus.")],
++) -> None:
++    """Affiche les Paliers de volume du Corpus (clé `tiers`) avec leurs Documents."""
++    try:
++        declare_corpus = declare(corpus_yaml)
++        spec = declare_corpus.spec.tiers
++        if spec is None:
++            typer.echo(
++                f"Le Corpus « {declare_corpus.corpus_id} » ne déclare pas de Paliers "
++                "(clé `tiers` absente)."
++            )
++            return
++        paliers = tirer_chemins([d.source_path for d in declare_corpus.documents], spec)
++    except ConfigError as erreur:
++        typer.echo(f"Configuration invalide : {erreur}", err=True)
++        raise typer.Exit(2) from erreur
++    except WlError as erreur:
++        typer.echo(f"Erreur : {erreur}", err=True)
++        raise typer.Exit(1) from erreur
++    for taille, chemins in paliers.items():
++        typer.echo(f"Palier {taille} : {len(chemins)} Documents")
++        for chemin in chemins:
++            typer.echo(f"  - {chemin}")
++
++
+ @corpus_app.command("profiler")
+ def corpus_profiler(
+     corpus_yaml: Annotated[Path, typer.Argument(help="Fichier `corpus.yaml` du Corpus.")],
+diff --git a/src/wavelibrarian/corpus/tiers.py b/src/wavelibrarian/corpus/tiers.py
+new file mode 100644
+index 0000000..de077c5
+--- /dev/null
++++ b/src/wavelibrarian/corpus/tiers.py
+@@ -0,0 +1,61 @@
++"""Paliers de volume emboîtés et reproductibles d'un Corpus (FR-54, AD-20, AD-22)."""
++
++from collections.abc import Sequence
++
++from wavelibrarian.core.errors import ConfigError
++from wavelibrarian.core.ids import sha16
++from wavelibrarian.core.types import ParsedCorpus
++from wavelibrarian.corpus.declare import TiersSpec
++from wavelibrarian.corpus.ingest import empreinte
++
++
++def tirer_chemins(
++    chemins: Sequence[str], spec: TiersSpec, required_paths: Sequence[str] = ()
++) -> dict[int, tuple[str, ...]]:
++    """`source_path` de chaque Palier (taille -> chemins triés).
++
++    Les Documents non requis sont triés par `sha16(graine, chemin)` : le Palier de taille k contient
++    les requis puis les k − r premiers non requis, donc les Paliers sont emboîtés par construction.
++    """
++    disponibles = set(chemins)
++    for i, taille in enumerate(spec.sizes):
++        if taille > len(disponibles):
++            raise ConfigError(
++                f"tiers.sizes[{i}]",
++                f"la taille {taille} dépasse le nombre de Documents du Corpus ({len(disponibles)})",
++            )
++    requis = list(dict.fromkeys(required_paths))
++    for i, chemin in enumerate(required_paths):
++        if chemin not in disponibles:
++            raise ConfigError(f"required_paths[{i}]", f"{chemin!r} n'est pas un Document du Corpus")
++    if len(requis) > spec.sizes[0]:
++        raise ConfigError(
++            "tiers.sizes[0]",
++            f"le Palier {spec.sizes[0]} ne peut pas contenir tous les Documents requis "
++            f"({len(requis)})",
++        )
++    graine = str(spec.seed)
++    autres = sorted(disponibles - set(requis), key=lambda c: (sha16(graine, c), c))
++    return {
++        taille: tuple(sorted([*requis, *autres[: taille - len(requis)]])) for taille in spec.sizes
++    }
++
++
++def tirer(
++    corpus: ParsedCorpus, spec: TiersSpec, required_paths: Sequence[str] = ()
++) -> dict[int, ParsedCorpus]:
++    """Sous-corpus de chaque Palier, avec sa propre `fingerprint`."""
++    paliers = tirer_chemins([d.source_path for d in corpus.documents], spec, required_paths)
++    res: dict[int, ParsedCorpus] = {}
++    for taille, chemins in paliers.items():
++        retenus = set(chemins)
++        documents = tuple(
++            sorted(
++                (d for d in corpus.documents if d.source_path in retenus),
++                key=lambda d: d.source_path,
++            )
++        )
++        res[taille] = ParsedCorpus(
++            corpus_id=corpus.corpus_id, fingerprint=empreinte(documents), documents=documents
++        )
++    return res
+diff --git a/tests/unit/corpus/test_tiers.py b/tests/unit/corpus/test_tiers.py
+new file mode 100644
+index 0000000..bb5a605
+--- /dev/null
++++ b/tests/unit/corpus/test_tiers.py
+@@ -0,0 +1,89 @@
++"""Tests des Paliers de volume (story 2.7)."""
++
++from pathlib import Path
++
++import pytest
++from typer.testing import CliRunner
++
++from wavelibrarian.cli import app
++from wavelibrarian.core.errors import ConfigError
++from wavelibrarian.core.types import ParsedCorpus
++from wavelibrarian.corpus.declare import TiersSpec
++from wavelibrarian.corpus.ingest import empreinte
++from wavelibrarian.corpus.tiers import tirer, tirer_chemins
++
++CORPUS_MINICORPUS = Path(__file__).resolve().parents[3] / "corpora" / "minicorpus" / "corpus.yaml"
++
++SPEC = TiersSpec(seed=42, sizes=(5, 10, 20))
++
++
++def _chemins(minicorpus: ParsedCorpus) -> list[str]:
++    return [d.source_path for d in minicorpus.documents]
++
++
++def test_emboitement_et_requis(minicorpus: ParsedCorpus) -> None:
++    chemins = _chemins(minicorpus)
++    requis = [chemins[-1], chemins[3], chemins[0]]
++    p = tirer_chemins(chemins, SPEC, requis)
++    assert [len(p[t]) for t in (5, 10, 20)] == [5, 10, 20]
++    assert set(p[5]) <= set(p[10]) <= set(p[20])
++    for t in (5, 10, 20):
++        assert set(requis) <= set(p[t])
++
++
++def test_graine(minicorpus: ParsedCorpus) -> None:
++    chemins = _chemins(minicorpus)
++    requis = chemins[:3]
++    assert tirer_chemins(chemins, SPEC, requis) == tirer_chemins(chemins[::-1], SPEC, requis)
++    autre = tirer_chemins(chemins, TiersSpec(seed=43, sizes=(5, 10, 20)), requis)
++    assert autre != tirer_chemins(chemins, SPEC, requis)
++
++
++def test_taille_trop_grande(minicorpus: ParsedCorpus) -> None:
++    n = len(minicorpus.documents)
++    with pytest.raises(ConfigError) as e:
++        tirer_chemins(_chemins(minicorpus), TiersSpec(seed=1, sizes=(5, n + 1)))
++    assert e.value.path == "tiers.sizes[1]"
++
++
++def test_trop_de_requis(minicorpus: ParsedCorpus) -> None:
++    chemins = _chemins(minicorpus)
++    with pytest.raises(ConfigError, match="ne peut pas contenir tous les Documents requis"):
++        tirer_chemins(chemins, TiersSpec(seed=1, sizes=(2, 5)), chemins[:3])
++
++
++def test_requis_inconnu(minicorpus: ParsedCorpus) -> None:
++    with pytest.raises(ConfigError) as e:
++        tirer_chemins(_chemins(minicorpus), SPEC, [_chemins(minicorpus)[0], "absent.md"])
++    assert e.value.path == "required_paths[1]"
++
++
++def test_sous_corpus(minicorpus: ParsedCorpus) -> None:
++    paliers = tirer(minicorpus, SPEC, _chemins(minicorpus)[:3])
++    p5 = paliers[5]
++    assert len(p5.documents) == 5
++    assert p5.corpus_id == minicorpus.corpus_id
++    assert [d.source_path for d in p5.documents] == sorted(d.source_path for d in p5.documents)
++    assert p5.fingerprint == empreinte(p5.documents)
++    assert p5.fingerprint != minicorpus.fingerprint
++
++
++def test_cli_avec_tiers() -> None:
++    res = CliRunner().invoke(app, ["corpus", "paliers", str(CORPUS_MINICORPUS)])
++    assert res.exit_code == 0
++    for t in (5, 10, 20):
++        assert f"Palier {t} : {t} Documents" in res.output
++    assert res.output.count("  - ") == 5 + 10 + 20
++
++
++def test_cli_sans_tiers(tmp_path: Path) -> None:
++    (tmp_path / "docs").mkdir()
++    (tmp_path / "docs" / "a.md").write_text("# A\n\ntexte\n", encoding="utf-8")
++    (tmp_path / "corpus.yaml").write_text(
++        "corpus_id: demo\npath: docs\nlang: fr\nlicense: CC0-1.0\npublishable: true\n"
++        "volatility: low\n",
++        encoding="utf-8",
++    )
++    res = CliRunner().invoke(app, ["corpus", "paliers", str(tmp_path / "corpus.yaml")])
++    assert res.exit_code == 0
++    assert "ne déclare pas de Paliers" in res.output

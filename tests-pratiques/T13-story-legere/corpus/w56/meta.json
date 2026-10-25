@@ -1,0 +1,38 @@
+{
+  "id": "w56",
+  "repo": "wavelocalai",
+  "pkg": "wavelocalai",
+  "label": "5.6",
+  "commit": "8113003dea6ade4b263a131ace9550ca65f2d101",
+  "base": "7332c7f57fdc7d94c4a3ef276608eae6db05b7bc",
+  "fichiers_commit": [
+    "_bmad-output/implementation-artifacts/story-5-6.md",
+    "_bmad-output/specs/spec-wavelocalai-v2/contrat-api.md",
+    "src/wavelocalai/models/card.py",
+    "src/wavelocalai/models/registry.py",
+    "src/wavelocalai/web/static/i18n/fr/models.json",
+    "tests/v2/e2e/test_models_card.py",
+    "tests/v2/e2e/test_shell.py",
+    "tests/v2/unit/test_bench_results.py",
+    "tests/v2/unit/test_model_card_static.py",
+    "tests/v2/unit/test_shell_static.py",
+    "tests/v2/web/test_model_card_api.py"
+  ],
+  "tests_caches": [
+    "tests/v2/unit/test_model_card_static.py"
+  ],
+  "tests_executes": [
+    "tests/v2/unit/test_model_card_static.py"
+  ],
+  "spec_origine": "_bmad-output/implementation-artifacts/story-5-6.md",
+  "src_modifies": [
+    "src/wavelocalai/models/card.py",
+    "src/wavelocalai/models/registry.py",
+    "src/wavelocalai/web/static/i18n/fr/models.json"
+  ],
+  "c_disponible": true,
+  "total_ref": 8,
+  "base_passed": 8,
+  "base_failed": 0,
+  "duree_ref_s": 10.5
+}

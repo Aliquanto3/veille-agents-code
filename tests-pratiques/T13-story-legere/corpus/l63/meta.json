@@ -1,0 +1,28 @@
+{
+  "id": "l63",
+  "repo": "wavelibrarian",
+  "pkg": "wavelibrarian",
+  "label": "6.3",
+  "commit": "558b621feb2a48d658f31321b3e6d01d6a5fdffb",
+  "base": "67792b6c50829db5d10a440b86067d1f645da780",
+  "fichiers_commit": [
+    "_bmad-output/implementation-artifacts/6-3-hyde.md",
+    "src/wavelibrarian/architectures/hyde.py",
+    "tests/unit/architectures/test_story_6_3.py"
+  ],
+  "tests_caches": [
+    "tests/unit/architectures/test_story_6_3.py"
+  ],
+  "tests_executes": [
+    "tests/unit/architectures/test_story_6_3.py"
+  ],
+  "spec_origine": "_bmad-output/implementation-artifacts/6-3-hyde.md",
+  "src_modifies": [
+    "src/wavelibrarian/architectures/hyde.py"
+  ],
+  "c_disponible": true,
+  "total_ref": 8,
+  "base_passed": 0,
+  "base_failed": 1,
+  "duree_ref_s": 7.9
+}

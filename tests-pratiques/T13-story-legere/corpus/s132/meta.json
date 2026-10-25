@@ -1,0 +1,32 @@
+{
+  "id": "s132",
+  "repo": "service-public-slm-fine-tuning",
+  "pkg": "slmsp",
+  "label": "13.2",
+  "commit": "d3cb062fe3eca38b349744082ba78f6d7854d2d8",
+  "base": "4ecf447057376a5ab8ad519454976d4b725129b8",
+  "fichiers_commit": [
+    "_bmad-output/implementation-artifacts/spec-13-2-vue-resume-a-trois-longueurs.md",
+    "src/slmsp/app/ui/css/resume.css",
+    "src/slmsp/app/ui/js/vues/resume.js",
+    "tests/app/ui/test_socle.py",
+    "tests/app/ui/test_socle_statique.py",
+    "tests/app/ui/test_vue_resume.py"
+  ],
+  "tests_caches": [
+    "tests/app/ui/test_vue_resume.py"
+  ],
+  "tests_executes": [
+    "tests/app/ui/test_vue_resume.py"
+  ],
+  "spec_origine": "_bmad-output/implementation-artifacts/spec-13-2-vue-resume-a-trois-longueurs.md",
+  "src_modifies": [
+    "src/slmsp/app/ui/css/resume.css",
+    "src/slmsp/app/ui/js/vues/resume.js"
+  ],
+  "c_disponible": true,
+  "total_ref": null,
+  "base_passed": 0,
+  "base_failed": 0,
+  "duree_ref_s": 4.5
+}

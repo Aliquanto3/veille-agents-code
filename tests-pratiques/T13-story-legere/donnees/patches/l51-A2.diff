@@ -1,0 +1,379 @@
+diff --git a/src/wavelibrarian/scoring/calibration.py b/src/wavelibrarian/scoring/calibration.py
+new file mode 100644
+index 0000000..4695f9f
+--- /dev/null
++++ b/src/wavelibrarian/scoring/calibration.py
+@@ -0,0 +1,118 @@
++"""Annotations humaines (contracts §4.6) : chargement strict et rapprochement (FR-38)."""
++
++import json
++import logging
++from collections.abc import Collection, Mapping
++from pathlib import Path
++from typing import Any, Literal, NamedTuple
++
++from pydantic import BaseModel, ConfigDict, field_validator
++
++from wavelibrarian.config.defaults import charger_yaml
++from wavelibrarian.config.schemas import valider
++from wavelibrarian.core.errors import ConfigError
++
++CleAnnotation = tuple[str, str, str]  # (annotateur, answer_id, critère)
++
++
++class Annotation(BaseModel):
++    """Un verdict humain sur un Critère d'une Réponse."""
++
++    model_config = ConfigDict(frozen=True, extra="forbid")
++
++    answer_id: str
++    criterion: Literal["correctness", "completeness", "faithfulness"]
++    verdict: bool
++    note: str = ""
++
++    @field_validator("verdict", mode="before")
++    @classmethod
++    def _verdict(cls, v: Any) -> bool:
++        if isinstance(v, bool):
++            return v
++        if v == "yes" and isinstance(v, str):
++            return True
++        if v == "no" and isinstance(v, str):
++            return False
++        raise ValueError(f"verdict invalide : {v!r} (attendu : yes ou no)")
++
++
++class AnnotationsFile(BaseModel):
++    """Document `annotations/<annotateur>.yaml`."""
++
++    model_config = ConfigDict(frozen=True, extra="forbid")
++
++    annotator: str
++    annotations: tuple[Annotation, ...]
++
++
++class Rapprochement(NamedTuple):
++    retenues: dict[CleAnnotation, bool]
++    ignorees: tuple[str, ...]
++
++
++def _charger_fichier(chemin: Path) -> dict[CleAnnotation, bool]:
++    donnees: Any = charger_yaml(chemin)
++    if not isinstance(donnees, dict):
++        raise ConfigError(str(chemin), "un fichier d'annotations doit être un dictionnaire YAML")
++    doc = valider(AnnotationsFile, donnees, str(chemin))
++    if doc.annotator != chemin.stem:
++        raise ConfigError(
++            "annotator",
++            f"l'annotateur {doc.annotator!r} ne correspond pas au nom du fichier "
++            f"{chemin.name!r} ({chemin})",
++        )
++    cles: dict[CleAnnotation, bool] = {}
++    index: dict[CleAnnotation, int] = {}
++    for i, a in enumerate(doc.annotations):
++        cle = (doc.annotator, a.answer_id, a.criterion)
++        if cle in cles:
++            raise ConfigError(
++                f"annotations[{i}].criterion",
++                f"annotation en double : {a.answer_id!r} / {a.criterion} "
++                f"(déjà à annotations[{index[cle]}]) ({chemin})",
++            )
++        cles[cle] = a.verdict
++        index[cle] = i
++    return cles
++
++
++def charger_dossier(dossier: Path) -> dict[CleAnnotation, bool]:
++    """Charge les `*.yaml` du dossier (triés), indexés par (annotateur, answer_id, critère)."""
++    resultat: dict[CleAnnotation, bool] = {}
++    for chemin in sorted(dossier.glob("*.yaml")):
++        resultat.update(_charger_fichier(chemin))
++    return resultat
++
++
++def answer_ids_de_answers_jsonl(chemin: Path) -> frozenset[str]:
++    """Les `answer_id` d'un `answers.jsonl` (une ligne JSON par Réponse)."""
++    try:
++        texte = chemin.read_text(encoding="utf-8")
++    except (OSError, UnicodeDecodeError) as exc:
++        raise ConfigError(str(chemin), f"fichier de Réponses illisible : {exc}") from exc
++    ids: set[str] = set()
++    for n, ligne in enumerate(texte.splitlines(), start=1):
++        if not ligne.strip():
++            continue
++        try:
++            objet = json.loads(ligne)
++        except json.JSONDecodeError as exc:
++            raise ConfigError(f"{chemin}[{n}]", f"ligne JSON invalide : {exc}") from exc
++        aid = objet.get("answer_id") if isinstance(objet, dict) else None
++        if not isinstance(aid, str):
++            raise ConfigError(f"{chemin}[{n}]", "answer_id absent ou n'est pas une chaîne")
++        ids.add(aid)
++    return frozenset(ids)
++
++
++def rapprocher(
++    annotations: Mapping[CleAnnotation, bool], answer_ids: Collection[str]
++) -> Rapprochement:
++    """Garde les annotations dont l'`answer_id` existe (égalité exacte) ; signale les autres."""
++    connus = set(answer_ids)
++    retenues = {cle: v for cle, v in annotations.items() if cle[1] in connus}
++    ignorees = tuple(sorted({cle[1] for cle in annotations if cle[1] not in connus}))
++    for aid in ignorees:
++        logging.warning("annotation ignorée : answer_id absent des Réponses : %s", aid)
++    return Rapprochement(retenues, ignorees)
+diff --git a/src/wavelibrarian/stats/kappa.py b/src/wavelibrarian/stats/kappa.py
+new file mode 100644
+index 0000000..423c5c8
+--- /dev/null
++++ b/src/wavelibrarian/stats/kappa.py
+@@ -0,0 +1,35 @@
++"""Kappa de Cohen entre deux vecteurs binaires (AD-22 : fonction pure, sans import du paquet)."""
++
++from collections.abc import Sequence
++
++
++def _en_binaire(valeurs: Sequence[bool | int], nom: str) -> list[int]:
++    sortie: list[int] = []
++    for i, v in enumerate(valeurs):
++        if isinstance(v, bool) or (isinstance(v, int) and v in (0, 1)):
++            sortie.append(int(v))
++        else:
++            raise ValueError(
++                f"valeur non binaire dans {nom}[{i}] : {v!r} (0, 1 ou booléen attendu)"
++            )
++    return sortie
++
++
++def cohen_kappa(a: Sequence[bool | int], b: Sequence[bool | int]) -> float | None:
++    """Kappa de Cohen de deux vecteurs binaires, calculé sur des comptes entiers.
++
++    Renvoie `None` quand le kappa est indéfini (accord attendu égal à 1, vecteurs vides inclus).
++    Lève `ValueError` si les longueurs diffèrent ou si une valeur n'est pas binaire.
++    """
++    if len(a) != len(b):
++        raise ValueError(f"longueurs différentes : {len(a)} et {len(b)}")
++    va = _en_binaire(a, "a")
++    vb = _en_binaire(b, "b")
++    n = len(va)
++    accords = sum(1 for x, y in zip(va, vb, strict=True) if x == y)
++    ya = sum(va)
++    yb = sum(vb)
++    pe_n2 = ya * yb + (n - ya) * (n - yb)
++    if n * n == pe_n2:
++        return None
++    return (n * accords - pe_n2) / (n * n - pe_n2)
+diff --git a/tests/unit/scoring/test_calibration.py b/tests/unit/scoring/test_calibration.py
+new file mode 100644
+index 0000000..355910e
+--- /dev/null
++++ b/tests/unit/scoring/test_calibration.py
+@@ -0,0 +1,157 @@
++"""Tests des Annotations humaines (story 5.1)."""
++
++import json
++import logging
++
++import pytest
++
++from wavelibrarian.core.errors import ConfigError
++from wavelibrarian.core.types import Answer
++from wavelibrarian.scoring.calibration import (
++    answer_ids_de_answers_jsonl,
++    charger_dossier,
++    rapprocher,
++)
++
++AID1 = "run1/cfg/standard/1/base/q1"
++AID2 = "run1/cfg/standard/1/base/q2"
++
++
++def _ecrire(dossier, nom, lignes):
++    (dossier / nom).write_text("\n".join(lignes) + "\n", encoding="utf-8")
++
++
++def _entree(aid, critere="correctness", verdict="yes"):
++    return [f"  - answer_id: {aid}", f"    criterion: {critere}", f"    verdict: {verdict}"]
++
++
++def _fichier(annotateur, *entrees):
++    lignes = [f"annotator: {annotateur}", "annotations:"]
++    for e in entrees:
++        lignes += e
++    return lignes
++
++
++def _erreur(tmp_path, lignes, nom="anael.yaml"):
++    _ecrire(tmp_path, nom, lignes)
++    with pytest.raises(ConfigError) as exc:
++        charger_dossier(tmp_path)
++    return exc.value
++
++
++def test_nominal_deux_annotateurs(tmp_path):
++    _ecrire(
++        tmp_path,
++        "anael.yaml",
++        _fichier("anael", _entree(AID1), _entree(AID1, "faithfulness", "no")),
++    )
++    _ecrire(tmp_path, "collegue.yaml", _fichier("collegue", _entree(AID1, verdict='"no"')))
++    assert charger_dossier(tmp_path) == {
++        ("anael", AID1, "correctness"): True,
++        ("anael", AID1, "faithfulness"): False,
++        ("collegue", AID1, "correctness"): False,
++    }
++
++
++def test_verdicts_nus_et_guillemets(tmp_path):
++    _ecrire(
++        tmp_path,
++        "anael.yaml",
++        _fichier("anael", _entree(AID1, verdict="no"), _entree(AID2, verdict='"yes"')),
++    )
++    cles = charger_dossier(tmp_path)
++    assert cles[("anael", AID1, "correctness")] is False
++    assert cles[("anael", AID2, "correctness")] is True
++
++
++def test_critere_inconnu(tmp_path):
++    valides = [_entree(AID1, c) for c in ("correctness", "completeness", "faithfulness")]
++    err = _erreur(tmp_path, _fichier("anael", *valides, _entree(AID1, "citation_correctness")))
++    assert err.path == "annotations[3].criterion"
++    assert "anael.yaml" in str(err)
++
++
++@pytest.mark.parametrize("verdict", ["peut-être", '"oui"', "1"])
++def test_verdict_invalide(tmp_path, verdict):
++    err = _erreur(tmp_path, _fichier("anael", _entree(AID1, verdict=verdict)))
++    assert err.path == "annotations[0].verdict"
++
++
++def test_doublon(tmp_path):
++    err = _erreur(
++        tmp_path,
++        _fichier(
++            "anael",
++            _entree(AID1),
++            _entree(AID2),
++            _entree(AID2, "faithfulness"),
++            _entree(AID1, "completeness"),
++            _entree(AID1, verdict="no"),
++        ),
++    )
++    assert err.path == "annotations[4].criterion"
++    assert "annotations[0]" in str(err)
++
++
++def test_annotateur_incoherent(tmp_path):
++    err = _erreur(tmp_path, _fichier("bob", _entree(AID1)))
++    assert err.path == "annotator"
++    assert "anael.yaml" in str(err)
++
++
++def test_dossier_vide(tmp_path):
++    assert charger_dossier(tmp_path) == {}
++
++
++def test_answers_jsonl_et_rapprochement(tmp_path, caplog):
++    reponses = [
++        Answer(
++            text="x",
++            abstained=False,
++            answer_id=AID1,
++            question_id="q1",
++            config_id="cfg",
++            tier=1,
++            status="ok",
++        ),
++    ]
++    jsonl = tmp_path / "answers.jsonl"
++    jsonl.write_text(
++        "\n".join(json.dumps(r.model_dump(mode="json")) for r in reponses) + "\n\n",
++        encoding="utf-8",
++    )
++    ids = answer_ids_de_answers_jsonl(jsonl)
++    assert ids == {AID1}
++
++    annotations = {
++        ("anael", AID1, "correctness"): True,
++        ("anael", AID2, "correctness"): False,
++        ("collegue", AID2, "faithfulness"): True,
++        ("anael", "run1/cfg/standard/q3", "correctness"): True,  # sans tier ni phase
++    }
++    with caplog.at_level(logging.WARNING):
++        res = rapprocher(annotations, ids)
++    assert res.retenues == {("anael", AID1, "correctness"): True}
++    assert res.ignorees == (AID2, "run1/cfg/standard/q3")
++    assert AID2 in caplog.text
++
++
++def test_answers_jsonl_ligne_invalide(tmp_path):
++    jsonl = tmp_path / "answers.jsonl"
++    jsonl.write_text('{"answer_id": "a"}\nnon json\n', encoding="utf-8")
++    with pytest.raises(ConfigError) as exc:
++        answer_ids_de_answers_jsonl(jsonl)
++    assert exc.value.path == f"{jsonl}[2]"
++
++
++def test_answers_jsonl_sans_answer_id(tmp_path):
++    jsonl = tmp_path / "answers.jsonl"
++    jsonl.write_text('{"answer_id": 3}\n', encoding="utf-8")
++    with pytest.raises(ConfigError) as exc:
++        answer_ids_de_answers_jsonl(jsonl)
++    assert exc.value.path == f"{jsonl}[1]"
++
++
++def test_answers_jsonl_illisible(tmp_path):
++    with pytest.raises(ConfigError):
++        answer_ids_de_answers_jsonl(tmp_path / "absent.jsonl")
+diff --git a/tests/unit/stats/test_kappa.py b/tests/unit/stats/test_kappa.py
+new file mode 100644
+index 0000000..524caa7
+--- /dev/null
++++ b/tests/unit/stats/test_kappa.py
+@@ -0,0 +1,45 @@
++"""Tests du kappa de Cohen (story 5.1)."""
++
++import pytest
++
++from wavelibrarian.stats.kappa import cohen_kappa
++
++
++def test_table_connue():
++    # 20 oui-oui, 5 oui-non, 10 non-oui, 15 non-non : po = 35/50 = 0,7 ; pe = 0,5 * 0,6 + 0,5 * 0,4
++    a = [True] * 20 + [True] * 5 + [False] * 10 + [False] * 15
++    b = [True] * 20 + [False] * 5 + [True] * 10 + [False] * 15
++    assert cohen_kappa(a, b) == pytest.approx(0.4, abs=1e-12)
++
++
++def test_identiques():
++    v = [True, False, True, True, False]
++    assert cohen_kappa(v, v) == 1.0
++
++
++def test_une_seule_classe():
++    assert cohen_kappa([True] * 4, [True] * 4) is None
++    assert cohen_kappa([False] * 4, [False] * 4) is None
++
++
++def test_vides():
++    assert cohen_kappa([], []) is None
++
++
++def test_classes_opposees_constantes():
++    assert cohen_kappa([True] * 4, [False] * 4) == 0.0
++
++
++def test_longueurs_differentes():
++    with pytest.raises(ValueError, match="longueurs"):
++        cohen_kappa([True], [True, False])
++
++
++@pytest.mark.parametrize("mauvaise", [2, -1, 0.5, "1", None])
++def test_valeur_non_binaire(mauvaise):
++    with pytest.raises(ValueError, match="non binaire"):
++        cohen_kappa([True, mauvaise], [True, False])
++
++
++def test_entiers_acceptes():
++    assert cohen_kappa([1, 0, 1, 0], [True, False, True, False]) == 1.0

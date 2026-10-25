@@ -1,0 +1,14 @@
+[
+ {"id":"u51","repo":"usine-migration-jira-demo","pkg":"usine","label":"5.1","commit":"00b07955","spec":"spec-5-1-"},
+ {"id":"u25","repo":"usine-migration-jira-demo","pkg":"usine","label":"2.5","commit":"5f083236","spec":"spec-2-5-"},
+ {"id":"u45","repo":"usine-migration-jira-demo","pkg":"usine","label":"4.5","commit":"0febaeba","spec":"spec-4-5-"},
+ {"id":"u75","repo":"usine-migration-jira-demo","pkg":"usine","label":"7.5","commit":"97734e64","spec":"spec-7-5-"},
+ {"id":"l65","repo":"wavelibrarian","pkg":"wavelibrarian","label":"6.5","commit":"8900082d","spec":"6-5-"},
+ {"id":"l63","repo":"wavelibrarian","pkg":"wavelibrarian","label":"6.3","commit":"558b621f","spec":"6-3-"},
+ {"id":"l27","repo":"wavelibrarian","pkg":"wavelibrarian","label":"2.7","commit":"347310df","spec":"2-7-"},
+ {"id":"l51","repo":"wavelibrarian","pkg":"wavelibrarian","label":"5.1","commit":"2229b27c","spec":"5-1-"},
+ {"id":"l23","repo":"wavelibrarian","pkg":"wavelibrarian","label":"2.3","commit":"fe4f03d3","spec":"2-3-"},
+ {"id":"w91","repo":"wavelocalai","pkg":"wavelocalai","label":"9.1","commit":"ab1fcfec","spec":"story-9-1"},
+ {"id":"w56","repo":"wavelocalai","pkg":"wavelocalai","label":"5.6","commit":"8113003d","spec":"story-5-6"},
+ {"id":"s132","repo":"service-public-slm-fine-tuning","pkg":"slmsp","label":"13.2","commit":"d3cb062f","spec":"spec-13-2-"}
+]

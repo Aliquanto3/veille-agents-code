@@ -1,0 +1,420 @@
+{
+ "bras": {
+  "A": {
+   "n": 11,
+   "cadrage_usd": 0.9986547636363636,
+   "cadrage_tours": 25.09090909090909,
+   "cadrage_s": 152.10909090909092,
+   "cadrage_chars": 9875.09090909091,
+   "dev_usd": 0.3831691545454545,
+   "dev_tours": 27.727272727272727,
+   "dev_s": 231.5909090909091,
+   "total_usd": 1.3818239181818184,
+   "total_tours": 52.81818181818182,
+   "total_s": 383.7,
+   "taux": 0.7188818181818182,
+   "complets": 2,
+   "ruff_propre": 10,
+   "ruff_mesures": 10,
+   "hors_perimetre": 3,
+   "spec_chars_dev": 11484.636363636364
+  },
+  "B": {
+   "n": 11,
+   "cadrage_usd": 0.3948707818181818,
+   "cadrage_tours": 12.909090909090908,
+   "cadrage_s": 82.60000000000001,
+   "cadrage_chars": 6643.545454545455,
+   "dev_usd": 0.3473611818181818,
+   "dev_tours": 27.454545454545453,
+   "dev_s": 269.60909090909087,
+   "total_usd": 0.7422319636363636,
+   "total_tours": 40.36363636363637,
+   "total_s": 352.20909090909095,
+   "taux": 0.6231272727272728,
+   "complets": 2,
+   "ruff_propre": 9,
+   "ruff_mesures": 10,
+   "hors_perimetre": 5,
+   "spec_chars_dev": 8253.09090909091
+  },
+  "C": {
+   "n": 3,
+   "cadrage_usd": 0.0,
+   "cadrage_tours": 0.0,
+   "cadrage_s": 0.0,
+   "cadrage_chars": 0.0,
+   "dev_usd": 0.5052789000000001,
+   "dev_tours": 37.0,
+   "dev_s": 227.03333333333333,
+   "total_usd": 0.5052789000000001,
+   "total_tours": 37.0,
+   "total_s": 227.03333333333333,
+   "taux": 0.9743666666666666,
+   "complets": 2,
+   "ruff_propre": 3,
+   "ruff_mesures": 3,
+   "hors_perimetre": 1,
+   "spec_chars_dev": 7611.333333333333
+  },
+  "D": {
+   "n": 10,
+   "cadrage_usd": 0.0,
+   "cadrage_tours": 0.0,
+   "cadrage_s": 0.0,
+   "cadrage_chars": 0.0,
+   "dev_usd": 0.33821902000000004,
+   "dev_tours": 23.8,
+   "dev_s": 137.35999999999999,
+   "total_usd": 0.33821902000000004,
+   "total_tours": 23.8,
+   "total_s": 137.35999999999999,
+   "taux": 0.70306,
+   "complets": 2,
+   "ruff_propre": 8,
+   "ruff_mesures": 9,
+   "hors_perimetre": 6,
+   "spec_chars_dev": 1562.8
+  }
+ },
+ "A_vs_B": {
+  "paires": 10,
+  "cout_agrege": -0.46359745053474155,
+  "cout_agrege_ic": [
+   -0.5526946385449237,
+   -0.3608811666522119
+  ],
+  "cout_relatif_moyen": -0.42397630376547674,
+  "cout_relatif_ic": [
+   -0.5089803594124399,
+   -0.3466731375959765
+  ],
+  "dev_seul_agrege": -0.09295355184747367,
+  "taux_ecart_pts": -10.176,
+  "taux_ecart_ic": [
+   -18.762999999999998,
+   -2.5790000000000015
+  ],
+  "b_moins_cher": 10
+ },
+ "A_vs_D": {
+  "paires": 10,
+  "cout_agrege": -0.7610099203676063,
+  "cout_agrege_ic": [
+   -0.7972910466342289,
+   -0.713625074133538
+  ],
+  "cout_relatif_moyen": -0.748169246919045,
+  "cout_relatif_ic": [
+   -0.7837845959249476,
+   -0.7095665407053139
+  ],
+  "dev_seul_agrege": -0.15134977416622386,
+  "taux_ecart_pts": -2.6995000000000005,
+  "taux_ecart_ic": [
+   -13.180499999999999,
+   7.6375
+  ],
+  "b_moins_cher": 10
+ },
+ "B_vs_D": {
+  "paires": 10,
+  "cout_agrege": -0.5544575992961932,
+  "cout_agrege_ic": [
+   -0.609986195344026,
+   -0.49551638023856015
+  ],
+  "cout_relatif_moyen": -0.5524618834018049,
+  "cout_relatif_ic": [
+   -0.6094267604337242,
+   -0.4941538169982924
+  ],
+  "dev_seul_agrege": -0.06438063060352828,
+  "taux_ecart_pts": 7.4765,
+  "taux_ecart_ic": [
+   1.1110000000000009,
+   13.829000000000002
+  ],
+  "b_moins_cher": 10
+ },
+ "A_vs_C": {
+  "paires": 3,
+  "cout_agrege": -0.7113640100504129,
+  "cout_agrege_ic": [
+   -0.794534760144469,
+   -0.639646392538453
+  ],
+  "cout_relatif_moyen": -0.6924516565070847,
+  "cout_relatif_ic": [
+   -0.7945347601444691,
+   -0.639646392538453
+  ],
+  "dev_seul_agrege": -0.023998194588465527,
+  "taux_ecart_pts": 23.396666666666672,
+  "taux_ecart_ic": [
+   7.690000000000008,
+   50.0
+  ],
+  "b_moins_cher": 3
+ },
+ "B_vs_C": {
+  "paires": 3,
+  "cout_agrege": -0.41143325539808007,
+  "cout_agrege_ic": [
+   -0.5696271515175229,
+   -0.2569928029969991
+  ],
+  "cout_relatif_moyen": -0.3787463878999328,
+  "cout_relatif_ic": [
+   -0.5696271515175229,
+   -0.2569928029969991
+  ],
+  "dev_seul_agrege": 0.29882065347313436,
+  "taux_ecart_pts": 44.553333333333335,
+  "taux_ecart_ic": [
+   37.5,
+   50.0
+  ],
+  "b_moins_cher": 3
+ },
+ "D_vs_C": {
+  "paires": 3,
+  "cout_agrege": 0.24692088002284196,
+  "cout_agrege_ic": [
+   0.01491026162776321,
+   0.6515793747308267
+  ],
+  "cout_relatif_moyen": 0.2922137564905845,
+  "cout_relatif_ic": [
+   0.01491026162776321,
+   0.6515793747308267
+  ],
+  "dev_seul_agrege": 0.24692088002284196,
+  "taux_ecart_pts": 32.26333333333334,
+  "taux_ecart_ic": [
+   25.0,
+   38.46000000000001
+  ],
+  "b_moins_cher": 0
+ },
+ "par_story": {
+  "l23": {
+   "A": {
+    "n": 1,
+    "total_usd": 0.8727732000000001,
+    "cadrage_usd": 0.6379530000000001,
+    "taux": 1.0
+   },
+   "B": {
+    "n": 1,
+    "total_usd": 0.6659923,
+    "cadrage_usd": 0.38886879999999996,
+    "taux": 1.0
+   },
+   "D": {
+    "n": 1,
+    "total_usd": 0.2678233,
+    "cadrage_usd": 0.0,
+    "taux": 1.0
+   }
+  },
+  "l27": {
+   "A": {
+    "n": 1,
+    "total_usd": 0.9925584,
+    "cadrage_usd": 0.7215537999999999,
+    "taux": 0.8889
+   },
+   "B": {
+    "n": 1,
+    "total_usd": 0.6113043,
+    "cadrage_usd": 0.3340856,
+    "taux": 0.6667
+   },
+   "D": {
+    "n": 1,
+    "total_usd": 0.27541020000000005,
+    "cadrage_usd": 0.0,
+    "taux": 0.7778
+   }
+  },
+  "l51": {
+   "A": {
+    "n": 2,
+    "total_usd": 1.04805225,
+    "cadrage_usd": 0.8185675000000001,
+    "taux": 0.6071500000000001
+   },
+   "B": {
+    "n": 2,
+    "total_usd": 0.5733769,
+    "cadrage_usd": 0.36732499999999996,
+    "taux": 0.57145
+   },
+   "D": {
+    "n": 1,
+    "total_usd": 0.2661719,
+    "cadrage_usd": 0.0,
+    "taux": 0.7143
+   }
+  },
+  "l63": {
+   "A": {
+    "n": 1,
+    "total_usd": 1.3906607,
+    "cadrage_usd": 1.076279,
+    "taux": 0.875
+   },
+   "B": {
+    "n": 1,
+    "total_usd": 0.6744612999999999,
+    "cadrage_usd": 0.3821308,
+    "taux": 0.625
+   },
+   "C": {
+    "n": 1,
+    "total_usd": 0.5011296000000001,
+    "cadrage_usd": 0.0,
+    "taux": 1.0
+   },
+   "D": {
+    "n": 1,
+    "total_usd": 0.41410480000000005,
+    "cadrage_usd": 0.0,
+    "taux": 0.75
+   }
+  },
+  "l65": {
+   "A": {
+    "n": 1,
+    "total_usd": 1.3328021999999997,
+    "cadrage_usd": 0.8609908,
+    "taux": 0.625
+   },
+   "B": {
+    "n": 1,
+    "total_usd": 0.8570167,
+    "cadrage_usd": 0.3528024,
+    "taux": 0.625
+   },
+   "D": {
+    "n": 1,
+    "total_usd": 0.4884487,
+    "cadrage_usd": 0.0,
+    "taux": 0.875
+   }
+  },
+  "u25": {
+   "A": {
+    "n": 1,
+    "total_usd": 1.4626805000000003,
+    "cadrage_usd": 0.8997720000000002,
+    "taux": 0.8462
+   },
+   "B": {
+    "n": 1,
+    "total_usd": 0.7559925000000001,
+    "cadrage_usd": 0.3854322,
+    "taux": 0.4615
+   },
+   "C": {
+    "n": 1,
+    "total_usd": 0.5219227,
+    "cadrage_usd": 0.0,
+    "taux": 0.9231
+   },
+   "D": {
+    "n": 1,
+    "total_usd": 0.3160143,
+    "cadrage_usd": 0.0,
+    "taux": 0.5385
+   }
+  },
+  "u45": {
+   "A": {
+    "n": 1,
+    "total_usd": 2.446185600000001,
+    "cadrage_usd": 1.911979000000001,
+    "taux": 1.0
+   },
+   "B": {
+    "n": 1,
+    "total_usd": 0.7546263999999999,
+    "cadrage_usd": 0.39229819999999993,
+    "taux": 1.0
+   },
+   "D": {
+    "n": 1,
+    "total_usd": 0.37910119999999997,
+    "cadrage_usd": 0.0,
+    "taux": 1.0
+   }
+  },
+  "u51": {
+   "A": {
+    "n": 1,
+    "total_usd": 2.3983833,
+    "cadrage_usd": 1.722565,
+    "taux": 0.5
+   },
+   "B": {
+    "n": 1,
+    "total_usd": 1.1450174000000002,
+    "cadrage_usd": 0.6408212000000001,
+    "taux": 0.5
+   },
+   "C": {
+    "n": 1,
+    "total_usd": 0.49278440000000007,
+    "cadrage_usd": 0.0,
+    "taux": 1.0
+   },
+   "D": {
+    "n": 1,
+    "total_usd": 0.48554480000000005,
+    "cadrage_usd": 0.0,
+    "taux": 0.6667
+   }
+  },
+  "u75": {
+   "A": {
+    "n": 1,
+    "total_usd": 1.066991,
+    "cadrage_usd": 0.6771083999999999,
+    "taux": 0.625
+   },
+   "B": {
+    "n": 1,
+    "total_usd": 0.6898967,
+    "cadrage_usd": 0.3649292,
+    "taux": 0.5
+   },
+   "D": {
+    "n": 1,
+    "total_usd": 0.21679229999999997,
+    "cadrage_usd": 0.0,
+    "taux": 0.375
+   }
+  },
+  "w91": {
+   "A": {
+    "n": 1,
+    "total_usd": 1.1409237,
+    "cadrage_usd": 0.8398664,
+    "taux": 0.3333
+   },
+   "B": {
+    "n": 1,
+    "total_usd": 0.8634902,
+    "cadrage_usd": 0.36756019999999995,
+    "taux": 0.3333
+   },
+   "D": {
+    "n": 1,
+    "total_usd": 0.2727787,
+    "cadrage_usd": 0.0,
+    "taux": 0.3333
+   }
+  }
+ }
+}

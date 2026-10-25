@@ -1,0 +1,30 @@
+{
+  "id": "l27",
+  "repo": "wavelibrarian",
+  "pkg": "wavelibrarian",
+  "label": "2.7",
+  "commit": "347310dfaba2058c506a39d68d948c5210556c53",
+  "base": "a0591dbbde6269dfaee0aa9165bfc8d3e18a3435",
+  "fichiers_commit": [
+    "_bmad-output/implementation-artifacts/2-7-paliers-de-volume-et-commande-wl-corpus-paliers.md",
+    "src/wavelibrarian/cli.py",
+    "src/wavelibrarian/corpus/tiers.py",
+    "tests/unit/corpus/test_tiers.py"
+  ],
+  "tests_caches": [
+    "tests/unit/corpus/test_tiers.py"
+  ],
+  "tests_executes": [
+    "tests/unit/corpus/test_tiers.py"
+  ],
+  "spec_origine": "_bmad-output/implementation-artifacts/2-7-paliers-de-volume-et-commande-wl-corpus-paliers.md",
+  "src_modifies": [
+    "src/wavelibrarian/cli.py",
+    "src/wavelibrarian/corpus/tiers.py"
+  ],
+  "c_disponible": true,
+  "total_ref": 9,
+  "base_passed": 0,
+  "base_failed": 1,
+  "duree_ref_s": 7.3
+}

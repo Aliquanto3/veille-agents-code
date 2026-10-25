@@ -1,0 +1,44 @@
+{
+  "id": "u25",
+  "repo": "usine-migration-jira-demo",
+  "pkg": "usine",
+  "label": "2.5",
+  "commit": "5f083236c2ee352585f866c77feba83935d5a1de",
+  "base": "f80fa13e678ba61a9a701219f2a896388e65da96",
+  "fichiers_commit": [
+    "_bmad-output/implementation-artifacts/spec-2-5-source-journal-a-l-echelle-et-correspondance-des-cles.md",
+    "src/usine/adaptateurs/journal/__init__.py",
+    "src/usine/adaptateurs/journal/manifeste.py",
+    "src/usine/composition.py",
+    "tests/contrat/source_tickets/fabriques.py",
+    "tests/unit/adaptateurs/journal/conftest.py",
+    "tests/unit/adaptateurs/journal/outils.py",
+    "tests/unit/adaptateurs/journal/test_correspondance.py",
+    "tests/unit/adaptateurs/journal/test_echelle.py",
+    "tests/unit/test_composition.py"
+  ],
+  "tests_caches": [
+    "tests/unit/adaptateurs/journal/conftest.py",
+    "tests/unit/adaptateurs/journal/outils.py",
+    "tests/unit/adaptateurs/journal/test_correspondance.py",
+    "tests/unit/adaptateurs/journal/test_echelle.py"
+  ],
+  "tests_executes": [
+    "tests/unit/adaptateurs/journal/test_correspondance.py",
+    "tests/unit/adaptateurs/journal/test_echelle.py"
+  ],
+  "spec_origine": "_bmad-output/implementation-artifacts/spec-2-5-source-journal-a-l-echelle-et-correspondance-des-cles.md",
+  "src_modifies": [
+    "src/usine/adaptateurs/journal/__init__.py",
+    "src/usine/adaptateurs/journal/manifeste.py",
+    "src/usine/composition.py"
+  ],
+  "c_disponible": true,
+  "total_ref": 13,
+  "base_passed": 0,
+  "base_failed": 1,
+  "duree_ref_s": 3.9,
+  "tests_appui": [
+    "tests/contrat/source_tickets/fabriques.py"
+  ]
+}

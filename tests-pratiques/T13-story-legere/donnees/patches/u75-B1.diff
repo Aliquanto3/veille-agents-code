@@ -1,0 +1,281 @@
+diff --git a/src/usine/ui/app.py b/src/usine/ui/app.py
+index f59f517..b485467 100644
+--- a/src/usine/ui/app.py
++++ b/src/usine/ui/app.py
+@@ -9,7 +9,8 @@ Passage lancé dans `sorties/progression/`. Elle n'écrit rien sous `sorties/` e
+ jamais la Chaîne dans son propre processus : `usine rapport` tourne dans un sous-processus.
+ La racine est `USINE_RACINE` si elle est définie, sinon le répertoire courant. Racine, Mode
+ repli, `Consultation`, configuration de la démo (`config/demo.yaml`) et manifestes de l'avant
+-/ après viennent des services de `ui/cli.py` (racine de composition).
++/ après viennent des services de `ui/cli.py` (racine de composition). L'écran outillage affiche,
++en lecture seule, `docs/fiche-outillage.md` sous la racine, sans en copier le texte.
+ """
+ 
+ import subprocess
+@@ -20,7 +21,7 @@ import streamlit as st
+ 
+ from usine.contrats.erreurs import UsineErreur
+ from usine.contrats.passage import Etape, EvenementProgression, ManifestePassage, StatutEtape
+-from usine.ui import avant_apres, carte, detail, lancement, navigation, progression
++from usine.ui import avant_apres, carte, detail, lancement, navigation, outillage, progression
+ from usine.ui.cli import (
+     config_demo,
+     consultation_dernier_passage,
+@@ -201,6 +202,23 @@ def afficher_avant_apres(racine: Path) -> None:
+     st.caption(avant_apres.legende(manifeste))
+ 
+ 
++def afficher_outillage(racine: Path) -> None:
++    """Fiche d'outillage du dépôt, relue à chaque affichage, en lecture seule."""
++    st.subheader(Ecran.outillage.value)
++    if _racine_introuvable(racine):
++        return
++    try:
++        fiche = outillage.lire_fiche(racine)
++    except UsineErreur as exc:
++        st.error(str(exc))
++        return
++    if fiche is None:
++        st.warning(outillage.FICHE_ABSENTE)
++        return
++    st.markdown(fiche)
++    st.caption(outillage.LEGENDE)
++
++
+ def afficher_a_venir(ecran: Ecran) -> None:
+     """Emplacement nommé d'un écran livré par une story suivante."""
+     st.subheader(ecran.value)
+@@ -393,6 +411,8 @@ def principal() -> None:
+         afficher_lancement(racine)
+     elif ecran is Ecran.avant_apres:
+         afficher_avant_apres(racine)
++    elif ecran is Ecran.outillage:
++        afficher_outillage(racine)
+     else:
+         afficher_a_venir(ecran)
+ 
+diff --git a/src/usine/ui/navigation.py b/src/usine/ui/navigation.py
+index 8015543..4b7c3a9 100644
+--- a/src/usine/ui/navigation.py
++++ b/src/usine/ui/navigation.py
+@@ -21,7 +21,6 @@ ECRAN_PAR_DEFAUT = Ecran.carte
+ 
+ STORY_A_VENIR: Mapping[Ecran, str] = MappingProxyType(
+     {
+-        Ecran.outillage: "7.5",
+         Ecran.agent: "7.9",
+     }
+ )
+diff --git a/src/usine/ui/outillage.py b/src/usine/ui/outillage.py
+new file mode 100644
+index 0000000..6ca4eac
+--- /dev/null
++++ b/src/usine/ui/outillage.py
+@@ -0,0 +1,32 @@
++"""Écran « Ce qu'il faut pour le faire en vrai » : lecture de la fiche d'outillage (sans Streamlit).
++
++La fiche `docs/fiche-outillage.md` (Story 8.1) est l'unique source du texte : l'UI la lit à
++chaque affichage, en lecture seule, et n'en copie rien (AD-11).
++"""
++
++from pathlib import Path
++
++from usine.contrats.erreurs import UsineErreur
++
++FICHIER_FICHE = "docs/fiche-outillage.md"
++"""Fiche d'outillage, relative à la racine."""
++
++FICHE_ABSENTE = (
++    f"Fiche absente : `{FICHIER_FICHE}` (Story 8.1) ; l'outillage demandé ne peut pas être affiché."
++)
++"""Avertissement affiché quand la fiche n'existe pas ou est vide."""
++
++LEGENDE = f"Source : `{FICHIER_FICHE}` (Story 8.1), affichée en lecture seule."
++"""Légende sous la fiche."""
++
++
++def lire_fiche(racine: Path) -> str | None:
++    """Contenu de la fiche, ou `None` si elle est absente ou vide ; `UsineErreur` si illisible."""
++    chemin = racine / FICHIER_FICHE
++    try:
++        contenu = chemin.read_text(encoding="utf-8")
++    except FileNotFoundError:
++        return None
++    except (OSError, UnicodeDecodeError) as exc:
++        raise UsineErreur(f"Fiche illisible : `{FICHIER_FICHE}` ({exc})") from exc
++    return contenu if contenu.strip() else None
+diff --git a/tests/unit/ui/test_app.py b/tests/unit/ui/test_app.py
+index 4693460..349ff21 100644
+--- a/tests/unit/ui/test_app.py
++++ b/tests/unit/ui/test_app.py
+@@ -31,7 +31,7 @@ from usine.contrats.prevision import (
+     RisqueEntreeRouge,
+     StatutPrevision,
+ )
+-from usine.ui import avant_apres, cli, detail, lancement
++from usine.ui import avant_apres, cli, detail, lancement, outillage
+ from usine.ui.carte import formater_regle, tendance
+ from usine.ui.cli import consultation_dernier_passage, mode_repli
+ from usine.ui.liens import echapper_markdown
+@@ -153,6 +153,9 @@ def test_navigation(ecran: Ecran, racine_publiee: Path, monkeypatch: pytest.Monk
+         assert page.subheader[0].value == ecran.value
+         assert _tableau_avant_apres(page)
+         assert not page.info  # plus un emplacement
++    elif ecran is Ecran.outillage:
++        assert page.subheader[0].value == ecran.value
++        assert not page.info  # plus un emplacement
+     elif ecran is not Ecran.carte:
+         assert page.subheader[0].value == ecran.value
+         assert f"Story {STORY_A_VENIR[ecran]}" in page.info[-1].value
+@@ -856,6 +859,60 @@ def _demo(
+     (racine / "config" / "demo.yaml").write_text(contenu, encoding="utf-8")
+ 
+ 
++FICHE = Path(__file__).resolve().parents[3] / outillage.FICHIER_FICHE
++
++
++def _racine_avec_fiche(tmp_path: Path) -> Path:
++    cible = tmp_path / outillage.FICHIER_FICHE
++    cible.parent.mkdir(parents=True)
++    shutil.copyfile(FICHE, cible)
++    return tmp_path
++
++
++def test_outillage_fiche_presente(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
++    monkeypatch.chdir(_racine_avec_fiche(tmp_path))
++    page = _page(Ecran.outillage)
++    assert not page.exception
++    assert not page.error
++    assert not page.info  # plus un emplacement
++    assert not page.warning
++    texte = _textes(page)
++    contenu = FICHE.read_text(encoding="utf-8")
++    assert contenu.strip() in texte
++    assert "| Extraction Jira |" in texte
++    assert [c.value for c in page.caption] == [outillage.LEGENDE]
++
++
++def test_outillage_fiche_modifiee(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
++    racine = _racine_avec_fiche(tmp_path)
++    monkeypatch.chdir(racine)
++    page = _page(Ecran.outillage)
++    (racine / outillage.FICHIER_FICHE).write_text("# Nouvelle fiche", encoding="utf-8")
++    _aller(page, Ecran.carte)
++    _aller(page, Ecran.outillage)
++    assert "# Nouvelle fiche" in _textes(page)
++
++
++def test_outillage_fiche_absente(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
++    monkeypatch.chdir(tmp_path)
++    page = _page(Ecran.outillage)
++    assert not page.exception
++    assert not page.error
++    assert [w.value for w in page.warning] == [outillage.FICHE_ABSENTE]
++
++
++def test_outillage_fiche_illisible(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
++    racine = _racine_avec_fiche(tmp_path)
++    (racine / outillage.FICHIER_FICHE).write_bytes(b"\xff\xfe\x00\xff")
++    monkeypatch.chdir(racine)
++    page = _page(Ecran.outillage)
++    assert not page.exception
++    assert len(page.error) == 1
++    assert outillage.FICHIER_FICHE in page.error[0].value
++    _aller(page, Ecran.carte)  # la navigation reste utilisable
++    assert not page.exception
++
++
+ def test_avant_apres_passage_publie(racine_publiee: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+     monkeypatch.chdir(racine_publiee)
+     page = _page(Ecran.avant_apres)
+diff --git a/tests/unit/ui/test_navigation.py b/tests/unit/ui/test_navigation.py
+index a9d747d..3cd1749 100644
+--- a/tests/unit/ui/test_navigation.py
++++ b/tests/unit/ui/test_navigation.py
+@@ -26,9 +26,9 @@ def test_ordre_et_defaut() -> None:
+ 
+ def test_stories_a_venir() -> None:
+     assert dict(STORY_A_VENIR) == {
+-        Ecran.outillage: "7.5",
+         Ecran.agent: "7.9",
+     }
++    assert Ecran.outillage not in STORY_A_VENIR  # écran livré par la Story 7.5
+     assert Ecran.detail not in STORY_A_VENIR  # écran livré par la Story 7.2
+     assert Ecran.avant_apres not in STORY_A_VENIR  # écran livré par la Story 7.4
+ 
+diff --git a/tests/unit/ui/test_outillage.py b/tests/unit/ui/test_outillage.py
+new file mode 100644
+index 0000000..5ef74e1
+--- /dev/null
++++ b/tests/unit/ui/test_outillage.py
+@@ -0,0 +1,70 @@
++"""Fiche d'outillage : lecture (présente, absente, vide, illisible) et pas de copie dans `ui/`."""
++
++from pathlib import Path
++
++import pytest
++
++from usine.contrats.erreurs import UsineErreur
++from usine.ui import outillage
++from usine.ui.outillage import FICHE_ABSENTE, FICHIER_FICHE, LEGENDE, lire_fiche
++
++DEPOT = Path(__file__).resolve().parents[3]
++REPERTOIRE_UI = Path(outillage.__file__).parent
++
++
++def _ecrire(racine: Path, octets: bytes) -> None:
++    fichier = racine / FICHIER_FICHE
++    fichier.parent.mkdir(parents=True, exist_ok=True)
++    fichier.write_bytes(octets)
++
++
++def test_constantes() -> None:
++    assert FICHIER_FICHE == "docs/fiche-outillage.md"
++    assert FICHIER_FICHE in FICHE_ABSENTE
++    assert FICHIER_FICHE in LEGENDE
++    assert "8.1" in LEGENDE
++    assert "lecture seule" in LEGENDE
++
++
++def test_fiche_presente(tmp_path: Path) -> None:
++    contenu = "# Titre\n\n| a | b |\n|---|---|\n| é | ✅ |\n"
++    _ecrire(tmp_path, contenu.encode("utf-8"))
++    assert lire_fiche(tmp_path) == contenu
++
++
++def test_fiche_du_depot() -> None:
++    fiche = lire_fiche(DEPOT)
++    assert fiche is not None
++    assert "Correspondance par brique" in fiche
++
++
++def test_fiche_absente(tmp_path: Path) -> None:
++    assert lire_fiche(tmp_path) is None
++
++
++@pytest.mark.parametrize("contenu", [b"", b" \n\t \n"])
++def test_fiche_vide(tmp_path: Path, contenu: bytes) -> None:
++    _ecrire(tmp_path, contenu)
++    assert lire_fiche(tmp_path) is None
++
++
++def test_fiche_encodage_invalide(tmp_path: Path) -> None:
++    _ecrire(tmp_path, b"\xff\xfe\x00\xff")
++    with pytest.raises(UsineErreur, match=FICHIER_FICHE):
++        lire_fiche(tmp_path)
++
++
++def test_fiche_est_un_repertoire(tmp_path: Path) -> None:
++    (tmp_path / FICHIER_FICHE).mkdir(parents=True)
++    with pytest.raises(UsineErreur, match=FICHIER_FICHE):
++        lire_fiche(tmp_path)
++
++
++def test_aucune_copie_du_texte_dans_ui() -> None:
++    lignes = (DEPOT / FICHIER_FICHE).read_text(encoding="utf-8").splitlines()
++    corps = [ligne.strip() for ligne in lignes[1:] if ligne.strip()]  # titre H1 excepté
++    assert corps
++    sources = "\n".join(
++        fichier.read_text(encoding="utf-8") for fichier in REPERTOIRE_UI.rglob("*.py")
++    )
++    assert [ligne for ligne in corps if ligne in sources] == []

@@ -1,0 +1,443 @@
+diff --git a/README.md b/README.md
+index 7c19552..9dae29c 100644
+--- a/README.md
++++ b/README.md
+@@ -35,7 +35,7 @@ uv sync
+ uv run wavelocalai-v2
+ ```
+ 
+-L'interface s'ouvre sur http://127.0.0.1:8502 (le port 8501 reste à la v1) : le serveur n'écoute que sur la machine locale. Options : `--port`, `--data-dir` (dossier des données, `data/` par défaut) et `--config` (un fichier `wavelocalai.toml`). Un modèle local reste à télécharger (`ollama pull qwen2.5:1.5b`) ; l'écran Modèles sait aussi les installer.
++L'interface s'ouvre sur http://127.0.0.1:8502 (le port 8501 reste à la v1) : le serveur n'écoute que sur la machine locale. Le navigateur par défaut s'ouvre tout seul une fois le serveur prêt ; `--no-browser` ou `[server] open_browser = false` dans `wavelocalai.toml` l'en empêche (sans navigateur, l'URL est écrite dans la console et le journal). Options : `--port`, `--no-browser`, `--data-dir` (dossier des données, `data/` par défaut) et `--config` (un fichier `wavelocalai.toml`). Un modèle local reste à télécharger (`ollama pull qwen2.5:1.5b`) ; l'écran Modèles sait aussi les installer.
+ 
+ Tests de la v2 : `uv run python -m pytest tests/v2` (sans Ollama) ; les parcours dans un navigateur (`tests/v2/e2e`, marqueur `e2e`) se lancent avec `-m e2e` et tournent chaque nuit sur Linux dans la CI (voir `AGENTS.md`).
+ 
+diff --git a/src/wavelocalai/__main__.py b/src/wavelocalai/__main__.py
+index 036da80..7d2aed7 100644
+--- a/src/wavelocalai/__main__.py
++++ b/src/wavelocalai/__main__.py
+@@ -10,10 +10,15 @@ import argparse
+ import logging
+ import sqlite3
+ import sys
++import threading
++import time
++import urllib.error
++import urllib.request
++import webbrowser
+ from collections.abc import Sequence
+ from pathlib import Path
+ 
+-from wavelocalai.config import DEFAULT_PORT, ConfigError, load_settings
++from wavelocalai.config import DEFAULT_PORT, ConfigError, has_display, load_settings
+ from wavelocalai.store.datadir import (
+     DataDirLock,
+     DataDirLockError,
+@@ -35,15 +40,63 @@ def _parse(argv: Sequence[str] | None) -> argparse.Namespace:
+     parser.add_argument("--port", type=int, help=f"port d'écoute (défaut {DEFAULT_PORT})")
+     parser.add_argument("--data-dir", type=Path, help="dossier des données (défaut : data/)")
+     parser.add_argument("--config", type=Path, help="fichier de réglages (wavelocalai.toml)")
++    parser.add_argument(
++        "--no-browser", action="store_true", help="n'ouvre pas le navigateur au lancement"
++    )
+     return parser.parse_args(argv)
+ 
+ 
++def _announce_url(url: str) -> None:
++    """Repli : l'URL va sur la console et dans le journal."""
++    print(f"wavelocalai-v2 : ouvrez {url}")
++    logger.warning("Navigateur non ouvert ; l'application est sur %s", url)
++
++
++def _server_answers(url: str) -> bool:
++    try:
++        with urllib.request.urlopen(url, timeout=1.0):  # noqa: S310
++            return True
++    except urllib.error.HTTPError:
++        return True  # toute réponse HTTP vaut « prêt »
++    except (OSError, ValueError):
++        return False
++
++
++def _open_browser_when_ready(
++    port: int, *, timeout_s: float = 30.0, interval_s: float = 0.1
++) -> bool:
++    """Ouvre le navigateur une fois que le serveur répond en HTTP ; rend `True` si ouvert.
++
++    Sans réponse à temps, sans affichage ou si l'ouverture échoue, l'URL est écrite sur la
++    console et dans le journal ; aucune exception ne sort.
++    """
++    url = f"http://127.0.0.1:{port}/"
++    try:
++        deadline = time.monotonic() + timeout_s
++        while not _server_answers(url):
++            if time.monotonic() >= deadline:
++                _announce_url(url)
++                return False
++            time.sleep(interval_s)
++        if not has_display():
++            _announce_url(url)
++            return False
++        if webbrowser.open(url):
++            return True
++    except (webbrowser.Error, OSError):
++        pass
++    _announce_url(url)
++    return False
++
++
+ def main(argv: Sequence[str] | None = None) -> int:
+     """Point d'entrée du script `wavelocalai-v2` ; rend le code de sortie."""
+     args = _parse(argv)
+     overrides: dict[str, dict[str, object]] = {}
+     if args.port is not None:
+         overrides["server"] = {"port": args.port}
++    if args.no_browser:
++        overrides.setdefault("server", {})["open_browser"] = False
+     if args.data_dir is not None:
+         overrides["data"] = {"dir": args.data_dir.resolve()}
+     try:
+@@ -99,6 +152,10 @@ def main(argv: Sequence[str] | None = None) -> int:
+                 settings.server.port,
+                 data_dir,
+             )
++            if settings.server.open_browser:
++                threading.Thread(
++                    target=_open_browser_when_ready, args=(settings.server.port,), daemon=True
++                ).start()
+             try:
+                 serve(settings, sock, store)
+             finally:
+diff --git a/src/wavelocalai/config.py b/src/wavelocalai/config.py
+index c8a80e3..4c61bef 100644
+--- a/src/wavelocalai/config.py
++++ b/src/wavelocalai/config.py
+@@ -11,6 +11,7 @@ le vérifie). Module de base : il n'importe rien du paquet.
+ from __future__ import annotations
+ 
+ import os
++import sys
+ import tomllib
+ from collections.abc import Mapping
+ from datetime import date
+@@ -59,6 +60,7 @@ class _Section(BaseModel):
+ 
+ class ServerSettings(_Section):
+     port: int = Field(DEFAULT_PORT, ge=1, le=65535)
++    open_browser: bool = True
+ 
+ 
+ class DataSettings(_Section):
+@@ -248,6 +250,14 @@ class Settings(BaseModel):
+         return [key.get_secret_value() for key in keys if key.get_secret_value()]
+ 
+ 
++def has_display() -> bool:
++    """Une session graphique existe-t-elle ? Toujours vrai sous Windows et macOS ; ailleurs,
++    `DISPLAY` ou `WAYLAND_DISPLAY` doit être renseigné (config.py lit seul l'environnement)."""
++    if sys.platform in ("win32", "darwin"):
++        return True
++    return bool(os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY"))
++
++
+ def get_version() -> str:
+     """Version du paquet installé (celle de `pyproject.toml`)."""
+     try:
+diff --git a/tests/v2/conftest.py b/tests/v2/conftest.py
+index 95e05f0..5054e42 100644
+--- a/tests/v2/conftest.py
++++ b/tests/v2/conftest.py
+@@ -80,6 +80,17 @@ def _restore_telemetry_env():
+             os.environ[name] = value
+ 
+ 
++@pytest.fixture(autouse=True)
++def _no_real_browser(monkeypatch):
++    """Aucun test n'ouvre un vrai navigateur."""
++    import webbrowser
++
++    def _refuse(*args, **kwargs):
++        raise AssertionError("webbrowser.open appelé dans un test")
++
++    monkeypatch.setattr(webbrowser, "open", _refuse)
++
++
+ @pytest.fixture(autouse=True)
+ def _stub_codecarbon(monkeypatch):
+     """Les tests ne lancent jamais le vrai CodeCarbon (plusieurs secondes de détection du matériel) :
+diff --git a/tests/v2/e2e/conftest.py b/tests/v2/e2e/conftest.py
+index 4035d78..f076802 100644
+--- a/tests/v2/e2e/conftest.py
++++ b/tests/v2/e2e/conftest.py
+@@ -136,6 +136,7 @@ class Backend:
+                 str(self.port),
+                 "--data-dir",
+                 str(self.data_dir),
++                "--no-browser",
+                 *(["--config", str(self.config)] if self.config else []),
+             ],
+             env=env,
+diff --git a/tests/v2/unit/test_config.py b/tests/v2/unit/test_config.py
+index 75830e3..405d9f2 100644
+--- a/tests/v2/unit/test_config.py
++++ b/tests/v2/unit/test_config.py
+@@ -26,6 +26,14 @@ def test_versioned_toml_gives_the_documented_defaults():
+     assert settings.data_dir == DEFAULT_TOML.parent / "data"
+ 
+ 
++def test_open_browser_defaults_to_true_and_reads_false_from_toml(tmp_path):
++    assert make_settings(tmp_path).server.open_browser is True
++    toml = tmp_path / "w.toml"
++    toml.write_text("[server]\nopen_browser = false\n", encoding="utf-8")
++    settings = load_settings(toml, tmp_path / "absent.env", environ={})
++    assert settings.server.open_browser is False
++
++
+ def test_toml_then_env_then_overrides(tmp_path):
+     toml = tmp_path / "wavelocalai.toml"
+     toml.write_text("[server]\nport = 9100\n[carbon]\npue = 1.4\n", encoding="utf-8")
+diff --git a/tests/v2/unit/test_main.py b/tests/v2/unit/test_main.py
+index d2cbf11..caabd92 100644
+--- a/tests/v2/unit/test_main.py
++++ b/tests/v2/unit/test_main.py
+@@ -44,7 +44,7 @@ def test_busy_port_is_refused_with_a_clear_message(busy_port):
+ 
+ 
+ def test_second_launch_refuses_when_port_is_busy(tmp_path, busy_port, capsys):
+-    code = main(["--port", str(busy_port), "--data-dir", str(tmp_path / "data")])
++    code = main(["--port", str(busy_port), "--data-dir", str(tmp_path / "data"), "--no-browser"])
+     assert code == 1
+     assert f"port {busy_port} est occupé" in capsys.readouterr().err
+     with DataDirLock(tmp_path / "data"):  # le verrou a bien été relâché
+@@ -54,7 +54,7 @@ def test_second_launch_refuses_when_port_is_busy(tmp_path, busy_port, capsys):
+ def test_second_launch_refuses_when_data_dir_is_locked(tmp_path, capsys):
+     data = tmp_path / "data"
+     with DataDirLock(data):
+-        code = main(["--port", str(closed_port()), "--data-dir", str(data)])
++        code = main(["--port", str(closed_port()), "--data-dir", str(data), "--no-browser"])
+     assert code == 1
+     err = capsys.readouterr().err
+     assert "autre wavelocalai-v2" in err and str(data) in err
+@@ -69,7 +69,7 @@ def test_second_launch_writes_nothing_in_the_live_servers_log(tmp_path, capsys):
+         log.parent.mkdir(parents=True, exist_ok=True)
+         log.write_text("ligne du serveur vivant", encoding="utf-8")
+         before = log.stat()
+-        code = main(["--port", str(closed_port()), "--data-dir", str(data)])
++        code = main(["--port", str(closed_port()), "--data-dir", str(data), "--no-browser"])
+         assert code == 1
+         assert log.read_text(encoding="utf-8") == "ligne du serveur vivant"
+         assert log.stat().st_mtime_ns == before.st_mtime_ns
+@@ -83,7 +83,8 @@ def test_lock_failure_for_another_reason_is_not_reported_as_a_live_server(tmp_pa
+     data = tmp_path / "data"
+     data.mkdir()
+     (data / LOCK_NAME).mkdir()
+-    assert main(["--port", str(closed_port()), "--data-dir", str(data)]) == 1
++    args = ["--port", str(closed_port()), "--data-dir", str(data), "--no-browser"]
++    assert main(args) == 1
+     err = capsys.readouterr().err
+     assert "Impossible de créer le verrou" in err and "autre wavelocalai-v2" not in err
+     assert not (data / "logs" / "wavelocalai.log").exists()
+@@ -91,7 +92,7 @@ def test_lock_failure_for_another_reason_is_not_reported_as_a_live_server(tmp_pa
+ 
+ def test_onedrive_data_dir_is_logged_as_a_warning(tmp_path, busy_port):
+     data = tmp_path / "OneDrive - Test" / "data"
+-    main(["--port", str(busy_port), "--data-dir", str(data)])
++    main(["--port", str(busy_port), "--data-dir", str(data), "--no-browser"])
+     log = (data / "logs" / "wavelocalai.log").read_text(encoding="utf-8")
+     assert "OneDrive" in log and "WARNING" in log
+ 
+@@ -101,3 +102,125 @@ def test_invalid_settings_stop_the_launch(tmp_path, capsys):
+     bad.write_text("[server\n", encoding="utf-8")
+     assert main(["--config", str(bad), "--data-dir", str(tmp_path / "data")]) == 2
+     assert "illisible" in capsys.readouterr().err
++
++
++# --- ouverture du navigateur (story 9.1) ---
++
++
++@pytest.fixture
++def http_server():
++    """Petit serveur HTTP local ; rend son port."""
++    import http.server
++    import threading
++
++    class Handler(http.server.BaseHTTPRequestHandler):
++        def do_GET(self):
++            self.send_response(404)  # tout statut vaut « prêt »
++            self.send_header("Content-Length", "0")
++            self.end_headers()
++
++        def log_message(self, *args):
++            pass
++
++    server = http.server.HTTPServer(("127.0.0.1", 0), Handler)
++    thread = threading.Thread(target=server.serve_forever, daemon=True)
++    thread.start()
++    yield server.server_address[1]
++    server.shutdown()
++    server.server_close()
++
++
++def test_opens_the_browser_once_when_the_server_answers(monkeypatch, http_server):
++    import webbrowser
++
++    from wavelocalai.__main__ import _open_browser_when_ready
++
++    calls = []
++    monkeypatch.setattr(webbrowser, "open", lambda url: calls.append(url) or True)
++    assert _open_browser_when_ready(http_server, timeout_s=5) is True
++    assert calls == [f"http://127.0.0.1:{http_server}/"]
++
++
++def test_does_not_open_before_the_server_answers(monkeypatch, capsys):
++    import webbrowser
++
++    from wavelocalai.__main__ import _open_browser_when_ready
++
++    calls = []
++    monkeypatch.setattr(webbrowser, "open", lambda url: calls.append(url) or True)
++    port = closed_port()
++    assert _open_browser_when_ready(port, timeout_s=0.3, interval_s=0.05) is False
++    assert calls == []
++    assert f"http://127.0.0.1:{port}/" in capsys.readouterr().out
++
++
++@pytest.mark.parametrize("failure", ["false", "error", "oserror"])
++def test_falls_back_to_the_url_when_opening_fails(
++    monkeypatch, http_server, capsys, caplog, failure
++):
++    import webbrowser
++
++    from wavelocalai.__main__ import _open_browser_when_ready
++
++    def fake_open(url):
++        if failure == "error":
++            raise webbrowser.Error("pas de navigateur")
++        if failure == "oserror":
++            raise OSError("échec")
++        return False
++
++    monkeypatch.setattr(webbrowser, "open", fake_open)
++    with caplog.at_level("WARNING", logger="wavelocalai"):
++        assert _open_browser_when_ready(http_server, timeout_s=5) is False
++    url = f"http://127.0.0.1:{http_server}/"
++    assert url in capsys.readouterr().out
++    assert url in caplog.text
++
++
++def test_falls_back_without_display(monkeypatch, http_server, capsys):
++    import webbrowser
++
++    from wavelocalai import __main__ as launcher
++
++    calls = []
++    monkeypatch.setattr(webbrowser, "open", lambda url: calls.append(url) or True)
++    monkeypatch.setattr(launcher.sys, "platform", "linux")
++    monkeypatch.delenv("DISPLAY", raising=False)
++    monkeypatch.delenv("WAYLAND_DISPLAY", raising=False)
++    assert launcher._open_browser_when_ready(http_server, timeout_s=5) is False
++    assert calls == []
++    assert f"http://127.0.0.1:{http_server}/" in capsys.readouterr().out
++
++
++def _run_main_with_fake_serve(monkeypatch, tmp_path, extra):
++    """Lance `main` (serve remplacé) ; rend le port et les ports passés à l'ouverture différée."""
++    import threading
++
++    from wavelocalai import __main__ as launcher
++    from wavelocalai.web import server
++
++    calls: list[int] = []
++    called = threading.Event()
++
++    def fake_open(port):
++        calls.append(port)
++        called.set()
++        return True
++
++    monkeypatch.setattr(server, "serve", lambda *a, **k: None)
++    monkeypatch.setattr(launcher, "_open_browser_when_ready", fake_open)
++    port = closed_port()
++    code = main(["--port", str(port), "--data-dir", str(tmp_path / "data"), *extra])
++    assert code == 0
++    called.wait(1.0)  # le thread daemon part depuis main ; on lui laisse le temps de passer
++    return port, calls
++
++
++def test_main_starts_one_browser_thread_by_default(monkeypatch, tmp_path):
++    port, calls = _run_main_with_fake_serve(monkeypatch, tmp_path, [])
++    assert calls == [port]
++
++
++def test_main_starts_no_browser_thread_with_no_browser(monkeypatch, tmp_path):
++    _, calls = _run_main_with_fake_serve(monkeypatch, tmp_path, ["--no-browser"])
++    assert calls == []
+diff --git a/tests/v2/web/test_lifecycle.py b/tests/v2/web/test_lifecycle.py
+index 2437c39..3b22309 100644
+--- a/tests/v2/web/test_lifecycle.py
++++ b/tests/v2/web/test_lifecycle.py
+@@ -77,7 +77,7 @@ def test_launcher_refuses_a_database_newer_than_the_code(tmp_path, capsys):
+     conn.execute("PRAGMA user_version = 99")
+     conn.close()
+     try:
+-        code = main(["--port", str(closed_port()), "--data-dir", str(data)])
++        code = main(["--port", str(closed_port()), "--data-dir", str(data), "--no-browser"])
+     finally:
+         close_logging()
+     assert code == 1
+diff --git a/tests/v2/web/test_real_launch.py b/tests/v2/web/test_real_launch.py
+index e4ed56d..925ce2e 100644
+--- a/tests/v2/web/test_real_launch.py
++++ b/tests/v2/web/test_real_launch.py
+@@ -33,7 +33,16 @@ def _launch(port: int, data_dir, ollama_port: int) -> subprocess.Popen:
+         "PYTHONIOENCODING": "utf-8",
+     }
+     return subprocess.Popen(  # noqa: S603
+-        [sys.executable, "-m", "wavelocalai", "--port", str(port), "--data-dir", str(data_dir)],
++        [
++            sys.executable,
++            "-m",
++            "wavelocalai",
++            "--port",
++            str(port),
++            "--data-dir",
++            str(data_dir),
++            "--no-browser",
++        ],
+         env=env,
+         stdout=subprocess.PIPE,
+         stderr=subprocess.PIPE,
+diff --git a/tests/v2/web/test_real_shutdown.py b/tests/v2/web/test_real_shutdown.py
+index 4302a9c..936be4b 100644
+--- a/tests/v2/web/test_real_shutdown.py
++++ b/tests/v2/web/test_real_shutdown.py
+@@ -35,7 +35,16 @@ def _launch(port: int, data_dir, ollama_port: int) -> subprocess.Popen:
+     }
+     flags = subprocess.CREATE_NEW_PROCESS_GROUP if WINDOWS else 0  # Ctrl+Break visé
+     return subprocess.Popen(  # noqa: S603
+-        [sys.executable, "-m", "wavelocalai", "--port", str(port), "--data-dir", str(data_dir)],
++        [
++            sys.executable,
++            "-m",
++            "wavelocalai",
++            "--port",
++            str(port),
++            "--data-dir",
++            str(data_dir),
++            "--no-browser",
++        ],
+         env=env,
+         stdout=subprocess.DEVNULL,
+         stderr=subprocess.DEVNULL,
+diff --git a/wavelocalai.toml b/wavelocalai.toml
+index 1a559d8..01080a1 100644
+--- a/wavelocalai.toml
++++ b/wavelocalai.toml
+@@ -5,6 +5,8 @@
+ [server]
+ # 8501 reste à la v1. Écoute sur 127.0.0.1 seulement (AD-19).
+ port = 8502
++# Ouvre le navigateur par défaut au lancement (--no-browser l'empêche).
++# open_browser = true
+ 
+ [data]
+ # Dossier des données (base, journaux, caches). Relatif à ce fichier.

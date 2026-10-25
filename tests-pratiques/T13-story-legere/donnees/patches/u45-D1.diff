@@ -1,0 +1,213 @@
+diff --git a/src/usine/chaine/etapes.py b/src/usine/chaine/etapes.py
+index cc45e08..797066d 100644
+--- a/src/usine/chaine/etapes.py
++++ b/src/usine/chaine/etapes.py
+@@ -216,7 +216,15 @@ def prevision_du_passage(
+                     resultat = risques_entree_rouge(
+                         indicateurs_de[entite], meteo_entite, grille, risque
+                     )
+-                    risques.extend(projete.risque for projete in resultat.risques)
++                    risques.extend(
++                        projete.risque.model_copy(
++                            update={
++                                "valeur_projetee_numerateur": projete.valeur_projetee.numerator,
++                                "valeur_projetee_denominateur": projete.valeur_projetee.denominator,
++                            }
++                        )
++                        for projete in resultat.risques
++                    )
+         return ContenuPrevisions(previsions=tuple(previsions), risques=tuple(risques))
+ 
+     return prevoir
+diff --git a/tests/unit/chaine/test_etapes.py b/tests/unit/chaine/test_etapes.py
+index 209859b..f942aa0 100644
+--- a/tests/unit/chaine/test_etapes.py
++++ b/tests/unit/chaine/test_etapes.py
+@@ -23,13 +23,13 @@ from usine.contrats.config import ConfigChaine, ConfigProgramme, ConfigUsine, Gr
+ from usine.contrats.erreurs import UsineErreur
+ from usine.contrats.meteo import Couleur, MeteoEntite
+ from usine.contrats.passage import ContextePassage, StatutEtape
+-from usine.contrats.prevision import ContenuPrevisions, StatutPrevision
++from usine.contrats.prevision import ContenuPrevisions, RisqueEntreeRouge, StatutPrevision
+ from usine.contrats.trace import TypeTrace
+ from usine.domaine.instantanes import tickets_etats
+ from usine.domaine.kpi import kpi, tendances
+ from usine.domaine.meteo import DECALAGE_IND8, indicateurs, meteo
+ from usine.domaine.prevision.baseline import ParametresBaseline, prevoir_sortie
+-from usine.domaine.prevision.risque import ParametresRisque, risques_entree_rouge
++from usine.domaine.prevision.risque import ParametresRisque, RisqueProjete, risques_entree_rouge
+ from usine.domaine.prevision.serie import series_stock
+ from usine.ports.consultation import Consultation
+ from usine.ports.etape import Etape as PortEtape
+@@ -244,6 +244,16 @@ def _passage_a_risque() -> tuple[pl.DataFrame, pl.DataFrame, tuple[MeteoEntite,
+     return etats, pl.concat(tables, how="vertical"), tuple(meteos)
+ 
+ 
++def _avec_valeur(projete: RisqueProjete) -> RisqueEntreeRouge:
++    """Risque du domaine avec sa valeur projetée de `risque.py` (publiée dans `previsions.json`)."""
++    return projete.risque.model_copy(
++        update={
++            "valeur_projetee_numerateur": projete.valeur_projetee.numerator,
++            "valeur_projetee_denominateur": projete.valeur_projetee.denominator,
++        }
++    )
++
++
+ def test_prevision_du_passage_egale_le_domaine() -> None:
+     etats, tables, meteos = _passage_a_risque()
+     grille, _ = _grille_et_programme()
+@@ -254,7 +264,7 @@ def test_prevision_du_passage_egale_le_domaine() -> None:
+     series = series_stock(etats, ENTITES, jours)
+     previsions = tuple(prevoir_sortie(series, m) for m in meteos if m.couleur is Couleur.rouge)
+     risques = tuple(
+-        projete.risque
++        _avec_valeur(projete)
+         for m in meteos
+         if m.couleur is not Couleur.rouge
+         for projete in risques_entree_rouge(tables, m, grille).risques
+@@ -289,7 +299,7 @@ def test_prevision_du_passage_parametres_injectes() -> None:
+         prevoir_sortie(series, m, baseline) for m in meteos if m.couleur is Couleur.rouge
+     )
+     risques = tuple(
+-        projete.risque
++        _avec_valeur(projete)
+         for m in meteos
+         if m.couleur is not Couleur.rouge
+         for projete in risques_entree_rouge(tables, m, grille, risque).risques
+diff --git a/tests/unit/chaine/test_recette_prevision.py b/tests/unit/chaine/test_recette_prevision.py
+new file mode 100644
+index 0000000..b02c2da
+--- /dev/null
++++ b/tests/unit/chaine/test_recette_prevision.py
+@@ -0,0 +1,131 @@
++"""Recette de la Prévision sur les Scénarios de démo (Story 4.5, FR-20, FR-21, SM-6).
++
++Le Journal est généré avec la Grille par défaut et les Scénarios livrés ; la Prévision est
++calculée par le chemin de la Chaîne (`prevision_du_passage`, étape `prevision`) au dernier Jour
++ouvré de l'historique. Un écart se corrige dans le générateur (Epic 1), jamais par un réglage de
++la Baseline sur les Scénarios (SM-C3) : ce test n'en règle aucun.
++"""
++
++from datetime import date
++from typing import cast
++
++import polars as pl
++import pytest
++
++from tests.unit.chaine.environnement import DATE_GENERATION, RACINE_DEPOT, horloge_figee
++from usine.chaine.etapes import EtapePrevision, prevision_du_passage
++from usine.config import charger_yaml
++from usine.contrats.calendrier import (
++    TAILLE_FENETRE_GLISSANTE,
++    jour_ouvre_precedent,
++    jours_ouvres,
++)
++from usine.contrats.config import ConfigChaine, ConfigProgramme, ConfigUsine, GrilleMeteo
++from usine.contrats.meteo import MeteoEntite
++from usine.contrats.passage import ContextePassage
++from usine.contrats.prevision import ContenuPrevisions, StatutPrevision
++from usine.domaine.instantanes import tickets_etats
++from usine.domaine.meteo import DECALAGE_IND8, indicateurs, meteo
++from usine.generateur.journal import generer
++from usine.ports.consultation import Consultation
++
++GRAINE = 42
++
++
++class ConsultationHistorique:
++    """Consultation réduite à `tickets_etats`, `indicateurs` et `meteo` de chaque jour."""
++
++    def __init__(
++        self, etats: pl.DataFrame, tables: pl.DataFrame, meteos: tuple[MeteoEntite, ...]
++    ) -> None:
++        self._etats = etats
++        self._tables = tables
++        self._meteos = meteos
++
++    def tickets_etats(self, date_arrete: date | None = None) -> pl.DataFrame:
++        return self._etats.filter(pl.col("date") == date_arrete)
++
++    def indicateurs(
++        self, date_arrete: date | None = None, entite: str | None = None
++    ) -> pl.DataFrame:
++        return self._tables.filter(pl.col("date") == date_arrete)
++
++    def meteo(
++        self, date_arrete: date | None = None, entite: str | None = None
++    ) -> tuple[MeteoEntite, ...]:
++        return tuple(m for m in self._meteos if m.date_arrete == date_arrete)
++
++
++@pytest.fixture(scope="module")
++def previsions_en_fin_d_historique() -> ContenuPrevisions:
++    """Contenu de `previsions.json` du Passage daté du dernier Jour ouvré de l'historique."""
++    programme = charger_yaml(RACINE_DEPOT / "config" / "programme.yaml", ConfigProgramme)
++    grille = charger_yaml(RACINE_DEPOT / "config" / "grille_meteo.yaml", GrilleMeteo)
++    generation = generer(programme, GRAINE, DATE_GENERATION)
++    ancrage = generation.entete.ancrage_semaines
++    dernier = generation.entete.date_injection
++    jours = jours_ouvres(ancrage, dernier)
++    entites = [e.code for e in programme.entites]
++    etats = tickets_etats(generation.evenements, jours)
++    profondeur = max(DECALAGE_IND8, TAILLE_FENETRE_GLISSANTE)
++    tables: list[pl.DataFrame] = []
++    meteos: list[MeteoEntite] = []
++    for jour in jours:  # comme `EtapeMeteo` : état des tickets de J-5 au jour
++        debut = max(ancrage, jour_ouvre_precedent(jour, profondeur))
++        historique = etats.filter(pl.col("date").is_between(debut, jour))
++        tables.append(
++            indicateurs(historique, jour, entites, grille, programme=programme, ancrage=ancrage)
++        )
++        meteos.extend(
++            meteo(historique, jour, entites, grille, "v", programme=programme, ancrage=ancrage)
++        )
++    consultation = ConsultationHistorique(etats, pl.concat(tables, how="vertical"), tuple(meteos))
++    ctx = ContextePassage(
++        dernier,
++        "20261012T073000Z-abc123",
++        ConfigUsine(chaine=ConfigChaine(palier=1)),
++        cast(Consultation, consultation),
++    )
++    etape = EtapePrevision(
++        prevision_du_passage(grille, entites, ancrage), "d" * 64, horloge_figee()
++    )
++    contenu = etape.executer(ctx).sorties["previsions"]
++    assert isinstance(contenu, ContenuPrevisions)
++    return ContenuPrevisions(
++        previsions=tuple(p for p in contenu.previsions if p.date_arrete == dernier),
++        risques=tuple(r for r in contenu.risques if r.date_arrete == dernier),
++    )
++
++
++def test_a_sort_dans_l_horizon(previsions_en_fin_d_historique: ContenuPrevisions) -> None:
++    (prevision,) = [p for p in previsions_en_fin_d_historique.previsions if p.entite == "ENT-A"]
++    assert prevision.statut is StatutPrevision.sortie_projetee
++    assert prevision.date_sortie_estimee is not None
++    horizon = jours_ouvres(prevision.date_arrete, prevision.date_sortie_estimee)
++    assert 1 < len(horizon) <= prevision.horizon_jours_ouvres + 1
++
++
++def test_b_ne_sort_pas(previsions_en_fin_d_historique: ContenuPrevisions) -> None:
++    (prevision,) = [p for p in previsions_en_fin_d_historique.previsions if p.entite == "ENT-B"]
++    assert prevision.statut is StatutPrevision.pas_de_sortie_projetee
++    assert prevision.date_sortie_estimee is None
++
++
++def test_c_porte_un_risque_d_entree_en_rouge(
++    previsions_en_fin_d_historique: ContenuPrevisions,
++) -> None:
++    risques = [r for r in previsions_en_fin_d_historique.risques if r.entite == "ENT-C"]
++    assert risques
++    assert not [p for p in previsions_en_fin_d_historique.previsions if p.entite == "ENT-C"]
++    for risque in risques:
++        assert risque.date_franchissement_estimee > risque.date_arrete
++
++
++def test_valeur_projetee_remplie_pour_les_risques(
++    previsions_en_fin_d_historique: ContenuPrevisions,
++) -> None:
++    """Chaque Risque publié porte la valeur projetée de `risque.py`."""
++    assert previsions_en_fin_d_historique.risques
++    for risque in previsions_en_fin_d_historique.risques:
++        assert risque.valeur_projetee_numerateur is not None
++        assert risque.valeur_projetee_denominateur is not None
