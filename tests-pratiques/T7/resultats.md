@@ -1,10 +1,10 @@
 # T7 : skill de design, boucle de vérification et navigateur pour un front FastAPI + Jinja2 vanilla
 
-Test du 2026-10-24. Protocole d'origine : hypothèses H1 et H2 de `digests/design-front-r1.md` (section 3) et H1 de `digests/tests-verification-r1.md` (section 3.6). **Note humaine à l'aveugle d'Anaël requise pour conclure le volet A** : `notation.html`.
+Test du 2026-10-24. Protocole d'origine : hypothèses H1 et H2 de `digests/design-front-r1.md` (section 3) et H1 de `digests/tests-verification-r1.md` (section 3.6). Volet A conclu le 2026-10-25 par la note à l'aveugle d'Anaël (section 3, « Note à l'aveugle ») : **garder `frontend-design`, écarter impeccable et hallmark**.
 
 ## 1. Résumé
 
-- **Volet A (design).** Aucune des trois skills ne réduit les défauts mesurables : axe-core trouve **0 violation sur les 16 pages** (aucune skill, `frontend-design`, impeccable, hallmark), et `impeccable detect` en trouve **plus** avec une skill (0 sur 4 sans skill, 2 sur 4 avec `frontend-design`, 4 sur 4 avec impeccable, 3 sur 4 avec hallmark), presque toujours la règle « palette crème ». Le critère « au moins 30 % de violations en moins » n'est donc atteint par aucun bras. Surcoût mesuré sur 4 essais par bras : `frontend-design` +1 % (0,317 $ contre 0,314 $), impeccable +16 %, hallmark +21 %. **Décision proposée : garder `frontend-design`**, sous réserve que ta note à l'aveugle ne donne pas +1 point ou plus à impeccable ou à hallmark.
+- **Volet A (design).** Aucune des trois skills ne réduit les défauts mesurables : axe-core trouve **0 violation sur les 16 pages** (aucune skill, `frontend-design`, impeccable, hallmark), et `impeccable detect` en trouve **plus** avec une skill (0 sur 4 sans skill, 2 sur 4 avec `frontend-design`, 4 sur 4 avec impeccable, 3 sur 4 avec hallmark), presque toujours la règle « palette crème ». Le critère « au moins 30 % de violations en moins » n'est donc atteint par aucun bras. Surcoût mesuré sur 4 essais par bras : `frontend-design` +1 % (0,317 $ contre 0,314 $), impeccable +16 %, hallmark +21 %. **Décision : garder `frontend-design`.** La note à l'aveugle d'Anaël le place en tête (4,17 sur 5, contre 4,00 sans skill, 3,67 pour impeccable et 3,50 pour hallmark) : aucune autre skill n'atteint le +1 point requis.
 - **Volet B (navigateur).** Les trois outils réussissent le parcours de 7 étapes (17 réussites sur 18 exécutions ; l'échec est un refus de permission, pas une erreur de l'outil). Coût d'un parcours : 0,08 à 0,12 $, 20 à 30 s. **Décision proposée : Playwright MCP** si on applique le critère à la lettre (seul le moins cher des outils qui réussissent à chaque fois avec la liste d'autorisations stricte), mais l'écart avec agent-browser (0,087 $ contre 0,088 $ avec la liste élargie) est dans le bruit.
 - **Le contrôle fonctionnel dans un vrai navigateur** est le seul des contrôles automatiques qui ait relevé un écart sur les 16 pages (hallmark, 3e essai : le message de confirmation, porté par `?ok=1`, réapparaît après rechargement alors que l'énoncé demandait un message à usage unique ; mon énoncé citait pourtant le paramètre de requête comme exemple possible, donc l'écart est en partie le mien). Les tests pytest de l'agent disaient couvrir ce point (via `?ok=1`) et passaient.
 
@@ -78,16 +78,31 @@ Données par exécution : `donnees/design_runs.json`, `donnees/design_resume.jso
 5. **Un écart, vu seulement par le navigateur** : hallmark, 3e essai, le message « Demande enregistrée. » reste affiché après rechargement (point `confirmation_unique` du contrat) parce qu'il dépend d'un paramètre `?ok=1` laissé dans l'URL. Les tests pytest de l'agent (5 tests, dont un « message à usage unique ») passaient : un client de test sans navigateur ne voit pas un rechargement. Le bras b1 (4e essai) utilise aussi `?ok=` mais l'efface côté navigateur et passe.
 
 ### Critère de la veille
-| Skill | Violations en moins (≥ 30 %) | Surcoût (≤ +50 %) | Note (≥ +1) | Conclusion provisoire |
+| Skill | Violations en moins (≥ 30 %) | Surcoût (≤ +50 %) | Note (≥ +1) | Conclusion |
 |---|---|---|---|---|
-| `frontend-design` (contre aucune skill) | non applicable (0 contre 0 ; detect : 2 contre 0) | +1 % | **à noter** | garder, par défaut |
-| impeccable (contre `frontend-design`) | non (4 contre 2 constats detect, 0 contre 0 axe) | +15 % | **à noter** | ne pas adopter si la note n'est pas de +1 |
-| hallmark (contre `frontend-design`) | non (3 contre 2 ; 0 contre 0 axe) | +20 % | **à noter** | ne pas adopter si la note n'est pas de +1 |
+| `frontend-design` (contre aucune skill) | non applicable (0 contre 0 ; detect : 2 contre 0) | +1 % | +0,17 (4,17 contre 4,00) | garder, par défaut (coût nul) |
+| impeccable (contre `frontend-design`) | non (4 contre 2 constats detect, 0 contre 0 axe) | +15 % | −0,50 (3,67 contre 4,17) | écarter |
+| hallmark (contre `frontend-design`) | non (3 contre 2 ; 0 contre 0 axe) | +20 % | −0,67 (3,50 contre 4,17) | écarter |
 
-**Décision proposée, en attente de ta note** : garder `frontend-design`. Si ta note place impeccable ou hallmark au moins 1 point au-dessus, le critère serait quand même refusé sur les violations ; il faudrait alors décider à la main si le gain de style justifie +15 à +20 % et un binaire non vérifié (impeccable) ou un flux interactif non adapté aux runs autonomes (hallmark).
+**Décision** : garder `frontend-design` ; impeccable et hallmark sont écartés (note inférieure, coût supérieur, aucune violation en moins).
 
 ### Note à l'aveugle
-`notation.html` (autonome, 5 Mo, captures en base64) présente les 8 rendus (2 par bras) sous les lettres A à H, tirées au hasard par `secrets` ; cinq captures par rendu (1280, 768 et 390 px à l'état initial, et 1280 et 390 px après un envoi invalide) ; trois grilles de 1 à 5 (lisibilité, finition, cohérence), un commentaire facultatif, sauvegarde automatique dans le navigateur et export JSON. La table de correspondance est dans `correspondance.json`, non référencée par la page. Pour dépouiller : transmettre le JSON exporté, puis croiser avec `correspondance.json`. (J'ai regardé deux captures pour contrôler le rendu des pages, sans noter.)
+`notation.html` (autonome, 5 Mo, captures en base64) présente les 8 rendus (2 par bras) sous les lettres A à H, tirées au hasard par `secrets` ; cinq captures par rendu (1280, 768 et 390 px à l'état initial, et 1280 et 390 px après un envoi invalide) ; trois grilles de 1 à 5 (lisibilité, finition, cohérence), un commentaire facultatif, sauvegarde automatique dans le navigateur et export JSON. La table de correspondance est dans `correspondance.json`, non référencée par la page. Pour dépouiller : `uv run --no-project python scripts/notes.py` (croise `donnees/notes-anael.json` avec `correspondance.json`, écrit `donnees/notes_resume.json`). (J'ai regardé deux captures pour contrôler le rendu des pages, sans noter.)
+
+**Résultat (export d'Anaël du 2026-10-25, 8 rendus, notes de 1 à 5)** :
+
+| Bras | lisibilité | finition | cohérence | moyenne | coût par essai |
+|---|---|---|---|---|---|
+| b1 aucune skill | 4,00 | 3,00 | **5,00** | 4,00 | 0,314 $ |
+| b2 `frontend-design` | **4,00** | **4,00** | 4,50 | **4,17** | 0,317 $ |
+| b3 impeccable | 3,50 | 3,50 | 4,00 | 3,67 | 0,365 $ |
+| b4 hallmark | 3,00 | 3,00 | 4,50 | 3,50 | 0,381 $ |
+
+Lecture :
+1. **`frontend-design` est le style préféré** : Anaël trouve le rendu B « probablement le style le plus "joli"/"travaillé" ». Il apprécie le tableau aux lignes alternées, les noms des demandeurs en gras et le bouton « Nouvelle demande » mis en avant. Son seul défaut récurrent est le contour coloré du bloc « Le formulaire contient 4 erreurs », vert en B et bleu en G. `impeccable detect` avait relevé ce défaut sur G (`border-accent-on-rounded`), mais pas sur B. L'écart avec l'absence de skill (+0,17) reste sous le point, pour 1 % de coût en plus : on garde la skill parce qu'elle ne coûte rien, pas parce qu'elle gagne.
+2. **Sans skill, le rendu est sobre et cohérent** (5 sur 5 en cohérence), avec le meilleur placement des erreurs, mais « un peu trop sobre ».
+3. **impeccable et hallmark sont tous deux en dessous de l'absence de skill** (−0,33 et −0,50), pour 15 à 20 % de coût en plus. Le rendu A (hallmark) est « peu de mise en évidence des actions », et le rendu E (hallmark) est « le cul entre deux chaises ». Le critère « +1 point » n'est atteint par aucun : impeccable et hallmark sont écartés.
+4. Limite : 2 rendus par bras sur un seul écran. Les deux rendus d'un même bras ont des notes proches (écart de 0,33 au plus).
 
 ## 4. Boucle de vérification (H2, partiel)
 
@@ -142,8 +157,8 @@ Tokens d'entrée (cache compris) : MCP 194 k, playwright-cli 161 k, agent-browse
 - **Edge** : un essai manuel d'agent-browser avec le chemin d'Edge a renvoyé le snapshot de la page d'accueil d'Edge au lieu de la page ouverte ; avec le Chromium de Playwright, aucun problème. Constat d'un seul essai, non creusé.
 - **Coût total du test** : environ 7,2 $ (16 exécutions de design : 5,5 $ ; 18 parcours : 1,7 $), 0,06 $ pour une sonde.
 
-## 7. Décisions proposées (en attente de ta note à l'aveugle)
-1. **Design** : garder `frontend-design` ; ne pas adopter impeccable ni hallmark pour les écrans métier Jinja sauf si la note donne au moins +1, et même alors seulement après arbitrage du risque (binaire non attesté, flux interactif). Ne pas installer les hooks d'impeccable.
+## 7. Décisions (volet A tranché par la note du 2026-10-25)
+1. **Design** : garder `frontend-design`. Écarter impeccable et hallmark : la note les place sous l'absence de skill. Ne pas installer les hooks d'impeccable. Son détecteur (`impeccable detect <url>`) reste une option de CI, puisqu'il a vu un des deux défauts de contour relevés par Anaël.
 2. **Navigateur** : Playwright MCP pour les sous-agents de vérification de story ; autoriser `export` et les filtres usuels si on retient une CLI.
 3. **Boucle** : parcours navigateur des critères d'acceptation dans la revue d'une story front ; axe-core et `impeccable detect <url>` en CI plutôt que dans la boucle de l'agent.
 4. **À suivre** : rejouer le volet A sur une page plus complexe (tableau de bord, plusieurs écrans) où la cohérence entre écrans compte, avec un serveur disponible pour la boucle des skills ; tester `modern-web-guidance` (H5) et DESIGN.md (H3), non couverts ici.

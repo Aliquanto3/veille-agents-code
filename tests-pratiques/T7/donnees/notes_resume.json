@@ -1,0 +1,26 @@
+{
+ "b1-aucune": {
+  "lisibilite": 4,
+  "finition": 3,
+  "coherence": 5,
+  "moyenne": 4
+ },
+ "b2-frontend-design": {
+  "lisibilite": 4,
+  "finition": 4,
+  "coherence": 4.5,
+  "moyenne": 4.166666666666667
+ },
+ "b3-impeccable": {
+  "lisibilite": 3.5,
+  "finition": 3.5,
+  "coherence": 4,
+  "moyenne": 3.6666666666666665
+ },
+ "b4-hallmark": {
+  "lisibilite": 3,
+  "finition": 3,
+  "coherence": 4.5,
+  "moyenne": 3.5
+ }
+}

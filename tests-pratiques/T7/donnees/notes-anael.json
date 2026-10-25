@@ -1,0 +1,50 @@
+{
+  "A": {
+    "lisibilite": 3,
+    "finition": 3,
+    "coherence": 5,
+    "commentaire": "Propre et sobre, peut-être un peu trop sobre, peu de mise en évidence des actions"
+  },
+  "B": {
+    "lisibilite": 4,
+    "finition": 4,
+    "coherence": 5,
+    "commentaire": "Tableau plus lisible grâce à l'alternance de couleurs, aux titres mis en avant ainsi que les montants affichés différemment (par contre le changement de police pour le titre aussi dans la version mobile pour \"Montant\" est bizarre). \"Nouvelle demande\" mieux mis en avant. Le bloc \"Le formulaire contient 4 erreurs\" est bizarre avec le contour vert par contre. Le fond rouge des blocs en erreur, en plus du contour rouge, est un peu stressant. Probablement le style le plus \"joli\"/\"travaillé\" sinon à mon goût"
+  },
+  "C": {
+    "commentaire": "Organisation un peu différente, qui met en avant les \"Nouvelle demande\" comme action principale puisque en haut et en grand. Le bloc \"Le formulaire contient 4 erreurs est très clair et bien positionné. De même pour les messages d'erreur. Peut-être un peu trop sobre de manière générale par contre, pas énormément d'utilisation des couleurs pour séparer les sections/actions/améliorer la lisibilité du tableau.",
+    "lisibilite": 4,
+    "finition": 3,
+    "coherence": 5
+  },
+  "D": {
+    "lisibilite": 4,
+    "finition": 3,
+    "coherence": 5,
+    "commentaire": "Sensiblement similaire au rendu C."
+  },
+  "E": {
+    "commentaire": "S'inspire partiellement du rendu B, mais sans reprendre tout ce qui était vraiment pertinent dedans, en faisant une version \"le cul entre deux chaises\". Au moins il n'y a pas le souci de contour vert autour de \"Le formulaire contient 4 erreurs\" qu'on avait dans le B.",
+    "lisibilite": 3,
+    "finition": 3,
+    "coherence": 4
+  },
+  "F": {
+    "commentaire": "Sensiblement similaire au rendu F, mais le gras sur les noms des demandeurs rend le tableau plus agréable à lire",
+    "lisibilite": 3,
+    "finition": 4,
+    "coherence": 4
+  },
+  "G": {
+    "commentaire": "De bonnes idées, mais le contour en bleu de \"Le formulaire contient 4 erreurs\" marche mal. Le nom des Demandeurs en gras est une très bonne idée. Le Service sous forme de labels est une bonne idée, mais gagnerait encore en lisibilité si chaque étiquette avait une couleur différente.",
+    "lisibilite": 4,
+    "coherence": 4,
+    "finition": 4
+  },
+  "H": {
+    "lisibilite": 4,
+    "finition": 3,
+    "coherence": 4,
+    "commentaire": "L'emplacement de \"Le formulaire contient 4 erreurs\" marche très bien, il attire vraiment le regard sur l'action à prendre. Un peu trop sobre sur le reste de l'interface par contre."
+  }
+}

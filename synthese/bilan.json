@@ -131,15 +131,15 @@
     },
     "frontend-design": {
       "decision": "Déjà en place",
-      "statut": "ouvert",
+      "statut": "conclu",
       "preuve": "T7",
-      "note": "+1 % de coût, aucune autre skill ne fait mieux sur les défauts mesurables ; reste ta note à l'aveugle (notation.html) pour clore."
+      "note": "T7, note à l'aveugle d'Anaël : en tête avec 4,17 sur 5, contre 4,00 sans skill, pour +1 % de coût. C'est le style le plus « travaillé » (tableau, mise en avant des actions). Défaut récurrent : le contour coloré du bloc d'erreurs, que `impeccable detect` repère une fois sur deux. Gardée parce qu'elle ne coûte rien, sans gain d'un point."
     },
     "impeccable": {
-      "decision": "S'inspirer",
-      "statut": "ouvert",
+      "decision": "Écarter",
+      "statut": "conclu",
       "preuve": "T7",
-      "note": "La skill coûte +15 % sans réduire les violations (0 axe partout) ; son détecteur `impeccable detect <url>` peut servir en CI, mais il relève surtout la règle « palette crème ». Clos par ta note. Fiche d'essai dans agent-cost-kit 0.12.0 (`docs/experimental.md`, skill `essai-outil`)."
+      "note": "T7, note à l'aveugle d'Anaël : 3,67 sur 5, sous l'absence de skill (4,00) et sous frontend-design (4,17), pour +15 % de coût et aucune violation en moins. Seul son détecteur `impeccable detect <url>` peut servir en CI : il a vu un des deux défauts de contour relevés par Anaël, mais il signale surtout la règle « palette crème »."
     },
     "taste-skill": {
       "decision": "Écarter",
@@ -149,9 +149,9 @@
     },
     "hallmark": {
       "decision": "Écarter",
-      "statut": "ouvert",
+      "statut": "conclu",
       "preuve": "T7",
-      "note": "+21 % de coût, aucune violation en moins, flux interactif et sous-agent inadaptés aux runs autonomes ; seule ta note pourrait le repêcher. Fiche d'essai dans agent-cost-kit 0.12.0 (`docs/experimental.md`, skill `essai-outil`)."
+      "note": "T7, note à l'aveugle d'Anaël : dernier avec 3,50 sur 5 (« le cul entre deux chaises », « peu de mise en évidence des actions »), +21 % de coût, aucune violation en moins, flux interactif et sous-agent inadaptés aux runs autonomes."
     },
     "ui-ux-pro-max": {
       "decision": "Écarter",
@@ -632,9 +632,9 @@
     {
       "nom": "Skill de design front",
       "candidats": "frontend-design, impeccable, hallmark, taste-skill",
-      "meilleur": "frontend-design (provisoire)",
+      "meilleur": "frontend-design",
       "strict": false,
-      "explication": "Aucune ne réduit les violations (0 axe partout) ; frontend-design ne coûte que +1 %, les autres +15 à +21 %. En attente de ta note à l'aveugle.",
+      "explication": "Note à l'aveugle d'Anaël (8 rendus, sur 5) : frontend-design 4,17, sans skill 4,00, impeccable 3,67, hallmark 3,50. Aucune skill ne réduit les violations (0 axe partout) ; frontend-design coûte +1 %, les autres +15 à +21 % pour une note plus basse. frontend-design est gardé parce qu'il ne coûte rien, pas pour un gain d'un point.",
       "preuve": "T7"
     },
     {
@@ -783,7 +783,7 @@
       "domaine": "Front",
       "garder": "frontend-design ; Claude in Chrome pour vérifier à la main",
       "changer": "Sous-agent de vérification avec Playwright MCP (T12 : 88 % des défauts semés, 0,14 $) qui parcourt les critères d'acceptation d'une story front avec la même spec que dev-story ; correction seulement sur FAIL ; axe-core en CI (n'a rien trouvé de plus en T12, mais ne coûte rien)",
-      "ne_pas": "impeccable, hallmark en permanence (sauf note à l'aveugle)"
+      "ne_pas": "impeccable, hallmark (note à l'aveugle inférieure, T7)"
     },
     {
       "domaine": "Tests",
@@ -823,11 +823,6 @@
     }
   ],
   "tests_ouverts": [
-    {
-      "test": "T7, design front",
-      "manque": "Ta note à l'aveugle des 8 rendus (notation.html, ~10 min).",
-      "elargir": "Si la note départage : 3 écrans métier de plus, 4 essais par bras."
-    },
     {
       "test": "T5, critique d'une autre famille",
       "manque": "16 défauts semés, un seul juge : les écarts entre relecteurs (8 à 12 sur 16) restent dans l'intervalle de confiance.",
@@ -952,8 +947,8 @@
     "<strong>Aucun dépôt de ta liste ne fait strictement mieux que l'option la plus simple de ta configuration</strong> (natif, ou BMAD et agent-cost-kit). 19 tests pratiques sur tes projets et tes transcriptions l'ont vérifié là où l'analyse ne suffisait pas : navigateur, design, revue, modèles locaux, routage.",
     "<strong>Ce qui rapporte, mesuré chez toi</strong> : réduire le contexte fixe (17,8 k tokens d'outils rarement appelés, retirés dans le kit 0.11.0) ; le second avis Haiku (87 % de ses constats sérieux corrigés pour 0,03 $) ; Sonnet seul pour implémenter (0,53 $ par story contre 1,33 $ pour Opus, réussite égale) ; sauter le cadrage BMAD pour une petite story à l'entrée détaillée (−73 %, réussite égale à 10 points près, T13 bis) ; la vérification des critères d'acceptation dans un vrai navigateur par un sous-agent Playwright (22 défauts d'interface semés sur 25 que pytest ne voit pas, 0,14 $ par story, T12), comme filet de sécurité.",
     "<strong>La découverte de la série : la mutation guidée.</strong> Montrer à l'agent les mutants qui survivent à ses tests lui fait boucher 134 trous non équivalents sur 134, contre 59 % avec une simple consigne, pour 0,22 $ par story. C'est le seul ajout à ta chaîne que les tests justifient (étape optionnelle de la revue, 3 à 13 min).",
-    "<strong>Ce qui ne rapporte pas, mesuré aussi</strong> : un relecteur d'une autre famille (+6 points, non significatif), la porte empirique, le verrouillage des tests (aucune triche observée sur 40 runs), <code>/advisor</code>, les tests Hypothesis, les juges de commandes shell, les modèles de décision (Jev), la compression des sorties, une voie « story légère » façon OpenSpec (−46 % de coût mais −10 points de réussite, T13), la correction systématique après vérification du front, le TTL d'une heure, les modèles locaux au quotidien, tailler un CLAUDE.md de quelques milliers de tokens, les skills de réécriture <code>clarity</code> et <code>humanizer</code> (T11, ta note : la réécriture sans skill fait au moins aussi bien pour deux à cinq fois moins cher).",
+    "<strong>Ce qui ne rapporte pas, mesuré aussi</strong> : un relecteur d'une autre famille (+6 points, non significatif), la porte empirique, le verrouillage des tests (aucune triche observée sur 40 runs), <code>/advisor</code>, les tests Hypothesis, les juges de commandes shell, les modèles de décision (Jev), la compression des sorties, une voie « story légère » façon OpenSpec (−46 % de coût mais −10 points de réussite, T13), la correction systématique après vérification du front, le TTL d'une heure, les modèles locaux au quotidien, tailler un CLAUDE.md de quelques milliers de tokens, les skills de design impeccable et hallmark (T7, ta note : en dessous de l'absence de skill), les skills de réécriture <code>clarity</code> et <code>humanizer</code> (T11, ta note : la réécriture sans skill fait au moins aussi bien pour deux à cinq fois moins cher).",
     "<strong>Gagnants stricts</strong> (au moins aussi bons et moins chers, sur tes données) : la chaîne agent-cost-kit contre bmad-build, la réduction du contexte fixe contre la compression, Haiku contre les modèles locaux pour le lookup, Sonnet seul contre Sonnet + conseiller, la mutation guidée contre la consigne seule. Partout ailleurs, pas de gagnant strict : choisir l'option la plus simple.",
-    "<strong>À faire de ton côté</strong> : noter à l'aveugle les 8 rendus de design (<code>tests-pratiques/T7/notation.html</code>, ~10 min) ; essayer le sous-agent <code>verif-front</code> (agent-cost-kit 0.13.0, expérimental) sur tes prochaines stories front ; essayer l'aiguillage des petites stories sans cadrage (agent-cost-kit 0.14.0, expérimental) et suivre les retours du reviewer sur 10 stories."
+    "<strong>À faire de ton côté</strong> : essayer le sous-agent <code>verif-front</code> (agent-cost-kit 0.13.0, expérimental) sur tes prochaines stories front ; essayer l'aiguillage des petites stories sans cadrage (agent-cost-kit 0.14.0, expérimental) et suivre les retours du reviewer sur 10 stories."
   ]
 }
