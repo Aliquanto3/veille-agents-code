@@ -1,0 +1,37 @@
+{
+ "cout_usd": 0.30810030000000005,
+ "tours": 14,
+ "duree_api_ms": 90717,
+ "tokens_in": 16,
+ "tokens_out": 16101,
+ "cache_creation": 32575,
+ "cache_read": 167583,
+ "erreur": false,
+ "sous_type": "success",
+ "refus_permission": 1,
+ "denials": [
+  "Bash"
+ ],
+ "resultat_fin": "SIGN.md`. Bandeau d'erreurs avec icône et sans bordure colorée, une seule marque rouge par champ fautif, et étiquettes colorées par service (libellé toujours écrit). Les montants sont alignés à droite en chiffres tabulaires et le nom est en gras. Sur mobile, les lignes passent en cartes avec la même typographie.\n- **Fichiers :** `app/main.py`, `app/templates/liste.html`, `app/static/style.css`, `app/static/app.js` et le nouveau `tests/test_saisie.py`.\n- **Écart au brief :** je n'ai pas lu la skill `frontend-design` en détail ni établi de plan de design formel avant de coder, à cause du budget.",
+ "outils": {
+  "Skill": 1,
+  "Bash": 6,
+  "bash": 1,
+  "Write": 4
+ },
+ "skills_invoquees": [
+  "frontend-design"
+ ],
+ "fichiers_lus": [
+  "DESIGN.md"
+ ],
+ "design_md_lu": true,
+ "tool_results_en_erreur": 2,
+ "statut": "ok",
+ "duree_s": 94.7,
+ "cmd": [
+  "claude",
+  "-p",
+  "..."
+ ]
+}

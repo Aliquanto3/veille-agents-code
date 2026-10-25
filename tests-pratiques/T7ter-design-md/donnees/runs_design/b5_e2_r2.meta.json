@@ -1,0 +1,39 @@
+{
+ "cout_usd": 0.3067174,
+ "tours": 16,
+ "duree_api_ms": 96546,
+ "tokens_in": 18,
+ "tokens_out": 15301,
+ "cache_creation": 32987,
+ "cache_read": 217234,
+ "erreur": false,
+ "sous_type": "success",
+ "refus_permission": 1,
+ "denials": [
+  "Bash"
+ ],
+ "resultat_fin": "s alignés à droite et des étiquettes colorées pour statut et catégorie. Sur mobile, il devient une liste de cartes avec la même typographie.\n- **Fichiers** : `app/main.py` (validation, route POST, totaux, tri, confirmation à usage unique par cookie), `app/templates/liste.html`, `app/static/style.css`, `app/static/app.js` (filtres combinés, insensibles à la casse et aux accents, avec compteur), et le nouveau `tests/test_notes_de_frais.py`.\n- **Tests** : les nouveaux tests couvrent la validation, l'ajout et les totaux. Le séparateur de milliers des montants est une espace normale (`1 249,90 €`).",
+ "outils": {
+  "Skill": 1,
+  "Bash": 5,
+  "Read": 1,
+  "Edit": 3,
+  "Write": 4
+ },
+ "skills_invoquees": [
+  "frontend-design"
+ ],
+ "fichiers_lus": [
+  "DESIGN.md",
+  "main.py"
+ ],
+ "design_md_lu": true,
+ "tool_results_en_erreur": 1,
+ "statut": "ok",
+ "duree_s": 101.8,
+ "cmd": [
+  "claude",
+  "-p",
+  "..."
+ ]
+}

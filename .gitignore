@@ -5,3 +5,4 @@ contexte/
 tests-pratiques/T7/correspondance.json
 tests-pratiques/T11-ecriture/correspondance.json
 tests-pratiques/T11-ecriture/sorties/**/*.flux.jsonl
+tests-pratiques/T7ter-design-md/correspondance.json

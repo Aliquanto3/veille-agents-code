@@ -1,0 +1,39 @@
+{
+ "cout_usd": 0.31551710000000005,
+ "tours": 14,
+ "duree_api_ms": 94460,
+ "tokens_in": 12,
+ "tokens_out": 16985,
+ "cache_creation": 33359,
+ "cache_read": 122071,
+ "erreur": false,
+ "sous_type": "success",
+ "refus_permission": 1,
+ "denials": [
+  "Bash"
+ ],
+ "resultat_fin": " une bordure rouge. Le tableau a des lignes alternées, un en-tête sombre, le demandeur en gras, les montants alignés à droite en chiffres tabulaires et une étiquette colorée par service. Sous 720 px, les lignes deviennent des fiches.\n- **Fichiers modifiés** : `app/main.py`, `app/templates/liste.html`, `app/static/app.js`, `app/static/style.css`, `tests/test_liste.py`.\n- **Tests** : j'en ai ajouté 4 pour l'ajout valide et la redirection 303, le message « Demande enregistrée. » à usage unique, le 422 avec 4 erreurs, le singulier « 1 erreur », la conservation des valeurs et les bornes du montant.",
+ "outils": {
+  "Skill": 1,
+  "Bash": 4,
+  "Read": 1,
+  "Edit": 3,
+  "Write": 3
+ },
+ "skills_invoquees": [
+  "frontend-design"
+ ],
+ "fichiers_lus": [
+  "DESIGN.md",
+  "main.py"
+ ],
+ "design_md_lu": true,
+ "tool_results_en_erreur": 1,
+ "statut": "ok",
+ "duree_s": 98.5,
+ "cmd": [
+  "claude",
+  "-p",
+  "..."
+ ]
+}

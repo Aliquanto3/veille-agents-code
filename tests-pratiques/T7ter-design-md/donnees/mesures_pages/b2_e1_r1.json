@@ -1,0 +1,238 @@
+{
+ "rendu": "b2_e1_r1",
+ "ecran": 1,
+ "extra_390": {
+  "interactifs": 7,
+  "cibles_sous_24": 0,
+  "cibles_sous_44": 0,
+  "police_min_px": 14.4,
+  "police_corps_px": 16
+ },
+ "debordement_390": false,
+ "debordement_390_detail": {
+  "sw": 390,
+  "iw": 390
+ },
+ "poids": {
+  "html": 5038,
+  "css": 4137,
+  "js": 1117,
+  "autre": 0,
+  "total": 10292,
+  "requetes_externes": [],
+  "n_externes": 0,
+  "inline": {
+   "css": 0,
+   "js": 0
+  }
+ },
+ "contraste_perso": {
+  "textes": 47,
+  "ratio_min": 5.91,
+  "sous_seuil": 0,
+  "exemples": []
+ },
+ "focus": {
+  "focusables": 7,
+  "sans_indicateur": 0,
+  "liste_sans": []
+ },
+ "css_signaux": {
+  "reduced_motion": true,
+  "focus_visible": true,
+  "custom_props": 13,
+  "couleurs_litterales": 15,
+  "transition_all": false,
+  "media_queries": 4
+ },
+ "extra_1280": {
+  "interactifs": 7,
+  "cibles_sous_24": 0,
+  "cibles_sous_44": 0,
+  "police_min_px": 14.4,
+  "police_corps_px": 16
+ },
+ "polices": [
+  "system-ui",
+  "\"Iowan Old Style\""
+ ],
+ "axe": {
+  "violations_total": 0,
+  "noeuds_total": 0,
+  "regles_distinctes": [],
+  "par_impact": {},
+  "contraste_axe_noeuds": 0,
+  "detail": {
+   "initial_390": {
+    "v": [],
+    "inc": []
+   },
+   "initial_768": {
+    "v": [],
+    "inc": []
+   },
+   "initial_1280": {
+    "v": [],
+    "inc": []
+   },
+   "erreur_1280": {
+    "v": [],
+    "inc": []
+   }
+  }
+ },
+ "impeccable_detect": {
+  "rc": 0,
+  "n": 0,
+  "brut": [],
+  "stderr": ""
+ },
+ "conformite": {
+  "initial": {
+   "R3": true,
+   "R3_detail": {
+    "haut_px": 634,
+    "contraste_fond": 6.7,
+    "autres_boutons": 0,
+    "plus_marque": true
+   },
+   "tableau": true,
+   "R4": true,
+   "R4_detail": [
+    "rgb(255,255,255)",
+    "rgb(248,250,251)",
+    "rgb(255,255,255)",
+    "rgb(248,250,251)"
+   ],
+   "R4bis": true,
+   "R4bis_detail": {
+    "fond": true,
+    "trait": false,
+    "typo": false
+   },
+   "R5": false,
+   "R5_detail": {
+    "graisses_identite": [
+     400
+    ],
+    "graisses_description": [
+     400
+    ]
+   },
+   "R6": true,
+   "R6_detail": {
+    "droite": true,
+    "entete_droite": true,
+    "tabulaire": true
+   },
+   "R7_colonnes": {
+    "Service": {
+     "etiquettes": false,
+     "une_couleur_par_valeur": false,
+     "contraste_min": null,
+     "valeurs": 0,
+     "couleurs": 0,
+     "ok": false
+    }
+   },
+   "R7": false,
+   "R9": false,
+   "R9_detail": {
+    "familles_de_teintes": 1,
+    "couleurs_distinctes": 1
+   }
+  },
+  "erreur": {
+   "R1": false,
+   "R1_detail": [
+    "bordure-top 1px rgb(163, 54, 27)",
+    "bordure-right 1px rgb(163, 54, 27)",
+    "bordure-bottom 1px rgb(163, 54, 27)",
+    "bordure-left 6px rgb(163, 54, 27)"
+   ],
+   "R1bis": false,
+   "R1bis_detail": {
+    "au_dessus_du_premier_champ": true,
+    "dans_le_formulaire": false,
+    "distance_action_px": 591
+   },
+   "R2": false,
+   "R2_detail": {
+    "invalides": 4,
+    "avec_bordure_rouge": 4,
+    "avec_fond_rouge": 4,
+    "fonds": [
+     "rgb(251, 238, 234)",
+     "rgb(251, 238, 234)",
+     "rgb(251, 238, 234)"
+    ]
+   }
+  },
+  "R8": true,
+  "R8_detail": {
+   "ecarts": [],
+   "familles_1280": [
+    "iowan old style",
+    "system-ui"
+   ],
+   "familles_390": [
+    "iowan old style",
+    "system-ui"
+   ],
+   "ecarts_de_taille": [
+    "h1: 44.8 -> 30.4"
+   ]
+  },
+  "controles": {
+   "R1": false,
+   "R1bis": false,
+   "R2": false,
+   "R3": true,
+   "R4": true,
+   "R4bis": true,
+   "R5": false,
+   "R6": true,
+   "R7": false,
+   "R8": true,
+   "R9": false
+  },
+  "score": {
+   "vrais": 5,
+   "applicables": 11
+  }
+ },
+ "fonctionnel": {
+  "h1": true,
+  "champs_labels": true,
+  "bouton": true,
+  "novalidate": true,
+  "lignes_initiales": true,
+  "post_422": true,
+  "bandeau_4_erreurs": true,
+  "msg_demandeur": true,
+  "msg_service": true,
+  "msg_montant": true,
+  "msg_motif": true,
+  "valeurs_conservees": true,
+  "aria_invalid": true,
+  "aria_describedby": true,
+  "bandeau_1_erreur": true,
+  "confirmation": true,
+  "ligne_en_tete": true,
+  "montant_format": true,
+  "date_format": true,
+  "lignes_apres_ajout": true,
+  "confirmation_unique": true,
+  "filtre_nom": true,
+  "compteur_singulier": true,
+  "filtre_accents": true,
+  "message_vide": true,
+  "filtre_categorie": true,
+  "compteur_pluriel": true,
+  "filtres_combines": true,
+  "combines_vide": true,
+  "tous_les_choix": true,
+  "_reussis": 30,
+  "_total": 30
+ }
+}

@@ -1,0 +1,255 @@
+{
+ "rendu": "b5_e2_r3",
+ "ecran": 2,
+ "extra_390": {
+  "interactifs": 9,
+  "cibles_sous_24": 0,
+  "cibles_sous_44": 0,
+  "police_min_px": 14,
+  "police_corps_px": 16
+ },
+ "debordement_390": false,
+ "debordement_390_detail": {
+  "sw": 390,
+  "iw": 390
+ },
+ "poids": {
+  "html": 8658,
+  "css": 5560,
+  "js": 1162,
+  "autre": 0,
+  "total": 15380,
+  "requetes_externes": [],
+  "n_externes": 0,
+  "inline": {
+   "css": 0,
+   "js": 0
+  }
+ },
+ "contraste_perso": {
+  "textes": 80,
+  "ratio_min": 5.26,
+  "sous_seuil": 0,
+  "exemples": []
+ },
+ "focus": {
+  "focusables": 9,
+  "sans_indicateur": 0,
+  "liste_sans": []
+ },
+ "css_signaux": {
+  "reduced_motion": true,
+  "focus_visible": true,
+  "custom_props": 10,
+  "couleurs_litterales": 37,
+  "transition_all": false,
+  "media_queries": 3
+ },
+ "extra_1280": {
+  "interactifs": 9,
+  "cibles_sous_24": 0,
+  "cibles_sous_44": 0,
+  "police_min_px": 14,
+  "police_corps_px": 16
+ },
+ "polices": [
+  "\"Segoe UI\""
+ ],
+ "axe": {
+  "violations_total": 1,
+  "noeuds_total": 1,
+  "regles_distinctes": [
+   "scrollable-region-focusable"
+  ],
+  "par_impact": {
+   "serious": 1
+  },
+  "contraste_axe_noeuds": 0,
+  "detail": {
+   "initial_390": {
+    "v": [],
+    "inc": []
+   },
+   "initial_768": {
+    "v": [
+     {
+      "id": "scrollable-region-focusable",
+      "impact": "serious",
+      "nodes": 1
+     }
+    ],
+    "inc": [
+     {
+      "id": "color-contrast",
+      "nodes": 4
+     }
+    ]
+   },
+   "initial_1280": {
+    "v": [],
+    "inc": []
+   },
+   "erreur_1280": {
+    "v": [],
+    "inc": []
+   }
+  }
+ },
+ "impeccable_detect": {
+  "rc": 0,
+  "n": 0,
+  "brut": [],
+  "stderr": ""
+ },
+ "conformite": {
+  "initial": {
+   "R3": true,
+   "R3_detail": {
+    "haut_px": 699,
+    "contraste_fond": 4.59,
+    "autres_boutons": 0,
+    "plus_marque": true
+   },
+   "tableau": true,
+   "R4": true,
+   "R4_detail": [
+    "rgb(255,255,255)",
+    "rgb(240,244,249)",
+    "rgb(255,255,255)",
+    "rgb(240,244,249)"
+   ],
+   "R4bis": true,
+   "R4bis_detail": {
+    "fond": true,
+    "trait": false,
+    "typo": false
+   },
+   "R5": true,
+   "R5_detail": {
+    "graisses_identite": [
+     700
+    ],
+    "graisses_description": [
+     400
+    ]
+   },
+   "R6": true,
+   "R6_detail": {
+    "droite": true,
+    "entete_droite": true,
+    "tabulaire": true
+   },
+   "R7_colonnes": {
+    "Catégorie": {
+     "etiquettes": true,
+     "une_couleur_par_valeur": true,
+     "contraste_min": 7.01,
+     "valeurs": 5,
+     "couleurs": 5,
+     "ok": true
+    },
+    "Statut": {
+     "etiquettes": true,
+     "une_couleur_par_valeur": true,
+     "contraste_min": 6.87,
+     "valeurs": 4,
+     "couleurs": 4,
+     "ok": true
+    }
+   },
+   "R7": true,
+   "R9": true,
+   "R9_detail": {
+    "familles_de_teintes": 7,
+    "couleurs_distinctes": 13
+   }
+  },
+  "erreur": {
+   "R1": true,
+   "R1_detail": [],
+   "R1bis": true,
+   "R1bis_detail": {
+    "au_dessus_du_premier_champ": true,
+    "dans_le_formulaire": true,
+    "distance_action_px": 423
+   },
+   "R2": true,
+   "R2_detail": {
+    "invalides": 5,
+    "avec_bordure_rouge": 5,
+    "avec_fond_rouge": 0,
+    "fonds": []
+   }
+  },
+  "R8": true,
+  "R8_detail": {
+   "ecarts": [],
+   "familles_1280": [
+    "segoe ui"
+   ],
+   "familles_390": [
+    "segoe ui"
+   ],
+   "ecarts_de_taille": []
+  },
+  "controles": {
+   "R1": true,
+   "R1bis": true,
+   "R2": true,
+   "R3": true,
+   "R4": true,
+   "R4bis": true,
+   "R5": true,
+   "R6": true,
+   "R7": true,
+   "R8": true,
+   "R9": true
+  },
+  "score": {
+   "vrais": 11,
+   "applicables": 11
+  }
+ },
+ "fonctionnel": {
+  "h1": true,
+  "champs_labels": true,
+  "bouton": true,
+  "novalidate": true,
+  "lignes_initiales": true,
+  "tri_initial": true,
+  "totaux_initiaux": true,
+  "post_422": true,
+  "bandeau_5_erreurs": true,
+  "msg_collaborateur": true,
+  "msg_categorie": true,
+  "msg_montant": true,
+  "msg_date": true,
+  "msg_description": true,
+  "valeurs_conservees": true,
+  "aria_invalid": true,
+  "aria_describedby": true,
+  "bandeau_1_erreur": true,
+  "date_future_refusee": true,
+  "confirmation": true,
+  "ligne_en_tete": true,
+  "montant_format": true,
+  "date_format": true,
+  "lignes_apres_ajout": true,
+  "statut_soumise": true,
+  "totaux_apres_ajout": true,
+  "confirmation_unique": true,
+  "filtre_nom": true,
+  "compteur_singulier": true,
+  "filtre_accents": true,
+  "message_vide": true,
+  "filtre_categorie": true,
+  "compteur_pluriel": true,
+  "totaux_independants_des_filtres": true,
+  "filtres_combines": true,
+  "filtres_combines_2": true,
+  "combines_vide": true,
+  "tous_les_choix": true,
+  "_reussis": 38,
+  "_total": 38
+ }
+}

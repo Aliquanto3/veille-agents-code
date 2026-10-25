@@ -1,0 +1,74 @@
+{
+  "A": {
+    "commentaire": "Le contour bleu autour de \"Le formulaire contient 4 erreurs\" est assez laid. Le trait bleu au-dessus de \"Nouvelle demande\" détonne avec le reste de l'interface, étant à côté et en dessous d'un trait d'une couleur différente.",
+    "lisibilite": 3,
+    "finition": 3,
+    "coherence": 3
+  },
+  "B": {
+    "commentaire": "Le fond rouge des champs en erreur est un peu stressant. Le tableau est un peu plus lisible par contre, avec le fond coloré pour le titre et l'alternance de fond entre les lignes. La section \"Nouvelle demande\" est clairement démarquée par rapport au reste.",
+    "lisibilite": 4,
+    "finition": 4,
+    "coherence": 5
+  },
+  "C": {
+    "lisibilite": 5,
+    "finition": 4,
+    "coherence": 5,
+    "commentaire": "Très lisible et bien mis en forme. Le fond en couleur du titre de tableau, les étiquettes colorées de Service, le Demandeur en gras et l'alternance de fond de ligne rendent le tableau bien plus lisible. \nPeut-être que l'écran \"Nouvelle demande\" mériterait de rester sur la gauche, mais il faudrait voir en pratique à quel point il est utilisé par rapport aux demandes enregistrées. Si c'est l'écran le plus utilisé, il mérite effectivement sa place en haut. J trouve juste que le champ \"Le formulaire contient 4 erreurs\" est un peu moins mis en avant qu'ailleurs avec son fond gris."
+  },
+  "D": {
+    "lisibilite": 4,
+    "finition": 4,
+    "coherence": 4,
+    "commentaire": "Plutôt bon et lisible, mais le contour vert autour de \"Le formulaire contient 4 erreurs\" est plutôt peu esthétique, et le tableau pourrait gagner encore un peu plus en lisibilité via de la mise en forme du contenu. Le fond rouge des champs en erreur est aussi un peu stressant et met moins en avant le champ \"Le formulaire contient 4 erreurs\"."
+  },
+  "E": {
+    "coherence": 5,
+    "finition": 4,
+    "lisibilite": 5,
+    "commentaire": "Assez similaire au rendu C, mais encore meilleur à mon goût, grâce aux bandeaux de \"Nouvelle demande\" et \"Demandes enregistrées\" plus esthétiques, ainsi que le bouton \"Enregistrer la demande\" qui optimise la place via son positionnement. Cela dit, peut-être qu'en termes d'UX il faudrait laisser ce bouton en bas du bloc Nouvelle demande, c'est potentiellement plus cohérent dans l'expérience utilisateur. \nOn a toujours cet inconvénient sur \"Le formulaire contient 4 erreurs\" que je trouve moins marquant que dans d'autres exemples."
+  },
+  "F": {
+    "lisibilite": 5,
+    "finition": 5,
+    "coherence": 4,
+    "commentaire": "Aussi très bon, similaire au rendu C, mais corrigeant l'inconvénient du bandeau \"Le formulaire contient 4 erreurs\", avec le bon niveau de visibilité. Juste un inconvénient : il manque une barre plus marquée au-dessus de \"Demandes enregistrées\" pour bien le séparer de la section précédente et rester cohérent avec le bloc au-dessus."
+  },
+  "G": {
+    "lisibilite": 4,
+    "finition": 3,
+    "coherence": 4,
+    "commentaire": "Je n'aime pas la police dans \"Total par statut\". Les champs en erreur n'ont pas besoin d'être tous en rouge quand il y a un message d'erreur clair avant et le détail en dessous. Le contour vert autour de \"Collaborateur\" en cas d'erreur est superflu. Par contre le tableau est plutôt clair et le total par statut reste lisible."
+  },
+  "H": {
+    "commentaire": "J'apprécie assez la cohérence des couleurs entre le total par statut et les labels dans la colonne Statut. Par contre ça fait des titres trop petits et moins lisibles dans la section Total par statut. \nIl manque aussi une séparation plus claire entre les sections, par exemple avec des traits de couleur au-dessus de \"Saisir une note\" et \"Toutes les notes\". \nJe ne comprends pas à quoi sert le bouton \"Nouvelle note\" en haut à droite, on ne le voit pas ailleurs ? C'est pour réinitialiser la section \"Saisir une note\" ?\nLe message d'erreur \"Le formulaire contient 5 erreurs est plutôt bon, mais gagnerait à avoir un fond rouge clair pour être mis plus en avant sur l'action à prendre.\nIl manque aussi des séparateurs plus clairs entre les sections, par exemple des traits de couleur au-dessus de \"Saisir une note\" et \"Toutes les notes\".",
+    "lisibilite": 4,
+    "finition": 4,
+    "coherence": 5
+  },
+  "I": {
+    "commentaire": "Je n'aime pas trop la police dans \"Total par statut\", pas idéale pour la lisibilité de nombres je trouve.\nLe fait que tous les champs en erreur aient un fond rouge quand on a une erreur est un peu trop stressant ou prenant dans l'espace visuel du moins.\nSinon c'est un bon équilibre de sobre et lisible. Le contraste entre le fond de l'application et le fond des blocs comme Nouvelle note et Registre font qu'on a moins besoin de trait de séparation coloré clair en haut de ces blocs pour marquer la différenciation.",
+    "lisibilite": 4,
+    "finition": 4,
+    "coherence": 5
+  },
+  "J": {
+    "lisibilite": 4,
+    "finition": 4,
+    "coherence": 5,
+    "commentaire": "Mêmes commentaires et notes que pour le rendu J. \nA un point près : le trait de couleur en haut de \"Nouvelle Note\" détonne par rapport à l'absence de trait de couleur juste à côté pour \"Registre\". Mais vu qu'ils sont côte à côte, ça se comprend peut-être pour souligner l'action à prendre de \"Nouvelle note\" qui prend moins de place à l'écran que quand on met les sections les unes au dessus des autres ?"
+  },
+  "K": {
+    "commentaire": "Tableau assez lisible, mais il faut éviter d'avoir la même esthétique, incluant les couleurs, pour Catégorie et Statut, au risque de confondre.\nLes labels dans \"Total par statut\" gagneraient à être de la bonne couleur et un peu plus grand pour être lisibles. Bonne police pour la lisibilité des nombres cependant.\nLe contraste du fond fait qu'on a moins besoin de séparateur coloré clair entre les sections, mais ça peut rester pertinent. En effet, dans le formulaire en erreur, la barre \"Le formulaire contient 5 erreurs\" contribue à la lisibilité des sections, comme les titres du tableau dans \"Toutes les notes\". \nCependant, \"Le formulaire contient 5 erreurs\" n'est pas dans la bonne couleur pour indiquer qu'il y a une erreur.",
+    "coherence": 3,
+    "lisibilite": 4,
+    "finition": 4
+  },
+  "L": {
+    "commentaire": "Formulaire d'erreur le plus adapté, respectant tous mes retours précédents. \nCe rendu évite de tomber dans le piège d'avoir des couleurs identiques entre \"Catégorie\" et \"Statut\", le tableau le plus clair.\n\nTotal par statut aussi assez clair grâce à la gestion des couleurs matchant en plus la colonne Statut. Peut-être que les labels devraient être un peu plus gros pour augmenter la lisibilité au détriment d'une cohérence parfaite cependant. Le fait de mettre en plus les valeurs en couleur marche bien. Le fond bleu clair autour de cette section de \"Total par statut\" marche aussi plutôt bien pour le séparer des sections où des actions sont à prendre, même si je ne suis pas sûr que ça soit la couleur la plus optimisée à cette fin.\n\nUn trait coloré au dessus de Saisir une note et Toutes les notes pourrait aussi aider un peu à la lisibilité de la séparation entre sections.\n\nJe me questionne sur la présence du bouton \"Nouvelle note\" en haut à droite qui n'apparaît pas dans tous les autres rendus cependant, une spec qui diffère ?",
+    "lisibilite": 5,
+    "finition": 4,
+    "coherence": 5
+  }
+}

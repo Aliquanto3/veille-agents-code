@@ -1,0 +1,41 @@
+{
+ "cout_usd": 0.30840690000000004,
+ "tours": 17,
+ "duree_api_ms": 90390,
+ "tokens_in": 12,
+ "tokens_out": 16569,
+ "cache_creation": 32713,
+ "cache_read": 118409,
+ "erreur": false,
+ "sous_type": "success",
+ "refus_permission": 1,
+ "denials": [
+  "Bash"
+ ],
+ "resultat_fin": "Design : registre de bureau, papier gris froid, encre bleu nuit, titres en serif système. Le bon de saisie reste fixe à gauche sur ordinateur, et le tableau devient une pile de fiches à 390 px. Le rouge n'est utilisé que pour les erreurs.\nFichiers modifiés : `app/main.py`, `app/templates/liste.html`, `app/static/style.css`, `app/static/app.js` et le nouveau `tests/test_demandes.py`.\nTests : `uv run pytest -q --tb=short` donne 14 réussis. Je n'ai pas lancé de serveur ni de navigateur, donc le rendu visuel et le filtrage JavaScript n'ont pas été testés.",
+ "outils": {
+  "Skill": 1,
+  "Bash": 4,
+  "Read": 4,
+  "Edit": 2,
+  "Write": 4
+ },
+ "skills_invoquees": [
+  "frontend-design"
+ ],
+ "fichiers_lus": [
+  "main.py",
+  "liste.html",
+  "style.css",
+  "app.js"
+ ],
+ "design_md_lu": false,
+ "tool_results_en_erreur": 1,
+ "statut": "ok",
+ "duree_s": 94.3,
+ "cmd": [
+  "claude",
+  "-p",
+  "..."
+ ]
+}

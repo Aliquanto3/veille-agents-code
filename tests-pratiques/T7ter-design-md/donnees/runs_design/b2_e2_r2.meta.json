@@ -1,0 +1,41 @@
+{
+ "cout_usd": 0.3519226,
+ "tours": 16,
+ "duree_api_ms": 105367,
+ "tokens_in": 14,
+ "tokens_out": 19097,
+ "cache_creation": 36032,
+ "cache_read": 167966,
+ "erreur": false,
+ "sous_type": "success",
+ "refus_permission": 1,
+ "denials": [
+  "Bash"
+ ],
+ "resultat_fin": "té vérifiés à l'œil.\n- **Design :** fond gris-bleu froid, vert-pétrole en accent, titres en Georgia et corps en police système (aucune ressource distante). Les totaux sont quatre bandes colorées, une par statut. Sur mobile, chaque ligne du tableau devient une fiche.\n- **Fichiers modifiés :** `app/main.py`, `app/templates/liste.html`, `app/static/app.js`, `app/static/style.css` et `tests/test_notes.py` (nouveau). Le corps du POST est lu à la main pour éviter la dépendance `python-multipart`.\n- **Tests :** ils couvrent la validation, l'ajout, le tri, la confirmation à usage unique et les totaux.",
+ "outils": {
+  "Skill": 1,
+  "Bash": 3,
+  "Read": 4,
+  "Edit": 2,
+  "Write": 4
+ },
+ "skills_invoquees": [
+  "frontend-design"
+ ],
+ "fichiers_lus": [
+  "main.py",
+  "liste.html",
+  "app.js",
+  "style.css"
+ ],
+ "design_md_lu": false,
+ "tool_results_en_erreur": 1,
+ "statut": "ok",
+ "duree_s": 109.0,
+ "cmd": [
+  "claude",
+  "-p",
+  "..."
+ ]
+}

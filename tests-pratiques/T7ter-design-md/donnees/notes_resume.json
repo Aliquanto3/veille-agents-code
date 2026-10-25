@@ -1,0 +1,184 @@
+{
+ "moyennes": {
+  "b2 écran 1": {
+   "lisibilite": 3.6666666666666665,
+   "finition": 3.6666666666666665,
+   "coherence": 4,
+   "moyenne": 3.7777777777777777,
+   "n": 3
+  },
+  "b2 écran 2": {
+   "lisibilite": 4,
+   "finition": 3.6666666666666665,
+   "coherence": 4.666666666666667,
+   "moyenne": 4.111111111111111,
+   "n": 3
+  },
+  "b2 écran tous": {
+   "lisibilite": 3.8333333333333335,
+   "finition": 3.6666666666666665,
+   "coherence": 4.333333333333333,
+   "moyenne": 3.944444444444444,
+   "n": 6
+  },
+  "b5 écran 1": {
+   "lisibilite": 5,
+   "finition": 4.333333333333333,
+   "coherence": 4.666666666666667,
+   "moyenne": 4.666666666666667,
+   "n": 3
+  },
+  "b5 écran 2": {
+   "lisibilite": 4.333333333333333,
+   "finition": 4,
+   "coherence": 4.333333333333333,
+   "moyenne": 4.222222222222222,
+   "n": 3
+  },
+  "b5 écran tous": {
+   "lisibilite": 4.666666666666667,
+   "finition": 4.166666666666667,
+   "coherence": 4.5,
+   "moyenne": 4.444444444444445,
+   "n": 6
+  }
+ },
+ "ecarts_b5_moins_b2": {
+  "ecran 1": {
+   "lisibilite": {
+    "ecart": 1.3333333333333333,
+    "ic95": [
+     1,
+     2
+    ],
+    "min": 1,
+    "max": 2,
+    "paires": 3
+   },
+   "finition": {
+    "ecart": 0.6666666666666666,
+    "ic95": [
+     0,
+     2
+    ],
+    "min": 0,
+    "max": 2,
+    "paires": 3
+   },
+   "coherence": {
+    "ecart": 0.6666666666666666,
+    "ic95": [
+     0,
+     1
+    ],
+    "min": 0,
+    "max": 1,
+    "paires": 3
+   },
+   "moyenne": {
+    "ecart": 0.8888888888888893,
+    "ic95": [
+     0.3333333333333339,
+     1.666666666666667
+    ],
+    "min": 0.3333333333333339,
+    "max": 1.666666666666667,
+    "paires": 3
+   }
+  },
+  "ecran 2": {
+   "lisibilite": {
+    "ecart": 0.3333333333333333,
+    "ic95": [
+     0,
+     1
+    ],
+    "min": 0,
+    "max": 1,
+    "paires": 3
+   },
+   "finition": {
+    "ecart": 0.3333333333333333,
+    "ic95": [
+     0,
+     1
+    ],
+    "min": 0,
+    "max": 1,
+    "paires": 3
+   },
+   "coherence": {
+    "ecart": -0.3333333333333333,
+    "ic95": [
+     -2,
+     1
+    ],
+    "min": -2,
+    "max": 1,
+    "paires": 3
+   },
+   "moyenne": {
+    "ecart": 0.11111111111111131,
+    "ic95": [
+     -0.6666666666666665,
+     1.0000000000000004
+    ],
+    "min": -0.6666666666666665,
+    "max": 1.0000000000000004,
+    "paires": 3
+   }
+  },
+  "deux écrans": {
+   "lisibilite": {
+    "ecart": 0.8333333333333334,
+    "ic95": [
+     0.3333333333333333,
+     1.3333333333333333
+    ],
+    "min": 0,
+    "max": 2,
+    "paires": 6
+   },
+   "finition": {
+    "ecart": 0.5,
+    "ic95": [
+     0,
+     1.1666666666666667
+    ],
+    "min": 0,
+    "max": 2,
+    "paires": 6
+   },
+   "coherence": {
+    "ecart": 0.16666666666666666,
+    "ic95": [
+     -0.8333333333333334,
+     0.8333333333333334
+    ],
+    "min": -2,
+    "max": 1,
+    "paires": 6
+   },
+   "moyenne": {
+    "ecart": 0.5000000000000003,
+    "ic95": [
+     -0.11111111111111087,
+     1.055555555555556
+    ],
+    "min": -0.6666666666666665,
+    "max": 1.666666666666667,
+    "paires": 6
+   }
+  }
+ },
+ "verdict": {
+  "gain_ecran2": 0.11111111111111131,
+  "critere1_gain_ge_0_5": false,
+  "ecart_coherence_ecran2": -0.3333333333333333,
+  "critere2_coherence_non_inferieure": false,
+  "surcout_6_essais": -0.014099562251858044,
+  "surcout_ecran2": -0.003634528016153604,
+  "critere3_surcout_le_10pct": true,
+  "decision": "ne pas garder DESIGN.md en l'état"
+ }
+}
