@@ -63,3 +63,4 @@ https://linas.substack.com/p/how-to-use-jev-ai
 # Compléments du 2026-10-25 (apportés par Anaël)
 https://clarity.addy.ie/
 https://github.com/tomtomsatnav/agent-orchestration-standard
+https://github.com/fabio-rovai/open-ontologies

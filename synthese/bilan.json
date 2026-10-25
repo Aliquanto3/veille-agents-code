@@ -589,13 +589,19 @@
       "decision": "À trancher",
       "statut": "ouvert",
       "preuve": "analyse",
-      "note": "Moniteur en direct et en lecture seule des sessions Claude Code (graphe des agents, tokens, coût, conflits de fichiers entre agents parallèles, alertes, vue sur plusieurs postes). Recoupe mesurer-couts et l'OpenTelemetry ; son seul apport neuf pour toi est l'alerte de conflit de fichiers pendant un run parallèle. Réserves : une semaine d'existence, 17 hooks qui lancent chacun un processus Node, Git Bash et make sous Windows, port 4318 (celui de l'export OpenTelemetry). À essayer en bac à sable sur un run parallèle, après lecture des hooks et SkillSpector."
+      "note": "Moniteur en direct et en lecture seule des sessions Claude Code (graphe des agents, tokens, coût, conflits de fichiers entre agents parallèles, alertes, vue sur plusieurs postes). Recoupe mesurer-couts et l'OpenTelemetry ; son seul apport neuf pour toi est l'alerte de conflit de fichiers pendant un run parallèle. Réserves : une semaine d'existence, 19 hooks sur 16 événements, asynchrones, qui lancent chacun un processus Node, Git Bash et make sous Windows, port 4318 (celui de l'export OpenTelemetry). À essayer en bac à sable sur un run parallèle, après lecture des hooks et SkillSpector."
     },
     "clarity": {
       "decision": "À trancher",
       "statut": "ouvert",
       "preuve": "T11 (note d'Anaël en attente)",
       "note": "Skill d'écriture à invocation manuelle, 7,7 k caractères, sans hook ni réseau, MIT. T11 (4 textes dont un post d'Anaël et un extrait arXiv, 8 essais) : aucun fait inventé selon le juge, chiffres et renvois intacts, 0,11 $ par réécriture. Les textes de départ avaient trop peu de défauts pour départager : la note à l'aveugle d'Anaël tranchera."
+    },
+    "open-ontologies": {
+      "decision": "Hors périmètre",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "Outil de domaine, pas d'agent de code : moteur Rust d'ingénierie d'ontologies RDF/OWL (raisonneur, SHACL, SPARQL) qui planifie, applique et annule un changement comme Terraform, avec l'impact annoncé et une preuve vérifiable par Lean 4 ; serveur MCP de 110 outils (coût de contexte à mesurer, installation au niveau projet seulement). Illustre le principe « contrôles déterministes plutôt que consignes ». Piste pour une mission client sur un graphe de connaissances, face à ROBOT (CI d'ontologies), Protégé + HermiT, Jena ou pySHACL, TopBraid EDG ; chiffres publiés par l'auteur seulement."
     }
   },
   "duels": [

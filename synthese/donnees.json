@@ -371,6 +371,7 @@
     {"id": "langfuse-phoenix", "nom": "Langfuse, Phoenix", "url": "https://langfuse.com/", "origine": "nouveau", "problemes": ["observabilite"], "verdict": "Évaluer"},
     {"id": "aos-dashboard", "nom": "tomtomsatnav/agent-orchestration-standard (AOS Dashboard)", "url": "https://github.com/tomtomsatnav/agent-orchestration-standard", "origine": "liste", "problemes": ["observabilite", "orchestration"], "verdict": "Évaluer"},
     {"id": "clarity", "nom": "addyosmani/clarity", "url": "https://clarity.addy.ie/", "origine": "liste", "problemes": ["experience", "veille"], "verdict": "Évaluer"},
+    {"id": "open-ontologies", "nom": "fabio-rovai/open-ontologies", "url": "https://github.com/fabio-rovai/open-ontologies", "origine": "liste", "problemes": ["contexte", "tests"], "verdict": "Hors périmètre"},
     {"id": "concise", "nom": "Output style Concise", "url": "https://code.claude.com/docs/en/output-styles", "origine": "natif", "problemes": ["experience"], "verdict": "Essayer"}
   ],
   "existants": [
