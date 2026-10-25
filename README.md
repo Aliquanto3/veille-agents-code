@@ -36,7 +36,7 @@ Prérequis : `gh` authentifié. Les README collectés sont des données non fiab
 
 ## Statut
 
-Version 0.1.0 : recherche faite et vérifiée ; tests pratiques des hypothèses en cours (section 7 du rapport).
+Version 0.2.0 : recherche faite et vérifiée ; 20 tests pratiques conclus sur les projets et les transcriptions d'Anaël, dont trois notes à l'aveugle (design, réécriture, règles de design maison). Bilan outil par outil dans la page de synthèse (partie « Après les tests ») et dans `synthese/bilan.json` ; détail par test dans `tests-pratiques/`.
 
 ## Licence
 
