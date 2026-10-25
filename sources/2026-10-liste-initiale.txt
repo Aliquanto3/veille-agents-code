@@ -60,3 +60,6 @@ https://codepointer.dev/p/cutting-llm-token-costs-with-rtk
 # Compléments du 2026-10-24 (apportés par Anaël après le premier run)
 https://linas.substack.com/p/how-to-use-jev-ai
 # PDF LinkedIn : « Jev Engineering for Coding Agents », synthèse indépendante des notes de Diogo Almeida (TypeSafe), septembre 2026
+# Compléments du 2026-10-25 (apportés par Anaël)
+https://clarity.addy.ie/
+https://github.com/tomtomsatnav/agent-orchestration-standard

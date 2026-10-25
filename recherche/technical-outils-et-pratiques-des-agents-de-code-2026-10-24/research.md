@@ -8,7 +8,7 @@ status: complete
 preset: 'deep'
 validation: 'normal'
 created: '2026-10-24'
-updated: '2026-10-24'
+updated: '2026-10-25'
 claims: 'registre : 21 affirmations porteuses, 15 verified, 4 unverified, 2 disputed, 0 overturned (recon_kit tally)'
 ---
 
@@ -215,6 +215,33 @@ Contraintes : ni Ollama ni GPU avant la fin du benchmark local (~2026-10-27), ch
 | T8 | **Local** : ≤ 4B en appel direct comme lookup contre Haiku ; MoE 35B-A3B dans Claude Code ; routage des sous-agents Explore par en-têtes | Place des modèles locaux | GPU et Ollama | Après le benchmark |
 
 Tests écartés faute d'enjeu suffisant pour l'instant : graphify contre LSP, agent view contre le run autonome, orca, Concise contre i-have-adhd (à faire au fil de l'eau), humanizer en français (à faire avec le post LinkedIn).
+
+## 7 bis. Résultats des tests pratiques (24 et 25 octobre 2026)
+
+Ajouté le 2026-10-25. Les protocoles, données brutes et scripts sont dans `tests-pratiques/` (un dossier par test, `PLAN.md` pour l'état). Le coût de chaque test est dans son fichier de résultats. Le benchmark local d'Anaël était en pause pendant T3, T4, T6, T7, T8 et T10.
+
+| # | Question | Résultat | Décision |
+|---|---|---|---|
+| T1 | Où passent les tokens ? (transcriptions de 45 jours) | Contexte fixe 51,7 k (principale), 38,2 k (sous-agent), dont 25,5 k et 17,4 k de définitions d'outils ; 8 outils rarement appelés pèsent 17,8 k. Bash fait 13,6 % de l'entrée, dont 54 % de lectures de fichiers. TTL 1 h des sous-agents : −358 $. Second avis : 87 % de ses constats medium ou high corrigés, 0,03 $ la story. | Listes `tools:` explicites (kit 0.11.0) ; pas d'outil de compression ; pas de TTL 1 h ; garder le second avis ; alerte de dérapage plutôt que coupure |
+| T2 | OpenTelemetry natif contre mesurer-couts | Tokens identiques à l'unité, coût à ±0,2 % | Transcriptions pour l'historique, OpenTelemetry en contrôle croisé |
+| T3 | CLAUDE.md minimal contre actuel | 4 stories × 5 répétitions (Sonnet) : minimal −3,6 % de coût, IC [−8 ; +7], réussite égale (86 %) ; lint propre 20/20 contre 12/20 | Ne pas tailler un CLAUDE.md de quelques k tokens pour économiser ; y mettre les commandes de contrôle |
+| T4 | Mutation bornée à la story, couverture différentielle | Vrai trou de test dans 5 stories sur 5 ; 1 story sur 5 sous 10 min ; les 5 passent diff-cover à 80 % alors que ~72 % des lignes à survivants sont couvertes | Pas de porte de mutation ; diff-cover en CI ; mutation en étape optionnelle de la revue |
+| T4 bis | Tests verrouillés pendant l'implémentation | 40 runs Sonnet, tests d'acceptation fournis : 0 test modifié avec ou sans règle deny ; face à un test faux, l'agent le signale sans y toucher ; la règle est contournable par `uv run python -c` | Pas de verrou imposé ; `git diff -- tests/` dans le contrôle rapide |
+| T5 | Critique d'une autre famille, porte empirique (7 stories, défauts réels) | 0 défaut manqué retrouvé sur 5 ; 23 tests Important sur 23 échouent bien, 48 % déjà tranchés par la chaîne | Porte empirique : idée à garder, pas un filtre |
+| T5 élargi | Rappel sur 16 défauts semés, 20 stories, 4 dépôts | Haiku 11, Opus 11 (les mêmes), gpt-6.1-sol 11, gpt-6-luna 8 ; chaîne + GPT 12 (+6 points), constats Important ×1,5 | Pas de critique externe |
+| T6 | `/advisor` | Conseiller appelé 1 run sur 12 sans consigne (+21 % de coût) ; avec consigne 1,19 $ par story contre 0,53 $ (Sonnet seul) et 1,33 $ (Opus seul), réussite 85 à 89 % partout | Pas d'`/advisor` ; Sonnet pour implémenter, Opus en recours |
+| T7 | Skills de design ; navigateur | 0 violation axe dans les 16 pages, aucune skill à −30 % ; frontend-design +1 %, impeccable +16 %, hallmark +21 %. Navigateur : Playwright MCP 6/6, playwright-cli 6/6 (+18 %), agent-browser 5/6 (refus de permission) | frontend-design (sous réserve de la note à l'aveugle) ; Playwright MCP pour le sous-agent de vérification |
+| T8 | Modèles locaux | Lookup : Haiku 40/40, qwen3.5:4b 37/40 ; qwen3.6:35b-a3b réussit mais 52 à 78 s avant le premier jeton, RAM saturée | Haiku pour le lookup ; local pour comparer seulement |
+| T8 élargi | Juge de commandes shell (600 commandes) | Aucune combinaison n'atteint 0 fuite et < 2 % de faux refus (règle + Haiku : 1 fuite, 10 %) | Règles deny natives et auto mode, pas de juge |
+| T9, T9 élargi | Jev et autres modèles pour prédire le dérapage d'une story (226 stories) | AUC 0,61 à 0,65, comme la longueur de la spec | Rien à brancher |
+| T10 | Hypothesis contre tests d'exemples (75 survivants de mutation) | Exemples 53 %, Hypothesis 45 %, coût égal | Rien à ajouter ; demander explicitement le renforcement des tests |
+| T10b | Mutation guidée : survivants montrés à l'agent | 134/134 non équivalents tués (59 % sans les montrer), 0,22 $ par story, 35 équivalents sur 35 bien reconnus | Étape optionnelle de revue : mutation puis tests écrits par un agent |
+
+**Ce que les tests changent aux recommandations de la section 6.**
+- **Confirmé** : Sonnet pour implémenter, Opus en recours (T6) ; le contexte fixe est le premier poste (T1) ; les outils de compression ne valent rien sur ce profil (T1) ; aucun outil tiers de navigateur ou de design ne bat l'option la plus simple (T7) ; le local ne remplace pas Haiku (T8).
+- **Renversé** : la protection des tests par phase (6.3) n'est pas nécessaire sur Claude 5.5 (T4 bis) ; le second avis d'une autre famille (6.3) n'apporte pas assez (T5, T5 élargi) ; la porte empirique (6.3) ne filtre rien (T5) ; `/advisor` (T6) ; le property-based testing (constat 3 du résumé) n'aide pas un agent à mieux tester que des exemples (T10).
+- **Nouveau** : la mutation n'est pas seulement un diagnostic, elle sert de consigne : montrer les survivants à l'agent bouche tous les trous non équivalents pour quelques centimes (T10b). C'est le gain le plus net de la série.
+- **Reste ouvert** : la note à l'aveugle du design (T7) ; les prédictions de dérapage (T9, il faudrait ~480 stories) ; voir la partie « Après les tests » de la page HTML pour le bilan outil par outil.
 
 ## 8. Questions ouvertes
 

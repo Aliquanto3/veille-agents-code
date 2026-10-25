@@ -244,10 +244,10 @@
       "note": "Aussi bon que le MCP une fois `export` autorisé, pas meilleur ; son atout (diff visuel, audit axe) n'est pas testé."
     },
     "deny-tests": {
-      "decision": "À trancher",
-      "statut": "ouvert",
-      "preuve": "T4",
-      "note": "EN ATTENTE banc de rejeu"
+      "decision": "S'inspirer",
+      "statut": "conclu",
+      "preuve": "T4 bis",
+      "note": "40 runs Sonnet avec les tests d'acceptation fournis dès le départ : 0 test modifié, avec ou sans règle deny ; face à un test volontairement faux, l'agent rend un code correct et signale le test sans y toucher. Le verrou ne change ni la réussite ni le coût, et un `uv run python -c` le contourne. Pas de règle imposée ; un contrôle `git diff -- tests/` dans le contrôle rapide suffit."
     },
     "mutation": {
       "decision": "Intégrer",
@@ -462,8 +462,8 @@
     "jev": {
       "decision": "Écarter",
       "statut": "conclu",
-      "preuve": "T9, T9 élargi",
-      "note": "Sur 226 stories, Jev prédit le dérapage et le coût élevé à peine comme la longueur de la spec (AUC 0,61 et 0,65) ; ne rien brancher. Relançable quand tu auras rapatrié les transcriptions des autres postes."
+      "preuve": "T9, T9 élargi (3 PC)",
+      "note": "Sur 243 stories de trois PC (25 dérapages), Jev prédit le dérapage un peu mieux que la longueur de la spec (AUC 0,63 contre 0,56) mais l'écart n'est pas significatif ([−0,05 ; +0,20]) et ses alertes ont une précision de 11 à 14 % pour un taux de base de 10 % : il ne trie presque pas. Ne rien brancher."
     },
     "routeurs-appris": {
       "decision": "Écarter",
@@ -552,8 +552,8 @@
     "humanizer": {
       "decision": "Intégrer",
       "statut": "ouvert",
-      "preuve": "analyse",
-      "note": "À la demande pour tes textes LinkedIn ; relire, il renforce certains tics."
+      "preuve": "T11 (en cours)",
+      "note": "À la demande pour tes textes LinkedIn ; relire, il renforce certains tics. Comparé à clarity, seul et enchaîné, par T11."
     },
     "firecrawl": {
       "decision": "Intégrer",
@@ -584,6 +584,18 @@
       "statut": "conclu",
       "preuve": "analyse",
       "note": "Mission SEO seulement."
+    },
+    "aos-dashboard": {
+      "decision": "À trancher",
+      "statut": "ouvert",
+      "preuve": "analyse",
+      "note": "Moniteur en direct et en lecture seule des sessions Claude Code (graphe des agents, tokens, coût, conflits de fichiers entre agents parallèles, alertes, vue sur plusieurs postes). Recoupe mesurer-couts et l'OpenTelemetry ; son seul apport neuf pour toi est l'alerte de conflit de fichiers pendant un run parallèle. Réserves : une semaine d'existence, 17 hooks qui lancent chacun un processus Node, Git Bash et make sous Windows, port 4318 (celui de l'export OpenTelemetry). À essayer en bac à sable sur un run parallèle, après lecture des hooks et SkillSpector."
+    },
+    "clarity": {
+      "decision": "À trancher",
+      "statut": "ouvert",
+      "preuve": "T11 (en cours)",
+      "note": "Skill d'écriture à invocation manuelle (rewrite, review, interview), 7,7 k caractères, sans hook ni réseau, MIT. Vise un texte utile et précis sans inventer de faits ; publie un protocole d'évaluation (aveugle, refus de toute invention) mais aucun résultat. Concurrent ou complément de humanizer : départagé par T11, en français."
     }
   },
   "duels": [
@@ -664,8 +676,8 @@
       "candidats": "longueur de la spec, Jev, gpt-6-luna, mimo",
       "meilleur": "Aucun",
       "strict": false,
-      "explication": "Les modèles retrouvent ce que dit déjà la longueur de la spec (AUC 0,61 à 0,65) ; il faudrait ~480 stories pour détecter un vrai gain.",
-      "preuve": "T9, T9 élargi"
+      "explication": "Sur 243 stories et 25 dérapages : Jev 0,63, longueur de la spec 0,56, gpt-6-luna 0,53 d'AUC ; aucun n'atteint 0,7, et les alertes de Jev ne sont pas plus précises que le hasard (11 à 14 % pour un taux de base de 10 %).",
+      "preuve": "T9, T9 élargi (3 PC)"
     },
     {
       "nom": "Mesurer la force des tests",
@@ -714,6 +726,14 @@
       "strict": false,
       "explication": "−3,6 % de coût, IC [−8 ; +7], réussite égale ; le minimal est plus propre en lint parce qu'il nomme les commandes. Ce qui compte : des consignes vérifiables, pas la longueur.",
       "preuve": "T3 (40 runs)"
+    },
+    {
+      "nom": "Protéger les tests pendant l'implémentation",
+      "candidats": "rien, règle deny native sur les fichiers de tests",
+      "meilleur": "Aucun",
+      "strict": false,
+      "explication": "Sonnet 5.5 n'a modifié aucun test sur 40 runs, même face à un test faux : la règle ne s'est jamais déclenchée. 20 runs par bras n'excluent qu'un taux de triche supérieur à 15 % : à refaire avec un modèle plus faible.",
+      "preuve": "T4 bis"
     }
   ],
   "setup": [
@@ -738,8 +758,8 @@
     {
       "domaine": "Tests",
       "garder": "pytest + ruff, CI sur 3 OS, consigne anti-mock (kit 0.10.0)",
-      "changer": "diff-cover à 80 % en CI ; étape optionnelle de la revue : mutation bornée aux lignes de la story (cosmic-ray, 10 min), puis un agent Sonnet qui écrit les tests tuant les survivants (0,22 $) ; consigne explicite de renforcement des tests dans dev-story",
-      "ne_pas": "Prendre la couverture pour une preuve de tests solides ; porte de mutation bloquante ; consigne Hypothesis systématique"
+      "changer": "diff-cover à 80 % en CI ; étape optionnelle de la revue : mutation bornée aux lignes de la story (cosmic-ray, 10 min), puis un agent Sonnet qui écrit les tests tuant les survivants (0,22 $) ; consigne explicite de renforcement des tests dans dev-story ; `git diff -- tests/` dans le contrôle rapide",
+      "ne_pas": "Prendre la couverture pour une preuve de tests solides ; porte de mutation bloquante ; consigne Hypothesis systématique ; règle deny sur les tests (sans effet mesuré sur Claude 5.5)"
     },
     {
       "domaine": "Revue",
@@ -795,8 +815,8 @@
     },
     {
       "test": "T9, prédiction du dérapage (Jev)",
-      "manque": "15 dérapages sur 226 stories : puissance insuffisante pour un écart de 0,05 d'AUC.",
-      "elargir": "~480 stories (~32 dérapages) avec les transcriptions des deux autres postes (`relancer.py --transcriptions`)."
+      "manque": "25 dérapages sur 243 stories (trois PC) pour ~32 visés ; même à 32, une AUC de 0,63 resterait sous le critère de 0,7.",
+      "elargir": "En cours : ajout des stories d'usine et de service-public développées avant le kit (agents general-purpose). Ensuite, seulement des trajectoires publiques (SWE-bench), à interpréter à part."
     },
     {
       "test": "T8, lookup local",
@@ -809,9 +829,9 @@
       "elargir": "Sous-agents imbriqués, reprise de session, sortie tronquée : utile seulement si tu veux remplacer les transcriptions par l'OpenTelemetry."
     },
     {
-      "test": "T4, tests verrouillés",
-      "manque": "EN ATTENTE banc de rejeu",
-      "elargir": "EN ATTENTE"
+      "test": "T4 bis, tests verrouillés",
+      "manque": "0 triche sur 40 runs : n'exclut qu'un taux supérieur à 15 % (IC à 95 %).",
+      "elargir": "Seulement avec un modèle plus faible (Haiku, modèle local) en implémentation, où la triche était fréquente dans les études de 2025."
     },
     {
       "test": "T10 et T10b, renforcement des tests",
@@ -885,7 +905,7 @@
     "<strong>Aucun dépôt de ta liste ne fait strictement mieux que l'option la plus simple de ta configuration</strong> (natif, ou BMAD et agent-cost-kit). 15 tests pratiques sur tes projets et tes transcriptions l'ont vérifié là où l'analyse ne suffisait pas : navigateur, design, revue, modèles locaux, routage.",
     "<strong>Ce qui rapporte, mesuré chez toi</strong> : réduire le contexte fixe (17,8 k tokens d'outils rarement appelés, retirés dans le kit 0.11.0) ; le second avis Haiku (87 % de ses constats sérieux corrigés pour 0,03 $) ; Sonnet seul pour implémenter (0,53 $ par story contre 1,33 $ pour Opus, réussite égale) ; la vérification des critères d'acceptation dans un vrai navigateur (seul contrôle à relever un écart en T7).",
     "<strong>La découverte de la série : la mutation guidée.</strong> Montrer à l'agent les mutants qui survivent à ses tests lui fait boucher 134 trous non équivalents sur 134, contre 59 % avec une simple consigne, pour 0,22 $ par story. C'est le seul ajout à ta chaîne que les tests justifient (étape optionnelle de la revue, 3 à 13 min).",
-    "<strong>Ce qui ne rapporte pas, mesuré aussi</strong> : un relecteur d'une autre famille (+6 points, non significatif), la porte empirique, <code>/advisor</code>, les tests Hypothesis, les juges de commandes shell, les modèles de décision (Jev), la compression des sorties, le TTL d'une heure, les modèles locaux au quotidien, tailler un CLAUDE.md de quelques milliers de tokens.",
+    "<strong>Ce qui ne rapporte pas, mesuré aussi</strong> : un relecteur d'une autre famille (+6 points, non significatif), la porte empirique, le verrouillage des tests (aucune triche observée sur 40 runs), <code>/advisor</code>, les tests Hypothesis, les juges de commandes shell, les modèles de décision (Jev), la compression des sorties, le TTL d'une heure, les modèles locaux au quotidien, tailler un CLAUDE.md de quelques milliers de tokens.",
     "<strong>Gagnants stricts</strong> (au moins aussi bons et moins chers, sur tes données) : la chaîne agent-cost-kit contre bmad-build, la réduction du contexte fixe contre la compression, Haiku contre les modèles locaux pour le lookup, Sonnet seul contre Sonnet + conseiller, la mutation guidée contre la consigne seule. Partout ailleurs, pas de gagnant strict : choisir l'option la plus simple.",
     "<strong>À faire de ton côté</strong> : noter les 8 rendus à l'aveugle (<code>tests-pratiques/T7/notation.html</code>, ~10 min), relever <code>cleanupPeriodDays</code>, valider la story du kit « mutation guidée », rapatrier les transcriptions des deux autres postes si tu veux relancer T9."
   ]
