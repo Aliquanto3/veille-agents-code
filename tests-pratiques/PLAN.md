@@ -46,3 +46,4 @@ Fichier d'état relisible après `/clear`. Protocoles d'origine : section 7 de `
 3. **`cleanupPeriodDays`** à relever (par ex. 365) dans `~/.claude/settings.json`, puis `.\sync.ps1 sauver` dans claude-config.
 4. **Transcriptions des deux autres postes** : JSON de `bilan-tokens` pour l'impact ; brutes seulement pour les projets personnels publics, dans `_hors-depot\transcriptions\<poste>\` ; puis `T9-elargi/relancer.py --transcriptions`.
 5. Piège relevé en T10b : un chemin court Windows (`UTILIS~1`) donné à `claude -p` fait refuser les écritures de fichiers ; toujours passer le chemin long aux agents.
+- 2026-10-25 : agent-cost-kit 0.12.0 publiée (PR #25) : mutation guidée et catalogue d'essais `essai-outil`, expérimentaux ; worktree `agent-cost-kit-wt-012` et branche supprimés. Audit de généralisation du kit : `_hors-depot/audit-generalisation-agent-cost-kit-2026-10-25.md` (19 stories, brief BMAD à faire).

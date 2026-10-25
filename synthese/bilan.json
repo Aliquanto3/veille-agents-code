@@ -19,7 +19,7 @@
       "decision": "Intégrer",
       "statut": "ouvert",
       "preuve": "analyse",
-      "note": "grill-with-docs et diagnosing-bugs en invocation manuelle, sans conflit avec BMAD ; non testé, mais 2,3 k caractères et aucun hook : un essai ne coûte presque rien."
+      "note": "grill-with-docs et diagnosing-bugs en invocation manuelle, sans conflit avec BMAD ; non testé, mais 2,3 k caractères et aucun hook : un essai ne coûte presque rien. Fiche d'essai dans agent-cost-kit 0.12.0 (`docs/experimental.md`, skill `essai-outil`)."
     },
     "addy-skills": {
       "decision": "S'inspirer",
@@ -97,7 +97,7 @@
       "decision": "Intégrer",
       "statut": "ouvert",
       "preuve": "analyse",
-      "note": "À la demande, pour un livrable client soigné ; Mermaid reste le format de la doc versionnée. Non testé, sans enjeu de coût."
+      "note": "À la demande, pour un livrable client soigné ; Mermaid reste le format de la doc versionnée. Non testé, sans enjeu de coût. Fiche d'essai dans agent-cost-kit 0.12.0 (`docs/experimental.md`, skill `essai-outil`)."
     },
     "graphify": {
       "decision": "Écarter",
@@ -139,7 +139,7 @@
       "decision": "S'inspirer",
       "statut": "ouvert",
       "preuve": "T7",
-      "note": "La skill coûte +15 % sans réduire les violations (0 axe partout) ; son détecteur `impeccable detect <url>` peut servir en CI, mais il relève surtout la règle « palette crème ». Clos par ta note."
+      "note": "La skill coûte +15 % sans réduire les violations (0 axe partout) ; son détecteur `impeccable detect <url>` peut servir en CI, mais il relève surtout la règle « palette crème ». Clos par ta note. Fiche d'essai dans agent-cost-kit 0.12.0 (`docs/experimental.md`, skill `essai-outil`)."
     },
     "taste-skill": {
       "decision": "Écarter",
@@ -151,7 +151,7 @@
       "decision": "Écarter",
       "statut": "ouvert",
       "preuve": "T7",
-      "note": "+21 % de coût, aucune violation en moins, flux interactif et sous-agent inadaptés aux runs autonomes ; seule ta note pourrait le repêcher."
+      "note": "+21 % de coût, aucune violation en moins, flux interactif et sous-agent inadaptés aux runs autonomes ; seule ta note pourrait le repêcher. Fiche d'essai dans agent-cost-kit 0.12.0 (`docs/experimental.md`, skill `essai-outil`)."
     },
     "ui-ux-pro-max": {
       "decision": "Écarter",
@@ -217,7 +217,7 @@
       "decision": "À trancher",
       "statut": "ouvert",
       "preuve": "analyse",
-      "note": "Research preview inclus dans Max, non évalué ; à essayer à la main au prochain cadrage UX."
+      "note": "Research preview inclus dans Max, non évalué ; à essayer à la main au prochain cadrage UX. Fiche d'essai dans agent-cost-kit 0.12.0 (`docs/experimental.md`, skill `essai-outil`)."
     },
     "claude-in-chrome": {
       "decision": "Déjà en place",
@@ -250,10 +250,10 @@
       "note": "40 runs Sonnet avec les tests d'acceptation fournis dès le départ : 0 test modifié, avec ou sans règle deny ; face à un test volontairement faux, l'agent rend un code correct et signale le test sans y toucher. Le verrou ne change ni la réussite ni le coût, et un `uv run python -c` le contourne. Pas de règle imposée ; un contrôle `git diff -- tests/` dans le contrôle rapide suffit."
     },
     "mutation": {
-      "decision": "Intégrer",
+      "decision": "Déjà en place",
       "statut": "conclu",
-      "preuve": "T4, T10b",
-      "note": "cosmic-ray borné aux lignes de la story trouve un vrai trou de test dans 5 stories sur 5 (T4). Montrer ensuite les survivants à un agent Sonnet lui fait tuer 134 survivants non équivalents sur 134, contre 59 % avec une simple consigne de renforcement, pour 0,22 $ par story, et il reconnaît seul les équivalents (35 sur 35). Étape optionnelle de la revue, 3 à 13 min par story ; trop lente pour une porte de CI."
+      "preuve": "T4, T10b, kit 0.12.0",
+      "note": "cosmic-ray borné aux lignes de la story trouve un vrai trou de test dans 5 stories sur 5 (T4). Montrer ensuite les survivants à un agent Sonnet lui fait tuer 134 survivants non équivalents sur 134, contre 59 % avec une simple consigne de renforcement, pour 0,22 $ par story, et il reconnaît seul les équivalents (35 sur 35). Étape optionnelle de la revue, 3 à 13 min par story ; trop lente pour une porte de CI. Livré dans agent-cost-kit 0.12.0 comme étape expérimentale (`scripts/mutation_story.py`, copie jetable, `docs/mutation-guidee.md`)."
     },
     "hypothesis": {
       "decision": "Écarter",
@@ -541,7 +541,7 @@
       "decision": "Intégrer",
       "statut": "ouvert",
       "preuve": "analyse",
-      "note": "Style natif qui couvre l'essentiel d'i-have-adhd sans dépendance ; à essayer une semaine."
+      "note": "Style natif qui couvre l'essentiel d'i-have-adhd sans dépendance ; à essayer une semaine. Fiche d'essai dans agent-cost-kit 0.12.0 (`docs/experimental.md`, skill `essai-outil`)."
     },
     "i-have-adhd": {
       "decision": "Écarter",
@@ -553,7 +553,7 @@
       "decision": "Intégrer",
       "statut": "ouvert",
       "preuve": "T11 (note d'Anaël en attente)",
-      "note": "T11 : aucun fait inventé, retire le gras décoratif et la moitié des exclamations, garde « WOUPS » mais fond une liste à puces en phrase ; 0,13 $ par réécriture. Enchaîné après clarity : 0,31 $ sans gain mesuré. La note à l'aveugle d'Anaël tranchera."
+      "note": "T11 : aucun fait inventé, retire le gras décoratif et la moitié des exclamations, garde « WOUPS » mais fond une liste à puces en phrase ; 0,13 $ par réécriture. Enchaîné après clarity : 0,31 $ sans gain mesuré. La note à l'aveugle d'Anaël tranchera. Fiche d'essai dans agent-cost-kit 0.12.0 (`docs/experimental.md`, skill `essai-outil`)."
     },
     "firecrawl": {
       "decision": "Intégrer",
@@ -565,7 +565,7 @@
       "decision": "Intégrer",
       "statut": "ouvert",
       "preuve": "analyse",
-      "note": "À la demande pour une vidéo de démo ; Windows non vérifié."
+      "note": "À la demande pour une vidéo de démo ; Windows non vérifié. Fiche d'essai dans agent-cost-kit 0.12.0 (`docs/experimental.md`, skill `essai-outil`)."
     },
     "apify-mcp": {
       "decision": "Écarter",
@@ -589,13 +589,13 @@
       "decision": "À trancher",
       "statut": "ouvert",
       "preuve": "analyse",
-      "note": "Moniteur en direct et en lecture seule des sessions Claude Code (graphe des agents, tokens, coût, conflits de fichiers entre agents parallèles, alertes, vue sur plusieurs postes). Recoupe mesurer-couts et l'OpenTelemetry ; son seul apport neuf pour toi est l'alerte de conflit de fichiers pendant un run parallèle. Réserves : une semaine d'existence, 19 hooks sur 16 événements, asynchrones, qui lancent chacun un processus Node, Git Bash et make sous Windows, port 4318 (celui de l'export OpenTelemetry). À essayer en bac à sable sur un run parallèle, après lecture des hooks et SkillSpector."
+      "note": "Moniteur en direct et en lecture seule des sessions Claude Code (graphe des agents, tokens, coût, conflits de fichiers entre agents parallèles, alertes, vue sur plusieurs postes). Recoupe mesurer-couts et l'OpenTelemetry ; son seul apport neuf pour toi est l'alerte de conflit de fichiers pendant un run parallèle. Réserves : une semaine d'existence, 19 hooks sur 16 événements, asynchrones, qui lancent chacun un processus Node, Git Bash et make sous Windows, port 4318 (celui de l'export OpenTelemetry). À essayer en bac à sable sur un run parallèle, après lecture des hooks et SkillSpector. Fiche d'essai dans agent-cost-kit 0.12.0 (`docs/experimental.md`, skill `essai-outil`)."
     },
     "clarity": {
       "decision": "À trancher",
       "statut": "ouvert",
       "preuve": "T11 (note d'Anaël en attente)",
-      "note": "Skill d'écriture à invocation manuelle, 7,7 k caractères, sans hook ni réseau, MIT. T11 (4 textes dont un post d'Anaël et un extrait arXiv, 8 essais) : aucun fait inventé selon le juge, chiffres et renvois intacts, 0,11 $ par réécriture. Les textes de départ avaient trop peu de défauts pour départager : la note à l'aveugle d'Anaël tranchera."
+      "note": "Skill d'écriture à invocation manuelle, 7,7 k caractères, sans hook ni réseau, MIT. T11 (4 textes dont un post d'Anaël et un extrait arXiv, 8 essais) : aucun fait inventé selon le juge, chiffres et renvois intacts, 0,11 $ par réécriture. Les textes de départ avaient trop peu de défauts pour départager : la note à l'aveugle d'Anaël tranchera. Fiche d'essai dans agent-cost-kit 0.12.0 (`docs/experimental.md`, skill `essai-outil`)."
     },
     "open-ontologies": {
       "decision": "Hors périmètre",
