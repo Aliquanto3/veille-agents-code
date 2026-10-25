@@ -1,0 +1,79 @@
+{
+ "verdict": {
+  "ecarts": [
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "et elle peut même améliorer la qualité",
+    "citation_source": "et même d'optimiser la performance !",
+    "explication": "« Performance » devient « qualité ». Le contexte (le bug repéré par Haiku) rend l'équivalence plausible, mais le terme de l'auteur est déplacé."
+   },
+   {
+    "type": "affirmation_renforcee",
+    "gravite": "mineur",
+    "citation_sortie": "Cette combinaison réduit les coûts",
+    "citation_source": "Cette combinaison permet de réduire les coûts",
+    "explication": "« Permet de réduire » devient une affirmation directe, un peu plus catégorique."
+   },
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "Un de mes relecteurs Opus était passé à côté d'un changement critique",
+    "citation_source": "Par exemple, un de mes relecteurs Opus avait raté un changement critique",
+    "explication": "La perte de « Par exemple » fait de l'anecdote un cas isolé plutôt qu'une illustration annoncée comme telle, sans conséquence factuelle."
+   },
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "sur 109 stories de trois projets",
+    "citation_source": "sur 109 stories des trois projets",
+    "explication": "L'article indéfini détache légèrement les trois projets de ceux évoqués plus haut, alors que la source renvoie à des projets déjà identifiés."
+   },
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "Résultat : en une journée, j'ai consommé plus de 60 % des crédits",
+    "citation_source": "Puis, cette semaine, après un pic à 3 orchestrateurs et une vingtaine d'agents tournant en parallèle sous Opus, j'ai consommé en une journée plus de 60% des crédits",
+    "explication": "La succession temporelle (« après ») devient un lien de cause explicite. Ce lien était implicite dans la source et reste fidèle à l'intention."
+   },
+   {
+    "type": "voix_effacee",
+    "gravite": "mineur",
+    "citation_sortie": "L'avantage, c'est que ça m'a donné beaucoup de données",
+    "citation_source": "Cela dit, ça m'a aussi offert beaucoup de données pour identifier les postes de consommation de mes projets !",
+    "explication": "Quelques marques orales et exclamatives disparaissent, mais les emojis, « WOUPS », la question finale et le ton personnel sont conservés. L'auteur reste reconnaissable.",
+    "marques_disparues": [
+     "« Cela dit, »",
+     "point d'exclamation après « postes de consommation de mes projets »",
+     "points de suspension de suspense dans « réduire les coûts... et même »",
+     "point d'exclamation après « divise environ par 5 la consommation »",
+     "« Par exemple »"
+    ]
+   }
+  ],
+  "porte_franchie": false,
+  "mise_en_forme": "La liste à puces des trois ambitions est fusionnée en une phrase (avec un « puis » qui introduit une gradation), la mention entre parenthèses « (d'après l'estimation de Claude) » est remontée sur la même ligne que le 🏆, et « LinkedIn » est remplacé par « ici ». Les emojis d'en-tête et de paragraphe sont conservés.",
+  "phrase_de_bilan": "La réécriture est fidèle : tous les chiffres (109 stories, 3 orchestrateurs, 60 %, 60 $, ×5, 1 850 $, 10 %, 200 $) et les réserves de l'auteur sont conservés. Seuls de légers glissements lexicaux et la perte de quelques marques orales sont à noter, sans aucun écart bloquant."
+ },
+ "meta": {
+  "cout_usd": 0.10802,
+  "tours": 1,
+  "duree_api_ms": 23129,
+  "erreur": false,
+  "sous_type": "success",
+  "tokens_in": 2,
+  "tokens_out": 2381,
+  "cache_creation": 7549,
+  "cache_read": 0,
+  "modeles": [
+   "claude-opus-5-5"
+  ],
+  "refus_permission": [],
+  "outils": {},
+  "skills_invoquees": [],
+  "fichiers_lus": [],
+  "rc": 0,
+  "duree_s": 24.1,
+  "stderr": ""
+ }
+}

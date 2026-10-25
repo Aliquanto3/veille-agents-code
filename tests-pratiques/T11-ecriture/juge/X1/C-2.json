@@ -1,0 +1,37 @@
+{
+ "verdict": {
+  "ecarts": [
+   {
+    "type": "affirmation_renforcee",
+    "gravite": "mineur",
+    "citation_sortie": "Le plus souvent, on gagne davantage à retirer qu'à ajouter.",
+    "citation_source": "Les gains viennent plus souvent de ce qu'on retire que de ce qu'on ajoute.",
+    "explication": "La source compare seulement des fréquences (« plus souvent ») ; la réécriture affirme qu'on gagne davantage à retirer « le plus souvent », ce qui suggère une majorité des cas et glisse vers un gain plus grand, sans contredire le propos."
+   }
+  ],
+  "porte_franchie": false,
+  "mise_en_forme": "Le gras des intertitres et des puces est conservé ; seuls « mesuré » et « mesuré aussi » passent entre parenthèses, et la liste, les hashtags et la question finale sont intacts.",
+  "phrase_de_bilan": "La réécriture est fidèle : chiffres, comparaisons, ordre des idées et appel final sont conservés, avec un seul léger renforcement, sans conséquence, dans la phrase de leçon finale."
+ },
+ "meta": {
+  "cout_usd": 0.076872,
+  "tours": 1,
+  "duree_api_ms": 12705,
+  "erreur": false,
+  "sous_type": "success",
+  "tokens_in": 2,
+  "tokens_out": 1162,
+  "cache_creation": 6703,
+  "cache_read": 0,
+  "modeles": [
+   "claude-opus-5-5"
+  ],
+  "refus_permission": [],
+  "outils": {},
+  "skills_invoquees": [],
+  "fichiers_lus": [],
+  "rc": 0,
+  "duree_s": 13.6,
+  "stderr": ""
+ }
+}

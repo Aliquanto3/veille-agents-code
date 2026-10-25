@@ -1,0 +1,26 @@
+{
+ "cout_usd": 0.20704100000000003,
+ "tours": 3,
+ "duree_api_ms": 22530,
+ "erreur": false,
+ "sous_type": "success",
+ "tokens_in": 4,
+ "tokens_out": 2208,
+ "cache_creation": 19924,
+ "cache_read": 17365,
+ "modeles": [
+  "claude-opus-5-5"
+ ],
+ "refus_permission": [],
+ "outils": {
+  "Skill": 1
+ },
+ "skills_invoquees": [
+  "humanizer"
+ ],
+ "fichiers_lus": [],
+ "rc": 0,
+ "duree_s": 23.3,
+ "stderr": "",
+ "prompt_debut": "Réécris ce texte en français pour le rendre plus clair et plus naturel, pour tes contacts LinkedIn, consultants et développeurs. N'invente aucun fait, ne renforce aucune affirmation, garde les chiffres et les renvois. Rends seulement le texte. Utilise d'abord "
+}

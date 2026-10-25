@@ -1,0 +1,86 @@
+{
+ "verdict": {
+  "ecarts": [
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "Cette semaine, j'ai eu jusqu'à 3 orchestrateurs et une vingtaine d'agents sous Opus en parallèle. Plus de 60 % de mes crédits de la semaine sont partis en une seule journée.",
+    "citation_source": "Puis, cette semaine, après un pic à 3 orchestrateurs et une vingtaine d'agents tournant en parallèle sous Opus, j'ai consommé en une journée plus de 60% des crédits de ma semaine entière.",
+    "explication": "Le lien temporel et implicitement causal (« après un pic ») est remplacé par deux phrases juxtaposées. Le lecteur peut encore déduire la cause."
+   },
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "J'en ai tiré un plugin open source.",
+    "citation_source": "D'où le plugin open source que je publie",
+    "explication": "L'acte de publication (« que je publie ») disparaît. « Open source » laisse toutefois entendre que le plugin est public."
+   },
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "Cette répartition réduit les coûts et peut même améliorer la qualité.",
+    "citation_source": "Cette combinaison permet de réduire les coûts... et même d'optimiser la performance !",
+    "explication": "« Performance » devient « qualité », ce qui reste cohérent avec l'exemple. La modalité bouge dans les deux sens : « permet de réduire » devient « réduit », et « permet d'optimiser » devient « peut même améliorer »."
+   },
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "J'ai mesuré la consommation nécessaire pour créer la version finale du plugin. Aux prix de l'API Anthropic, ces tests m'auraient coûté 1 850 $",
+    "citation_source": "selon les mesures de consommation pour la création du plugin final et les prix de l'API Anthropic, j'aurais dû payer 1850$",
+    "explication": "Les 1 850 $ sont rattachés explicitement à « ces tests » plutôt qu'à la création du plugin final. La mesure devient aussi une action personnelle (« J'ai mesuré »). La source rapproche déjà les deux, donc l'écart reste faible."
+   },
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "Je continuerai à le mettre à jour au fil de mes prochains repos.",
+    "citation_source": "Et je continuerai à le mettre à jour en testant sur mes prochains repos.",
+    "explication": "La méthode de mise à jour (« en testant ») disparaît."
+   },
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "Bien sûr, ce plugin repose sur ma seule expérience, avec peu de projets. N'hésitez pas à relancer les tests sur les vôtres !",
+    "citation_source": "Bien entendu, ça reste un plugin basé sur ma seule expérience dans un faible nombre de projets, donc n'hésitez pas à relancer les tests sur vos propres projets !",
+    "explication": "Le lien logique « donc » entre la réserve et l'invitation à retester disparaît. Le sens se déduit encore."
+   },
+   {
+    "type": "voix_effacee",
+    "gravite": "mineur",
+    "citation_sortie": "J'en ai tiré un plugin open source.",
+    "citation_source": "👉 D'où le plugin open source que je publie",
+    "explication": "Quelques marques expressives de l'auteur disparaissent, sans changer qui parle : la plupart des emojis, « WOUPS » et la question finale sont conservés.",
+    "marques_disparues": [
+     "emoji 👉",
+     "exclamation dans « plusieurs dizaines de tests ! »",
+     "points de suspension et exclamation dans « réduire les coûts... et même d'optimiser la performance ! »",
+     "exclamation après « divise environ par 5 la consommation ! »",
+     "« Cela dit » remplacé par « L'avantage, c'est que »"
+    ]
+   }
+  ],
+  "porte_franchie": false,
+  "mise_en_forme": "Il n'y a pas de gras dans les deux textes. La liste à puces est conservée avec des points-virgules ajoutés. Le titre est identique. Le paragraphe du plugin est découpé en deux, et la parenthèse « (d'après l'estimation de Claude) » est intégrée à la phrase du 🏆.",
+  "phrase_de_bilan": "La réécriture est fidèle : chiffres (3, vingtaine, 60 %, 109, 60 $, 5, 1 850 $, 10 %, 200 $), réserves, appel à l'action et question finale conservés. Il ne reste que des glissements mineurs de liens logiques, de rattachement et de quelques marques de voix."
+ },
+ "meta": {
+  "cout_usd": 0.12645599999999999,
+  "tours": 1,
+  "duree_api_ms": 29684,
+  "erreur": false,
+  "sous_type": "success",
+  "tokens_in": 2,
+  "tokens_out": 3294,
+  "cache_creation": 7571,
+  "cache_read": 0,
+  "modeles": [
+   "claude-opus-5-5"
+  ],
+  "refus_permission": [],
+  "outils": {},
+  "skills_invoquees": [],
+  "fichiers_lus": [],
+  "rc": 0,
+  "duree_s": 30.5,
+  "stderr": ""
+ }
+}

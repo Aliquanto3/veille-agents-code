@@ -1,0 +1,86 @@
+{
+ "verdict": {
+  "ecarts": [
+   {
+    "type": "affirmation_renforcee",
+    "gravite": "mineur",
+    "citation_sortie": "Cette combinaison réduit les coûts, et elle peut même améliorer la qualité.",
+    "citation_source": "Cette combinaison permet de réduire les coûts... et même d'optimiser la performance !",
+    "explication": "« permet de réduire » devient « réduit », un peu plus affirmatif, et « performance » devient « qualité », ce qui déplace légèrement le critère amélioré."
+   },
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "ces tests m'auraient coûté 1 850 $",
+    "citation_source": "selon les mesures de consommation pour la création du plugin final et les prix de l'API Anthropic, j'aurais dû payer 1850$",
+    "explication": "La source rattache les 1 850 $ à la création du plugin final, la réécriture les rattache aux « tests » ; la source mêle elle-même les deux, donc l'écart est faible."
+   },
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "environ 60 $… au tarif de l'API !",
+    "citation_source": "environ 60 $... dans l'API !",
+    "explication": "« dans l'API » est ambigu (coût réellement payé dans l'API ou équivalent au tarif de l'API) ; la réécriture tranche pour un coût hypothétique au tarif de l'API."
+   },
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "Cette semaine, j'ai atteint un pic de 3 orchestrateurs et d'une vingtaine d'agents en parallèle sous Opus. Résultat : plus de 60 %",
+    "citation_source": "Puis, cette semaine, après un pic à 3 orchestrateurs et une vingtaine d'agents tournant en parallèle sous Opus, j'ai consommé",
+    "explication": "L'enchaînement temporel « après » devient un lien de cause explicite « Résultat », plausible mais plus net que dans la source."
+   },
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "Je continuerai à le mettre à jour au fil de mes prochains repos.",
+    "citation_source": "Et je continuerai à le mettre à jour en testant sur mes prochains repos.",
+    "explication": "La mention des tests sur les prochains repos disparaît."
+   },
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "J'en ai tiré un plugin open source.",
+    "citation_source": "D'où le plugin open source que je publie",
+    "explication": "L'idée que l'auteur publie le plugin maintenant s'efface au profit d'un simple « j'en ai tiré »."
+   },
+   {
+    "type": "voix_effacee",
+    "gravite": "mineur",
+    "citation_sortie": "En contrepartie, j'avais beaucoup de données pour comprendre où partait la consommation de mes projets.",
+    "citation_source": "Cela dit, ça m'a aussi offert beaucoup de données pour identifier les postes de consommation de mes projets !",
+    "explication": "Quelques marques d'enthousiasme oral disparaissent, mais les emojis, le « WOUPS » et la question finale restent : la voix de l'auteur est préservée.",
+    "marques_disparues": [
+     "« Cela dit, »",
+     "point d'exclamation après « mes projets »",
+     "point d'exclamation après « plusieurs dizaines de tests »",
+     "« Bien entendu, ça reste »",
+     "lien logique « donc n'hésitez pas »"
+    ]
+   }
+  ],
+  "porte_franchie": false,
+  "mise_en_forme": "Les titres, emojis et la liste à puces sont conservés (ponctuation de liste ajoutée) ; un paragraphe est scindé en deux et la mention « (d'après l'estimation de Claude) » est intégrée à la phrase du 🏆.",
+  "phrase_de_bilan": "Réécriture fidèle : chiffres (109, 60 %, 60 $, 5, 1 850 $, 10 %, 200 $) et structure conservés, quelques glissements mineurs de rattachement et de nuance, sans écart qui franchisse la porte."
+ },
+ "meta": {
+  "cout_usd": 0.12142,
+  "tours": 1,
+  "duree_api_ms": 26727,
+  "erreur": false,
+  "sous_type": "success",
+  "tokens_in": 2,
+  "tokens_out": 3045,
+  "cache_creation": 7564,
+  "cache_read": 0,
+  "modeles": [
+   "claude-opus-5-5"
+  ],
+  "refus_permission": [],
+  "outils": {},
+  "skills_invoquees": [],
+  "fichiers_lus": [],
+  "rc": 0,
+  "duree_s": 27.5,
+  "stderr": ""
+ }
+}

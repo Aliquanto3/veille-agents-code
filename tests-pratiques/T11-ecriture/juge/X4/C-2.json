@@ -1,0 +1,44 @@
+{
+ "verdict": {
+  "ecarts": [
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "Both approaches tie skills to the JIT context philosophy of [19].",
+    "citation_source": "and OpenHands now implements the same idea as PathTrigger rules injected on file-touch—marrying skills to the JIT context philosophy of [19].",
+    "explication": "La source rattache le lien avec [19] à la phrase qui couvre Claude Code et OpenHands, de façon ambiguë ; la réécriture choisit explicitement les deux approches, une lecture plausible mais plus nette que la source."
+   },
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "OpenClaw is now the only eager loader.",
+    "citation_source": "OpenClaw remains the one eager loader",
+    "explication": "« remains » indique qu'OpenClaw chargeait déjà les skills de façon anticipée ; « is now » perd cette continuité, sans conséquence factuelle notable."
+   }
+  ],
+  "porte_franchie": false,
+  "mise_en_forme": "Les longues phrases sont découpées, l'énumération des modes de chargement différé devient une liste à puces et « First / Second / Third » est ajouté ; les titres de paragraphe, les chiffres (9/11, 8/11, 8 of 9, four systems) et les renvois (Section 8.3, [19]) sont conservés.",
+  "phrase_de_bilan": "La réécriture est fidèle : elle conserve tous les faits, chiffres et renvois, et ne présente que deux nuances mineures sans risque d'induire le lecteur en erreur."
+ },
+ "meta": {
+  "cout_usd": 0.075012,
+  "tours": 1,
+  "duree_api_ms": 11032,
+  "erreur": false,
+  "sous_type": "success",
+  "tokens_in": 2,
+  "tokens_out": 1091,
+  "cache_creation": 6648,
+  "cache_read": 0,
+  "modeles": [
+   "claude-opus-5-5"
+  ],
+  "refus_permission": [],
+  "outils": {},
+  "skills_invoquees": [],
+  "fichiers_lus": [],
+  "rc": 0,
+  "duree_s": 12.3,
+  "stderr": ""
+ }
+}

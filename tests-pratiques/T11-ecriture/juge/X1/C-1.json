@@ -1,0 +1,29 @@
+{
+ "verdict": {
+  "ecarts": [],
+  "porte_franchie": false,
+  "mise_en_forme": "Le gras des trois intertitres, les puces et les hashtags sont conservés. Les intertitres passent de « mesuré : » à « (mesuré) : » et de « : la mutation guidée » à « , c'est la mutation guidée », sans perte de structure.",
+  "phrase_de_bilan": "La réécriture est fidèle : tous les chiffres sont conservés et rattachés aux bonnes phrases (15 tests, 45 jours, 8 outils, 17,8 k tokens, 87 %, 0,03 $, 0,53 $ contre 1,33 $, +6 points, 40 runs, 134 sur 134, 59 %, 35 mutants, 0,22 $). Les nuances (« non significatif », « strictement », « plus souvent », « optionnelle ») sont maintenues, et le déplacement de la phrase de coût, le passage à l'impératif dans la leçon et « des mutations » ne sont que des reformulations sans effet factuel."
+ },
+ "meta": {
+  "cout_usd": 0.06952,
+  "tours": 1,
+  "duree_api_ms": 8442,
+  "erreur": false,
+  "sous_type": "success",
+  "tokens_in": 2,
+  "tokens_out": 800,
+  "cache_creation": 6689,
+  "cache_read": 0,
+  "modeles": [
+   "claude-opus-5-5"
+  ],
+  "refus_permission": [],
+  "outils": {},
+  "skills_invoquees": [],
+  "fichiers_lus": [],
+  "rc": 0,
+  "duree_s": 9.1,
+  "stderr": ""
+ }
+}

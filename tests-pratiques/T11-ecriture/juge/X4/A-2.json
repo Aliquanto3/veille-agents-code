@@ -1,0 +1,44 @@
+{
+ "verdict": {
+  "ecarts": [
+   {
+    "type": "affirmation_renforcee",
+    "gravite": "mineur",
+    "citation_sortie": "OpenHands loaded everything up front in April, which made it the outlier.",
+    "citation_source": "OpenHands, an eager outlier in April,",
+    "explication": "« everything » et « the outlier » rendent un peu plus absolu « an eager outlier », qui désignait seulement un chargement anticipé des skills."
+   },
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "Both approaches tie skills to the JIT context philosophy of [19].",
+    "citation_source": "—marrying skills to the JIT context philosophy of [19].",
+    "explication": "La source rattache l'incise par un tiret, sans préciser si elle vise OpenHands seul ou Claude Code et OpenHands ; la réécriture choisit la lecture « les deux », qui reste plausible et garde le renvoi [19]."
+   }
+  ],
+  "porte_franchie": false,
+  "mise_en_forme": "La réécriture ajoute deux listes à puces, du gras sur les trois développements et du code en ligne pour paths, requires, skill, invoke_skill et $ ; les titres de paragraphe sont conservés.",
+  "phrase_de_bilan": "La réécriture est fidèle : chiffres (9/11, 8/11, 8 of 9, quatre systèmes), renvois (Section 8.3, [19]) et exemples sont tous conservés, et les seuls écarts sont deux nuances mineures."
+ },
+ "meta": {
+  "cout_usd": 0.08142,
+  "tours": 1,
+  "duree_api_ms": 30555,
+  "erreur": false,
+  "sous_type": "success",
+  "tokens_in": 2,
+  "tokens_out": 1393,
+  "cache_creation": 6694,
+  "cache_read": 0,
+  "modeles": [
+   "claude-opus-5-5"
+  ],
+  "refus_permission": [],
+  "outils": {},
+  "skills_invoquees": [],
+  "fichiers_lus": [],
+  "rc": 0,
+  "duree_s": 34.1,
+  "stderr": ""
+ }
+}

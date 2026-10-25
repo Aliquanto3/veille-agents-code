@@ -1,0 +1,51 @@
+{
+ "verdict": {
+  "ecarts": [
+   {
+    "type": "affirmation_renforcee",
+    "gravite": "mineur",
+    "citation_sortie": "À eux seuls, 8 outils rarement utilisés ajoutaient 17,8 k tokens à chaque appel.",
+    "citation_source": "8 outils rarement appelés pesaient 17,8 k tokens à chaque appel.",
+    "explication": "« À eux seuls » ajoute une insistance absente de la source, sans changer le chiffre."
+   },
+   {
+    "type": "affirmation_renforcee",
+    "gravite": "mineur",
+    "citation_sortie": "87 % des problèmes sérieux qu'il a relevés ont été corrigés",
+    "citation_source": "87 % de ses constats sérieux ont été corrigés",
+    "explication": "« Constats » devient « problèmes », ce qui présente les remarques de Haiku comme de vrais défauts, alors que la source reste neutre."
+   },
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "des agents de code moins chers ou plus efficaces",
+    "citation_source": "rendre les agents de code moins chers ou meilleurs",
+    "explication": "« Meilleurs » devient « plus efficaces », ce qui resserre légèrement la notion de qualité, sans conséquence factuelle."
+   }
+  ],
+  "porte_franchie": false,
+  "mise_en_forme": "Gras, puces, titres de section et hashtags conservés. Seuls les deux-points des intertitres sont remplacés par des parenthèses autour de « mesuré ».",
+  "phrase_de_bilan": "Réécriture fidèle : tous les chiffres et la question finale sont conservés. Il ne reste que trois nuances mineures de formulation, qui ne franchissent pas la porte."
+ },
+ "meta": {
+  "cout_usd": 0.080052,
+  "tours": 1,
+  "duree_api_ms": 15400,
+  "erreur": false,
+  "sous_type": "success",
+  "tokens_in": 2,
+  "tokens_out": 1311,
+  "cache_creation": 6728,
+  "cache_read": 0,
+  "modeles": [
+   "claude-opus-5-5"
+  ],
+  "refus_permission": [],
+  "outils": {},
+  "skills_invoquees": [],
+  "fichiers_lus": [],
+  "rc": 0,
+  "duree_s": 16.1,
+  "stderr": ""
+ }
+}

@@ -1,0 +1,37 @@
+{
+ "verdict": {
+  "ecarts": [
+   {
+    "type": "chiffre_ou_renvoi_perdu_ou_modifie",
+    "gravite": "mineur",
+    "citation_sortie": "Il a aussi reconnu sans erreur les 35 mutants équivalents, pour un coût de 0,22 $ par story.",
+    "citation_source": "Coût : 0,22 $ par story. Il a aussi reconnu sans erreur les 35 mutants équivalents.",
+    "explication": "Le coût de 0,22 $ par story, qui porte sur toute la mutation guidée, est rattaché à la phrase sur la reconnaissance des mutants équivalents, ce qui peut laisser croire qu'il ne concerne que cette étape."
+   }
+  ],
+  "porte_franchie": false,
+  "mise_en_forme": "Le gras des deux intertitres et de « La vraie découverte » a été retiré, ce dernier devenant une phrase d'ouverture de paragraphe ; le paragraphe « Verdict » a été fusionné avec l'introduction ; les puces sont conservées.",
+  "phrase_de_bilan": "La réécriture est fidèle : chiffres, liste, question finale et hashtags sont conservés, et le seul écart est le déplacement mineur du coût de 0,22 $ vers une autre phrase."
+ },
+ "meta": {
+  "cout_usd": 0.077468,
+  "tours": 1,
+  "duree_api_ms": 15444,
+  "erreur": false,
+  "sous_type": "success",
+  "tokens_in": 2,
+  "tokens_out": 1187,
+  "cache_creation": 6715,
+  "cache_read": 0,
+  "modeles": [
+   "claude-opus-5-5"
+  ],
+  "refus_permission": [],
+  "outils": {},
+  "skills_invoquees": [],
+  "fichiers_lus": [],
+  "rc": 0,
+  "duree_s": 16.1,
+  "stderr": ""
+ }
+}

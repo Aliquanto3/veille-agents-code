@@ -1,0 +1,44 @@
+X1
+   cond           mots mots_par_p     tirets contrastes chutes_une    triades triades_fi    gonfles       gras
+   source          316       10.5          0          0          0          0          0          1          3
+   A-1             328       10.6          0          0          0          1          0          1          3
+   A-2             329       11.0          0          0          0          0          0          1          3
+   B-1             319       10.6          0          0          0          1          0          0          0
+   B-2             326       10.5          0          0          0          1          0          0          0
+   C-1             314       11.2          0          0          0          1          0          1          3
+   C-2             319       10.6          0          0          0          1          0          1          3
+   D-1             327       11.7          0          0          0          1          0          0          0
+   D-2             324       11.6          0          0          0          1          0          0          0
+X2
+   cond           mots mots_par_p     tirets contrastes chutes_une    triades triades_fi    gonfles       gras
+   source          579       26.3          0          0          1          2          0          2          9
+   A-1             664       16.6          0          0          1          2          0          2          9
+   A-2             663       17.9          0          1          1          1          0          2          9
+   B-1             625       16.9          0          0          1          2          1          1          7
+   B-2             633       18.6          0          0          1          1          1          1          0
+   C-1             611       17.5          0          0          1          1          0          1          9
+   C-2             636       18.7          0          0          1          3          0          1          9
+   D-1             637       19.3          0          0          1          3          0          2          0
+   D-2             636       19.3          0          0          1          3          0          1          4
+X3
+   cond           mots mots_par_p     tirets contrastes chutes_une    triades triades_fi    gonfles       gras
+   source          480       20.9          0          0          0          1          1          1          0
+   A-1             500       16.7          0          0          0          2          1          1          0
+   A-2             504       16.3          0          0          0          2          2          1          0
+   B-1             483       21.0          0          0          0          3          2          1          0
+   B-2             477       20.7          0          0          0          3          1          1          0
+   C-1             480       17.1          0          0          0          2          2          1          0
+   C-2             500       16.7          0          0          0          4          3          1          0
+   D-1             478       15.4          0          0          0          2          2          1          0
+   D-2             488       16.8          0          0          0          3          3          1          0
+X4
+   cond           mots mots_par_p     tirets contrastes chutes_une    triades triades_fi    gonfles       gras
+   source          314       28.5          3          0          0          2          0          2          0
+   A-1             380       13.1          0          0          0          3          1          1          0
+   A-2             404       12.6          0          0          0          4          3          1          3
+   B-1             360       14.4          0          0          0          5          2          1          0
+   B-2             367       15.3          0          0          0          4          2          1          0
+   C-1             370       12.8          0          0          0          3          1          1          0
+   C-2             368       13.1          0          0          0          3          1          1          0
+   D-1             376       13.9          0          0          0          2          1          1          0
+   D-2             393       13.6          0          0          0          4          2          1          0

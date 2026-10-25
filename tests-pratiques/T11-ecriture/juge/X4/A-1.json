@@ -1,0 +1,58 @@
+{
+ "verdict": {
+  "ecarts": [
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "This follows Claude Code's deferred tool loading (Section 8.3).",
+    "citation_source": "Echoing Claude Code's deferred tool loading (Section 8.3),",
+    "explication": "« Echoing » signale un parallèle, alors que « follows » peut se lire comme une filiation ou une antériorité que la source n'affirme pas ; l'ambiguïté reste faible."
+   },
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "OpenClaw is now the only eager loader.",
+    "citation_source": "OpenClaw remains the one eager loader,",
+    "explication": "« remains » indique qu'OpenClaw chargeait déjà ainsi en avril, continuité que « is now » efface ; le fait actuel reste exact."
+   },
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "In April, OpenHands still loaded skills eagerly;",
+    "citation_source": "OpenHands, an eager outlier in April,",
+    "explication": "La source présente OpenHands comme une exception en avril ; la réécriture perd cette idée d'exception sans fausser le fait."
+   },
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "Three further developments show this layer maturing.",
+    "citation_source": "Three second-order developments mark the layer's maturation:",
+    "explication": "« second-order » (développements dérivés) devient « further » (développements supplémentaires), ce qui atténue légèrement la nuance sans conséquence factuelle."
+   }
+  ],
+  "porte_franchie": false,
+  "mise_en_forme": "Le texte n'avait pas de gras ; la réécriture met en code certains termes (`paths`, `requires`, `skill`, `invoke_skill`, `$`) et transforme l'énumération des modes de chargement différé en liste à puces, sans perte de contenu ni d'ordre.",
+  "phrase_de_bilan": "La réécriture est fidèle : tous les chiffres (9/11, 8/11, 8 sur 9, quatre systèmes) et les renvois ([19], Section 8.3) sont conservés et bien rattachés, et seules quelques nuances temporelles ou de registre sont légèrement affaiblies."
+ },
+ "meta": {
+  "cout_usd": 0.08901999999999999,
+  "tours": 1,
+  "duree_api_ms": 17267,
+  "erreur": false,
+  "sous_type": "success",
+  "tokens_in": 2,
+  "tokens_out": 1785,
+  "cache_creation": 6664,
+  "cache_read": 0,
+  "modeles": [
+   "claude-opus-5-5"
+  ],
+  "refus_permission": [],
+  "outils": {},
+  "skills_invoquees": [],
+  "fichiers_lus": [],
+  "rc": 0,
+  "duree_s": 19.5,
+  "stderr": ""
+ }
+}

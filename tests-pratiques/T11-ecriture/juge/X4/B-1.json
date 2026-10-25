@@ -1,0 +1,29 @@
+{
+ "verdict": {
+  "ecarts": [],
+  "porte_franchie": false,
+  "mise_en_forme": "Les trois intitulés de paragraphe en tête de ligne (« Observation 8. », « Deferred loading as the dominant pattern. », « Gating and conditional activation. ») sont conservés. Les longues phrases à tirets et points-virgules ont été découpées en phrases courtes. Il n'y avait ni gras, ni puces, ni liens à préserver.",
+  "phrase_de_bilan": "La réécriture est fidèle : chiffres (9/11, 8/11, 8 des 9, quatre systèmes), renvois ([19], Section 8.3), noms de mécanismes et nuances (« nearly universal », « the only eager loader ») sont conservés ; les seuls ajouts sont des explicitations neutres, comme le développement de JIT en just-in-time."
+ },
+ "meta": {
+  "cout_usd": 0.07599600000000001,
+  "tours": 1,
+  "duree_api_ms": 37290,
+  "erreur": false,
+  "sous_type": "success",
+  "tokens_in": 2,
+  "tokens_out": 1149,
+  "cache_creation": 6626,
+  "cache_read": 0,
+  "modeles": [
+   "claude-opus-5-5"
+  ],
+  "refus_permission": [],
+  "outils": {},
+  "skills_invoquees": [],
+  "fichiers_lus": [],
+  "rc": 0,
+  "duree_s": 40.9,
+  "stderr": ""
+ }
+}

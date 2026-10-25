@@ -462,8 +462,8 @@
     "jev": {
       "decision": "Écarter",
       "statut": "conclu",
-      "preuve": "T9, T9 élargi (3 PC)",
-      "note": "Sur 243 stories de trois PC (25 dérapages), Jev prédit le dérapage un peu mieux que la longueur de la spec (AUC 0,63 contre 0,56) mais l'écart n'est pas significatif ([−0,05 ; +0,20]) et ses alertes ont une précision de 11 à 14 % pour un taux de base de 10 % : il ne trie presque pas. Ne rien brancher."
+      "preuve": "T9, T9 élargi (3 PC, 339 stories)",
+      "note": "Sur 339 stories de trois PC et deux processus (kit et avant le kit), 32 dérapages : Jev plafonne à 0,62 d'AUC sur le dérapage (0,57 pour la longueur de la spec), loin du seuil utile de 0,7. Le test a maintenant la puissance d'écarter une AUC de 0,65 ; ses alertes ne trient presque pas. Ne rien brancher."
     },
     "routeurs-appris": {
       "decision": "Écarter",
@@ -552,8 +552,8 @@
     "humanizer": {
       "decision": "Intégrer",
       "statut": "ouvert",
-      "preuve": "T11 (en cours)",
-      "note": "À la demande pour tes textes LinkedIn ; relire, il renforce certains tics. Comparé à clarity, seul et enchaîné, par T11."
+      "preuve": "T11 (note d'Anaël en attente)",
+      "note": "T11 : aucun fait inventé, retire le gras décoratif et la moitié des exclamations, garde « WOUPS » mais fond une liste à puces en phrase ; 0,13 $ par réécriture. Enchaîné après clarity : 0,31 $ sans gain mesuré. La note à l'aveugle d'Anaël tranchera."
     },
     "firecrawl": {
       "decision": "Intégrer",
@@ -594,8 +594,8 @@
     "clarity": {
       "decision": "À trancher",
       "statut": "ouvert",
-      "preuve": "T11 (en cours)",
-      "note": "Skill d'écriture à invocation manuelle (rewrite, review, interview), 7,7 k caractères, sans hook ni réseau, MIT. Vise un texte utile et précis sans inventer de faits ; publie un protocole d'évaluation (aveugle, refus de toute invention) mais aucun résultat. Concurrent ou complément de humanizer : départagé par T11, en français."
+      "preuve": "T11 (note d'Anaël en attente)",
+      "note": "Skill d'écriture à invocation manuelle, 7,7 k caractères, sans hook ni réseau, MIT. T11 (4 textes dont un post d'Anaël et un extrait arXiv, 8 essais) : aucun fait inventé selon le juge, chiffres et renvois intacts, 0,11 $ par réécriture. Les textes de départ avaient trop peu de défauts pour départager : la note à l'aveugle d'Anaël tranchera."
     }
   },
   "duels": [
@@ -676,8 +676,8 @@
       "candidats": "longueur de la spec, Jev, gpt-6-luna, mimo",
       "meilleur": "Aucun",
       "strict": false,
-      "explication": "Sur 243 stories et 25 dérapages : Jev 0,63, longueur de la spec 0,56, gpt-6-luna 0,53 d'AUC ; aucun n'atteint 0,7, et les alertes de Jev ne sont pas plus précises que le hasard (11 à 14 % pour un taux de base de 10 %).",
-      "preuve": "T9, T9 élargi (3 PC)"
+      "explication": "Sur 339 stories et 32 dérapages : Jev 0,62, gpt-6-luna 0,56, longueur de la spec 0,57 d'AUC. Aucun n'approche 0,7, et le test a désormais la puissance d'écarter 0,65. Battre la longueur de 0,05 de façon significative demanderait ~3 000 stories, sans intérêt pratique vu le niveau atteint.",
+      "preuve": "T9, T9 élargi (339 stories)"
     },
     {
       "nom": "Mesurer la force des tests",
@@ -734,6 +734,14 @@
       "strict": false,
       "explication": "Sonnet 5.5 n'a modifié aucun test sur 40 runs, même face à un test faux : la règle ne s'est jamais déclenchée. 20 runs par bras n'excluent qu'un taux de triche supérieur à 15 % : à refaire avec un modèle plus faible.",
       "preuve": "T4 bis"
+    },
+    {
+      "nom": "Réécrire un texte",
+      "candidats": "sans skill, humanizer, clarity, clarity puis humanizer",
+      "meilleur": "En attente de la note d'Anaël",
+      "strict": false,
+      "explication": "Aucune condition n'invente de fait selon le juge (relecture plus sévère : un « que je publie aujourd'hui » ajouté sans skill, 3 fois sur 8) ; chiffres et renvois intacts partout. Les textes avaient trop peu de tics pour que humanizer fasse la différence ; l'enchaînement coûte 2,5 fois plus sans gain mesuré.",
+      "preuve": "T11"
     }
   ],
   "setup": [
@@ -794,6 +802,11 @@
   ],
   "tests_ouverts": [
     {
+      "test": "T11, écriture",
+      "manque": "Ta note à l'aveugle des 32 réécritures (`tests-pratiques/T11-ecriture/notation.html`, ~20 min).",
+      "elargir": "Avec des textes plus chargés en tics (premiers jets bruts d'un modèle) si humanizer et clarity restent à égalité."
+    },
+    {
       "test": "T7, design front",
       "manque": "Ta note à l'aveugle des 8 rendus (notation.html, ~10 min).",
       "elargir": "Si la note départage : 3 écrans métier de plus, 4 essais par bras."
@@ -812,11 +825,6 @@
       "test": "T6, /advisor",
       "manque": "12 runs par bras sur des stories bien cadrées : IC [−23 ; +16] contre Opus.",
       "elargir": "Sur les stories difficiles (celles où Sonnet échoue deux fois), seul cas où un conseiller pourrait valoir son coût."
-    },
-    {
-      "test": "T9, prédiction du dérapage (Jev)",
-      "manque": "25 dérapages sur 243 stories (trois PC) pour ~32 visés ; même à 32, une AUC de 0,63 resterait sous le critère de 0,7.",
-      "elargir": "En cours : ajout des stories d'usine et de service-public développées avant le kit (agents general-purpose). Ensuite, seulement des trajectoires publiques (SWE-bench), à interpréter à part."
     },
     {
       "test": "T8, lookup local",

@@ -1,0 +1,44 @@
+{
+ "verdict": {
+  "ecarts": [
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "D'après la recherche, les agents échouent dès leurs premières étapes, et ces erreurs restent invisibles jusqu'à devenir irrécupérables [2].",
+    "citation_source": "La recherche situe les échecs des agents dans leurs premières étapes, invisibles jusqu'à être irrécupérables [2]",
+    "explication": "La source dit où naissent les échecs. La réécriture peut se lire comme « les agents échouent dès le début », ce qui laisse entendre un échec systématique ; le décalage reste léger."
+   },
+   {
+    "type": "fait_invente",
+    "gravite": "mineur",
+    "citation_sortie": "(mesure faite sur des modèles de 2025)",
+    "citation_source": "(pas les cas codés en dur ; modèles de 2025)",
+    "explication": "La réécriture ajoute « mesure faite », ce qui précise le type de preuve sans que la source le dise. L'ajout reste sans conséquence notable, puisque la source cite une étude."
+   }
+  ],
+  "porte_franchie": false,
+  "mise_en_forme": "Le gras sur « cadrage de l'agent » et « contrôles automatiques » a disparu. Le titre « Les trois constats qui pilotent la recommandation » devient « Trois constats fondent la recommandation ». La liste numérotée, les intertitres en gras et tous les renvois [1] à [20] sont conservés.",
+  "phrase_de_bilan": "La réécriture est fidèle : chiffres, renvois, réserves et structure sont intacts, avec seulement deux nuances mineures sur l'origine des échecs des agents et la mention « mesure faite »."
+ },
+ "meta": {
+  "cout_usd": 0.096976,
+  "tours": 1,
+  "duree_api_ms": 18757,
+  "erreur": false,
+  "sous_type": "success",
+  "tokens_in": 2,
+  "tokens_out": 1640,
+  "cache_creation": 8021,
+  "cache_read": 0,
+  "modeles": [
+   "claude-opus-5-5"
+  ],
+  "refus_permission": [],
+  "outils": {},
+  "skills_invoquees": [],
+  "fichiers_lus": [],
+  "rc": 0,
+  "duree_s": 22.1,
+  "stderr": ""
+ }
+}

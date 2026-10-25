@@ -1,0 +1,58 @@
+{
+ "verdict": {
+  "ecarts": [
+   {
+    "type": "affirmation_renforcee",
+    "gravite": "mineur",
+    "citation_sortie": "Concrètement, il faut un contexte court, des contrôles automatiques qui jugent son travail et une validation tôt dans la story.",
+    "citation_source": "c'est le **cadrage de l'agent** : un contexte court, des contrôles automatiques qui jugent son travail, et une validation tôt dans la story.",
+    "explication": "La source décrit ce qui fait la différence. « il faut » en fait une prescription, ce qui ajoute une légère modalité d'obligation sans changer le fond."
+   },
+   {
+    "type": "fait_invente",
+    "gravite": "mineur",
+    "citation_sortie": "choix du modèle selon la tâche",
+    "citation_source": "routage par modèle",
+    "explication": "« selon la tâche » précise un critère de routage que la source ne nomme pas. C'est une interprétation plausible et sans conséquence."
+   },
+   {
+    "type": "fait_invente",
+    "gravite": "mineur",
+    "citation_sortie": "Le plugin complet réduit la dépense de 18 à 31 %",
+    "citation_source": "−18 à −31 % pour le plugin complet",
+    "explication": "La source ne dit pas sur quelle grandeur porte la baisse. La réécriture la rattache à « la dépense », ce qui est cohérent avec le paragraphe mais n'est pas explicite dans la source."
+   },
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "porte de revue fondée sur des preuves concrètes",
+    "citation_source": "porte empirique en revue",
+    "explication": "« empirique » est interprété comme « fondé sur des preuves concrètes ». La glose est plausible, mais elle peut s'éloigner de l'idée d'une vérification par l'exécution ou la mesure."
+   }
+  ],
+  "porte_franchie": false,
+  "mise_en_forme": "Le gras et les titres de section sont conservés. Deux phrases à énumération sont converties en listes à puces (constats de la recherche [2][3][4] et contrôles déterministes [17][18][19]), et plusieurs longues phrases sont découpées en phrases courtes.",
+  "phrase_de_bilan": "La réécriture est fidèle : chiffres, unités et renvois sont tous conservés et bien rattachés, les réserves sont maintenues, et seuls quelques ajouts interprétatifs mineurs apparaissent, sans franchir la porte."
+ },
+ "meta": {
+  "cout_usd": 0.107348,
+  "tours": 1,
+  "duree_api_ms": 75138,
+  "erreur": false,
+  "sous_type": "success",
+  "tokens_in": 2,
+  "tokens_out": 2123,
+  "cache_creation": 8110,
+  "cache_read": 0,
+  "modeles": [
+   "claude-opus-5-5"
+  ],
+  "refus_permission": [],
+  "outils": {},
+  "skills_invoquees": [],
+  "fichiers_lus": [],
+  "rc": 0,
+  "duree_s": 75.8,
+  "stderr": ""
+ }
+}

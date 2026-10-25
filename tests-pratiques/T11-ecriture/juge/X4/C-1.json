@@ -1,0 +1,51 @@
+{
+ "verdict": {
+  "ecarts": [
+   {
+    "type": "affirmation_renforcee",
+    "gravite": "mineur",
+    "citation_sortie": "Eight of the nine adopters now follow the same approach as Claude Code's deferred tool loading (Section 8.3).",
+    "citation_source": "Echoing Claude Code's deferred tool loading (Section 8.3), eight of the nine adopters now load only skill metadata eagerly",
+    "explication": "« Echoing » évoque un simple écho, alors que « follow the same approach » laisse entendre une démarche alignée sur Claude Code. La nuance est légère et sans conséquence factuelle."
+   },
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "OpenClaw is now the only eager loader.",
+    "citation_source": "OpenClaw remains the one eager loader",
+    "explication": "« remains » indique qu'OpenClaw chargeait déjà de façon eager auparavant ; « is now » perd cette continuité sans rien rendre faux."
+   },
+   {
+    "type": "structure_ou_lien_abime",
+    "gravite": "mineur",
+    "citation_sortie": "The first skills written by agents have appeared alongside it (Hermes's self-improving loop, Gemini CLI's extraction inbox).",
+    "citation_source": "and a supply chain has emerged—hosted registries in four systems, trust tiers and quarantine in Hermes, provenance verification in OpenClaw—together with the first agent-authored skills (Hermes's self-improving loop, Gemini CLI's extraction inbox).",
+    "explication": "Dans la source, les skills écrits par des agents font partie du troisième développement. La réécriture les place dans une phrase à part, mais « alongside it » conserve le rattachement."
+   }
+  ],
+  "porte_franchie": false,
+  "mise_en_forme": "Aucun gras ni titre n'a été modifié. L'énumération des mécanismes de chargement, en ligne dans la source, est devenue une liste à puces, et l'énumération des trois développements a reçu les marqueurs « First / Second / Third ».",
+  "phrase_de_bilan": "La réécriture est fidèle : tous les chiffres (9/11, 8/11, 8 of 9, four systems), les renvois (Section 8.3, [19]) et les noms sont conservés, sans fait inventé, et les seuls écarts sont des nuances mineures de formulation."
+ },
+ "meta": {
+  "cout_usd": 0.080092,
+  "tours": 1,
+  "duree_api_ms": 19360,
+  "erreur": false,
+  "sous_type": "success",
+  "tokens_in": 2,
+  "tokens_out": 1347,
+  "cache_creation": 6643,
+  "cache_read": 0,
+  "modeles": [
+   "claude-opus-5-5"
+  ],
+  "refus_permission": [],
+  "outils": {},
+  "skills_invoquees": [],
+  "fichiers_lus": [],
+  "rc": 0,
+  "duree_s": 22.9,
+  "stderr": ""
+ }
+}

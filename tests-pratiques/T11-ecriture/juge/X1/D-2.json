@@ -1,0 +1,51 @@
+{
+ "verdict": {
+  "ecarts": [
+   {
+    "type": "affirmation_renforcee",
+    "gravite": "mineur",
+    "citation_sortie": "Ce qui ne rapporte pas, mesuré de la même façon :",
+    "citation_source": "Ce qui ne rapporte pas, mesuré aussi :",
+    "explication": "« de la même façon » affirme un protocole identique pour les deux listes, alors que la source dit seulement que ces points ont aussi été mesurés."
+   },
+   {
+    "type": "affirmation_renforcee",
+    "gravite": "mineur",
+    "citation_sortie": "De tout ce que j'ai testé, c'est le seul ajout à ma chaîne que les tests justifient",
+    "citation_source": "C'est le seul ajout à ma chaîne que les tests justifient",
+    "explication": "L'ajout « De tout ce que j'ai testé » met explicitement en avant la comparaison avec tous les essais, mais le propos de la source reste le même."
+   },
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "Le plus souvent, on gagne davantage à retirer qu'à ajouter.",
+    "citation_source": "Les gains viennent plus souvent de ce qu'on retire que de ce qu'on ajoute.",
+    "explication": "La source compare la fréquence des deux sources de gain, alors que la réécriture affirme que retirer rapporte davantage dans la plupart des cas, une nuance légèrement différente."
+   }
+  ],
+  "porte_franchie": false,
+  "mise_en_forme": "Le gras des intertitres « Ce qui rapporte » et « Ce qui ne rapporte pas » et le titre en gras « La vraie découverte » ont disparu, tout comme les étiquettes « Verdict : » et « La leçon générale : » ; les puces, les hashtags et la question finale sont conservés.",
+  "phrase_de_bilan": "La réécriture est fidèle : tous les chiffres sont conservés et bien rattachés (15, 45 jours, 17,8 k, 87 %, 0,03 $, 0,53 $/1,33 $, +6 points, 40 runs, 134/134, 59 %, 35, 0,22 $), et seules quelques nuances mineures de formulation apparaissent."
+ },
+ "meta": {
+  "cout_usd": 0.083164,
+  "tours": 1,
+  "duree_api_ms": 13375,
+  "erreur": false,
+  "sous_type": "success",
+  "tokens_in": 2,
+  "tokens_out": 1475,
+  "cache_creation": 6707,
+  "cache_read": 0,
+  "modeles": [
+   "claude-opus-5-5"
+  ],
+  "refus_permission": [],
+  "outils": {},
+  "skills_invoquees": [],
+  "fichiers_lus": [],
+  "rc": 0,
+  "duree_s": 14.2,
+  "stderr": ""
+ }
+}

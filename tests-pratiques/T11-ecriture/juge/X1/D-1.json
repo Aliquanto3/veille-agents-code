@@ -1,0 +1,51 @@
+{
+ "verdict": {
+  "ecarts": [
+   {
+    "type": "fait_invente",
+    "gravite": "mineur",
+    "citation_sortie": "Le résultat qui m'a le plus surpris vient de la mutation guidée.",
+    "citation_source": "**La vraie découverte : la mutation guidée.**",
+    "explication": "La source parle de « vraie découverte » ; la réécriture ajoute une réaction personnelle (la surprise) que la source n'exprime pas, sans conséquence factuelle."
+   },
+   {
+    "type": "fait_invente",
+    "gravite": "mineur",
+    "citation_sortie": "et je l'ajoute comme étape optionnelle de la revue",
+    "citation_source": "en étape optionnelle de la revue",
+    "explication": "La source dit que les tests justifient cet ajout sous forme d'étape optionnelle ; la réécriture en fait une décision explicite au présent, ce qui est une légère extrapolation."
+   },
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "Chez moi, les gains sont venus plus souvent de ce que j'ai retiré que de ce que j'ai ajouté.",
+    "citation_source": "La leçon générale : [...] Les gains viennent plus souvent de ce qu'on retire que de ce qu'on ajoute.",
+    "explication": "La leçon présentée comme générale devient une observation limitée à l'auteur : la portée est réduite, et le libellé « La leçon générale » disparaît."
+   }
+  ],
+  "porte_franchie": false,
+  "mise_en_forme": "Le gras des trois intertitres est retiré, « Ce qui rapporte, mesuré » devient « mesures à l'appui », et l'intertitre « La vraie découverte » est fondu dans une phrase ; les puces, les hashtags et la question finale sont conservés.",
+  "phrase_de_bilan": "La réécriture est fidèle : tous les chiffres sont conservés et correctement rattachés (15 tests, 45 jours, 8 outils, 17,8 k tokens, 87 %, 0,03 $, 0,53 $ / 1,33 $, +6 points, 40 runs, 134/134, 59 %, 0,22 $, 35 mutants), et les seuls écarts sont des nuances mineures de ton et de portée."
+ },
+ "meta": {
+  "cout_usd": 0.08655199999999999,
+  "tours": 1,
+  "duree_api_ms": 14205,
+  "erreur": false,
+  "sous_type": "success",
+  "tokens_in": 2,
+  "tokens_out": 1646,
+  "cache_creation": 6703,
+  "cache_read": 0,
+  "modeles": [
+   "claude-opus-5-5"
+  ],
+  "refus_permission": [],
+  "outils": {},
+  "skills_invoquees": [],
+  "fichiers_lus": [],
+  "rc": 0,
+  "duree_s": 14.9,
+  "stderr": ""
+ }
+}

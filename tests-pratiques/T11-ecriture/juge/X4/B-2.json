@@ -1,0 +1,44 @@
+{
+ "verdict": {
+  "ecarts": [
+   {
+    "type": "chiffre_ou_renvoi_perdu_ou_modifie",
+    "gravite": "mineur",
+    "citation_sortie": "OpenHands now implements the same idea as PathTrigger rules, which are injected when a file is touched, tying skills to the JIT context philosophy of [19].",
+    "citation_source": "Claude Code's paths frontmatter activates a skill when the model touches matching files (via the Read, Edit, or Write tools), and OpenHands now implements the same idea as PathTrigger rules injected on file-touch—marrying skills to the JIT context philosophy of [19].",
+    "explication": "Dans la source, le rattachement à la philosophie JIT de [19] porte sur toute la phrase (Claude Code et OpenHands) ; une fois la phrase coupée en deux, le renvoi ne s'applique plus qu'à OpenHands."
+   },
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "OpenHands loaded skills eagerly in April and moved to progressive disclosure with the V1 SDK.",
+    "citation_source": "OpenHands, an eager outlier in April, moved to progressive disclosure with the V1 SDK;",
+    "explication": "La notion d'exception (« outlier ») disparaît : la source précise qu'OpenHands faisait figure de cas isolé en avril, ce que la réécriture ne dit plus."
+   }
+  ],
+  "porte_franchie": false,
+  "mise_en_forme": "Aucun gras, aucune puce ni aucun titre modifié ; les intitulés de paragraphe sont conservés, et les phrases longues à tirets ou points-virgules sont découpées en phrases courtes.",
+  "phrase_de_bilan": "La réécriture est fidèle : chiffres, systèmes cités et renvois (Section 8.3, [19]) sont conservés, et les seuls écarts sont mineurs (portée du renvoi [19] et perte de la nuance « outlier »)."
+ },
+ "meta": {
+  "cout_usd": 0.08608,
+  "tours": 1,
+  "duree_api_ms": 23786,
+  "erreur": false,
+  "sous_type": "success",
+  "tokens_in": 2,
+  "tokens_out": 1650,
+  "cache_creation": 6634,
+  "cache_read": 0,
+  "modeles": [
+   "claude-opus-5-5"
+  ],
+  "refus_permission": [],
+  "outils": {},
+  "skills_invoquees": [],
+  "fichiers_lus": [],
+  "rc": 0,
+  "duree_s": 27.3,
+  "stderr": ""
+ }
+}

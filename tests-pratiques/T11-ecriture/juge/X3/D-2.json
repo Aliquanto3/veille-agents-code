@@ -1,0 +1,47 @@
+{
+ "verdict": {
+  "ecarts": [
+   {
+    "type": "voix_effacee",
+    "gravite": "mineur",
+    "citation_sortie": "OUPS 😱",
+    "citation_source": "WOUPS  😱",
+    "explication": "L'interjection propre à l'auteur « WOUPS » est normalisée en « OUPS ». La voix reste reconnaissable : emoji, ton personnel et question finale sont conservés.",
+    "marques_disparues": [
+     "WOUPS (remplacé par OUPS)"
+    ]
+   },
+   {
+    "type": "affirmation_renforcee",
+    "gravite": "mineur",
+    "citation_sortie": "Cette combinaison réduit les coûts",
+    "citation_source": "Cette combinaison permet de réduire les coûts",
+    "explication": "« permet de réduire » devient « réduit », légèrement plus affirmatif. La suite (« peut même améliorer ») reste nuancée, et le chiffre est toujours attribué à l'estimation de Claude."
+   }
+  ],
+  "porte_franchie": false,
+  "mise_en_forme": "Titre, emojis (💸, 👉, 🏆, 😱, 😰) et liste à tirets sont conservés. La liste reçoit des points-virgules et le paragraphe 👉 est scindé en deux, sans perte de contenu.",
+  "phrase_de_bilan": "Réécriture fidèle : chiffres (60 %, 109 stories, 3 orchestrateurs, 60 $, 5, 1 850 $, 10 %, 200 $), réserves, attributions et question finale sont préservés. Il ne reste que deux écarts mineurs."
+ },
+ "meta": {
+  "cout_usd": 0.091788,
+  "tours": 1,
+  "duree_api_ms": 14346,
+  "erreur": false,
+  "sous_type": "success",
+  "tokens_in": 2,
+  "tokens_out": 1555,
+  "cache_creation": 7585,
+  "cache_read": 0,
+  "modeles": [
+   "claude-opus-5-5"
+  ],
+  "refus_permission": [],
+  "outils": {},
+  "skills_invoquees": [],
+  "fichiers_lus": [],
+  "rc": 0,
+  "duree_s": 15.5,
+  "stderr": ""
+ }
+}

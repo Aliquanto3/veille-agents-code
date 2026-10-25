@@ -1,0 +1,51 @@
+{
+ "verdict": {
+  "ecarts": [
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "La principale réserve porte sur les sources.",
+    "citation_source": "**Principale réserve.**",
+    "explication": "Le titre devient une phrase qui précise l'objet de la réserve (« les sources »), ce que la source ne dit pas. Le contenu qui suit justifie cette lecture, donc l'ajout reste sans conséquence."
+   },
+   {
+    "type": "affirmation_renforcee",
+    "gravite": "mineur",
+    "citation_sortie": "et les taux varient selon le prompt et le harnais [17]",
+    "citation_source": "avec des taux sensibles au prompt et au harnais [17]",
+    "explication": "« Sensibles » devient « varient », un constat un peu plus net, sans portée différente pour le lecteur."
+   },
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "C'est pourquoi il vaut mieux faire ces tests pratiques sur tes propres stories.",
+    "citation_source": "D'où l'importance des tests pratiques sur tes propres stories.",
+    "explication": "« Ces tests » rattache la conclusion aux huit hypothèses de la section 6, alors que la source parle des tests pratiques en général. Le glissement est léger."
+   }
+  ],
+  "porte_franchie": false,
+  "mise_en_forme": "Le gras est retiré partout, y compris sur les intitulés « Ce que disent les preuves », « Les trois constats… », « Recommandation » et « Principale réserve », qui sont intégrés à la prose. La liste numérotée, l'italique de *context engineering*, tous les chiffres et tous les renvois [1] à [20] sont conservés à leur place.",
+  "phrase_de_bilan": "La réécriture est fidèle : chiffres, renvois, réserves et ordre des idées sont préservés, et seuls trois glissements mineurs de formulation apparaissent."
+ },
+ "meta": {
+  "cout_usd": 0.096852,
+  "tours": 1,
+  "duree_api_ms": 14884,
+  "erreur": false,
+  "sous_type": "success",
+  "tokens_in": 2,
+  "tokens_out": 1633,
+  "cache_creation": 8023,
+  "cache_read": 0,
+  "modeles": [
+   "claude-opus-5-5"
+  ],
+  "refus_permission": [],
+  "outils": {},
+  "skills_invoquees": [],
+  "fichiers_lus": [],
+  "rc": 0,
+  "duree_s": 15.6,
+  "stderr": ""
+ }
+}

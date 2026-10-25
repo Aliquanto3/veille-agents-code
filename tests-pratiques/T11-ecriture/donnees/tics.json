@@ -1,0 +1,2078 @@
+{
+ "X1": {
+  "source": {
+   "mots": 316,
+   "phrases": 30,
+   "mots_par_phrase": 10.5,
+   "paragraphes": 8,
+   "tirets": 0,
+   "contrastes": 0,
+   "contrastes_xpasy": 1,
+   "plutot_que": 0,
+   "chutes_une_ligne": 0,
+   "suites_fragments": 0,
+   "triades": 0,
+   "triades_fin_phrase": 0,
+   "gonfles": 1,
+   "gras": 3,
+   "emojis_fleches": 0,
+   "puces": 12,
+   "titres": 0,
+   "liens": 0,
+   "hashtags": 4,
+   "renvois": 0,
+   "renvois_source": 0,
+   "renvois_manquants": [],
+   "renvois_ajoutes": [],
+   "chiffres_manquants": [],
+   "chiffres_ajoutes": [],
+   "voix": {
+    "emojis": "",
+    "n_emojis": 0,
+    "interjections_capitales": [
+     "CLAUDE"
+    ],
+    "questions": 1,
+    "exclamations": 0,
+    "points_suspension": 0,
+    "parentheses": 2,
+    "je": 6,
+    "vous": 3
+   },
+   "detail": {
+    "contrastes": [
+     [
+      "X, pas Y",
+      "points, non significatif"
+     ]
+    ],
+    "chutes": [],
+    "triades": [],
+    "gonfles": [
+     [
+      "la vraie / le vrai / la véritable",
+      "La vraie découverte"
+     ]
+    ]
+   }
+  },
+  "A-1": {
+   "mots": 328,
+   "phrases": 31,
+   "mots_par_phrase": 10.6,
+   "paragraphes": 8,
+   "tirets": 0,
+   "contrastes": 0,
+   "contrastes_xpasy": 0,
+   "plutot_que": 0,
+   "chutes_une_ligne": 0,
+   "suites_fragments": 0,
+   "triades": 1,
+   "triades_fin_phrase": 0,
+   "gonfles": 1,
+   "gras": 3,
+   "emojis_fleches": 0,
+   "puces": 12,
+   "titres": 0,
+   "liens": 0,
+   "hashtags": 4,
+   "renvois": 0,
+   "renvois_source": 0,
+   "renvois_manquants": [],
+   "renvois_ajoutes": [],
+   "chiffres_manquants": [],
+   "chiffres_ajoutes": [],
+   "voix": {
+    "emojis": "",
+    "n_emojis": 0,
+    "interjections_capitales": [
+     "CLAUDE"
+    ],
+    "questions": 1,
+    "exclamations": 0,
+    "points_suspension": 0,
+    "parentheses": 4,
+    "je": 7,
+    "vous": 4
+   },
+   "detail": {
+    "contrastes": [],
+    "chutes": [],
+    "triades": [
+     "fait 15 tests pratiques, sur mes propres projets et sur 45 jours de"
+    ],
+    "gonfles": [
+     [
+      "la vraie / le vrai / la véritable",
+      "La vraie découverte"
+     ]
+    ]
+   }
+  },
+  "A-2": {
+   "mots": 329,
+   "phrases": 30,
+   "mots_par_phrase": 11.0,
+   "paragraphes": 8,
+   "tirets": 0,
+   "contrastes": 0,
+   "contrastes_xpasy": 0,
+   "plutot_que": 0,
+   "chutes_une_ligne": 0,
+   "suites_fragments": 0,
+   "triades": 0,
+   "triades_fin_phrase": 0,
+   "gonfles": 1,
+   "gras": 3,
+   "emojis_fleches": 0,
+   "puces": 12,
+   "titres": 0,
+   "liens": 0,
+   "hashtags": 4,
+   "renvois": 0,
+   "renvois_source": 0,
+   "renvois_manquants": [],
+   "renvois_ajoutes": [],
+   "chiffres_manquants": [],
+   "chiffres_ajoutes": [],
+   "voix": {
+    "emojis": "",
+    "n_emojis": 0,
+    "interjections_capitales": [
+     "CLAUDE"
+    ],
+    "questions": 1,
+    "exclamations": 0,
+    "points_suspension": 0,
+    "parentheses": 4,
+    "je": 6,
+    "vous": 4
+   },
+   "detail": {
+    "contrastes": [],
+    "chutes": [],
+    "triades": [],
+    "gonfles": [
+     [
+      "la vraie / le vrai / la véritable",
+      "La vraie découverte"
+     ]
+    ]
+   }
+  },
+  "B-1": {
+   "mots": 319,
+   "phrases": 30,
+   "mots_par_phrase": 10.6,
+   "paragraphes": 8,
+   "tirets": 0,
+   "contrastes": 0,
+   "contrastes_xpasy": 1,
+   "plutot_que": 0,
+   "chutes_une_ligne": 0,
+   "suites_fragments": 0,
+   "triades": 1,
+   "triades_fin_phrase": 0,
+   "gonfles": 0,
+   "gras": 0,
+   "emojis_fleches": 0,
+   "puces": 12,
+   "titres": 0,
+   "liens": 0,
+   "hashtags": 4,
+   "renvois": 0,
+   "renvois_source": 0,
+   "renvois_manquants": [],
+   "renvois_ajoutes": [],
+   "chiffres_manquants": [],
+   "chiffres_ajoutes": [],
+   "voix": {
+    "emojis": "",
+    "n_emojis": 0,
+    "interjections_capitales": [
+     "CLAUDE"
+    ],
+    "questions": 1,
+    "exclamations": 0,
+    "points_suspension": 0,
+    "parentheses": 2,
+    "je": 8,
+    "vous": 4
+   },
+   "detail": {
+    "contrastes": [
+     [
+      "X, pas Y",
+      "points, non significatif"
+     ]
+    ],
+    "chutes": [],
+    "triades": [
+     "fait 15 tests pratiques, sur mes propres projets et sur 45 jours de"
+    ],
+    "gonfles": []
+   }
+  },
+  "B-2": {
+   "mots": 326,
+   "phrases": 31,
+   "mots_par_phrase": 10.5,
+   "paragraphes": 7,
+   "tirets": 0,
+   "contrastes": 0,
+   "contrastes_xpasy": 1,
+   "plutot_que": 0,
+   "chutes_une_ligne": 0,
+   "suites_fragments": 0,
+   "triades": 1,
+   "triades_fin_phrase": 0,
+   "gonfles": 0,
+   "gras": 0,
+   "emojis_fleches": 0,
+   "puces": 12,
+   "titres": 0,
+   "liens": 0,
+   "hashtags": 4,
+   "renvois": 0,
+   "renvois_source": 0,
+   "renvois_manquants": [],
+   "renvois_ajoutes": [],
+   "chiffres_manquants": [
+    "8"
+   ],
+   "chiffres_ajoutes": [],
+   "voix": {
+    "emojis": "",
+    "n_emojis": 0,
+    "interjections_capitales": [
+     "CLAUDE"
+    ],
+    "questions": 1,
+    "exclamations": 0,
+    "points_suspension": 0,
+    "parentheses": 2,
+    "je": 10,
+    "vous": 4
+   },
+   "detail": {
+    "contrastes": [
+     [
+      "X, pas Y",
+      "points, non significatif"
+     ]
+    ],
+    "chutes": [],
+    "triades": [
+     "fait 15 tests pratiques, sur mes propres projets et sur 45 jours de"
+    ],
+    "gonfles": []
+   }
+  },
+  "C-1": {
+   "mots": 314,
+   "phrases": 28,
+   "mots_par_phrase": 11.2,
+   "paragraphes": 8,
+   "tirets": 0,
+   "contrastes": 0,
+   "contrastes_xpasy": 1,
+   "plutot_que": 0,
+   "chutes_une_ligne": 0,
+   "suites_fragments": 0,
+   "triades": 1,
+   "triades_fin_phrase": 0,
+   "gonfles": 1,
+   "gras": 3,
+   "emojis_fleches": 0,
+   "puces": 12,
+   "titres": 0,
+   "liens": 0,
+   "hashtags": 4,
+   "renvois": 0,
+   "renvois_source": 0,
+   "renvois_manquants": [],
+   "renvois_ajoutes": [],
+   "chiffres_manquants": [],
+   "chiffres_ajoutes": [],
+   "voix": {
+    "emojis": "",
+    "n_emojis": 0,
+    "interjections_capitales": [
+     "CLAUDE"
+    ],
+    "questions": 1,
+    "exclamations": 0,
+    "points_suspension": 0,
+    "parentheses": 4,
+    "je": 6,
+    "vous": 4
+   },
+   "detail": {
+    "contrastes": [
+     [
+      "X, pas Y",
+      "points, non significatif"
+     ]
+    ],
+    "chutes": [],
+    "triades": [
+     "mené 15 tests pratiques, sur mes propres projets et sur 45 jours de"
+    ],
+    "gonfles": [
+     [
+      "la vraie / le vrai / la véritable",
+      "La vraie découverte"
+     ]
+    ]
+   }
+  },
+  "C-2": {
+   "mots": 319,
+   "phrases": 30,
+   "mots_par_phrase": 10.6,
+   "paragraphes": 8,
+   "tirets": 0,
+   "contrastes": 0,
+   "contrastes_xpasy": 1,
+   "plutot_que": 1,
+   "chutes_une_ligne": 0,
+   "suites_fragments": 0,
+   "triades": 1,
+   "triades_fin_phrase": 0,
+   "gonfles": 1,
+   "gras": 3,
+   "emojis_fleches": 0,
+   "puces": 12,
+   "titres": 0,
+   "liens": 0,
+   "hashtags": 4,
+   "renvois": 0,
+   "renvois_source": 0,
+   "renvois_manquants": [],
+   "renvois_ajoutes": [],
+   "chiffres_manquants": [],
+   "chiffres_ajoutes": [],
+   "voix": {
+    "emojis": "",
+    "n_emojis": 0,
+    "interjections_capitales": [
+     "CLAUDE"
+    ],
+    "questions": 1,
+    "exclamations": 0,
+    "points_suspension": 0,
+    "parentheses": 4,
+    "je": 7,
+    "vous": 4
+   },
+   "detail": {
+    "contrastes": [
+     [
+      "X, pas Y",
+      "points, non significatif"
+     ]
+    ],
+    "chutes": [],
+    "triades": [
+     "fait 15 tests pratiques, sur mes propres projets et sur 45 jours de"
+    ],
+    "gonfles": [
+     [
+      "la vraie / le vrai / la véritable",
+      "La vraie découverte"
+     ]
+    ]
+   }
+  },
+  "D-1": {
+   "mots": 327,
+   "phrases": 28,
+   "mots_par_phrase": 11.7,
+   "paragraphes": 8,
+   "tirets": 0,
+   "contrastes": 0,
+   "contrastes_xpasy": 1,
+   "plutot_que": 0,
+   "chutes_une_ligne": 0,
+   "suites_fragments": 0,
+   "triades": 1,
+   "triades_fin_phrase": 0,
+   "gonfles": 0,
+   "gras": 0,
+   "emojis_fleches": 0,
+   "puces": 12,
+   "titres": 0,
+   "liens": 0,
+   "hashtags": 4,
+   "renvois": 0,
+   "renvois_source": 0,
+   "renvois_manquants": [],
+   "renvois_ajoutes": [],
+   "chiffres_manquants": [],
+   "chiffres_ajoutes": [],
+   "voix": {
+    "emojis": "",
+    "n_emojis": 0,
+    "interjections_capitales": [
+     "CLAUDE"
+    ],
+    "questions": 1,
+    "exclamations": 0,
+    "points_suspension": 0,
+    "parentheses": 2,
+    "je": 10,
+    "vous": 4
+   },
+   "detail": {
+    "contrastes": [
+     [
+      "X, pas Y",
+      "points, non significatif"
+     ]
+    ],
+    "chutes": [],
+    "triades": [
+     "15 tests pratiques, sur mes propres projets et sur 45 jours de"
+    ],
+    "gonfles": []
+   }
+  },
+  "D-2": {
+   "mots": 324,
+   "phrases": 28,
+   "mots_par_phrase": 11.6,
+   "paragraphes": 8,
+   "tirets": 0,
+   "contrastes": 0,
+   "contrastes_xpasy": 1,
+   "plutot_que": 1,
+   "chutes_une_ligne": 0,
+   "suites_fragments": 0,
+   "triades": 1,
+   "triades_fin_phrase": 0,
+   "gonfles": 0,
+   "gras": 0,
+   "emojis_fleches": 0,
+   "puces": 12,
+   "titres": 0,
+   "liens": 0,
+   "hashtags": 4,
+   "renvois": 0,
+   "renvois_source": 0,
+   "renvois_manquants": [],
+   "renvois_ajoutes": [],
+   "chiffres_manquants": [],
+   "chiffres_ajoutes": [],
+   "voix": {
+    "emojis": "",
+    "n_emojis": 0,
+    "interjections_capitales": [
+     "CLAUDE"
+    ],
+    "questions": 1,
+    "exclamations": 0,
+    "points_suspension": 0,
+    "parentheses": 2,
+    "je": 9,
+    "vous": 4
+   },
+   "detail": {
+    "contrastes": [
+     [
+      "X, pas Y",
+      "points, non significatif"
+     ]
+    ],
+    "chutes": [],
+    "triades": [
+     "fait 15 tests pratiques, sur mes propres projets et sur 45 jours de"
+    ],
+    "gonfles": []
+   }
+  }
+ },
+ "X2": {
+  "source": {
+   "mots": 579,
+   "phrases": 22,
+   "mots_par_phrase": 26.3,
+   "paragraphes": 5,
+   "tirets": 0,
+   "contrastes": 0,
+   "contrastes_xpasy": 1,
+   "plutot_que": 1,
+   "chutes_une_ligne": 1,
+   "suites_fragments": 0,
+   "triades": 2,
+   "triades_fin_phrase": 0,
+   "gonfles": 2,
+   "gras": 9,
+   "emojis_fleches": 0,
+   "puces": 0,
+   "titres": 0,
+   "liens": 0,
+   "hashtags": 0,
+   "renvois": 21,
+   "renvois_source": 21,
+   "renvois_manquants": [],
+   "renvois_ajoutes": [],
+   "chiffres_manquants": [],
+   "chiffres_ajoutes": [],
+   "voix": {
+    "emojis": "",
+    "n_emojis": 0,
+    "interjections_capitales": [
+     "BMAD"
+    ],
+    "questions": 0,
+    "exclamations": 0,
+    "points_suspension": 0,
+    "parentheses": 8,
+    "je": 0,
+    "vous": 0
+   },
+   "detail": {
+    "contrastes": [
+     [
+      "X, pas Y",
+      "cache, pas la sortie"
+     ]
+    ],
+    "chutes": [
+     "**Les trois constats qui pilotent la recommandation.**"
+    ],
+    "triades": [
+     "15 à évaluer, 10 à écarter et 8 hors périmètre",
+     "Le coût caché, c'est le contexte fixe et le cache"
+    ],
+    "gonfles": [
+     [
+      "essentiel",
+      "essentiel"
+     ],
+     [
+      "décisif",
+      "décision"
+     ]
+    ]
+   }
+  },
+  "A-1": {
+   "mots": 664,
+   "phrases": 40,
+   "mots_par_phrase": 16.6,
+   "paragraphes": 8,
+   "tirets": 0,
+   "contrastes": 0,
+   "contrastes_xpasy": 1,
+   "plutot_que": 1,
+   "chutes_une_ligne": 1,
+   "suites_fragments": 0,
+   "triades": 2,
+   "triades_fin_phrase": 0,
+   "gonfles": 2,
+   "gras": 9,
+   "emojis_fleches": 0,
+   "puces": 6,
+   "titres": 0,
+   "liens": 0,
+   "hashtags": 0,
+   "renvois": 21,
+   "renvois_source": 21,
+   "renvois_manquants": [],
+   "renvois_ajoutes": [],
+   "chiffres_manquants": [],
+   "chiffres_ajoutes": [],
+   "voix": {
+    "emojis": "",
+    "n_emojis": 0,
+    "interjections_capitales": [
+     "BMAD"
+    ],
+    "questions": 0,
+    "exclamations": 0,
+    "points_suspension": 0,
+    "parentheses": 7,
+    "je": 0,
+    "vous": 0
+   },
+   "detail": {
+    "contrastes": [
+     [
+      "X, pas Y",
+      "cache, pas des sorties"
+     ]
+    ],
+    "chutes": [
+     "**Les trois constats qui fondent la recommandation.**"
+    ],
+    "triades": [
+     "bonne part du besoin, par une fonction native ou un plugin officiel",
+     "15 à évaluer, 10 à écarter et 8 hors périmètre"
+    ],
+    "gonfles": [
+     [
+      "essentiel",
+      "essentiel"
+     ],
+     [
+      "décisif",
+      "décision"
+     ]
+    ]
+   }
+  },
+  "A-2": {
+   "mots": 663,
+   "phrases": 37,
+   "mots_par_phrase": 17.9,
+   "paragraphes": 9,
+   "tirets": 0,
+   "contrastes": 1,
+   "contrastes_xpasy": 1,
+   "plutot_que": 0,
+   "chutes_une_ligne": 1,
+   "suites_fragments": 0,
+   "triades": 1,
+   "triades_fin_phrase": 0,
+   "gonfles": 2,
+   "gras": 9,
+   "emojis_fleches": 0,
+   "puces": 6,
+   "titres": 0,
+   "liens": 0,
+   "hashtags": 0,
+   "renvois": 21,
+   "renvois_source": 21,
+   "renvois_manquants": [],
+   "renvois_ajoutes": [],
+   "chiffres_manquants": [],
+   "chiffres_ajoutes": [],
+   "voix": {
+    "emojis": "",
+    "n_emojis": 0,
+    "interjections_capitales": [
+     "BMAD"
+    ],
+    "questions": 0,
+    "exclamations": 0,
+    "points_suspension": 0,
+    "parentheses": 7,
+    "je": 0,
+    "vous": 0
+   },
+   "detail": {
+    "contrastes": [
+     [
+      "ce n'est pas X, c'est Y",
+      "ce n'est plus le choix du modèle ni le nombre d'outils installés, mais"
+     ],
+     [
+      "X, pas Y",
+      "cache, pas de la"
+     ]
+    ],
+    "chutes": [
+     "**Les trois constats qui fondent la recommandation.**"
+    ],
+    "triades": [
+     "15 à évaluer, 10 à écarter et 8 hors périmètre"
+    ],
+    "gonfles": [
+     [
+      "essentiel",
+      "essentiel"
+     ],
+     [
+      "décisif",
+      "décision"
+     ]
+    ]
+   }
+  },
+  "B-1": {
+   "mots": 625,
+   "phrases": 37,
+   "mots_par_phrase": 16.9,
+   "paragraphes": 5,
+   "tirets": 0,
+   "contrastes": 0,
+   "contrastes_xpasy": 1,
+   "plutot_que": 1,
+   "chutes_une_ligne": 1,
+   "suites_fragments": 0,
+   "triades": 2,
+   "triades_fin_phrase": 1,
+   "gonfles": 1,
+   "gras": 7,
+   "emojis_fleches": 0,
+   "puces": 0,
+   "titres": 0,
+   "liens": 0,
+   "hashtags": 0,
+   "renvois": 21,
+   "renvois_source": 21,
+   "renvois_manquants": [],
+   "renvois_ajoutes": [],
+   "chiffres_manquants": [],
+   "chiffres_ajoutes": [],
+   "voix": {
+    "emojis": "",
+    "n_emojis": 0,
+    "interjections_capitales": [
+     "BMAD"
+    ],
+    "questions": 0,
+    "exclamations": 0,
+    "points_suspension": 0,
+    "parentheses": 7,
+    "je": 0,
+    "vous": 0
+   },
+   "detail": {
+    "contrastes": [
+     [
+      "X, pas Y",
+      "cache, pas de la"
+     ]
+    ],
+    "chutes": [
+     "**Trois constats fondent la recommandation.**"
+    ],
+    "triades": [
+     "revue, navigateur et mesure des coûts",
+     "15 à évaluer, 10 à écarter et 8 hors périmètre"
+    ],
+    "gonfles": [
+     [
+      "essentiel",
+      "essentiel"
+     ]
+    ]
+   }
+  },
+  "B-2": {
+   "mots": 633,
+   "phrases": 34,
+   "mots_par_phrase": 18.6,
+   "paragraphes": 5,
+   "tirets": 0,
+   "contrastes": 0,
+   "contrastes_xpasy": 0,
+   "plutot_que": 1,
+   "chutes_une_ligne": 1,
+   "suites_fragments": 0,
+   "triades": 1,
+   "triades_fin_phrase": 1,
+   "gonfles": 1,
+   "gras": 0,
+   "emojis_fleches": 0,
+   "puces": 0,
+   "titres": 0,
+   "liens": 0,
+   "hashtags": 0,
+   "renvois": 21,
+   "renvois_source": 21,
+   "renvois_manquants": [],
+   "renvois_ajoutes": [],
+   "chiffres_manquants": [],
+   "chiffres_ajoutes": [],
+   "voix": {
+    "emojis": "",
+    "n_emojis": 0,
+    "interjections_capitales": [
+     "BMAD"
+    ],
+    "questions": 0,
+    "exclamations": 0,
+    "points_suspension": 0,
+    "parentheses": 6,
+    "je": 0,
+    "vous": 0
+   },
+   "detail": {
+    "contrastes": [],
+    "chutes": [
+     "La recommandation s'appuie sur trois constats."
+    ],
+    "triades": [
+     "15 à évaluer, 10 à écarter et 8 hors périmètre"
+    ],
+    "gonfles": [
+     [
+      "essentiel",
+      "essentiel"
+     ]
+    ]
+   }
+  },
+  "C-1": {
+   "mots": 611,
+   "phrases": 35,
+   "mots_par_phrase": 17.5,
+   "paragraphes": 5,
+   "tirets": 0,
+   "contrastes": 0,
+   "contrastes_xpasy": 1,
+   "plutot_que": 1,
+   "chutes_une_ligne": 1,
+   "suites_fragments": 0,
+   "triades": 1,
+   "triades_fin_phrase": 0,
+   "gonfles": 1,
+   "gras": 9,
+   "emojis_fleches": 0,
+   "puces": 0,
+   "titres": 0,
+   "liens": 0,
+   "hashtags": 0,
+   "renvois": 21,
+   "renvois_source": 21,
+   "renvois_manquants": [],
+   "renvois_ajoutes": [],
+   "chiffres_manquants": [],
+   "chiffres_ajoutes": [],
+   "voix": {
+    "emojis": "",
+    "n_emojis": 0,
+    "interjections_capitales": [
+     "BMAD"
+    ],
+    "questions": 0,
+    "exclamations": 0,
+    "points_suspension": 0,
+    "parentheses": 8,
+    "je": 0,
+    "vous": 0
+   },
+   "detail": {
+    "contrastes": [
+     [
+      "X, pas Y",
+      "cache, pas de la"
+     ]
+    ],
+    "chutes": [
+     "**Les trois constats qui fondent la recommandation.**"
+    ],
+    "triades": [
+     "15 à évaluer, 10 à écarter et 8 hors périmètre"
+    ],
+    "gonfles": [
+     [
+      "essentiel",
+      "essentiel"
+     ]
+    ]
+   }
+  },
+  "C-2": {
+   "mots": 636,
+   "phrases": 34,
+   "mots_par_phrase": 18.7,
+   "paragraphes": 5,
+   "tirets": 0,
+   "contrastes": 0,
+   "contrastes_xpasy": 1,
+   "plutot_que": 1,
+   "chutes_une_ligne": 1,
+   "suites_fragments": 0,
+   "triades": 3,
+   "triades_fin_phrase": 0,
+   "gonfles": 1,
+   "gras": 9,
+   "emojis_fleches": 0,
+   "puces": 0,
+   "titres": 0,
+   "liens": 0,
+   "hashtags": 0,
+   "renvois": 21,
+   "renvois_source": 21,
+   "renvois_manquants": [],
+   "renvois_ajoutes": [],
+   "chiffres_manquants": [],
+   "chiffres_ajoutes": [],
+   "voix": {
+    "emojis": "",
+    "n_emojis": 0,
+    "interjections_capitales": [
+     "BMAD"
+    ],
+    "questions": 0,
+    "exclamations": 0,
+    "points_suspension": 0,
+    "parentheses": 8,
+    "je": 0,
+    "vous": 0
+   },
+   "detail": {
+    "contrastes": [
+     [
+      "X, pas Y",
+      "cache, pas des sorties"
+     ]
+    ],
+    "chutes": [
+     "**Les trois constats sur lesquels repose la recommandation.**"
+    ],
+    "triades": [
+     "En 2026, le choix du modèle et le nombre d'outils installés",
+     "en grande partie l'équivalent, par une fonction native ou un plugin officiel",
+     "15 à évaluer, 10 à écarter et 8 sont hors périmètre"
+    ],
+    "gonfles": [
+     [
+      "essentiel",
+      "essentiel"
+     ]
+    ]
+   }
+  },
+  "D-1": {
+   "mots": 637,
+   "phrases": 33,
+   "mots_par_phrase": 19.3,
+   "paragraphes": 5,
+   "tirets": 0,
+   "contrastes": 0,
+   "contrastes_xpasy": 0,
+   "plutot_que": 0,
+   "chutes_une_ligne": 1,
+   "suites_fragments": 0,
+   "triades": 3,
+   "triades_fin_phrase": 0,
+   "gonfles": 2,
+   "gras": 0,
+   "emojis_fleches": 0,
+   "puces": 0,
+   "titres": 0,
+   "liens": 0,
+   "hashtags": 0,
+   "renvois": 21,
+   "renvois_source": 21,
+   "renvois_manquants": [],
+   "renvois_ajoutes": [],
+   "chiffres_manquants": [],
+   "chiffres_ajoutes": [],
+   "voix": {
+    "emojis": "",
+    "n_emojis": 0,
+    "interjections_capitales": [
+     "BMAD"
+    ],
+    "questions": 0,
+    "exclamations": 0,
+    "points_suspension": 0,
+    "parentheses": 8,
+    "je": 1,
+    "vous": 0
+   },
+   "detail": {
+    "contrastes": [],
+    "chutes": [
+     "La recommandation repose sur trois constats."
+    ],
+    "triades": [
+     "Avec des agents, les alertes d'analyse statique et la complexité augmentent durablement",
+     "la revue, le navigateur et la mesure des coûts",
+     "15 à évaluer, 10 à écarter et 8 hors périmètre"
+    ],
+    "gonfles": [
+     [
+      "majeur",
+      "majeure"
+     ],
+     [
+      "décisif",
+      "décision"
+     ]
+    ]
+   }
+  },
+  "D-2": {
+   "mots": 636,
+   "phrases": 33,
+   "mots_par_phrase": 19.3,
+   "paragraphes": 5,
+   "tirets": 0,
+   "contrastes": 0,
+   "contrastes_xpasy": 0,
+   "plutot_que": 1,
+   "chutes_une_ligne": 1,
+   "suites_fragments": 0,
+   "triades": 3,
+   "triades_fin_phrase": 0,
+   "gonfles": 1,
+   "gras": 4,
+   "emojis_fleches": 0,
+   "puces": 0,
+   "titres": 0,
+   "liens": 0,
+   "hashtags": 0,
+   "renvois": 21,
+   "renvois_source": 21,
+   "renvois_manquants": [],
+   "renvois_ajoutes": [],
+   "chiffres_manquants": [],
+   "chiffres_ajoutes": [],
+   "voix": {
+    "emojis": "",
+    "n_emojis": 0,
+    "interjections_capitales": [
+     "BMAD"
+    ],
+    "questions": 0,
+    "exclamations": 0,
+    "points_suspension": 0,
+    "parentheses": 8,
+    "je": 0,
+    "vous": 0
+   },
+   "detail": {
+    "contrastes": [],
+    "chutes": [
+     "**Trois constats fondent la recommandation.**"
+    ],
+    "triades": [
+     "En 2026, le choix du modèle et le nombre d'outils installés",
+     "la revue, le navigateur et la mesure des coûts",
+     "15 à évaluer, 10 à écarter, et 8 sont hors périmètre"
+    ],
+    "gonfles": [
+     [
+      "essentiel",
+      "essentiel"
+     ]
+    ]
+   }
+  }
+ },
+ "X3": {
+  "source": {
+   "mots": 480,
+   "phrases": 23,
+   "mots_par_phrase": 20.9,
+   "paragraphes": 11,
+   "tirets": 0,
+   "contrastes": 0,
+   "contrastes_xpasy": 0,
+   "plutot_que": 0,
+   "chutes_une_ligne": 0,
+   "suites_fragments": 0,
+   "triades": 1,
+   "triades_fin_phrase": 1,
+   "gonfles": 1,
+   "gras": 0,
+   "emojis_fleches": 5,
+   "puces": 3,
+   "titres": 0,
+   "liens": 0,
+   "hashtags": 0,
+   "renvois": 0,
+   "renvois_source": 0,
+   "renvois_manquants": [],
+   "renvois_ajoutes": [],
+   "chiffres_manquants": [],
+   "chiffres_ajoutes": [],
+   "voix": {
+    "emojis": "💸😱👉🏆😰",
+    "n_emojis": 5,
+    "interjections_capitales": [
+     "AIDD",
+     "BMAD",
+     "WOUPS"
+    ],
+    "questions": 1,
+    "exclamations": 7,
+    "points_suspension": 6,
+    "parentheses": 5,
+    "je": 23,
+    "vous": 10
+   },
+   "detail": {
+    "contrastes": [],
+    "chutes": [],
+    "triades": [
+     "avis pour quelques centimes, Opus relit et corrige"
+    ],
+    "gonfles": [
+     [
+      "stratégique",
+      "stratégie"
+     ]
+    ]
+   }
+  },
+  "A-1": {
+   "mots": 500,
+   "phrases": 30,
+   "mots_par_phrase": 16.7,
+   "paragraphes": 12,
+   "tirets": 0,
+   "contrastes": 0,
+   "contrastes_xpasy": 0,
+   "plutot_que": 0,
+   "chutes_une_ligne": 0,
+   "suites_fragments": 0,
+   "triades": 2,
+   "triades_fin_phrase": 1,
+   "gonfles": 1,
+   "gras": 0,
+   "emojis_fleches": 5,
+   "puces": 3,
+   "titres": 0,
+   "liens": 0,
+   "hashtags": 0,
+   "renvois": 0,
+   "renvois_source": 0,
+   "renvois_manquants": [],
+   "renvois_ajoutes": [],
+   "chiffres_manquants": [],
+   "chiffres_ajoutes": [],
+   "voix": {
+    "emojis": "💸😱👉🏆😰",
+    "n_emojis": 5,
+    "interjections_capitales": [
+     "AIDD",
+     "BMAD",
+     "OUPS"
+    ],
+    "questions": 1,
+    "exclamations": 6,
+    "points_suspension": 5,
+    "parentheses": 2,
+    "je": 24,
+    "vous": 8
+   },
+   "detail": {
+    "contrastes": [],
+    "chutes": [],
+    "triades": [
+     "Pro, puis Max x5, et enfin Max x20 ce",
+     "avis pour quelques centimes, et Opus relit et corrige"
+    ],
+    "gonfles": [
+     [
+      "stratégique",
+      "stratégie"
+     ]
+    ]
+   }
+  },
+  "A-2": {
+   "mots": 504,
+   "phrases": 31,
+   "mots_par_phrase": 16.3,
+   "paragraphes": 11,
+   "tirets": 0,
+   "contrastes": 0,
+   "contrastes_xpasy": 0,
+   "plutot_que": 0,
+   "chutes_une_ligne": 0,
+   "suites_fragments": 0,
+   "triades": 2,
+   "triades_fin_phrase": 2,
+   "gonfles": 1,
+   "gras": 0,
+   "emojis_fleches": 5,
+   "puces": 3,
+   "titres": 0,
+   "liens": 0,
+   "hashtags": 0,
+   "renvois": 0,
+   "renvois_source": 0,
+   "renvois_manquants": [],
+   "renvois_ajoutes": [],
+   "chiffres_manquants": [],
+   "chiffres_ajoutes": [],
+   "voix": {
+    "emojis": "💸😱👉🏆😰",
+    "n_emojis": 5,
+    "interjections_capitales": [
+     "AIDD",
+     "BMAD",
+     "OUPS"
+    ],
+    "questions": 1,
+    "exclamations": 7,
+    "points_suspension": 5,
+    "parentheses": 4,
+    "je": 26,
+    "vous": 7
+   },
+   "detail": {
+    "contrastes": [],
+    "chutes": [],
+    "triades": [
+     "Pro, puis Max x5, et Max x20 ce mois-ci",
+     "avis pour quelques centimes, et Opus relit et corrige"
+    ],
+    "gonfles": [
+     [
+      "stratégique",
+      "stratégie"
+     ]
+    ]
+   }
+  },
+  "B-1": {
+   "mots": 483,
+   "phrases": 23,
+   "mots_par_phrase": 21.0,
+   "paragraphes": 11,
+   "tirets": 0,
+   "contrastes": 0,
+   "contrastes_xpasy": 1,
+   "plutot_que": 0,
+   "chutes_une_ligne": 0,
+   "suites_fragments": 0,
+   "triades": 3,
+   "triades_fin_phrase": 2,
+   "gonfles": 1,
+   "gras": 0,
+   "emojis_fleches": 5,
+   "puces": 0,
+   "titres": 0,
+   "liens": 0,
+   "hashtags": 0,
+   "renvois": 0,
+   "renvois_source": 0,
+   "renvois_manquants": [],
+   "renvois_ajoutes": [],
+   "chiffres_manquants": [],
+   "chiffres_ajoutes": [],
+   "voix": {
+    "emojis": "💸😱👉🏆😰",
+    "n_emojis": 5,
+    "interjections_capitales": [
+     "AIDD",
+     "BMAD",
+     "WOUPS"
+    ],
+    "questions": 1,
+    "exclamations": 3,
+    "points_suspension": 3,
+    "parentheses": 3,
+    "je": 22,
+    "vous": 9
+   },
+   "detail": {
+    "contrastes": [
+     [
+      "X, pas Y",
+      "entreprise, pas seulement"
+     ]
+    ],
+    "chutes": [],
+    "triades": [
+     "Pro, puis Max x5, et ce mois-ci Max x20",
+     "avis pour quelques centimes, et Opus relit et corrige",
+     "Et vous, avez-vous augmenté votre licence, ou optimisez-vous les coûts de"
+    ],
+    "gonfles": [
+     [
+      "stratégique",
+      "stratégie"
+     ]
+    ]
+   }
+  },
+  "B-2": {
+   "mots": 477,
+   "phrases": 23,
+   "mots_par_phrase": 20.7,
+   "paragraphes": 11,
+   "tirets": 0,
+   "contrastes": 0,
+   "contrastes_xpasy": 0,
+   "plutot_que": 0,
+   "chutes_une_ligne": 0,
+   "suites_fragments": 0,
+   "triades": 3,
+   "triades_fin_phrase": 1,
+   "gonfles": 1,
+   "gras": 0,
+   "emojis_fleches": 5,
+   "puces": 0,
+   "titres": 0,
+   "liens": 0,
+   "hashtags": 0,
+   "renvois": 0,
+   "renvois_source": 0,
+   "renvois_manquants": [],
+   "renvois_ajoutes": [],
+   "chiffres_manquants": [],
+   "chiffres_ajoutes": [],
+   "voix": {
+    "emojis": "💸😱👉🏆😰",
+    "n_emojis": 5,
+    "interjections_capitales": [
+     "AIDD",
+     "BMAD",
+     "WOUPS"
+    ],
+    "questions": 1,
+    "exclamations": 4,
+    "points_suspension": 2,
+    "parentheses": 4,
+    "je": 25,
+    "vous": 9
+   },
+   "detail": {
+    "contrastes": [],
+    "chutes": [],
+    "triades": [
+     "Pro, puis Max x5, et enfin Max x20 ce",
+     "avis pour quelques centimes, Opus relit et corrige",
+     "Et vous, avez-vous augmenté votre licence, ou optimisez-vous le coût de"
+    ],
+    "gonfles": [
+     [
+      "stratégique",
+      "stratégie"
+     ]
+    ]
+   }
+  },
+  "C-1": {
+   "mots": 480,
+   "phrases": 28,
+   "mots_par_phrase": 17.1,
+   "paragraphes": 12,
+   "tirets": 0,
+   "contrastes": 0,
+   "contrastes_xpasy": 0,
+   "plutot_que": 0,
+   "chutes_une_ligne": 0,
+   "suites_fragments": 0,
+   "triades": 2,
+   "triades_fin_phrase": 2,
+   "gonfles": 1,
+   "gras": 0,
+   "emojis_fleches": 5,
+   "puces": 3,
+   "titres": 0,
+   "liens": 0,
+   "hashtags": 0,
+   "renvois": 0,
+   "renvois_source": 0,
+   "renvois_manquants": [],
+   "renvois_ajoutes": [],
+   "chiffres_manquants": [],
+   "chiffres_ajoutes": [],
+   "voix": {
+    "emojis": "💸😱👉🏆😰",
+    "n_emojis": 5,
+    "interjections_capitales": [
+     "AIDD",
+     "BMAD",
+     "WOUPS"
+    ],
+    "questions": 1,
+    "exclamations": 3,
+    "points_suspension": 3,
+    "parentheses": 3,
+    "je": 21,
+    "vous": 8
+   },
+   "detail": {
+    "contrastes": [],
+    "chutes": [],
+    "triades": [
+     "Pro, puis Max x5, et Max x20 ce mois-ci",
+     "avis pour quelques centimes, Opus relit et corrige"
+    ],
+    "gonfles": [
+     [
+      "stratégique",
+      "stratégie"
+     ]
+    ]
+   }
+  },
+  "C-2": {
+   "mots": 500,
+   "phrases": 30,
+   "mots_par_phrase": 16.7,
+   "paragraphes": 12,
+   "tirets": 0,
+   "contrastes": 0,
+   "contrastes_xpasy": 0,
+   "plutot_que": 0,
+   "chutes_une_ligne": 0,
+   "suites_fragments": 0,
+   "triades": 4,
+   "triades_fin_phrase": 3,
+   "gonfles": 1,
+   "gras": 0,
+   "emojis_fleches": 5,
+   "puces": 3,
+   "titres": 0,
+   "liens": 0,
+   "hashtags": 0,
+   "renvois": 0,
+   "renvois_source": 0,
+   "renvois_manquants": [],
+   "renvois_ajoutes": [],
+   "chiffres_manquants": [],
+   "chiffres_ajoutes": [],
+   "voix": {
+    "emojis": "💸😱👉🏆😰",
+    "n_emojis": 5,
+    "interjections_capitales": [
+     "AIDD",
+     "BMAD",
+     "OUPS"
+    ],
+    "questions": 1,
+    "exclamations": 3,
+    "points_suspension": 3,
+    "parentheses": 2,
+    "je": 25,
+    "vous": 8
+   },
+   "detail": {
+    "contrastes": [],
+    "chutes": [],
+    "triades": [
+     "déjà montré certaines ici, sur LinkedIn, et les autres sont publiques",
+     "des sous-agents en parallèle, sur des worktrees ou des lanes séparés",
+     "Pro, puis Max x5, et ce mois-ci Max x20",
+     "avis pour quelques centimes, puis Opus relit et corrige"
+    ],
+    "gonfles": [
+     [
+      "stratégique",
+      "stratégie"
+     ]
+    ]
+   }
+  },
+  "D-1": {
+   "mots": 478,
+   "phrases": 31,
+   "mots_par_phrase": 15.4,
+   "paragraphes": 12,
+   "tirets": 0,
+   "contrastes": 0,
+   "contrastes_xpasy": 0,
+   "plutot_que": 0,
+   "chutes_une_ligne": 0,
+   "suites_fragments": 0,
+   "triades": 2,
+   "triades_fin_phrase": 2,
+   "gonfles": 1,
+   "gras": 0,
+   "emojis_fleches": 4,
+   "puces": 3,
+   "titres": 0,
+   "liens": 0,
+   "hashtags": 0,
+   "renvois": 0,
+   "renvois_source": 0,
+   "renvois_manquants": [],
+   "renvois_ajoutes": [],
+   "chiffres_manquants": [],
+   "chiffres_ajoutes": [],
+   "voix": {
+    "emojis": "💸😱🏆😰",
+    "n_emojis": 4,
+    "interjections_capitales": [
+     "AIDD",
+     "BMAD",
+     "WOUPS"
+    ],
+    "questions": 1,
+    "exclamations": 3,
+    "points_suspension": 3,
+    "parentheses": 3,
+    "je": 23,
+    "vous": 7
+   },
+   "detail": {
+    "contrastes": [],
+    "chutes": [],
+    "triades": [
+     "Pro, puis Max x5, et Max x20 ce mois-ci",
+     "avis pour quelques centimes, et Opus relit et corrige"
+    ],
+    "gonfles": [
+     [
+      "stratégique",
+      "stratégie"
+     ]
+    ]
+   }
+  },
+  "D-2": {
+   "mots": 488,
+   "phrases": 29,
+   "mots_par_phrase": 16.8,
+   "paragraphes": 12,
+   "tirets": 0,
+   "contrastes": 0,
+   "contrastes_xpasy": 0,
+   "plutot_que": 0,
+   "chutes_une_ligne": 0,
+   "suites_fragments": 0,
+   "triades": 3,
+   "triades_fin_phrase": 3,
+   "gonfles": 1,
+   "gras": 0,
+   "emojis_fleches": 5,
+   "puces": 3,
+   "titres": 0,
+   "liens": 0,
+   "hashtags": 0,
+   "renvois": 0,
+   "renvois_source": 0,
+   "renvois_manquants": [],
+   "renvois_ajoutes": [],
+   "chiffres_manquants": [],
+   "chiffres_ajoutes": [],
+   "voix": {
+    "emojis": "💸😱👉🏆😰",
+    "n_emojis": 5,
+    "interjections_capitales": [
+     "AIDD",
+     "BMAD",
+     "OUPS"
+    ],
+    "questions": 1,
+    "exclamations": 3,
+    "points_suspension": 3,
+    "parentheses": 2,
+    "je": 25,
+    "vous": 8
+   },
+   "detail": {
+    "contrastes": [],
+    "chutes": [],
+    "triades": [
+     "des sous-agents en parallèle, sur des worktrees ou des lanes séparés",
+     "Pro, puis Max x5, et ce mois-ci Max x20",
+     "avis pour quelques centimes, puis Opus relit et corrige"
+    ],
+    "gonfles": [
+     [
+      "stratégique",
+      "stratégie"
+     ]
+    ]
+   }
+  }
+ },
+ "X4": {
+  "source": {
+   "mots": 314,
+   "phrases": 11,
+   "mots_par_phrase": 28.5,
+   "paragraphes": 3,
+   "tirets": 3,
+   "contrastes": 0,
+   "contrastes_xpasy": 0,
+   "plutot_que": 0,
+   "chutes_une_ligne": 0,
+   "suites_fragments": 0,
+   "triades": 2,
+   "triades_fin_phrase": 0,
+   "gonfles": 2,
+   "gras": 0,
+   "emojis_fleches": 0,
+   "puces": 0,
+   "titres": 0,
+   "liens": 0,
+   "hashtags": 0,
+   "renvois": 1,
+   "renvois_source": 1,
+   "renvois_manquants": [],
+   "renvois_ajoutes": [],
+   "chiffres_manquants": [],
+   "chiffres_ajoutes": [],
+   "voix": {
+    "emojis": "",
+    "n_emojis": 0,
+    "interjections_capitales": [
+     "SKILL",
+     "PATH"
+    ],
+    "questions": 0,
+    "exclamations": 0,
+    "points_suspension": 0,
+    "parentheses": 11,
+    "je": 0,
+    "vous": 0
+   },
+   "detail": {
+    "contrastes": [],
+    "chutes": [],
+    "triades": [
+     "registries in four systems, trust tiers and quarantine in Hermes",
+     "via the Read, Edit, or Write tools"
+    ],
+    "gonfles": [
+     [
+      "professionalized/maturation",
+      "maturation"
+     ],
+     [
+      "most interesting",
+      "most architecturally interesting"
+     ]
+    ]
+   }
+  },
+  "A-1": {
+   "mots": 380,
+   "phrases": 29,
+   "mots_par_phrase": 13.1,
+   "paragraphes": 4,
+   "tirets": 0,
+   "contrastes": 0,
+   "contrastes_xpasy": 0,
+   "plutot_que": 0,
+   "chutes_une_ligne": 0,
+   "suites_fragments": 0,
+   "triades": 3,
+   "triades_fin_phrase": 1,
+   "gonfles": 1,
+   "gras": 0,
+   "emojis_fleches": 0,
+   "puces": 4,
+   "titres": 0,
+   "liens": 0,
+   "hashtags": 0,
+   "renvois": 1,
+   "renvois_source": 1,
+   "renvois_manquants": [],
+   "renvois_ajoutes": [],
+   "chiffres_manquants": [],
+   "chiffres_ajoutes": [],
+   "voix": {
+    "emojis": "",
+    "n_emojis": 0,
+    "interjections_capitales": [
+     "SKILL",
+     "PATH"
+    ],
+    "questions": 0,
+    "exclamations": 0,
+    "points_suspension": 0,
+    "parentheses": 9,
+    "je": 0,
+    "vous": 0
+   },
+   "detail": {
+    "contrastes": [],
+    "chutes": [],
+    "triades": [
+     "systems have hosted registries, Hermes has trust tiers and quarantine",
+     "files through the Read, Edit, or Write tools",
+     "server the same way, whether or not its tools are"
+    ],
+    "gonfles": [
+     [
+      "most interesting",
+      "most architecturally interesting"
+     ]
+    ]
+   }
+  },
+  "A-2": {
+   "mots": 404,
+   "phrases": 32,
+   "mots_par_phrase": 12.6,
+   "paragraphes": 6,
+   "tirets": 0,
+   "contrastes": 0,
+   "contrastes_xpasy": 0,
+   "plutot_que": 0,
+   "chutes_une_ligne": 0,
+   "suites_fragments": 0,
+   "triades": 4,
+   "triades_fin_phrase": 3,
+   "gonfles": 1,
+   "gras": 3,
+   "emojis_fleches": 0,
+   "puces": 7,
+   "titres": 0,
+   "liens": 0,
+   "hashtags": 0,
+   "renvois": 1,
+   "renvois_source": 1,
+   "renvois_manquants": [],
+   "renvois_ajoutes": [],
+   "chiffres_manquants": [],
+   "chiffres_ajoutes": [],
+   "voix": {
+    "emojis": "",
+    "n_emojis": 0,
+    "interjections_capitales": [
+     "SKILL",
+     "PATH"
+    ],
+    "questions": 0,
+    "exclamations": 0,
+    "points_suspension": 0,
+    "parentheses": 5,
+    "je": 0,
+    "vous": 0
+   },
+   "detail": {
+    "contrastes": [],
+    "chutes": [],
+    "triades": [
+     "are Claude Code's paths, OpenHands's PathTrigger and OpenClaw's requires",
+     "systems have hosted registries, Hermes has trust tiers and quarantine",
+     "binaries on PATH, environment variables, or an OS family",
+     "files through the Read, Edit or Write tools"
+    ],
+    "gonfles": [
+     [
+      "most interesting",
+      "most interesting"
+     ]
+    ]
+   }
+  },
+  "B-1": {
+   "mots": 360,
+   "phrases": 25,
+   "mots_par_phrase": 14.4,
+   "paragraphes": 3,
+   "tirets": 0,
+   "contrastes": 0,
+   "contrastes_xpasy": 0,
+   "plutot_que": 0,
+   "chutes_une_ligne": 0,
+   "suites_fragments": 0,
+   "triades": 5,
+   "triades_fin_phrase": 2,
+   "gonfles": 1,
+   "gras": 0,
+   "emojis_fleches": 0,
+   "puces": 0,
+   "titres": 0,
+   "liens": 0,
+   "hashtags": 0,
+   "renvois": 1,
+   "renvois_source": 1,
+   "renvois_manquants": [],
+   "renvois_ajoutes": [],
+   "chiffres_manquants": [],
+   "chiffres_ajoutes": [],
+   "voix": {
+    "emojis": "",
+    "n_emojis": 0,
+    "interjections_capitales": [
+     "SKILL",
+     "PATH"
+    ],
+    "questions": 0,
+    "exclamations": 0,
+    "points_suspension": 0,
+    "parentheses": 7,
+    "je": 0,
+    "vous": 0
+   },
+   "detail": {
+    "contrastes": [],
+    "chutes": [],
+    "triades": [
+     "registries in four systems, trust tiers and quarantine in Hermes",
+     "agent-authored skills have appeared, in Hermes's self-improving loop and Gemini CLI's extraction inbox",
+     "ActivateSkill, skill, or OpenHands's invoke_skill",
+     "files through the Read, Edit, or Write tools",
+     "server the same way, whether or not its tools are"
+    ],
+    "gonfles": [
+     [
+      "most interesting",
+      "most architecturally interesting"
+     ]
+    ]
+   }
+  },
+  "B-2": {
+   "mots": 367,
+   "phrases": 24,
+   "mots_par_phrase": 15.3,
+   "paragraphes": 3,
+   "tirets": 0,
+   "contrastes": 0,
+   "contrastes_xpasy": 0,
+   "plutot_que": 0,
+   "chutes_une_ligne": 0,
+   "suites_fragments": 0,
+   "triades": 4,
+   "triades_fin_phrase": 2,
+   "gonfles": 1,
+   "gras": 0,
+   "emojis_fleches": 0,
+   "puces": 0,
+   "titres": 0,
+   "liens": 0,
+   "hashtags": 0,
+   "renvois": 1,
+   "renvois_source": 1,
+   "renvois_manquants": [],
+   "renvois_ajoutes": [],
+   "chiffres_manquants": [],
+   "chiffres_ajoutes": [],
+   "voix": {
+    "emojis": "",
+    "n_emojis": 0,
+    "interjections_capitales": [
+     "SKILL",
+     "PATH"
+    ],
+    "questions": 0,
+    "exclamations": 0,
+    "points_suspension": 0,
+    "parentheses": 6,
+    "je": 0,
+    "vous": 0
+   },
+   "detail": {
+    "contrastes": [],
+    "chutes": [],
+    "triades": [
+     "registries in four systems, trust tiers and quarantine in Hermes",
+     "have appeared alongside it, in Hermes's self-improving loop and Gemini CLI's extraction inbox",
+     "ActivateSkill, skill, or OpenHands's invoke_skill",
+     "files through the Read, Edit, or Write tools"
+    ],
+    "gonfles": [
+     [
+      "most interesting",
+      "most interesting"
+     ]
+    ]
+   }
+  },
+  "C-1": {
+   "mots": 370,
+   "phrases": 29,
+   "mots_par_phrase": 12.8,
+   "paragraphes": 4,
+   "tirets": 0,
+   "contrastes": 0,
+   "contrastes_xpasy": 0,
+   "plutot_que": 0,
+   "chutes_une_ligne": 0,
+   "suites_fragments": 0,
+   "triades": 3,
+   "triades_fin_phrase": 1,
+   "gonfles": 1,
+   "gras": 0,
+   "emojis_fleches": 0,
+   "puces": 4,
+   "titres": 0,
+   "liens": 0,
+   "hashtags": 0,
+   "renvois": 1,
+   "renvois_source": 1,
+   "renvois_manquants": [],
+   "renvois_ajoutes": [],
+   "chiffres_manquants": [],
+   "chiffres_ajoutes": [],
+   "voix": {
+    "emojis": "",
+    "n_emojis": 0,
+    "interjections_capitales": [
+     "SKILL",
+     "PATH"
+    ],
+    "questions": 0,
+    "exclamations": 0,
+    "points_suspension": 0,
+    "parentheses": 11,
+    "je": 0,
+    "vous": 0
+   },
+   "detail": {
+    "contrastes": [],
+    "chutes": [],
+    "triades": [
+     "registries in four systems, trust tiers and quarantine in Hermes",
+     "files through the Read, Edit, or Write tools",
+     "server the same way, whether or not its tools are"
+    ],
+    "gonfles": [
+     [
+      "most interesting",
+      "most architecturally interesting"
+     ]
+    ]
+   }
+  },
+  "C-2": {
+   "mots": 368,
+   "phrases": 28,
+   "mots_par_phrase": 13.1,
+   "paragraphes": 4,
+   "tirets": 0,
+   "contrastes": 0,
+   "contrastes_xpasy": 0,
+   "plutot_que": 0,
+   "chutes_une_ligne": 0,
+   "suites_fragments": 0,
+   "triades": 3,
+   "triades_fin_phrase": 1,
+   "gonfles": 1,
+   "gras": 0,
+   "emojis_fleches": 0,
+   "puces": 4,
+   "titres": 0,
+   "liens": 0,
+   "hashtags": 0,
+   "renvois": 1,
+   "renvois_source": 1,
+   "renvois_manquants": [],
+   "renvois_ajoutes": [],
+   "chiffres_manquants": [],
+   "chiffres_ajoutes": [],
+   "voix": {
+    "emojis": "",
+    "n_emojis": 0,
+    "interjections_capitales": [
+     "SKILL",
+     "PATH"
+    ],
+    "questions": 0,
+    "exclamations": 0,
+    "points_suspension": 0,
+    "parentheses": 11,
+    "je": 0,
+    "vous": 0
+   },
+   "detail": {
+    "contrastes": [],
+    "chutes": [],
+    "triades": [
+     "registries in four systems, trust tiers and quarantine in Hermes",
+     "files through the Read, Edit, or Write tools",
+     "server the same way, whether or not its tools are"
+    ],
+    "gonfles": [
+     [
+      "most interesting",
+      "most architecturally interesting"
+     ]
+    ]
+   }
+  },
+  "D-1": {
+   "mots": 376,
+   "phrases": 27,
+   "mots_par_phrase": 13.9,
+   "paragraphes": 4,
+   "tirets": 0,
+   "contrastes": 0,
+   "contrastes_xpasy": 0,
+   "plutot_que": 0,
+   "chutes_une_ligne": 0,
+   "suites_fragments": 0,
+   "triades": 2,
+   "triades_fin_phrase": 1,
+   "gonfles": 1,
+   "gras": 0,
+   "emojis_fleches": 0,
+   "puces": 4,
+   "titres": 0,
+   "liens": 0,
+   "hashtags": 0,
+   "renvois": 1,
+   "renvois_source": 1,
+   "renvois_manquants": [],
+   "renvois_ajoutes": [],
+   "chiffres_manquants": [],
+   "chiffres_ajoutes": [],
+   "voix": {
+    "emojis": "",
+    "n_emojis": 0,
+    "interjections_capitales": [
+     "SKILL",
+     "PATH"
+    ],
+    "questions": 0,
+    "exclamations": 0,
+    "points_suspension": 0,
+    "parentheses": 11,
+    "je": 0,
+    "vous": 0
+   },
+   "detail": {
+    "contrastes": [],
+    "chutes": [],
+    "triades": [
+     "systems have hosted registries, Hermes has trust tiers and quarantine",
+     "files through the Read, Edit, or Write tools"
+    ],
+    "gonfles": [
+     [
+      "most interesting",
+      "most architecturally interesting"
+     ]
+    ]
+   }
+  },
+  "D-2": {
+   "mots": 393,
+   "phrases": 29,
+   "mots_par_phrase": 13.6,
+   "paragraphes": 4,
+   "tirets": 0,
+   "contrastes": 0,
+   "contrastes_xpasy": 0,
+   "plutot_que": 0,
+   "chutes_une_ligne": 0,
+   "suites_fragments": 0,
+   "triades": 4,
+   "triades_fin_phrase": 2,
+   "gonfles": 1,
+   "gras": 0,
+   "emojis_fleches": 0,
+   "puces": 4,
+   "titres": 0,
+   "liens": 0,
+   "hashtags": 0,
+   "renvois": 1,
+   "renvois_source": 1,
+   "renvois_manquants": [],
+   "renvois_ajoutes": [],
+   "chiffres_manquants": [],
+   "chiffres_ajoutes": [],
+   "voix": {
+    "emojis": "",
+    "n_emojis": 0,
+    "interjections_capitales": [
+     "SKILL",
+     "PATH"
+    ],
+    "questions": 0,
+    "exclamations": 0,
+    "points_suspension": 0,
+    "parentheses": 9,
+    "je": 0,
+    "vous": 0
+   },
+   "detail": {
+    "contrastes": [],
+    "chutes": [],
+    "triades": [
+     "systems have hosted registries, Hermes has trust tiers and quarantine",
+     "at the same time, through Hermes's self-improving loop and Gemini CLI's extraction inbox",
+     "ActivateSkill, skill, or invoke_skill in OpenHands",
+     "files through the Read, Edit, or Write tools"
+    ],
+    "gonfles": [
+     [
+      "most interesting",
+      "most interesting"
+     ]
+    ]
+   }
+  }
+ }
+}

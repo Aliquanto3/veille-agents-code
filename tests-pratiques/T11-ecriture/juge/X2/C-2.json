@@ -1,0 +1,51 @@
+{
+ "verdict": {
+  "ecarts": [
+   {
+    "type": "affirmation_renforcee",
+    "gravite": "mineur",
+    "citation_sortie": "C'est pourquoi les tests pratiques sur tes propres stories comptent autant.",
+    "citation_source": "D'où l'importance des tests pratiques sur tes propres stories.",
+    "explication": "« comptent autant » ajoute une comparaison implicite absente de la source, sans en changer la portée factuelle."
+   },
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "les échecs des agents naissent dans leurs premières étapes",
+    "citation_source": "La recherche situe les échecs des agents dans leurs premières étapes",
+    "explication": "« naissent » suggère une origine là où la source localise seulement les échecs, une nuance sans conséquence pratique."
+   },
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "Les fonctions natives couvrent déjà l'essentiel de la liste.",
+    "citation_source": "Le natif couvre déjà l'essentiel de la liste.",
+    "explication": "Le titre parle de fonctions natives alors que la phrase suivante inclut aussi les plugins officiels, ce qui reste cohérent avec le « natif » plus large de la source."
+   }
+  ],
+  "porte_franchie": false,
+  "mise_en_forme": "Le gras des intertitres et de « cadrage de l'agent » et « contrôles automatiques », l'italique de *context engineering* et la liste numérotée sont conservés. Seul l'intertitre « Les trois constats qui pilotent la recommandation » est reformulé.",
+  "phrase_de_bilan": "La réécriture est fidèle : tous les chiffres, renvois [1] à [20], sections et réserves sont conservés et bien rattachés, et seules quelques nuances lexicales mineures apparaissent."
+ },
+ "meta": {
+  "cout_usd": 0.0931,
+  "tours": 1,
+  "duree_api_ms": 12966,
+  "erreur": false,
+  "sous_type": "success",
+  "tokens_in": 2,
+  "tokens_out": 1427,
+  "cache_creation": 8069,
+  "cache_read": 0,
+  "modeles": [
+   "claude-opus-5-5"
+  ],
+  "refus_permission": [],
+  "outils": {},
+  "skills_invoquees": [],
+  "fichiers_lus": [],
+  "rc": 0,
+  "duree_s": 13.6,
+  "stderr": ""
+ }
+}

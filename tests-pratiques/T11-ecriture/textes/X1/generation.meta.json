@@ -1,0 +1,21 @@
+{
+ "cout_usd": 0.10814399999999999,
+ "tours": 1,
+ "duree_api_ms": 14592,
+ "erreur": false,
+ "sous_type": "success",
+ "tokens_in": 2,
+ "tokens_out": 1674,
+ "cache_creation": 9332,
+ "cache_read": 0,
+ "modeles": [
+  "claude-opus-5-5"
+ ],
+ "refus_permission": [],
+ "outils": {},
+ "skills_invoquees": [],
+ "fichiers_lus": [],
+ "rc": 0,
+ "duree_s": 16.0,
+ "stderr": ""
+}

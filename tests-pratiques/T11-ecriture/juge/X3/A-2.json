@@ -1,0 +1,79 @@
+{
+ "verdict": {
+  "ecarts": [
+   {
+    "type": "voix_effacee",
+    "gravite": "mineur",
+    "citation_sortie": "OUPS 😱",
+    "citation_source": "WOUPS  😱",
+    "explication": "L'interjection personnelle « WOUPS » de l'auteur est normalisée en « OUPS », ce qui atténue une marque de sa voix sans changer qui parle."
+   },
+   {
+    "type": "chiffre_ou_renvoi_perdu_ou_modifie",
+    "gravite": "mineur",
+    "citation_sortie": "passer de frameworks simples comme OpenSpec ou SpecKit",
+    "citation_source": "passer de frameworks plus simples comme OpenSpec/SpecKit",
+    "explication": "Le comparatif « plus simples » devient un absolu « simples », ce qui nuance différemment OpenSpec et SpecKit."
+   },
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "j'ai changé d'abonnement Anthropic plusieurs fois : Pro, puis Max x5, et Max x20 ce mois-ci",
+    "citation_source": "je suis monté dans les abonnements Anthropic : Pro, Max x5, jusqu'à Max x20 ce mois-ci",
+    "explication": "L'idée de montée en gamme (« je suis monté ») devient un simple changement, même si l'ordre de la liste conserve la progression."
+   },
+   {
+    "type": "affirmation_renforcee",
+    "gravite": "mineur",
+    "citation_sortie": "Cette combinaison réduit les coûts",
+    "citation_source": "Cette combinaison permet de réduire les coûts",
+    "explication": "« Permet de réduire » (possibilité) devient « réduit » (effet affirmé)."
+   },
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "et peut même améliorer la qualité !",
+    "citation_source": "et même d'optimiser la performance !",
+    "explication": "« Performance » devient « qualité », une notion voisine mais différente, avec une modalité légèrement atténuée (« peut »)."
+   },
+   {
+    "type": "fait_invente",
+    "gravite": "mineur",
+    "citation_sortie": "que je publie aujourd'hui",
+    "citation_source": "que je publie",
+    "explication": "Le moment précis « aujourd'hui » est ajouté alors que la source ne le donne pas."
+   },
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "Je commence à comprendre pourquoi certains revendent l'accès à leurs comptes via des routeurs…",
+    "citation_source": "Je commence à comprendre le business des comptes qui sont revendus dans des routeurs...",
+    "explication": "« Le business des comptes revendus » devient « certains revendent l'accès à leurs comptes », ce qui attribue la revente à des titulaires de comptes, une nuance que la source ne précise pas."
+   }
+  ],
+  "porte_franchie": false,
+  "mise_en_forme": "Le titre, la liste à puces, les emojis (💸, 😱, 👉, 🏆, 😰) et la question finale sont conservés ; la liste prend des points-virgules, les points de suspension finaux de la troisième puce disparaissent, et un espace est ajouté après 🏆 ainsi que dans « 1 850 $ » et « 60 % ».",
+  "phrase_de_bilan": "La réécriture est fidèle : tous les chiffres et renvois sont conservés et aucun écart ne franchit la porte. Restent quelques glissements mineurs : un « réduit » plus affirmatif, « performance » devenu « qualité », un « aujourd'hui » ajouté et « WOUPS » adouci."
+ },
+ "meta": {
+  "cout_usd": 0.118752,
+  "tours": 1,
+  "duree_api_ms": 24507,
+  "erreur": false,
+  "sous_type": "success",
+  "tokens_in": 2,
+  "tokens_out": 2884,
+  "cache_creation": 7633,
+  "cache_read": 0,
+  "modeles": [
+   "claude-opus-5-5"
+  ],
+  "refus_permission": [],
+  "outils": {},
+  "skills_invoquees": [],
+  "fichiers_lus": [],
+  "rc": 0,
+  "duree_s": 25.2,
+  "stderr": ""
+ }
+}

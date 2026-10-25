@@ -1,0 +1,62 @@
+{
+ "verdict": {
+  "ecarts": [
+   {
+    "type": "voix_effacee",
+    "gravite": "mineur",
+    "citation_sortie": "OUPS 😱",
+    "citation_source": "WOUPS  😱",
+    "explication": "L'interjection propre à l'auteur « WOUPS » devient le plus courant « OUPS ». L'emoji reste, et la voix demeure reconnaissable.",
+    "marques_disparues": [
+     "WOUPS (remplacé par OUPS)",
+     "point d'exclamation de la parenthèse sur les dizaines de tests"
+    ]
+   },
+   {
+    "type": "affirmation_renforcee",
+    "gravite": "mineur",
+    "citation_sortie": "Cette combinaison réduit les coûts, et elle peut même améliorer les résultats.",
+    "citation_source": "Cette combinaison permet de réduire les coûts... et même d'optimiser la performance !",
+    "explication": "« permet de réduire » devient « réduit », ce qui est un peu plus affirmatif. La seconde partie est au contraire atténuée par « peut », et l'ensemble reste globalement équilibré."
+   },
+   {
+    "type": "fait_invente",
+    "gravite": "mineur",
+    "citation_sortie": "que je publie aujourd'hui",
+    "citation_source": "que je publie",
+    "explication": "La précision temporelle « aujourd'hui » est ajoutée. Elle est sans conséquence factuelle notable."
+   },
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "Bien sûr, ce plugin repose uniquement sur mon expérience, avec peu de projets. N'hésitez pas à relancer les tests sur les vôtres !",
+    "citation_source": "Bien entendu, ça reste un plugin basé sur ma seule expérience dans un faible nombre de projets, donc n'hésitez pas à relancer les tests sur vos propres projets !",
+    "explication": "Le lien causal « donc » entre la réserve et l'invitation à relancer les tests disparaît, mais il reste implicite par la juxtaposition."
+   }
+  ],
+  "porte_franchie": false,
+  "mise_en_forme": "Le titre, les emojis de section (💸, 👉, 🏆) et la liste à tirets sont conservés. La liste reçoit des points-virgules, et un long paragraphe est scindé en deux.",
+  "phrase_de_bilan": "La réécriture est fidèle : chiffres (60 %, 109 stories, 60 $, 5, 1 850 $, 10 %, 200 $), réserve sur l'estimation de Claude et question finale conservés, avec seulement quelques écarts mineurs de ton et de nuance."
+ },
+ "meta": {
+  "cout_usd": 0.10058,
+  "tours": 1,
+  "duree_api_ms": 18769,
+  "erreur": false,
+  "sous_type": "success",
+  "tokens_in": 2,
+  "tokens_out": 1987,
+  "cache_creation": 7604,
+  "cache_read": 0,
+  "modeles": [
+   "claude-opus-5-5"
+  ],
+  "refus_permission": [],
+  "outils": {},
+  "skills_invoquees": [],
+  "fichiers_lus": [],
+  "rc": 0,
+  "duree_s": 19.6,
+  "stderr": ""
+ }
+}

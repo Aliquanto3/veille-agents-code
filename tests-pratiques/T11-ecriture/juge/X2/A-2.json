@@ -1,0 +1,58 @@
+{
+ "verdict": {
+  "ecarts": [
+   {
+    "type": "chiffre_ou_renvoi_perdu_ou_modifie",
+    "gravite": "porte",
+    "citation_sortie": "Côté recherche, quatre résultats vont dans ce sens :",
+    "citation_source": "La recherche situe les échecs des agents dans leurs premières étapes, invisibles jusqu'à être irrécupérables [2], l'usage d'agents fait monter durablement alertes statiques et complexité [3], et des consignes de sécurité ajoutées au prompt n'améliorent pas la sûreté du code [4].",
+    "explication": "La source cite trois résultats de recherche [2][3][4] et la liste en compte trois, mais la réécriture annonce « quatre », un décompte inventé qui laisse croire qu'un résultat manque."
+   },
+   {
+    "type": "affirmation_renforcee",
+    "gravite": "mineur",
+    "citation_sortie": "les fichiers d'instructions qui grossissent sans fin",
+    "citation_source": "les fichiers d'instructions qui enflent",
+    "explication": "« sans fin » ajoute une intensité que la source n'exprime pas."
+   },
+   {
+    "type": "affirmation_renforcee",
+    "gravite": "mineur",
+    "citation_sortie": "Huit hypothèses doivent passer un test pratique avant toute décision (section 6).",
+    "citation_source": "huit hypothèses demandent un test pratique avant décision (section 6).",
+    "explication": "« doivent » et « toute décision » rendent un peu plus impérative la formulation « demandent un test pratique avant décision »."
+   },
+   {
+    "type": "affirmation_renforcee",
+    "gravite": "mineur",
+    "citation_sortie": "C'est pourquoi il faut faire des tests pratiques sur tes propres stories.",
+    "citation_source": "D'où l'importance des tests pratiques sur tes propres stories.",
+    "explication": "La conclusion passe de l'importance soulignée à une injonction (« il faut »), sans changer le fond."
+   }
+  ],
+  "porte_franchie": true,
+  "mise_en_forme": "Le gras et les titres de section sont conservés (« Ce que disent les preuves » devient « Ce que montrent les données », « pilotent » devient « fondent ») ; la phrase sur la recherche et l'énumération des contrôles déterministes sont transformées en listes à puces, et plusieurs phrases longues sont scindées.",
+  "phrase_de_bilan": "La réécriture reste fidèle sur les chiffres, les renvois et les réserves, mais le décompte inventé « quatre résultats » pour une liste de trois franchit la porte ; les autres écarts sont de légers renforcements de ton."
+ },
+ "meta": {
+  "cout_usd": 0.106536,
+  "tours": 1,
+  "duree_api_ms": 19606,
+  "erreur": false,
+  "sous_type": "success",
+  "tokens_in": 2,
+  "tokens_out": 2082,
+  "cache_creation": 8111,
+  "cache_read": 0,
+  "modeles": [
+   "claude-opus-5-5"
+  ],
+  "refus_permission": [],
+  "outils": {},
+  "skills_invoquees": [],
+  "fichiers_lus": [],
+  "rc": 0,
+  "duree_s": 20.2,
+  "stderr": ""
+ }
+}

@@ -1,0 +1,37 @@
+{
+ "verdict": {
+  "ecarts": [
+   {
+    "type": "affirmation_renforcee",
+    "gravite": "mineur",
+    "citation_sortie": "En 2026, ni le modèle ni le nombre d'outils installés ne font la différence.",
+    "citation_source": "En 2026, ce qui fait la différence n'est plus le modèle ni le nombre d'outils installés",
+    "explication": "La source dit que le modèle et les outils ne sont « plus » ce qui départage (une évolution relative), alors que la réécriture affirme de façon absolue qu'ils ne font pas la différence."
+   }
+  ],
+  "porte_franchie": false,
+  "mise_en_forme": "Le gras, l'italique, les intertitres en gras et la liste numérotée sont conservés ; seul le titre « qui pilotent » devient « qui fondent », sans changement de structure.",
+  "phrase_de_bilan": "La réécriture est fidèle. Tous les chiffres et renvois [1] à [20] sont conservés et bien rattachés, les réserves sont maintenues, et seule la perte de la nuance temporelle « n'est plus » constitue un écart mineur."
+ },
+ "meta": {
+  "cout_usd": 0.08528000000000001,
+  "tours": 1,
+  "duree_api_ms": 10376,
+  "erreur": false,
+  "sous_type": "success",
+  "tokens_in": 2,
+  "tokens_out": 1060,
+  "cache_creation": 8009,
+  "cache_read": 0,
+  "modeles": [
+   "claude-opus-5-5"
+  ],
+  "refus_permission": [],
+  "outils": {},
+  "skills_invoquees": [],
+  "fichiers_lus": [],
+  "rc": 0,
+  "duree_s": 11.1,
+  "stderr": ""
+ }
+}

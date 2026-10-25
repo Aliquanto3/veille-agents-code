@@ -1,0 +1,130 @@
+## X1\A-1.json False | Gras, puces, titres de section et hashtags conservés. Seuls les deux-points des intertitres sont remplacés par
+   mineur affirmation_renforcee | À eux seuls, 8 outils rarement utilisés ajoutaient 17,8 k tokens à chaque appel. || 8 outils rarement appelés pesaient 17,8 k tokens à chaque appel.
+   mineur affirmation_renforcee | 87 % des problèmes sérieux qu'il a relevés ont été corrigés || 87 % de ses constats sérieux ont été corrigés
+   mineur sens_change | des agents de code moins chers ou plus efficaces || rendre les agents de code moins chers ou meilleurs
+## X1\A-2.json False | Le gras des intertitres, les puces, l'ordre des listes et les hashtags sont conservés ; les deux-points des in
+   mineur affirmation_renforcee | 87 % des problèmes sérieux qu'il a relevés ont été corrigés || 87 % de ses constats sérieux ont été corrigés
+## X1\B-1.json False | Le gras des trois intertitres a disparu (« Ce qui rapporte », « Ce qui ne rapporte pas », « La vraie découvert
+   mineur fait_invente | C'est le seul ajout à ma chaîne que les tests justifient. Je l'ajoute comme étape optionnelle de la  || C'est le seul ajout à ma chaîne que les tests justifient, en étape optionnelle d
+   mineur fait_invente | 8 outils que l'agent appelait rarement || 8 outils rarement appelés
+## X1\B-2.json False | Le gras des deux intertitres et de « La vraie découverte » a été retiré, ce dernier devenant une phrase d'ouve
+   mineur chiffre_ou_renvoi_perdu_ou_modifie | Il a aussi reconnu sans erreur les 35 mutants équivalents, pour un coût de 0,22 $ par story. || Coût : 0,22 $ par story. Il a aussi reconnu sans erreur les 35 mutants équivalen
+## X1\C-1.json False | Le gras des trois intertitres, les puces et les hashtags sont conservés. Les intertitres passent de « mesuré :
+## X1\C-2.json False | Le gras des intertitres et des puces est conservé ; seuls « mesuré » et « mesuré aussi » passent entre parenth
+   mineur affirmation_renforcee | Le plus souvent, on gagne davantage à retirer qu'à ajouter. || Les gains viennent plus souvent de ce qu'on retire que de ce qu'on ajoute.
+## X1\D-1.json False | Le gras des trois intertitres est retiré, « Ce qui rapporte, mesuré » devient « mesures à l'appui », et l'inte
+   mineur fait_invente | Le résultat qui m'a le plus surpris vient de la mutation guidée. || **La vraie découverte : la mutation guidée.**
+   mineur fait_invente | et je l'ajoute comme étape optionnelle de la revue || en étape optionnelle de la revue
+   mineur sens_change | Chez moi, les gains sont venus plus souvent de ce que j'ai retiré que de ce que j'ai ajouté. || La leçon générale : [...] Les gains viennent plus souvent de ce qu'on retire que
+## X1\D-2.json False | Le gras des intertitres « Ce qui rapporte » et « Ce qui ne rapporte pas » et le titre en gras « La vraie décou
+   mineur affirmation_renforcee | Ce qui ne rapporte pas, mesuré de la même façon : || Ce qui ne rapporte pas, mesuré aussi :
+   mineur affirmation_renforcee | De tout ce que j'ai testé, c'est le seul ajout à ma chaîne que les tests justifient || C'est le seul ajout à ma chaîne que les tests justifient
+   mineur sens_change | Le plus souvent, on gagne davantage à retirer qu'à ajouter. || Les gains viennent plus souvent de ce qu'on retire que de ce qu'on ajoute.
+## X2\A-1.json False | Le gras et les titres de section sont conservés. Deux phrases à énumération sont converties en listes à puces 
+   mineur affirmation_renforcee | Concrètement, il faut un contexte court, des contrôles automatiques qui jugent son travail et une va || c'est le **cadrage de l'agent** : un contexte court, des contrôles automatiques 
+   mineur fait_invente | choix du modèle selon la tâche || routage par modèle
+   mineur fait_invente | Le plugin complet réduit la dépense de 18 à 31 % || −18 à −31 % pour le plugin complet
+   mineur sens_change | porte de revue fondée sur des preuves concrètes || porte empirique en revue
+## X2\A-2.json True | Le gras et les titres de section sont conservés (« Ce que disent les preuves » devient « Ce que montrent les d
+   porte chiffre_ou_renvoi_perdu_ou_modifie | Côté recherche, quatre résultats vont dans ce sens : || La recherche situe les échecs des agents dans leurs premières étapes, invisibles
+   mineur affirmation_renforcee | les fichiers d'instructions qui grossissent sans fin || les fichiers d'instructions qui enflent
+   mineur affirmation_renforcee | Huit hypothèses doivent passer un test pratique avant toute décision (section 6). || huit hypothèses demandent un test pratique avant décision (section 6).
+   mineur affirmation_renforcee | C'est pourquoi il faut faire des tests pratiques sur tes propres stories. || D'où l'importance des tests pratiques sur tes propres stories.
+## X2\B-1.json False | Le gras sur « cadrage de l'agent » et « contrôles automatiques » a disparu. Le titre « Les trois constats qui 
+   mineur sens_change | D'après la recherche, les agents échouent dès leurs premières étapes, et ces erreurs restent invisib || La recherche situe les échecs des agents dans leurs premières étapes, invisibles
+   mineur fait_invente | (mesure faite sur des modèles de 2025) || (pas les cas codés en dur ; modèles de 2025)
+## X2\B-2.json False | Le gras est retiré partout, y compris sur les intitulés « Ce que disent les preuves », « Les trois constats… »
+   mineur sens_change | La principale réserve porte sur les sources. || **Principale réserve.**
+   mineur affirmation_renforcee | et les taux varient selon le prompt et le harnais [17] || avec des taux sensibles au prompt et au harnais [17]
+   mineur sens_change | C'est pourquoi il vaut mieux faire ces tests pratiques sur tes propres stories. || D'où l'importance des tests pratiques sur tes propres stories.
+## X2\C-1.json False | Le gras, l'italique, les intertitres en gras et la liste numérotée sont conservés ; seul le titre « qui pilote
+   mineur affirmation_renforcee | En 2026, ni le modèle ni le nombre d'outils installés ne font la différence. || En 2026, ce qui fait la différence n'est plus le modèle ni le nombre d'outils in
+## X2\C-2.json False | Le gras des intertitres et de « cadrage de l'agent » et « contrôles automatiques », l'italique de *context eng
+   mineur affirmation_renforcee | C'est pourquoi les tests pratiques sur tes propres stories comptent autant. || D'où l'importance des tests pratiques sur tes propres stories.
+   mineur sens_change | les échecs des agents naissent dans leurs premières étapes || La recherche situe les échecs des agents dans leurs premières étapes
+   mineur sens_change | Les fonctions natives couvrent déjà l'essentiel de la liste. || Le natif couvre déjà l'essentiel de la liste.
+## X2\D-1.json True | Le gras est retiré partout, et les intertitres en gras (« Ce que disent les preuves », « Les trois constats… »
+   porte affirmation_renforcee | D'après le mutation testing, les suites écrites par des LLM ne détectent que 36 % des mutants [18]. || le mutation testing révèle des suites écrites par LLM qui ne détectent que 36 % 
+   mineur sens_change | Selon la recherche, les agents échouent dès leurs premières étapes || La recherche situe les échecs des agents dans leurs premières étapes
+   mineur affirmation_renforcee | Six réglages ne présentent aucun risque || Six réglages sont sans regret
+   mineur fait_invente | (mesure faite sur des modèles de 2025) || (pas les cas codés en dur ; modèles de 2025)
+   mineur sens_change | des préprints venant chacun d'un seul laboratoire || des préprints d'un seul laboratoire
+   mineur affirmation_renforcee | Une réserve importante : || **Principale réserve.**
+## X2\D-2.json False | Le gras a été retiré de « cadrage de l'agent », de « contrôles automatiques » et des intitulés des trois const
+   mineur affirmation_renforcee | Six réglages sans regret sont à appliquer dès maintenant. || Six réglages sont sans regret et applicables tout de suite
+   mineur chiffre_ou_renvoi_perdu_ou_modifie | Six réglages sans regret sont à appliquer dès maintenant. Huit hypothèses demandent un test pratique || Six réglages sont sans regret et applicables tout de suite ; huit hypothèses dem
+## X3\A-1.json False | Les emojis, la liste à tirets, les titres et le paragraphe d'appel sont conservés. Les tirets reçoivent des po
+   mineur voix_effacee | OUPS 😱 || WOUPS  😱
+   mineur chiffre_ou_renvoi_perdu_ou_modifie | D'après la consommation mesurée pendant la création du plugin final et les prix de l'API Anthropic,  || selon les mesures de consommation pour la création du plugin final et les prix d
+   mineur sens_change | Résultat : en une journée, j'ai consommé plus de 60 % des crédits de toute ma semaine. || après un pic à 3 orchestrateurs et une vingtaine d'agents tournant en parallèle 
+   mineur fait_invente | le plugin open source que je publie aujourd'hui || le plugin open source que je publie
+## X3\A-2.json False | Le titre, la liste à puces, les emojis (💸, 😱, 👉, 🏆, 😰) et la question finale sont conservés ; la liste prend d
+   mineur voix_effacee | OUPS 😱 || WOUPS  😱
+   mineur chiffre_ou_renvoi_perdu_ou_modifie | passer de frameworks simples comme OpenSpec ou SpecKit || passer de frameworks plus simples comme OpenSpec/SpecKit
+   mineur sens_change | j'ai changé d'abonnement Anthropic plusieurs fois : Pro, puis Max x5, et Max x20 ce mois-ci || je suis monté dans les abonnements Anthropic : Pro, Max x5, jusqu'à Max x20 ce m
+   mineur affirmation_renforcee | Cette combinaison réduit les coûts || Cette combinaison permet de réduire les coûts
+   mineur sens_change | et peut même améliorer la qualité ! || et même d'optimiser la performance !
+   mineur fait_invente | que je publie aujourd'hui || que je publie
+   mineur sens_change | Je commence à comprendre pourquoi certains revendent l'accès à leurs comptes via des routeurs… || Je commence à comprendre le business des comptes qui sont revendus dans des rout
+## X3\B-1.json False | La liste à puces des ambitions est fondue en une phrase. Il n'y a pas de gras ni de titre ; le titre et les em
+   mineur structure_ou_lien_abime | J'ai voulu aller toujours plus loin : passer de frameworks simples comme OpenSpec ou SpecKit à des f || J'ai voulu aller toujours plus loin : 
+- passer de frameworks plus simples comme
+   mineur affirmation_renforcee | Cette combinaison réduit les coûts || Cette combinaison permet de réduire les coûts
+   mineur sens_change | passer de frameworks simples comme OpenSpec ou SpecKit || passer de frameworks plus simples comme OpenSpec/SpecKit
+   mineur voix_effacee | 🏆 Sur les projets où je l'ai testé, ce plugin divise la consommation par 5 environ (d'après l'estima || 🏆Sur les projets où je l'ai testé, ce plugin divise environ par 5 la consommatio
+## X3\B-2.json False | La liste à puces des trois ambitions est fusionnée en une phrase (avec un « puis » qui introduit une gradation
+   mineur sens_change | et elle peut même améliorer la qualité || et même d'optimiser la performance !
+   mineur affirmation_renforcee | Cette combinaison réduit les coûts || Cette combinaison permet de réduire les coûts
+   mineur sens_change | Un de mes relecteurs Opus était passé à côté d'un changement critique || Par exemple, un de mes relecteurs Opus avait raté un changement critique
+   mineur sens_change | sur 109 stories de trois projets || sur 109 stories des trois projets
+   mineur sens_change | Résultat : en une journée, j'ai consommé plus de 60 % des crédits || Puis, cette semaine, après un pic à 3 orchestrateurs et une vingtaine d'agents t
+   mineur voix_effacee | L'avantage, c'est que ça m'a donné beaucoup de données || Cela dit, ça m'a aussi offert beaucoup de données pour identifier les postes de 
+## X3\C-1.json False | Les titres, emojis et la liste à puces sont conservés (ponctuation de liste ajoutée) ; un paragraphe est scind
+   mineur affirmation_renforcee | Cette combinaison réduit les coûts, et elle peut même améliorer la qualité. || Cette combinaison permet de réduire les coûts... et même d'optimiser la performa
+   mineur sens_change | ces tests m'auraient coûté 1 850 $ || selon les mesures de consommation pour la création du plugin final et les prix d
+   mineur sens_change | environ 60 $… au tarif de l'API ! || environ 60 $... dans l'API !
+   mineur sens_change | Cette semaine, j'ai atteint un pic de 3 orchestrateurs et d'une vingtaine d'agents en parallèle sous || Puis, cette semaine, après un pic à 3 orchestrateurs et une vingtaine d'agents t
+   mineur sens_change | Je continuerai à le mettre à jour au fil de mes prochains repos. || Et je continuerai à le mettre à jour en testant sur mes prochains repos.
+   mineur sens_change | J'en ai tiré un plugin open source. || D'où le plugin open source que je publie
+   mineur voix_effacee | En contrepartie, j'avais beaucoup de données pour comprendre où partait la consommation de mes proje || Cela dit, ça m'a aussi offert beaucoup de données pour identifier les postes de 
+## X3\C-2.json False | Le titre, les emojis de section (💸, 👉, 🏆) et la liste à tirets sont conservés. La liste reçoit des points-virg
+   mineur voix_effacee | OUPS 😱 || WOUPS  😱
+   mineur affirmation_renforcee | Cette combinaison réduit les coûts, et elle peut même améliorer les résultats. || Cette combinaison permet de réduire les coûts... et même d'optimiser la performa
+   mineur fait_invente | que je publie aujourd'hui || que je publie
+   mineur sens_change | Bien sûr, ce plugin repose uniquement sur mon expérience, avec peu de projets. N'hésitez pas à relan || Bien entendu, ça reste un plugin basé sur ma seule expérience dans un faible nom
+## X3\D-1.json False | Il n'y a pas de gras dans les deux textes. La liste à puces est conservée avec des points-virgules ajoutés. Le
+   mineur sens_change | Cette semaine, j'ai eu jusqu'à 3 orchestrateurs et une vingtaine d'agents sous Opus en parallèle. Pl || Puis, cette semaine, après un pic à 3 orchestrateurs et une vingtaine d'agents t
+   mineur sens_change | J'en ai tiré un plugin open source. || D'où le plugin open source que je publie
+   mineur sens_change | Cette répartition réduit les coûts et peut même améliorer la qualité. || Cette combinaison permet de réduire les coûts... et même d'optimiser la performa
+   mineur sens_change | J'ai mesuré la consommation nécessaire pour créer la version finale du plugin. Aux prix de l'API Ant || selon les mesures de consommation pour la création du plugin final et les prix d
+   mineur sens_change | Je continuerai à le mettre à jour au fil de mes prochains repos. || Et je continuerai à le mettre à jour en testant sur mes prochains repos.
+   mineur sens_change | Bien sûr, ce plugin repose sur ma seule expérience, avec peu de projets. N'hésitez pas à relancer le || Bien entendu, ça reste un plugin basé sur ma seule expérience dans un faible nom
+   mineur voix_effacee | J'en ai tiré un plugin open source. || 👉 D'où le plugin open source que je publie
+## X3\D-2.json False | Titre, emojis (💸, 👉, 🏆, 😱, 😰) et liste à tirets sont conservés. La liste reçoit des points-virgules et le para
+   mineur voix_effacee | OUPS 😱 || WOUPS  😱
+   mineur affirmation_renforcee | Cette combinaison réduit les coûts || Cette combinaison permet de réduire les coûts
+## X4\A-1.json False | Le texte n'avait pas de gras ; la réécriture met en code certains termes (`paths`, `requires`, `skill`, `invok
+   mineur sens_change | This follows Claude Code's deferred tool loading (Section 8.3). || Echoing Claude Code's deferred tool loading (Section 8.3),
+   mineur sens_change | OpenClaw is now the only eager loader. || OpenClaw remains the one eager loader,
+   mineur sens_change | In April, OpenHands still loaded skills eagerly; || OpenHands, an eager outlier in April,
+   mineur sens_change | Three further developments show this layer maturing. || Three second-order developments mark the layer's maturation:
+## X4\A-2.json False | La réécriture ajoute deux listes à puces, du gras sur les trois développements et du code en ligne pour paths,
+   mineur affirmation_renforcee | OpenHands loaded everything up front in April, which made it the outlier. || OpenHands, an eager outlier in April,
+   mineur sens_change | Both approaches tie skills to the JIT context philosophy of [19]. || —marrying skills to the JIT context philosophy of [19].
+## X4\B-1.json False | Les trois intitulés de paragraphe en tête de ligne (« Observation 8. », « Deferred loading as the dominant pat
+## X4\B-2.json False | Aucun gras, aucune puce ni aucun titre modifié ; les intitulés de paragraphe sont conservés, et les phrases lo
+   mineur chiffre_ou_renvoi_perdu_ou_modifie | OpenHands now implements the same idea as PathTrigger rules, which are injected when a file is touch || Claude Code's paths frontmatter activates a skill when the model touches matchin
+   mineur sens_change | OpenHands loaded skills eagerly in April and moved to progressive disclosure with the V1 SDK. || OpenHands, an eager outlier in April, moved to progressive disclosure with the V
+## X4\C-1.json False | Aucun gras ni titre n'a été modifié. L'énumération des mécanismes de chargement, en ligne dans la source, est 
+   mineur affirmation_renforcee | Eight of the nine adopters now follow the same approach as Claude Code's deferred tool loading (Sect || Echoing Claude Code's deferred tool loading (Section 8.3), eight of the nine ado
+   mineur sens_change | OpenClaw is now the only eager loader. || OpenClaw remains the one eager loader
+   mineur structure_ou_lien_abime | The first skills written by agents have appeared alongside it (Hermes's self-improving loop, Gemini  || and a supply chain has emerged—hosted registries in four systems, trust tiers an
+## X4\C-2.json False | Les longues phrases sont découpées, l'énumération des modes de chargement différé devient une liste à puces et
+   mineur sens_change | Both approaches tie skills to the JIT context philosophy of [19]. || and OpenHands now implements the same idea as PathTrigger rules injected on file
+   mineur sens_change | OpenClaw is now the only eager loader. || OpenClaw remains the one eager loader
+## X4\D-1.json False | La liste des modes de chargement, inline dans la source, devient une liste à puces. Les intitulés de paragraph
+   mineur affirmation_renforcee | Eight of the nine adopters now work the same way as Claude Code's deferred tool loading (Section 8.3 || Echoing Claude Code's deferred tool loading (Section 8.3), eight of the nine ado
+   mineur sens_change | Pi broke the tie by supporting skills explicitly but not MCP || broken by Pi's explicit skills-yes-MCP-no position
+## X4\D-2.json False | La réécriture découpe les phrases longues, ajoute les marqueurs « First/Second/Third » et transforme l'énuméra
+   mineur sens_change | The first skills written by agents have appeared at the same time, through Hermes's self-improving l || together with the first agent-authored skills (Hermes's self-improving loop, Gem
+   mineur sens_change | load only skill metadata at startup || load only skill metadata eagerly

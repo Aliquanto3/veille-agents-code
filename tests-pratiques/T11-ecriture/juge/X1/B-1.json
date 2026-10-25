@@ -1,0 +1,44 @@
+{
+ "verdict": {
+  "ecarts": [
+   {
+    "type": "fait_invente",
+    "gravite": "mineur",
+    "citation_sortie": "C'est le seul ajout à ma chaîne que les tests justifient. Je l'ajoute comme étape optionnelle de la revue.",
+    "citation_source": "C'est le seul ajout à ma chaîne que les tests justifient, en étape optionnelle de la revue.",
+    "explication": "La source dit que les tests justifient cet ajout en étape optionnelle, alors que la réécriture affirme que l'auteur l'ajoute effectivement, ce qui introduit une action non explicitée."
+   },
+   {
+    "type": "fait_invente",
+    "gravite": "mineur",
+    "citation_sortie": "8 outils que l'agent appelait rarement",
+    "citation_source": "8 outils rarement appelés",
+    "explication": "La réécriture attribue les appels à l'agent, une précision que la source ne donne pas, sans conséquence factuelle notable."
+   }
+  ],
+  "porte_franchie": false,
+  "mise_en_forme": "Le gras des trois intertitres a disparu (« Ce qui rapporte », « Ce qui ne rapporte pas », « La vraie découverte ») mais les intertitres sont conservés en texte simple ; puces, liste, question finale et hashtags sont intacts.",
+  "phrase_de_bilan": "Réécriture fidèle : chiffres, comparaisons, réserves (« non significatif », « strictement », « plus souvent ») et structure sont conservés ; seuls deux glissements mineurs sont à signaler."
+ },
+ "meta": {
+  "cout_usd": 0.078868,
+  "tours": 1,
+  "duree_api_ms": 11754,
+  "erreur": false,
+  "sous_type": "success",
+  "tokens_in": 2,
+  "tokens_out": 1261,
+  "cache_creation": 6705,
+  "cache_read": 0,
+  "modeles": [
+   "claude-opus-5-5"
+  ],
+  "refus_permission": [],
+  "outils": {},
+  "skills_invoquees": [],
+  "fichiers_lus": [],
+  "rc": 0,
+  "duree_s": 12.5,
+  "stderr": ""
+ }
+}

@@ -3,3 +3,4 @@ data/raw/
 __pycache__/
 contexte/
 tests-pratiques/T7/correspondance.json
+tests-pratiques/T11-ecriture/correspondance.json

@@ -1,0 +1,43 @@
+{
+ "couts": {
+  "A": {
+   "n": 8,
+   "total": 0.483,
+   "moyen": 0.06
+  },
+  "B": {
+   "n": 8,
+   "total": 1.062,
+   "moyen": 0.133
+  },
+  "C": {
+   "n": 8,
+   "total": 0.906,
+   "moyen": 0.113
+  },
+  "D": {
+   "n": 8,
+   "total": 2.5,
+   "moyen": 0.313
+  }
+ },
+ "portes": {
+  "A": {
+   "franchies": 1,
+   "essais": 8
+  },
+  "B": {
+   "franchies": 0,
+   "essais": 8
+  },
+  "C": {
+   "franchies": 0,
+   "essais": 8
+  },
+  "D": {
+   "franchies": 1,
+   "essais": 8
+  }
+ },
+ "cout_total_conditions": 4.045
+}

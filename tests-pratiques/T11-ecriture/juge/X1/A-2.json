@@ -1,0 +1,37 @@
+{
+ "verdict": {
+  "ecarts": [
+   {
+    "type": "affirmation_renforcee",
+    "gravite": "mineur",
+    "citation_sortie": "87 % des problèmes sérieux qu'il a relevés ont été corrigés",
+    "citation_source": "87 % de ses constats sérieux ont été corrigés",
+    "explication": "« Constats » devient « problèmes », ce qui présente un peu plus nettement les signalements de Haiku comme de vrais défauts, sans changer le chiffre ni le périmètre."
+   }
+  ],
+  "porte_franchie": false,
+  "mise_en_forme": "Le gras des intertitres, les puces, l'ordre des listes et les hashtags sont conservés ; les deux-points des intertitres deviennent des parenthèses (« (mesuré) », « (mesuré aussi) »)",
+  "phrase_de_bilan": "La réécriture est fidèle : tous les chiffres sont conservés et à leur place (15 tests, 45 jours, 8 outils, 17,8 k tokens, 87 %, 0,03 $, 0,53 $, 1,33 $, +6 points, 40 runs, 134 sur 134, 59 %, 0,22 $, 35 mutants), les nuances sont gardées, et le seul écart, sur le mot « problèmes », est mineur."
+ },
+ "meta": {
+  "cout_usd": 0.072848,
+  "tours": 1,
+  "duree_api_ms": 10534,
+  "erreur": false,
+  "sous_type": "success",
+  "tokens_in": 2,
+  "tokens_out": 950,
+  "cache_creation": 6730,
+  "cache_read": 0,
+  "modeles": [
+   "claude-opus-5-5"
+  ],
+  "refus_permission": [],
+  "outils": {},
+  "skills_invoquees": [],
+  "fichiers_lus": [],
+  "rc": 0,
+  "duree_s": 11.2,
+  "stderr": ""
+ }
+}

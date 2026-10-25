@@ -1,0 +1,44 @@
+{
+ "verdict": {
+  "ecarts": [
+   {
+    "type": "affirmation_renforcee",
+    "gravite": "mineur",
+    "citation_sortie": "Six réglages sans regret sont à appliquer dès maintenant.",
+    "citation_source": "Six réglages sont sans regret et applicables tout de suite",
+    "explication": "La source dit que les réglages peuvent être appliqués tout de suite ; la réécriture en fait une prescription (« sont à appliquer »), ce qui durcit légèrement la modalité."
+   },
+   {
+    "type": "chiffre_ou_renvoi_perdu_ou_modifie",
+    "gravite": "mineur",
+    "citation_sortie": "Six réglages sans regret sont à appliquer dès maintenant. Huit hypothèses demandent un test pratique avant de décider (section 6).",
+    "citation_source": "Six réglages sont sans regret et applicables tout de suite ; huit hypothèses demandent un test pratique avant décision (section 6).",
+    "explication": "Dans la source, le renvoi « (section 6) » couvre les réglages et les hypothèses ; la coupure en deux phrases le rattache aux seules hypothèses, et le lecteur ne sait plus où trouver les six réglages."
+   }
+  ],
+  "porte_franchie": false,
+  "mise_en_forme": "Le gras a été retiré de « cadrage de l'agent », de « contrôles automatiques » et des intitulés des trois constats ; le titre « Les trois constats qui pilotent la recommandation » est reformulé en « Trois constats fondent la recommandation » ; la liste numérotée et les titres en gras des paragraphes sont conservés.",
+  "phrase_de_bilan": "La réécriture est fidèle : tous les chiffres et les renvois [1] à [20] sont conservés à la bonne place, et les nuances (« en grande partie », « en partie », modèles de 2025, préprints) sont préservées. Seuls deux écarts mineurs touchent la phrase des six réglages et son renvoi à la section 6."
+ },
+ "meta": {
+  "cout_usd": 0.10296,
+  "tours": 1,
+  "duree_api_ms": 15577,
+  "erreur": false,
+  "sous_type": "success",
+  "tokens_in": 2,
+  "tokens_out": 1932,
+  "cache_creation": 8039,
+  "cache_read": 0,
+  "modeles": [
+   "claude-opus-5-5"
+  ],
+  "refus_permission": [],
+  "outils": {},
+  "skills_invoquees": [],
+  "fichiers_lus": [],
+  "rc": 0,
+  "duree_s": 16.2,
+  "stderr": ""
+ }
+}

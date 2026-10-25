@@ -1,0 +1,72 @@
+{
+ "verdict": {
+  "ecarts": [
+   {
+    "type": "affirmation_renforcee",
+    "gravite": "porte",
+    "citation_sortie": "D'après le mutation testing, les suites écrites par des LLM ne détectent que 36 % des mutants [18].",
+    "citation_source": "le mutation testing révèle des suites écrites par LLM qui ne détectent que 36 % des mutants [18]",
+    "explication": "La source parle de certaines suites révélées par le mutation testing, alors que la réécriture en fait une règle générale pour toutes les suites écrites par des LLM."
+   },
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "Selon la recherche, les agents échouent dès leurs premières étapes",
+    "citation_source": "La recherche situe les échecs des agents dans leurs premières étapes",
+    "explication": "La source dit où naissent les échecs quand il y en a, alors que la réécriture peut se lire comme « les agents échouent dès le début »."
+   },
+   {
+    "type": "affirmation_renforcee",
+    "gravite": "mineur",
+    "citation_sortie": "Six réglages ne présentent aucun risque",
+    "citation_source": "Six réglages sont sans regret",
+    "explication": "« Sans regret » désigne un choix peu coûteux et sûr à faire, ce qui est plus nuancé qu'« aucun risque »."
+   },
+   {
+    "type": "fait_invente",
+    "gravite": "mineur",
+    "citation_sortie": "(mesure faite sur des modèles de 2025)",
+    "citation_source": "(pas les cas codés en dur ; modèles de 2025)",
+    "explication": "La réécriture ajoute qu'il s'agit d'une mesure, alors que la source précise juste avant que ces contrôles ne sont pas tous mesurés."
+   },
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "des préprints venant chacun d'un seul laboratoire",
+    "citation_source": "des préprints d'un seul laboratoire",
+    "explication": "La réécriture tranche une ambiguïté de la source (un laboratoire par étude ou un même laboratoire pour toutes)."
+   },
+   {
+    "type": "affirmation_renforcee",
+    "gravite": "mineur",
+    "citation_sortie": "Une réserve importante :",
+    "citation_source": "**Principale réserve.**",
+    "explication": "La réserve n'est plus présentée comme la principale, ce qui affaiblit légèrement sa hiérarchie."
+   }
+  ],
+  "porte_franchie": true,
+  "mise_en_forme": "Le gras est retiré partout, et les intertitres en gras (« Ce que disent les preuves », « Les trois constats… », « Recommandation », « Principale réserve ») sont fondus dans des phrases d'introduction. La liste numérotée et l'ordre des idées sont conservés.",
+  "phrase_de_bilan": "La réécriture est globalement fidèle et garde tous les chiffres et renvois, mais elle généralise le résultat sur le mutation testing [18], ce qui franchit la porte."
+ },
+ "meta": {
+  "cout_usd": 0.11169200000000001,
+  "tours": 1,
+  "duree_api_ms": 19861,
+  "erreur": false,
+  "sous_type": "success",
+  "tokens_in": 2,
+  "tokens_out": 2377,
+  "cache_creation": 8018,
+  "cache_read": 0,
+  "modeles": [
+   "claude-opus-5-5"
+  ],
+  "refus_permission": [],
+  "outils": {},
+  "skills_invoquees": [],
+  "fichiers_lus": [],
+  "rc": 0,
+  "duree_s": 20.5,
+  "stderr": ""
+ }
+}

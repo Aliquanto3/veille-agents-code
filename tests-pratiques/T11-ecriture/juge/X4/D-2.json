@@ -1,0 +1,44 @@
+{
+ "verdict": {
+  "ecarts": [
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "The first skills written by agents have appeared at the same time, through Hermes's self-improving loop and Gemini CLI's extraction inbox.",
+    "citation_source": "together with the first agent-authored skills (Hermes's self-improving loop, Gemini CLI's extraction inbox)",
+    "explication": "« together with » rattache les premières skills écrites par des agents au troisième développement, alors que « at the same time » ajoute une simultanéité temporelle que la source n'affirme pas explicitement."
+   },
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "load only skill metadata at startup",
+    "citation_source": "load only skill metadata eagerly",
+    "explication": "« eagerly » signifie « chargé d'emblée, sans attendre la demande », et « at startup » précise un moment que la source ne fixe pas : l'écart reste sans conséquence pratique."
+   }
+  ],
+  "porte_franchie": false,
+  "mise_en_forme": "La réécriture découpe les phrases longues, ajoute les marqueurs « First/Second/Third » et transforme l'énumération des quatre mécanismes de chargement en liste à puces ; titres, renvois [19] et Section 8.3 et ordre des idées sont conservés.",
+  "phrase_de_bilan": "La réécriture est fidèle : chiffres (9/11, 8/11, 8 des 9, quatre systèmes), renvois et nuances sont conservés, avec seulement deux légers glissements de formulation sans conséquence factuelle."
+ },
+ "meta": {
+  "cout_usd": 0.077704,
+  "tours": 1,
+  "duree_api_ms": 13801,
+  "erreur": false,
+  "sous_type": "success",
+  "tokens_in": 2,
+  "tokens_out": 1216,
+  "cache_creation": 6672,
+  "cache_read": 0,
+  "modeles": [
+   "claude-opus-5-5"
+  ],
+  "refus_permission": [],
+  "outils": {},
+  "skills_invoquees": [],
+  "fichiers_lus": [],
+  "rc": 0,
+  "duree_s": 15.5,
+  "stderr": ""
+ }
+}

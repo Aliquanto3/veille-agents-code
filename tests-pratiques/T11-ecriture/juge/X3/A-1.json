@@ -1,0 +1,58 @@
+{
+ "verdict": {
+  "ecarts": [
+   {
+    "type": "voix_effacee",
+    "gravite": "mineur",
+    "citation_sortie": "OUPS 😱",
+    "citation_source": "WOUPS  😱",
+    "explication": "L'interjection personnelle « WOUPS » est normalisée en « OUPS », ce qui gomme un peu la marque de l'auteur sans changer qui parle ; marques_disparues : [\"WOUPS\"]."
+   },
+   {
+    "type": "chiffre_ou_renvoi_perdu_ou_modifie",
+    "gravite": "mineur",
+    "citation_sortie": "D'après la consommation mesurée pendant la création du plugin final et les prix de l'API Anthropic, ces tests auraient dû me coûter 1 850 $",
+    "citation_source": "selon les mesures de consommation pour la création du plugin final et les prix de l'API Anthropic, j'aurais dû payer 1850$",
+    "explication": "La source rattache les 1 850 $ à la création du plugin final, et la réécriture les rattache explicitement à « ces tests », ce qui resserre légèrement le périmètre du chiffre."
+   },
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "Résultat : en une journée, j'ai consommé plus de 60 % des crédits de toute ma semaine.",
+    "citation_source": "après un pic à 3 orchestrateurs et une vingtaine d'agents tournant en parallèle sous Opus, j'ai consommé en une journée plus de 60% des crédits",
+    "explication": "Le lien temporel « après un pic » devient un lien causal explicite (« Résultat : »), ce qui reste cohérent avec le propos implicite de l'auteur."
+   },
+   {
+    "type": "fait_invente",
+    "gravite": "mineur",
+    "citation_sortie": "le plugin open source que je publie aujourd'hui",
+    "citation_source": "le plugin open source que je publie",
+    "explication": "L'ajout de « aujourd'hui » précise une date absente de la source, sans conséquence factuelle réelle."
+   }
+  ],
+  "porte_franchie": false,
+  "mise_en_forme": "Les emojis, la liste à tirets, les titres et le paragraphe d'appel sont conservés. Les tirets reçoivent des points-virgules, le long paragraphe 👉 est scindé en deux et les parenthèses « (et pas juste sur le code) » sont fondues dans la phrase.",
+  "phrase_de_bilan": "La réécriture est fidèle : chiffres (109, 60 %, 60 $, ×5, 1 850 $, 10 %, 200 $), réserves (« environ », « d'après l'estimation de Claude », « faible nombre de projets ») et question finale sont préservés, avec seulement des écarts mineurs."
+ },
+ "meta": {
+  "cout_usd": 0.10324,
+  "tours": 1,
+  "duree_api_ms": 18817,
+  "erreur": false,
+  "sous_type": "success",
+  "tokens_in": 2,
+  "tokens_out": 2106,
+  "cache_creation": 7639,
+  "cache_read": 0,
+  "modeles": [
+   "claude-opus-5-5"
+  ],
+  "refus_permission": [],
+  "outils": {},
+  "skills_invoquees": [],
+  "fichiers_lus": [],
+  "rc": 0,
+  "duree_s": 19.5,
+  "stderr": ""
+ }
+}

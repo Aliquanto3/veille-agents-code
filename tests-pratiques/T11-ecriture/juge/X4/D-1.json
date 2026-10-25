@@ -1,0 +1,44 @@
+{
+ "verdict": {
+  "ecarts": [
+   {
+    "type": "affirmation_renforcee",
+    "gravite": "mineur",
+    "citation_sortie": "Eight of the nine adopters now work the same way as Claude Code's deferred tool loading (Section 8.3).",
+    "citation_source": "Echoing Claude Code's deferred tool loading (Section 8.3), eight of the nine adopters now load only skill metadata eagerly",
+    "explication": "« Echoing » indique un écho ou une analogie, alors que « work the same way as » affirme une identité de fonctionnement un peu plus forte. Le renvoi et les chiffres sont conservés."
+   },
+   {
+    "type": "sens_change",
+    "gravite": "mineur",
+    "citation_sortie": "Pi broke the tie by supporting skills explicitly but not MCP",
+    "citation_source": "broken by Pi's explicit skills-yes-MCP-no position",
+    "explication": "La source décrit une position explicite sur les deux volets (oui aux skills, non à MCP). La réécriture ne rattache « explicitly » qu'au support des skills, ce qui atténue un peu le refus explicite de MCP."
+   }
+  ],
+  "porte_franchie": false,
+  "mise_en_forme": "La liste des modes de chargement, inline dans la source, devient une liste à puces. Les intitulés de paragraphe (« Observation 8. », « Deferred loading as the dominant pattern. », « Gating and conditional activation. ») sont conservés et rien n'est mis en gras.",
+  "phrase_de_bilan": "La réécriture est fidèle : tous les chiffres (9/11, 8/11, 8 of 9, quatre registres), la section 8.3, le renvoi [19] et les exemples sont conservés, avec seulement deux nuances mineures sans conséquence factuelle."
+ },
+ "meta": {
+  "cout_usd": 0.07405199999999999,
+  "tours": 1,
+  "duree_api_ms": 9943,
+  "erreur": false,
+  "sous_type": "success",
+  "tokens_in": 2,
+  "tokens_out": 1045,
+  "cache_creation": 6643,
+  "cache_read": 0,
+  "modeles": [
+   "claude-opus-5-5"
+  ],
+  "refus_permission": [],
+  "outils": {},
+  "skills_invoquees": [],
+  "fichiers_lus": [],
+  "rc": 0,
+  "duree_s": 11.3,
+  "stderr": ""
+ }
+}
