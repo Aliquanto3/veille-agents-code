@@ -1,0 +1,120 @@
+{
+ "story": "us-7-14",
+ "bras": "B",
+ "essai": 1,
+ "prompt": "Tu travailles dans un dépôt Python (le dossier courant). Voici la story à renforcer.\nSpec de la story : `_bmad-output/implementation-artifacts/spec-7-14-carte-meteo-detail-d-une-entite-et-livrables.md` (à lire d'abord).\nFichiers source modifiés par la story :\n- `src/usine/ui/carte.py`\n- `src/usine/ui/detail.py`\n- `src/usine/ui/vues.py`\n- `src/usine/ui/serveur.py`\n- `src/usine/ui/cli.py`\n- `src/usine/ui/liens.py`\nTests existants de la story :\n- `tests/unit/ui/test_vues_ecrans.py`\n- `tests/unit/ui/test_serveur.py`\n- `tests/contrat/consultation/test_contrat.py`\n\nRenforce les tests de cette story : ajoute des tests pytest qui vérifient précisément le comportement attendu (valeurs exactes, bornes, branches d'erreur). Ne modifie pas le code source. Utilise Hypothesis (tests de propriétés) là où une propriété générale existe ; garde des exemples ciblés pour le reste.\n\nÉcris les nouveaux tests dans de nouveaux fichiers `tests/unit/ui/test_renf_*.py` ; ne modifie ni le code source ni les tests existants. Lance les tests avec `python -m pytest -q --tb=short <fichiers>` (l'environnement est prêt, rien à installer). Tous tes tests doivent passer. Termine par la liste des fichiers créés.",
+ "rc": 0,
+ "stderr": "",
+ "duree_mur_s": 96.8,
+ "modifies_suivis": [],
+ "crees": [
+  "tests/unit/ui/test_renf_carte_detail.py"
+ ],
+ "sortie": {
+  "duration_api_ms": 82984,
+  "stop_reason": "end_turn",
+  "session_id": "2e604afe-0178-492b-ad88-d7c6ca5b6d82",
+  "total_cost_usd": 0.3436986,
+  "usage": {
+   "input_tokens": 16,
+   "cache_creation_input_tokens": 42614,
+   "cache_read_input_tokens": 206906,
+   "output_tokens": 15252,
+   "output_tokens_details": {
+    "thinking_tokens": 628
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 42614,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 854,
+     "cache_read_input_tokens": 48094,
+     "cache_creation_input_tokens": 490,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 490
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-sonnet-5-5": {
+    "inputTokens": 16,
+    "outputTokens": 15252,
+    "cacheReadInputTokens": 206906,
+    "cacheCreationInputTokens": 42614,
+    "webSearchRequests": 0,
+    "costUSD": 0.3436986,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 628,
+    "canonicalModel": "claude-sonnet-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [
+   {
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_01283RFcTrM4qabTQvct9wW3",
+    "tool_input": {
+     "command": "cat > tests/unit/ui/test_renf_carte_detail.py <<'EOF'\n\"\"\"Renfort Story 7.14 : bornes, propriétés et branches d'erreur des vues et routes (AD-25).\"\"\"\n\nfrom datetime import date\n\nimport pytest\nfrom hypothesis import given, settings\nfrom hypothesis import strategies as st\n\nfrom tests.unit.ui.test_detail import _meteo, _regle\nfrom tests.unit.ui.test_vues_ecrans import XLSX, _Double, _url, client\nfrom usine.contrats.erreurs import UsineErreur\nfrom usine.contrats.meteo import CodeIndicateur, Couleur\nfrom usine.ui import carte\nfrom usine.ui.detail import EXPLICATION_PALIER_1, entite_absente, vue_detail\nfrom usine.ui.liens import vue_ticket\n\nCODES = st.from_regex(r\"ENT-[A-Z0-9]{1,6}\", fullmatch=True)\n\n\ndef _avec_couleur(entite: str, couleur: Couleur):\n    return _meteo(entite).model_copy(update={\"couleur\": couleur})\n\n\ndef _rouge(entite: str, nb_tickets: int):\n    cles = tuple(f\"DEMO-{n}\" for n in range(1, nb_tickets + 1))\n    return _meteo(entite, regles=(_regle(CodeIndicateur.ind_2, cles),))\n\n\n# --- taille_lisible ---\n\n\n@pytest.mark.parametrize(\n    (\"octets\", \"attendu\"),\n    [\n        (0, \"0 o\"),\n        (1023, \"1023 o\"),\n        (1024, \"1 Ko\"),\n        (1536, \"2 Ko\"),\n        (1048575, \"1,0 Mo\"),\n        (1048576, \"1,0 Mo\"),\n        (1048576 * 3 + 524288, \"3,5 Mo\"),\n        (1024 * 1023, \"1023 Ko\"),\n    ],\n)\ndef test_taille_lisible_valeurs_exactes(octets: int, attendu: str) -> None:\n    assert carte.taille_lisible(octets) == attendu\n\n\n@given(st.integers(min_value=0, max_value=10**10))\ndef test_taille_lisible_jamais_1024_ko(octets: int) -> None:\n    texte = carte.taille_lisible(octets)\n    assert texte != \"1024 Ko\"\n    if octets < 1024:\n        assert texte == f\"{octets} o\"\n    elif texte.endswith(\" Ko\"):\n        assert 1 <= int(texte.removesuffix(\" Ko\")) <= 1023\n    else:\n        assert texte.endswith(\" Mo\")\n        assert \",\" in texte\n\n\n# --- tri, suite, tickets, URLs ---\n\n\n@given(\n    st.lists(\n        st.tuples(CODES, st.sampled_from(list(Couleur))), unique_by=lambda t: t[0], max_size=12\n    ),\n    st.randoms(use_true_random=False),\n)\ndef test_entites_triees_gravite_decroissante_puis_entite(paires, hasard) -> None:\n    meteos = [_avec_couleur(e, c) for e, c in paires]\n    hasard.shuffle(meteos)\n    triees = carte.entites_triees(meteos)\n    assert sorted(m.entite for m in triees) == sorted(e for e, _ in paires)\n    cles = [(-list(Couleur).index(m.couleur), m.entite) for m in triees]\n    assert cles == sorted(cles)\n\n\n@given(st.integers(min_value=-5, max_value=50))\ndef test_libelle_suite(reste: int) -> None:\n    assert carte.libelle_suite(reste) == (f\"+{reste}\" if reste > 0 else None)\n\n\n@given(st.text(min_size=1, max_size=20), st.one_of(st.none(), st.text(min_size=1, max_size=40)))\ndef test_vue_ticket_propriete(cle: str, url: str | None) -> None:\n    vue = vue_ticket(cle, url)\n    assert vue.cle == cle\n    assert vue.url == url\n    assert vue.nom_accessible == (None if url is None else f\"{cle} (nouvel onglet)\")\n\n\ndef test_url_detail_et_nom_fichier() -> None:\n    assert carte.url_detail(\"ENT-B\") == \"/entites/ENT-B\"\n    assert carte.url_detail(\"a/b c\") == \"/entites/a%2Fb%20c\"\n    assert carte.nom_fichier_livrable(\"rapport_xlsx\", date(2026, 10, 9)) == \"rapport-2026-10-09.xlsx\"\n    assert carte.nom_fichier_livrable(\"rapport_pptx\", date(2026, 1, 2)).endswith(\"2026-01-02.pptx\")\n\n\n@settings(deadline=None, max_examples=40)\n@given(st.integers(min_value=1, max_value=12))\ndef test_carte_tickets_coupes_cote_serveur(n: int) -> None:\n    double = _Double(meteos=(_rouge(\"ENT-B\", n),))\n    ligne = carte.vue_carte(double).lignes[0]\n    assert [t.cle for t in ligne.tickets] == [f\"DEMO-{k}\" for k in range(1, min(n, 3) + 1)]\n    assert ligne.suite == (f\"+{n - 3}\" if n > 3 else None)\n    expected_regle = \"IND-2 : 11 (seuil ≥ 10)\"\n    assert ligne.regle_principale == expected_regle\n\n\n@settings(deadline=None, max_examples=40)\n@given(st.integers(min_value=1, max_value=12))\ndef test_detail_tickets_et_suite(n: int) -> None:\n    vue = vue_detail(_Double(meteos=(_rouge(\"ENT-B\", n),)), \"ENT-B\")\n    regle = vue.regles[0]\n    assert [t.cle for t in regle.tickets] == [f\"DEMO-{k}\" for k in range(1, min(n, 3) + 1)]\n    assert [t.cle for t in regle.tickets_suite] == [f\"DEMO-{k}\" for k in range(4, n + 1)]\n    assert regle.libelle_suite == (f\"+{n - 3}\" if n > 3 else None)\n\n\ndef test_carte_comptages_somme_et_ordre() -> None:\n    meteos = (\n        _avec_couleur(\"ENT-A\", Couleur.jaune),\n        _avec_couleur(\"ENT-B\", Couleur.jaune),\n        _rouge(\"ENT-C\", 1),\n        _avec_couleur(\"ENT-D\", Couleur.vert),\n    )\n    vue = carte.vue_carte(_Double(meteos=meteos))\n    assert [(c.meteo.couleur, c.nombre) for c in vue.comptages] == [\n        (\"rouge\", 1),\n        (\"orange\", 0),\n        (\"jaune\", 2),\n        (\"vert\", 1),\n    ]\n    assert [ligne.entite for ligne in vue.lignes] == [\"ENT-C\", \"ENT-A\", \"ENT-B\", \"ENT-D\"]\n    assert [ligne.tickets for ligne in vue.lignes[1:]] == [[], [], []]\n    assert [ligne.suite for ligne in vue.lignes[1:]] == [None, None, None]\n    assert vue.lignes[1].regle_principale == carte.INCONNUE\n\n\ndef test_carte_messages_vides_du_filtre() -> None:\n    filtre = carte.vue_carte(_Double()).filtre\n    assert filtre is not None\n    messages = {o.valeur: o.message_vide for o in filtre.options}\n    assert messages[\"toutes\"] == \"\"\n    assert messages[\"rouge\"] == \"Aucune Entité en rouge à cette Date d'arrêté.\"\n    assert messages[\"orange\"] == \"Aucune Entité en orange à cette Date d'arrêté.\"\n    assert filtre.annonce_une == \"1 Entité affichée\"\n    assert filtre.annonce_plusieurs == \"{n} Entités affichées\"\n\n\ndef test_carte_message_et_erreur_formes() -> None:\n    sans = carte.vue_carte_message(\"m\")\n    assert (sans.message, sans.erreur, sans.lignes, sans.livrables, sans.filtre) == (\n        \"m\",\n        None,\n        [],\n        [],\n        None,\n    )\n    erreur = carte.vue_carte_erreur(\"boum\")\n    assert (erreur.erreur, erreur.message, erreur.lien_message) == (\"boum\", None, None)\n\n\ndef test_carte_aucune_meteo_message() -> None:\n    vue = carte.vue_carte(_Double(meteos=()))\n    assert vue.message == carte.AUCUNE_METEO\n    assert vue.lignes == []\n\n\ndef test_livrables_vues_exactes() -> None:\n    vues = carte.vues_livrables(_Double(livrables={\"rapport_xlsx\": XLSX, \"rapport_pptx\": b\"\"}))\n    xlsx, pptx = vues\n    assert (xlsx.nom, xlsx.libelle, xlsx.fichier) == (\n        \"rapport_xlsx\",\n        \"Rapport quotidien\",\n        \"rapport-2026-10-09.xlsx\",\n    )\n    assert xlsx.description == \"Excel (.xlsx) · 2 Ko\"\n    assert (xlsx.url, xlsx.absent) == (\"/livrables/rapport_xlsx\", None)\n    # un fichier vide existe : il reste proposé\n    assert pptx.description == \"PowerPoint (.pptx) · 0 o\"\n    assert (pptx.url, pptx.absent) == (\"/livrables/rapport_pptx\", None)\n\n\ndef test_livrables_absents_sans_lien() -> None:\n    for vue in carte.vues_livrables(_Double(livrables={})):\n        assert vue.url is None\n        assert vue.description == \"\"\n        assert vue.absent == \"Non généré pour ce Passage\"\n\n\n# --- détail ---\n\n\ndef test_detail_palier_demande_et_passage() -> None:\n    double = _Double(palier=2)\n    un = vue_detail(double, \"ENT-B\", 1)\n    deux = vue_detail(double, \"ENT-B\", 2)\n    assert un.palier == 1\n    assert un.prevision is None\n    assert deux.prevision is not None\n    assert un.explication is not None\n    assert EXPLICATION_PALIER_1 in un.explication.model_dump_json()\n    for champ in (\"meteo\", \"regles\", \"kpi\", \"risque\"):\n        assert getattr(un, champ) == getattr(deux, champ)\n    assert double.appels_palier == [1, 1, 2, 2][: len(double.appels_palier)]\n    assert 1 in double.appels_palier\n    assert [o.actif for o in un.segment_palier.options] == [False, True]\n    assert [o.actif for o in deux.segment_palier.options] == [True, False]\n    assert [o.valeur for o in deux.segment_palier.options] == [2, 1]\n\n\ndef test_detail_passage_palier_1_ne_lit_aucune_sortie_llm() -> None:\n    double = _Double(palier=1)\n    vue = vue_detail(double, \"ENT-B\", 2)\n    assert vue.segment_palier is None\n    assert vue.palier == 1\n    assert vue.prevision is not None\n    assert set(double.appels_palier) == {1}\n\n\n@pytest.mark.parametrize(\"palier\", [None, \"\", \"2\", \"3\", \"0\", \"abc\", \"01\", \"1.0\"])\ndef test_api_palier_illisible_vaut_palier_2(palier: str | None) -> None:\n    suffixe = \"\" if palier is None else f\"?palier={palier}\"\n    vue = client().get(f\"/api/entites/ENT-B{suffixe}\").json()\n    assert vue[\"palier\"] == 2\n    assert vue[\"prevision\"] is not None\n\n\ndef test_api_palier_1_masque_la_prevision() -> None:\n    vue = client().get(\"/api/entites/ENT-B?palier=1\").json()\n    assert vue[\"palier\"] == 1\n    assert vue[\"prevision\"] is None\n\n\ndef test_detail_entite_absente_exact() -> None:\n    vue = vue_detail(_Double(), \"ENT-X\")\n    assert vue.message == \"Entité ENT-X absente du Passage affiché.\"\n    assert vue.message == entite_absente(\"ENT-X\")\n    assert (vue.lien_message.libelle, vue.lien_message.url) == (\"Voir la carte météo\", \"/\")\n    assert [e.libelle for e in vue.entites] == [\"ENT-B\", \"ENT-C\", \"ENT-A\"]\n    assert vue.meteo is None\n\n\ndef test_detail_entite_verte_sans_regle() -> None:\n    vue = vue_detail(_Double(), \"ENT-A\")\n    assert vue.regles == []\n    assert vue.aucune_regle is not None\n    assert vue.meteo.couleur == \"vert\"\n\n\ndef test_detail_kpi_exacts() -> None:\n    vue = vue_detail(_Double(), \"ENT-B\")\n    assert vue.aucun_kpi is None\n    assert [(k.libelle, k.valeur) for k in vue.kpi] == [\n        (\"Anomalies ouvertes\", \"40\"),\n        (\"Taux de KO des cas de test (tnr)\", \"25 %\"),\n    ]\n\n\n# --- routes ---\n\n\ndef test_navigation_redirection_307_sans_suivre() -> None:\n    reponse = client().get(\"/entites\", follow_redirects=False)\n    assert reponse.status_code == 307\n    assert reponse.headers[\"location\"] == \"/entites/ENT-B\"\n\n\ndef test_navigation_erreur_de_lecture_redirige_vers_la_carte() -> None:\n    from fastapi.testclient import TestClient\n\n    from usine.ui.serveur import HOTE, creer_application\n\n    def casse(_repli: bool):\n        raise UsineErreur(\"illisible\")\n\n    app = creer_application(repli=False, lire_manifeste=lambda _: None, lire_consultation=casse)\n    reponse = TestClient(app, base_url=f\"http://{HOTE}\").get(\"/entites\", follow_redirects=False)\n    assert (reponse.status_code, reponse.headers[\"location\"]) == (307, \"/\")\n\n\ndef test_livrable_en_tetes_exacts_get_et_head() -> None:\n    c = client()\n    get = c.get(\"/livrables/rapport_xlsx\")\n    assert get.status_code == 200\n    assert get.content == XLSX\n    assert get.headers[\"content-type\"] == carte.MIME_LIVRABLES[\"rapport_xlsx\"]\n    assert get.headers[\"content-disposition\"] == 'attachment; filename=\"rapport-2026-10-09.xlsx\"'\n    head = c.head(\"/livrables/rapport_xlsx\")\n    assert head.status_code == 200\n    assert head.headers[\"content-disposition\"] == get.headers[\"content-disposition\"]\n    assert head.content == b\"\"\n\n\n@pytest.mark.parametrize(\"nom\", [\"autre\", \"rapport_XLSX\", \"rapport_xlsx.xlsx\", \"..\", \"rapport\"])\ndef test_livrable_nom_hors_liste_404(nom: str) -> None:\n    assert client().get(f\"/livrables/{nom}\").status_code == 404\n\n\ndef test_livrable_absent_page_404_nomme_le_fichier() -> None:\n    reponse = client(_Double(livrables={})).get(\"/livrables/rapport_pptx\")\n    assert reponse.status_code == 404\n    assert reponse.headers[\"content-type\"].startswith(\"text/html\")\n    assert \"rapport-2026-10-09.pptx\" in reponse.text\n    assert 'href=\"/\"' in reponse.text\n\n\ndef test_livrable_lecture_impossible_500_message_echappe() -> None:\n    class Casse(_Double):\n        def livrable(self, nom):\n            raise OSError(\"<b>&boum\")\n\n    reponse = client(Casse()).get(\"/livrables/rapport_xlsx\")\n    assert reponse.status_code == 500\n    assert \"&lt;b&gt;&amp;boum\" in reponse.text\n    assert \"<b>&boum\" not in reponse.text\n    assert \"rapport-2026-10-09.xlsx\" in reponse.text\n\n\ndef test_api_carte_lecture_impossible_osError_et_usine_erreur() -> None:\n    from fastapi.testclient import TestClient\n\n    from usine.ui.serveur import HOTE, creer_application\n\n    for exc, attendu in (\n        (OSError(\"disque\"), \"Lecture du Passage impossible : disque\"),\n        (UsineErreur(\"grille\"), \"grille\"),\n    ):\n\n        def casse(_repli: bool, exc=exc):\n            raise exc\n\n        app = creer_application(repli=False, lire_manifeste=lambda _: None, lire_consultation=casse)\n        c = TestClient(app, base_url=f\"http://{HOTE}\")\n        assert c.get(\"/api/carte\").json()[\"erreur\"] == attendu\n        assert c.get(\"/api/entites/ENT-A\").json()[\"erreur\"] == attendu\n\n\ndef test_api_carte_sans_passage_lien_chaine() -> None:\n    from fastapi.testclient import TestClient\n\n    from usine.ui.serveur import HOTE, creer_application\n\n    app = creer_application(\n        repli=False, lire_manifeste=lambda _: None, lire_consultation=lambda _: None\n    )\n    c = TestClient(app, base_url=f\"http://{HOTE}\")\n    vue = c.get(\"/api/carte\").json()\n    assert vue[\"message\"] == carte.AUCUN_PASSAGE\n    assert vue[\"lien_message\"] == {\"libelle\": \"Lancer la Chaîne\", \"url\": \"/chaine\"}\n    page = c.get(\"/livrables/rapport_xlsx\")\n    assert page.status_code == 404\n\n\ndef test_api_carte_url_ticket_en_donnee() -> None:\n    ligne = client().get(\"/api/carte\").json()[\"lignes\"][0]\n    assert ligne[\"tickets\"][0] == {\n        \"cle\": \"DEMO-1\",\n        \"url\": _url(\"DEMO-1\"),\n        \"nom_accessible\": \"DEMO-1 (nouvel onglet)\",\n    }\n    repli = client(_Double(avec_url=False)).get(\"/api/carte\").json()[\"lignes\"][0]\n    assert repli[\"tickets\"][0] == {\"cle\": \"DEMO-1\", \"url\": None, \"nom_accessible\": None}\nEOF\npython -m pytest -q --tb=short tests/unit/ui/test_renf_carte_detail.py 2>&1 | tail -40"
+    }
+   }
+  ],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 13,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "J'ai ajouté un fichier de tests de renfort : `tests/unit/ui/test_renf_carte_detail.py`. Il compte 47 tests, tous verts. Je n'ai lancé que ce fichier, pas le reste de la suite, ni ruff ni mypy. Le code source et les tests existants sont intacts.\n\nCe que couvrent les nouveaux tests :\n- **Propriétés Hypothesis :**\n  - `taille_lisible` ne rend jamais « 1024 Ko » et reste en octets sous 1024.\n  - `entites_triees` classe par gravité décroissante puis par Entité, quel que soit l'ordre d'entrée.\n  - `libelle_suite` et `vue_ticket` (nom accessible « … (nouvel onglet) » ou `None`).\n  - Pour n tickets sur la carte et sur le détail, la coupe à 3 tickets et le « +N » sont faits côté serveur.\n- **Exemples ciblés :**\n  - Bornes de `taille_lisible` (1023, 1024, 1 048 575…).\n  - `url_detail` et le nom de fichier d'un livrable.\n  - Comptages, ordre des lignes et messages vides du filtre.\n  - Vues de message et d'erreur.\n  - Livrables présents, vides ou absents.\n  - Détail : `?palier=1` masque la Prévision et ses Météo, Règles, KPI et Risque restent identiques à ceux de `?palier=2`. Un `palier` illisible donne le Palier 2.\n  - Détail : un Passage de Palier 1 n'a pas de segment et ne lit aucune sortie LLM. L'Entité absente et l'Entité verte ont leurs messages.\n- **Routes :**\n  - Redirection 307 de `/entites`, y compris vers `/` si la lecture échoue.\n  - Entêtes exacts de `/livrables/…` en GET et en HEAD.\n  - 404 pour un nom hors liste ou un livrable absent.\n  - 500 avec message HTML échappé quand la lecture échoue.\n  - Erreurs `OSError` et `UsineErreur` sur `/api/carte` et `/api/entites`.\n  - Absence de Passage avec le lien « Lancer la Chaîne ».\n\nLes nouveaux tests importent les fabriques (`_Double`, `client`, `_meteo`…) des tests existants.\n\n**Fichier créé :**\n- `tests/unit/ui/test_renf_carte_detail.py`",
+  "ttft_ms": 2671,
+  "type": "result",
+  "duration_ms": 95610,
+  "uuid": "34359183-44f7-48ea-b614-9f7701ca6df4",
+  "ttft_stream_ms": 2014,
+  "time_to_request_ms": 1110,
+  "first_content_frame_ms": 2014,
+  "queued_turn_count": 0,
+  "result_index": 0
+ }
+}

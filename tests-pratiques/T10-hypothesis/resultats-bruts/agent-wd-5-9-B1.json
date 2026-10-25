@@ -1,0 +1,120 @@
+{
+ "story": "wd-5-9",
+ "bras": "B",
+ "essai": 1,
+ "prompt": "Tu travailles dans un dépôt Python (le dossier courant). Voici la story à renforcer.\nSpec de la story : `_bmad-output/implementation-artifacts/5-9-encart-ce-qui-l-aurait-bloqué-dans-les-scénarios-b.md` (à lire d'abord).\nFichiers source modifiés par la story :\n- `src/wavedevsecops/web/blockers.py`\n- `src/wavedevsecops/scenarios/model.py`\n- `src/wavedevsecops/scenarios/loader.py`\nTests existants de la story :\n- `tests/test_blockers.py`\n\nRenforce les tests de cette story : ajoute des tests pytest qui vérifient précisément le comportement attendu (valeurs exactes, bornes, branches d'erreur). Ne modifie pas le code source. Utilise Hypothesis (tests de propriétés) là où une propriété générale existe ; garde des exemples ciblés pour le reste.\n\nÉcris les nouveaux tests dans de nouveaux fichiers `tests/test_renf_*.py` ; ne modifie ni le code source ni les tests existants. Lance les tests avec `python -m pytest -q --tb=short <fichiers>` (l'environnement est prêt, rien à installer). Tous tes tests doivent passer. Termine par la liste des fichiers créés.",
+ "rc": 0,
+ "stderr": "",
+ "duree_mur_s": 118.8,
+ "modifies_suivis": [],
+ "crees": [
+  "tests/test_renf_blockers.py"
+ ],
+ "sortie": {
+  "duration_api_ms": 71448,
+  "stop_reason": "end_turn",
+  "session_id": "375521df-c587-4d5b-b6a6-c2c4a5e344bc",
+  "total_cost_usd": 0.2699488,
+  "usage": {
+   "input_tokens": 20,
+   "cache_creation_input_tokens": 31585,
+   "cache_read_input_tokens": 235388,
+   "output_tokens": 12003,
+   "output_tokens_details": {
+    "thinking_tokens": 762
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 31585,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 1091,
+     "cache_read_input_tokens": 36967,
+     "cache_creation_input_tokens": 588,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 588
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-sonnet-5-5": {
+    "inputTokens": 20,
+    "outputTokens": 12003,
+    "cacheReadInputTokens": 235388,
+    "cacheCreationInputTokens": 31585,
+    "webSearchRequests": 0,
+    "costUSD": 0.2699488,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 762,
+    "canonicalModel": "claude-sonnet-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [
+   {
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_012pLuVFQh1WdnboenXQmJgT",
+    "tool_input": {
+     "command": "python - <<'EOF'\np='tests/test_renf_blockers.py'\ns=open(p,encoding='utf-8').read()\ns=s.replace('KEBAB = st.from_regex(r\"^[a-z0-9]+(?:-[a-z0-9]+)*$\", fullmatch=True)','KEBAB = st.from_regex(r\"^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$\", fullmatch=True)')\ns=s.replace('''    out = \"blocked_by:\\\\n\"\n''','''    if not items:\n        return \"blocked_by: []\\\\n\"\n    out = \"blocked_by:\\\\n\"\n''')\ns=s.replace('''    scenario = _parse([(\"a\", 1, \"s\"), (\"b\", 1, \"s\"), (\"a\", 1, \"s\")])\n    assert scenario.semantic_errors()''','''    base = _parse([(\"a\", 1, \"s\"), (\"b\", 1, \"s\"), (\"c\", 1, \"s\")])\n    blockers = [base.blocked_by[0], base.blocked_by[1], base.blocked_by[0]]\n    scenario = base.model_copy(update={\"blocked_by\": blockers})\n    assert scenario.semantic_errors()''')\nopen(p,'w',encoding='utf-8').write(s)\nEOF\npython -m pytest -q --tb=short tests/test_renf_blockers.py 2>&1 | tail -30"
+    }
+   }
+  ],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 18,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "J'ai créé `tests/test_renf_blockers.py` avec 46 tests, et les 46 passent. Je n'ai touché ni au code source ni aux tests existants. J'ai lancé le fichier seul : `test_blockers.py` n'a pas été relancé après mes ajouts (il passait avant, 19 tests).\n\nCe que les tests vérifient :\n- **Schéma `Blocker` :**\n  - Station : les valeurs 1 à 4 sont acceptées, 0, 5, -1 et 100 sont refusées.\n  - Identifiants : ceux qui ne sont pas en kebab-case sont refusés.\n  - `reason_text` : une phrase vide est refusée, une phrase d'une lettre est acceptée.\n  - Le modèle est figé.\n- **Lint de `blocked_by` (propriétés Hypothesis) :**\n  - Une déclaration cohérente n'est jamais refusée.\n  - Une station différente, une barrière inconnue ou un scénario inconnu sont toujours refusés, avec le message exact.\n  - Sans `barriers` ni `scenario_ids`, aucune vérification de chaîne n'est faite.\n  - Un doublon est refusé même sans ces paramètres.\n- **`semantic_errors` :** les chemins et les messages sont exacts, le doublon porte l'index du second, et une barrière inconnue ne signale pas aussi la station.\n- **`chain_barriers` :** le contenu réel et le cas sans chaîne (dictionnaire vide).\n- **`catalogue_scenario_titles` :**\n  - Le mode A l'emporte quel que soit l'ordre des fichiers.\n  - Un B seul est retenu, et un scénario hors catalogue est ignoré.\n  - Entre deux B, le premier est conservé.\n  - Les fichiers illisibles (`ScenarioError`, `OSError`, `UnicodeDecodeError`) sont ignorés et journalisés.\n- **`blockers_body` :**\n  - Forme exacte de l'item.\n  - Texte de repli : le jalon prime sur le texte de la carte, qui prime sur « Bientôt ».\n  - Une station livrée ignore son jalon.\n  - Une station absente donne « Station 1 · » et pas de lien.\n  - Le libellé de barrière retombe sur l'identifiant si la chaîne ne le décrit pas.\n  - Un avertissement est journalisé quand une station livrée n'a pas de titre de scénario, et aucun quand elle n'est pas livrée.\n  - Un titre vide donne pas de lien.\n  - L'ordre de déclaration est conservé.\n  - Un scénario sans `blocked_by` ne relit pas la chaîne.\n\nDeux contraintes sur les tests Hypothesis : les identifiants générés commencent par une lettre et excluent les mots que YAML lit comme booléens (`no`, `yes`, `null`…), sinon YAML les convertit avant le schéma. Le test du doublon à l'index 2 construit le scénario avec `model_copy`, parce que `parse_scenario` refuse déjà un doublon.\n\nFichier créé :\n- `tests/test_renf_blockers.py`",
+  "ttft_ms": 2379,
+  "type": "result",
+  "duration_ms": 117827,
+  "uuid": "8c2b397e-07a5-4f03-a1ad-baffb00847b8",
+  "ttft_stream_ms": 1653,
+  "time_to_request_ms": 622,
+  "first_content_frame_ms": 1653,
+  "queued_turn_count": 0,
+  "result_index": 0
+ }
+}

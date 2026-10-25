@@ -1,0 +1,127 @@
+{
+ "story": "us-7-15",
+ "bras": "A",
+ "essai": 1,
+ "prompt": "Tu travailles dans un dépôt Python (le dossier courant). Voici la story à renforcer.\nSpec de la story : `_bmad-output/implementation-artifacts/spec-7-15-lancement-de-la-chaine-et-bouton-de-mode.md` (à lire d'abord).\nFichiers source modifiés par la story :\n- `src/usine/ui/chaine.py`\n- `src/usine/ui/vues.py`\n- `src/usine/ui/serveur.py`\n- `src/usine/ui/app.py`\n- `src/usine/ui/textes.py`\nTests existants de la story :\n- `tests/unit/ui/test_chaine.py`\n- `tests/unit/ui/test_serveur.py`\n- `tests/unit/ui/test_vues_ecrans.py`\n- `tests/unit/ui/test_cli.py`\n\nRenforce les tests de cette story : ajoute des tests pytest qui vérifient précisément le comportement attendu (valeurs exactes, bornes, branches d'erreur). Ne modifie pas le code source.\n\nÉcris les nouveaux tests dans de nouveaux fichiers `tests/unit/ui/test_renf_*.py` ; ne modifie ni le code source ni les tests existants. Lance les tests avec `python -m pytest -q --tb=short <fichiers>` (l'environnement est prêt, rien à installer). Tous tes tests doivent passer. Termine par la liste des fichiers créés.",
+ "rc": 0,
+ "stderr": "",
+ "duree_mur_s": 100.7,
+ "modifies_suivis": [],
+ "crees": [
+  "tests/unit/ui/test_renf_chaine.py"
+ ],
+ "sortie": {
+  "duration_api_ms": 89199,
+  "stop_reason": "end_turn",
+  "session_id": "570e103c-7b57-453c-8c8d-bf3774516b58",
+  "total_cost_usd": 0.3297118,
+  "usage": {
+   "input_tokens": 20,
+   "cache_creation_input_tokens": 36234,
+   "cache_read_input_tokens": 280458,
+   "output_tokens": 15669,
+   "output_tokens_details": {
+    "thinking_tokens": 594
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 36234,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 912,
+     "cache_read_input_tokens": 42022,
+     "cache_creation_input_tokens": 182,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 182
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-sonnet-5-5": {
+    "inputTokens": 20,
+    "outputTokens": 15669,
+    "cacheReadInputTokens": 280458,
+    "cacheCreationInputTokens": 36234,
+    "webSearchRequests": 0,
+    "costUSD": 0.3297118,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 594,
+    "canonicalModel": "claude-sonnet-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [
+   {
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_01BEPCNS9VNJ74QUCXhubDYp",
+    "tool_input": {
+     "command": "cat > tests/unit/ui/test_renf_chaine.py <<'EOF'\n\"\"\"Renfort de la Story 7.15 : valeurs exactes, bornes et branches d'erreur.\"\"\"\n\nfrom pathlib import Path\nfrom typing import Any, cast\n\nimport pytest\n\nfrom tests.unit.ui.test_avant_apres import manifeste\nfrom tests.unit.ui.test_chaine import Banc, _evenement, ecrire_progression\nfrom usine.contrats.passage import Etape, StatutEtape\nfrom usine.ui import app, textes\nfrom usine.ui.chaine import (\n    AUCUN_PASSAGE_LANCE,\n    AUCUN_PASSAGE_REPLI,\n    DESCRIPTIONS,\n    JOURNAL_ATTENTE,\n    JOURNAL_VIDE,\n    MESSAGE_SUCCES,\n    MOTIF_LANCEMENT_EN_COURS,\n    MOTIF_MODE_EN_COURS,\n    MOTIF_RACINE,\n    GestionChaine,\n    LancementRefuse,\n    vue_dernier_passage,\n)\nfrom usine.ui.progression import AUCUN_RAPPORT\n\n\ndef test_constantes_et_reexport_app() -> None:\n    assert textes.INTERVALLE_SONDAGE == 1.0\n    assert textes.LIGNES_ERREUR_MAX == 20\n    assert app.INTERVALLE_SONDAGE == textes.INTERVALLE_SONDAGE\n    assert app.LIGNES_ERREUR_MAX == textes.LIGNES_ERREUR_MAX\n    assert app.LANCEMENT_REPLI == textes.LANCEMENT_REPLI\n\n\ndef test_descriptions_couvrent_les_dix_etapes() -> None:\n    assert set(DESCRIPTIONS) == set(Etape)\n    assert len(DESCRIPTIONS) == 10\n    assert all(DESCRIPTIONS.values())\n\n\ndef test_vue_dernier_passage_valeurs_exactes() -> None:\n    base = manifeste(secondes=3.4)\n    vue = vue_dernier_passage(base.model_copy(update={\"nb_tickets\": 1234567}))\n    assert vue.lignes == [\n        \"Date d'arrêté 09/10/2026 · durée 3,4 s\",\n        \"1 234 567 tickets extraits\",\n        \"Passage 20261012T073000Z-aaaaaa\",\n    ]\n    assert vue_dernier_passage(base).lignes[1] == \"0 tickets extraits\"\n\n\ndef test_message_dernier_passage_selon_le_mode(racine_tmp: Path) -> None:\n    assert Banc(racine_tmp).etat()[\"message_dernier_passage\"] == AUCUN_PASSAGE_LANCE\n    assert Banc(racine_tmp, repli=True).etat()[\"message_dernier_passage\"] == AUCUN_PASSAGE_REPLI\n\n\n@pytest.fixture\ndef racine_tmp(tmp_path: Path) -> Path:\n    return tmp_path\n\n\ndef test_etat_initial_journal_attente(racine_tmp: Path) -> None:\n    vue = Banc(racine_tmp).etat()\n    assert vue[\"journal_vide\"] == JOURNAL_ATTENTE\n    assert vue[\"total\"] == 10\n\n\ndef test_lancement_refuse_en_repli_sans_marques(racine_tmp: Path) -> None:\n    banc = Banc(racine_tmp, repli=True)\n    reponse = banc.lancer()\n    assert reponse.status_code == 409\n    assert reponse.json()[\"detail\"] == textes.LANCEMENT_REPLI.replace(\"`\", \"\")\n    assert banc.lanceur.appels == []\n    vue = banc.etat()\n    assert vue[\"bouton_lancement\"][\"bloque\"] is True\n    assert vue[\"bouton_lancement\"][\"motif\"] == textes.LANCEMENT_REPLI.replace(\"`\", \"\")\n    assert vue[\"bouton_mode\"] == {\n        \"libelle\": \"Revenir au Mode réel\",\n        \"bloque\": False,\n        \"motif\": None,\n    }\n    assert vue[\"mode_cible\"] == \"reel\"\n\n\ndef test_lancement_refuse_racine_absente_ou_inexistante(tmp_path: Path) -> None:\n    for racine in (None, tmp_path / \"absente\"):\n        banc = Banc(racine)\n        reponse = banc.lancer()\n        assert reponse.status_code == 409\n        assert reponse.json()[\"detail\"] == MOTIF_RACINE\n        assert banc.lanceur.appels == []\n        assert banc.etat()[\"bouton_lancement\"][\"motif\"] == MOTIF_RACINE\n\n\ndef test_gestion_leve_lancement_refuse(racine_tmp: Path) -> None:\n    gestion = GestionChaine(None)\n    with pytest.raises(LancementRefuse, match=\"racine\"):\n        gestion.lancer(False)\n    assert gestion.en_cours() is False\n\n\ndef test_deuxieme_lancement_409_sans_second_processus(racine_tmp: Path) -> None:\n    banc = Banc(racine_tmp)\n    assert banc.lancer().status_code == 202\n    reponse = banc.lancer()\n    assert reponse.status_code == 409\n    assert reponse.json()[\"detail\"] == MOTIF_LANCEMENT_EN_COURS\n    assert len(banc.lanceur.appels) == 1\n\n\ndef test_bascule_refusee_pendant_la_chaine_puis_permise(racine_tmp: Path) -> None:\n    banc = Banc(racine_tmp)\n    banc.lancer()\n    reponse = banc.mode(\"repli\")\n    assert reponse.status_code == 409\n    assert reponse.json()[\"detail\"] == MOTIF_MODE_EN_COURS\n    banc.lanceur.finir(0)\n    assert banc.mode(\"repli\").status_code == 200\n    assert banc.etat()[\"mode_cible\"] == \"reel\"\n    assert banc.mode(\"reel\").status_code == 200\n    assert banc.etat()[\"mode_cible\"] == \"repli\"\n\n\n@pytest.mark.parametrize(\"corps\", [{\"mode\": \"autre\"}, {}, {\"mode\": \"repli\", \"x\": 1}, {\"mode\": 1}])\ndef test_mode_corps_invalide_422(racine_tmp: Path, corps: dict[str, Any]) -> None:\n    banc = Banc(racine_tmp)\n    assert banc.http.post(\"/api/mode\", json=corps).status_code == 422\n    assert banc.etat()[\"mode_cible\"] == \"repli\"\n\n\ndef test_mode_bascule_lit_le_manifeste_du_nouveau_mode(racine_tmp: Path) -> None:\n    banc = Banc(racine_tmp)\n    banc.mode(\"repli\")\n    assert banc.lectures[-1] is True\n    banc.mode(\"reel\")\n    assert banc.lectures[-1] is False\n\n\n@pytest.mark.parametrize(\n    (\"origine\", \"statut\"),\n    [\n        (\"http://evil.test\", 403),\n        (\"null\", 403),\n        (\"http://127.0.0.1:9999\", 403),\n        (\"http://localhost\", 403),  # autre netloc que le Host 127.0.0.1\n        (\"http://127.0.0.1\", 200),\n    ],\n)\ndef test_origine_sur_post_mode(racine_tmp: Path, origine: str, statut: int) -> None:\n    banc = Banc(racine_tmp)\n    reponse = banc.http.post(\"/api/mode\", json={\"mode\": \"repli\"}, headers={\"Origin\": origine})\n    assert reponse.status_code == statut\n\n\ndef test_origine_etrangere_ne_lance_rien(racine_tmp: Path) -> None:\n    banc = Banc(racine_tmp)\n    reponse = banc.http.post(\"/api/chaine\", headers={\"Origin\": \"http://evil.test\"})\n    assert reponse.status_code == 403\n    assert banc.lanceur.appels == []\n\n\ndef test_host_forge_400(racine_tmp: Path) -> None:\n    banc = Banc(racine_tmp)\n    assert banc.http.get(\"/api/chaine\", headers={\"Host\": \"evil.test\"}).status_code == 400\n    assert banc.http.post(\"/api/chaine\", headers={\"Host\": \"evil.test\"}).status_code == 400\n    assert banc.http.get(\"/api/chaine\", headers={\"Host\": \"localhost\"}).status_code == 200\n\n\ndef test_demarrage_oserror_vue_attente_avec_erreur(racine_tmp: Path) -> None:\n    banc = Banc(racine_tmp)\n\n    def echoue(*_a: Any, **_k: Any) -> None:\n        raise OSError(\"boum\")\n\n    gestion = GestionChaine(racine_tmp, popen=cast(Any, echoue))\n    gestion.lancer(False)\n    vue = gestion.vue(False, None)\n    assert vue.statut == \"attente\"\n    assert vue.erreur == \"Lancement de la Chaîne impossible : boum\"\n    assert vue.bouton_lancement.bloque is False\n    assert vue.bouton_lancement.libelle == \"Lancer la Chaîne\"\n    assert gestion.en_cours() is False\n    del banc\n\n\ndef test_suivi_etapes_annonce_journal_et_compteur(racine_tmp: Path) -> None:\n    banc = Banc(racine_tmp, passage=manifeste())\n    banc.lancer()\n    ecrire_progression(\n        racine_tmp,\n        _evenement(Etape.extraction, StatutEtape.en_cours, 0),\n        _evenement(Etape.extraction, StatutEtape.reussie, 1.5),\n        _evenement(Etape.instantanes, StatutEtape.sautee, 2),\n        _evenement(Etape.kpi, StatutEtape.en_cours, 3),\n        partielle='{\"passage_id\": \"tronque',\n    )\n    vue = banc.etat()\n    assert vue[\"statut\"] == \"en_cours\"\n    assert vue[\"terminees\"] == 2\n    assert vue[\"compteur\"] == \"2 / 10\"\n    assert vue[\"annonce\"] == \"Étape 3 sur 10 : kpi\"\n    etats = [etape[\"etat\"] for etape in vue[\"etapes\"]]\n    assert etats[:4] == [\"reussie\", \"sautee\", \"en_cours\", \"en_attente\"]\n    assert vue[\"etapes\"][0][\"numero\"] == 1\n    assert vue[\"etapes\"][0][\"duree\"] == \"1,5 s\"\n    assert vue[\"etapes\"][0][\"libelle_etat\"] == \"Réussie\"\n    assert vue[\"etapes\"][2][\"libelle_etat\"] == \"En cours\"\n    assert vue[\"etapes\"][3][\"duree\"] is None\n    assert vue[\"etapes\"][0][\"description\"] == DESCRIPTIONS[Etape.extraction]\n    # journal : la ligne la plus récente en premier, ligne partielle ignorée\n    assert [ligne[\"texte\"] for ligne in vue[\"journal\"]] == [\n        \"kpi : En cours\",\n        \"instantanes : Sautée\",\n        \"extraction : Réussie\",\n        \"extraction : En cours\",\n    ]\n    assert vue[\"journal\"][0][\"horodatage\"] == \"07:30:03\"\n    assert vue[\"journal\"][-1][\"horodatage\"] == \"07:30:00\"\n    assert vue[\"bandeau\"] is None\n    assert vue[\"erreur\"] is None\n\n\ndef test_en_cours_sans_evenement_annonce_et_journal_vide(racine_tmp: Path) -> None:\n    banc = Banc(racine_tmp)\n    banc.lancer()\n    vue = banc.etat()\n    assert vue[\"annonce\"] == \"Chaîne en cours…\"\n    assert vue[\"journal_vide\"] == JOURNAL_VIDE\n    assert vue[\"journal\"] == []\n\n\ndef test_annonce_vide_entre_deux_etapes(racine_tmp: Path) -> None:\n    banc = Banc(racine_tmp)\n    banc.lancer()\n    ecrire_progression(\n        racine_tmp,\n        _evenement(Etape.extraction, StatutEtape.en_cours, 0),\n        _evenement(Etape.extraction, StatutEtape.reussie, 1),\n    )\n    assert banc.etat()[\"annonce\"] == \"\"\n\n\ndef test_message_de_progression_dans_le_journal(racine_tmp: Path) -> None:\n    from usine.contrats.passage import EvenementProgression\n\n    from tests.unit.ui.test_chaine import INSTANT, PASSAGE\n\n    banc = Banc(racine_tmp)\n    banc.lancer()\n    ligne = EvenementProgression(\n        passage_id=PASSAGE,\n        etape=Etape.kpi,\n        statut=StatutEtape.echouee,\n        horodatage=INSTANT,\n        message=\"détail\",\n    ).model_dump_json()\n    ecrire_progression(racine_tmp, ligne)\n    assert banc.etat()[\"journal\"][0][\"texte\"] == \"kpi : Échec · détail\"\n\n\ndef test_fin_reussie(racine_tmp: Path) -> None:\n    banc = Banc(racine_tmp)\n    banc.lancer()\n    banc.lanceur.finir(0)\n    vue = banc.etat()\n    assert vue[\"statut\"] == \"terminee\"\n    assert vue[\"en_cours\"] is False\n    assert vue[\"annonce\"] == MESSAGE_SUCCES\n    assert vue[\"bandeau\"] == {\n        \"variante\": \"succes\",\n        \"texte\": MESSAGE_SUCCES,\n        \"lignes\": [],\n        \"complement\": None,\n        \"lien\": {\"libelle\": \"Voir la carte météo\", \"url\": \"/\"},\n    }\n    assert vue[\"bouton_lancement\"] == {\n        \"libelle\": \"Relancer la Chaîne\",\n        \"bloque\": False,\n        \"motif\": None,\n    }\n    assert vue[\"bouton_mode\"][\"bloque\"] is False\n    assert vue[\"bouton_mode\"][\"motif\"] is None\n\n\ndef test_echec_hors_etape_sans_sortie_erreur(racine_tmp: Path) -> None:\n    banc = Banc(racine_tmp)\n    banc.lancer()\n    banc.lanceur.finir(3)\n    vue = banc.etat()\n    assert vue[\"statut\"] == \"echec\"\n    assert vue[\"annonce\"] == \"Échec de la Chaîne hors d'une étape.\"\n    bandeau = vue[\"bandeau\"]\n    assert bandeau[\"variante\"] == \"erreur\"\n    assert bandeau[\"texte\"] == \"Échec de la Chaîne hors d'une étape (code 3).\"\n    assert bandeau[\"lignes\"] == [\"aucun message\"]\n    assert bandeau[\"complement\"] == AUCUN_RAPPORT\n    assert bandeau[\"lien\"] is None\n    assert vue[\"bouton_lancement\"][\"libelle\"] == \"Relancer la Chaîne\"\n\n\n@pytest.mark.parametrize((\"total\", \"attendu\"), [(19, 19), (20, 20), (21, 20), (45, 20)])\ndef test_echec_borne_des_lignes_d_erreur(racine_tmp: Path, total: int, attendu: int) -> None:\n    banc = Banc(racine_tmp)\n    banc.lanceur.sortie_erreur = \"\".join(f\"ligne {i}\\n\" for i in range(1, total + 1)).encode()\n    banc.lancer()\n    banc.lanceur.finir(1)\n    lignes = banc.etat()[\"bandeau\"][\"lignes\"]\n    assert len(lignes) == attendu\n    assert lignes[-1] == f\"ligne {total}\"\n    assert lignes[0] == f\"ligne {total - attendu + 1}\"\n\n\ndef test_echec_nomme_l_etape_et_garde_le_passage(racine_tmp: Path) -> None:\n    banc = Banc(racine_tmp, passage=manifeste())\n    avant = banc.etat()[\"dernier_passage\"]\n    banc.lancer()\n    ecrire_progression(\n        racine_tmp,\n        _evenement(Etape.extraction, StatutEtape.reussie, 1),\n        _evenement(Etape.kpi, StatutEtape.echouee, 2),\n    )\n    banc.lanceur.finir(2)\n    vue = banc.etat()\n    assert vue[\"bandeau\"][\"texte\"] == \"Échec de la Chaîne à l'étape « kpi » (code 2).\"\n    assert vue[\"annonce\"] == \"Échec de la Chaîne à l'étape « kpi ».\"\n    assert vue[\"etapes\"][1][\"etat\"] == \"echouee\"\n    assert vue[\"etapes\"][1][\"libelle_etat\"] == \"Échec\"\n    assert vue[\"terminees\"] == 2  # l'échec compte comme terminée\n    assert vue[\"dernier_passage\"] == avant\n\n\ndef test_relance_apres_fin_repart_a_zero(racine_tmp: Path) -> None:\n    banc = Banc(racine_tmp)\n    banc.lanceur.sortie_erreur = b\"boum\\n\"\n    banc.lancer()\n    banc.lanceur.finir(1)\n    assert banc.etat()[\"bandeau\"][\"lignes\"] == [\"boum\"]\n    assert banc.lancer().status_code == 202\n    assert len(banc.lanceur.appels) == 2\n    vue = banc.etat()\n    assert vue[\"statut\"] == \"en_cours\"\n    assert vue[\"bandeau\"] is None\n    assert vue[\"erreur\"] is None\n\n\ndef test_progression_invalide_signalee_sondage_maintenu(racine_tmp: Path) -> None:\n    banc = Banc(racine_tmp)\n    banc.lancer()\n    ecrire_progression(racine_tmp, \"pas du json\")\n    reponse = banc.http.get(\"/api/chaine\")\n    assert reponse.status_code == 200\n    vue = reponse.json()\n    assert vue[\"erreur\"]\n    assert vue[\"etapes\"] and vue[\"terminees\"] == 0\n    assert vue[\"statut\"] == \"en_cours\"\nEOF\npython -m pytest -q --tb=short tests/unit/ui/test_renf_chaine.py 2>&1 | tail -40"
+    }
+   },
+   {
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_014u4XWMrpQYrErhx9XaUhJH",
+    "tool_input": {
+     "command": "python - <<'EOF'\np='tests/unit/ui/test_renf_chaine.py'\ns=open(p,encoding='utf-8').read()\ns=s.replace('\"1 234 567 tickets extraits\"','\"1\\\\u00a0234\\\\u00a0567 tickets extraits\"')\ns=s.replace('vue[\"etapes\"][1][\"etat\"] == \"echouee\"','vue[\"etapes\"][2][\"etat\"] == \"echouee\"').replace('vue[\"etapes\"][1][\"libelle_etat\"] == \"Échec\"','vue[\"etapes\"][2][\"libelle_etat\"] == \"Échec\"')\nopen(p,'w',encoding='utf-8').write(s)\nEOF\npython -m pytest -q --tb=short tests/unit/ui/test_renf_chaine.py 2>&1 | tail -15"
+    }
+   }
+  ],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 14,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "J'ai ajouté un seul fichier de tests, `tests/unit/ui/test_renf_chaine.py`. Ses 36 tests passent. Je n'ai lancé que ce fichier, pas la suite complète. Je n'ai modifié ni le code source ni les tests existants.\n\nLes tests réutilisent les doublures de `test_chaine.py` (`Banc`, `Lanceur`, etc.). Aucun ne lance de vraie Chaîne ni ne joint Jira. Ils vérifient :\n\n- **Constantes et textes :** `INTERVALLE_SONDAGE` et `LIGNES_ERREUR_MAX` sont réimportées par `app.py`, et les 10 étapes ont une description. L'encart « Dernier Passage » donne des lignes exactes (espaces insécables, durée `3,4 s`, `0 tickets extraits`).\n- **Lancement refusé :** 409 en Mode repli (motif sans marques Markdown), racine absente ou inexistante, ou deuxième lancement (un seul processus démarré). Un démarrage en `OSError` laisse la vue en `attente` avec son message d'erreur.\n- **Bascule de mode :**\n  - Elle est refusée (409) pendant une Chaîne, puis permise après.\n  - Un corps invalide donne 422.\n  - Le manifeste lu est celui du nouveau mode.\n- **Origine et `Host` :** `Origin` étranger, `null`, autre port ou autre netloc donnent 403, et le lancement n'a pas lieu. Un `Host` forgé donne 400, `localhost` est accepté.\n- **Suivi :**\n  - Les états des étapes, durées, compteur `2 / 10` et annonce `Étape 3 sur 10 : kpi` sont exacts.\n  - Le journal met le plus récent en haut, avec l'horodatage UTC et le message de l'événement, et ignore la ligne finale partielle.\n  - L'annonce est vide entre deux étapes.\n  - Une progression invalide est signalée dans `erreur` sans interrompre le sondage.\n- **Fin et échec :**\n  - Le bandeau de succès a son lien et le libellé « Relancer la Chaîne ».\n  - L'échec nomme l'étape ou « hors d'une étape », avec le code et « aucun message » sans sortie d'erreur.\n  - Les lignes d'erreur sont bornées à 20 (essais à 19, 20, 21 et 45 lignes).\n  - Le Passage affiché ne change pas, et une relance repart d'un état propre.\n\nFichier créé :\n- `tests/unit/ui/test_renf_chaine.py`",
+  "ttft_ms": 1884,
+  "type": "result",
+  "duration_ms": 99567,
+  "uuid": "459de389-072e-4cf7-bce9-34eab143a61a",
+  "ttft_stream_ms": 1288,
+  "time_to_request_ms": 423,
+  "first_content_frame_ms": 1288,
+  "queued_turn_count": 0,
+  "result_index": 0
+ }
+}

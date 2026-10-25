@@ -1,0 +1,120 @@
+{
+ "story": "wd-8-4",
+ "bras": "B",
+ "essai": 1,
+ "prompt": "Tu travailles dans un dépôt Python (le dossier courant). Voici la story à renforcer.\nSpec de la story : `_bmad-output/implementation-artifacts/8-4-bloquer-une-pr-quand-la-couverture-du-nouveau-code-passe-sou.md` (à lire d'abord).\nFichiers source modifiés par la story :\n- `src/wavedevsecops/ci/findings.py`\n- `src/wavedevsecops/scenarios/ops/replace_in_file.py`\n- `src/wavedevsecops/toolrun/__init__.py`\n- `src/wavedevsecops/ci/__init__.py`\nTests existants de la story :\n- `tests/test_quality_gate.py`\n\nRenforce les tests de cette story : ajoute des tests pytest qui vérifient précisément le comportement attendu (valeurs exactes, bornes, branches d'erreur). Ne modifie pas le code source. Utilise Hypothesis (tests de propriétés) là où une propriété générale existe ; garde des exemples ciblés pour le reste.\n\nÉcris les nouveaux tests dans de nouveaux fichiers `tests/test_renf_*.py` ; ne modifie ni le code source ni les tests existants. Lance les tests avec `python -m pytest -q --tb=short <fichiers>` (l'environnement est prêt, rien à installer). Tous tes tests doivent passer. Termine par la liste des fichiers créés.",
+ "rc": 0,
+ "stderr": "",
+ "duree_mur_s": 87.2,
+ "modifies_suivis": [],
+ "crees": [
+  "tests/test_renf_quality_gate.py"
+ ],
+ "sortie": {
+  "duration_api_ms": 78535,
+  "stop_reason": "end_turn",
+  "session_id": "fdb66e65-5fa4-4475-a791-804e8a2548ee",
+  "total_cost_usd": 0.3595758,
+  "usage": {
+   "input_tokens": 20,
+   "cache_creation_input_tokens": 49642,
+   "cache_read_input_tokens": 380278,
+   "output_tokens": 12294,
+   "output_tokens_details": {
+    "thinking_tokens": 762
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 49642,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 987,
+     "cache_read_input_tokens": 55441,
+     "cache_creation_input_tokens": 171,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 171
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-sonnet-5-5": {
+    "inputTokens": 20,
+    "outputTokens": 12294,
+    "cacheReadInputTokens": 380278,
+    "cacheCreationInputTokens": 49642,
+    "webSearchRequests": 0,
+    "costUSD": 0.3595758,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 762,
+    "canonicalModel": "claude-sonnet-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [
+   {
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_01VhxtCUbhrHYCo791Pwh4hP",
+    "tool_input": {
+     "command": "cd T:/s/wd84-B1 && sed -i 's/return SimpleNamespace(ok=path is not None, path=path)/return SimpleNamespace(\\n            ok=path is not None, path=path, reason=\"absent\", state=\"missing\"\\n        )/; s/    tree.mkdir()$/    tree.mkdir(parents=True)/' tests/test_renf_quality_gate.py && python -m pytest -q --tb=short tests/test_renf_quality_gate.py -p no:cacheprovider 2>&1 | tail -15"
+    }
+   }
+  ],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 15,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "J'ai ajouté `tests/test_renf_quality_gate.py` : 59 tests, tous verts. Je n'ai pas lancé les tests lents qui font tourner les vrais outils, ni la suite existante. Le code source et les tests existants sont intacts.\n\nCe que les tests couvrent :\n- **Lecteur diff-cover :**\n  - Le seuil de 80 % se joue sur la valeur tronquée : 79,99 reste ✗ et 80 passe ✓. C'est une propriété Hypothesis sur des entiers et des flottants, avec des bornes ciblées.\n  - Un diff vide donne `diff_coverage_none`, toujours en info.\n  - Un pourcentage non numérique avec des lignes mesurées lève `ValueError`, comme les formes inattendues.\n  - Pour les constats par fichier, j'ai vérifié le singulier et le pluriel, la ligne minimale, la ligne 0 qui donne `None`, la gravité selon le seuil, les entrées ignorées et les chemins absolus rendus relatifs.\n- **Regroupement des lignes (`_ranges`)** : une propriété Hypothesis contre une implémentation de référence, plus quelques exemples.\n- **Texte de couverture (`diff_coverage_text`)** : propriété sur le format.\n- **Lecteur `coverage json`** : valeur tronquée (propriété), pourcentage en chaîne, et dix entrées illisibles refusées.\n- **Op `replace_in_file`** :\n  - Une propriété Hypothesis montre que le remplacement d'une occurrence unique est exact.\n  - Le fichier n'est pas réécrit quand le texte figure 0 fois ou plusieurs fois.\n  - Les fins de ligne CRLF sont normalisées en LF.\n  - Un fichier absent ou binaire, un `old` vide et plusieurs chemins interdits sont refusés.\n- **`toolrun.with_tools_on_path` et `spawn_tool`** :\n  - Les dossiers des outils passent en tête du `PATH`, et l'environnement d'origine n'est pas modifié.\n  - La casse de la clé `PATH` est respectée.\n  - Seul diff-cover reçoit le git du registre dans son `PATH`.\n  - Un outil indisponible lève `ToolUnavailable`.\n- **Job `quality_gate` avec des outils simulés** :\n  - Un pytest en échec arrête le job avant diff-cover (`before_failed`).\n  - Un délai dépassé donne une erreur de l'outil.\n  - La sortie de pytest précède celle de diff-cover.\n  - Les constats sont lus même au vert.\n  - Un code de sortie inattendu donne `error`.\n  - Un rapport illisible laisse un constat `no_detail`.\n\nFichier créé :\n- `tests/test_renf_quality_gate.py`",
+  "ttft_ms": 1742,
+  "type": "result",
+  "duration_ms": 85984,
+  "uuid": "d4fd9e8e-5999-4a47-834a-e7284e665fa2",
+  "ttft_stream_ms": 1079,
+  "time_to_request_ms": 124,
+  "first_content_frame_ms": 1079,
+  "queued_turn_count": 0,
+  "result_index": 0
+ }
+}

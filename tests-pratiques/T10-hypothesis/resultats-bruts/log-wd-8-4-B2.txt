@@ -1,0 +1,1 @@
+wd-8-4-B2 rc 0 cout 0.412736 tours 11 api_ms 96845 mur_s 98.0 modifies [] crees ['tests/test_renf_quality_gate.py']

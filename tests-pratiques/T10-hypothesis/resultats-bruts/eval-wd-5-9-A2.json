@@ -1,0 +1,116 @@
+{
+ "story": "wd-5-9",
+ "bras": "A",
+ "essai": 2,
+ "nouveaux_fichiers": [
+  "tests/test_renf_blockers.py"
+ ],
+ "modifies_suivis": [],
+ "cibles_total": 10,
+ "utilise_hypothesis": false,
+ "nb_given": 0,
+ "lignes_tests": 305,
+ "nb_tests_nouveaux": 35,
+ "union": {
+  "rc": 0,
+  "fin": "54 passed in 3.00s",
+  "secondes": 3.73
+ },
+ "passages": [
+  {
+   "rc": 0,
+   "secondes": 2.35,
+   "echecs": [],
+   "fichiers_en_erreur": [],
+   "fin": "35 passed in 1.61s"
+  },
+  {
+   "rc": 0,
+   "secondes": 2.34,
+   "echecs": [],
+   "fichiers_en_erreur": [],
+   "fin": "35 passed in 1.62s"
+  }
+ ],
+ "tests_faux": [],
+ "tests_instables": [],
+ "fichiers_en_erreur": [],
+ "secondes_nouveaux_tests": 2.34,
+ "rejeu_possible": true,
+ "rejeu": [
+  {
+   "id": "wd-5-9:blockers.py:41",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 2.29,
+   "tue_au_second_tirage": false
+  },
+  {
+   "id": "wd-5-9:blockers.py:43",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 1.56,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "wd-5-9:blockers.py:44",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 1.55,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "wd-5-9:blockers.py:53",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 2.31,
+   "tue_au_second_tirage": false
+  },
+  {
+   "id": "wd-5-9:blockers.py:65",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 2.25,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "wd-5-9:blockers.py:76",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 1.79,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "wd-5-9:model.py:55",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 1.44,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "wd-5-9:model.py:59",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 1.45,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "wd-5-9:model.py:63",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 1.42,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "wd-5-9:model.py:132",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 2.28,
+   "tue_au_second_tirage": false
+  }
+ ],
+ "tues": 7,
+ "tues_avec_second_tirage": 7,
+ "erreurs_rejeu": 0,
+ "modifies_suivis_apres": []
+}

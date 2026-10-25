@@ -1,0 +1,120 @@
+{
+ "story": "us-7-16",
+ "bras": "A",
+ "essai": 2,
+ "prompt": "Tu travailles dans un dépôt Python (le dossier courant). Voici la story à renforcer.\nSpec de la story : `_bmad-output/implementation-artifacts/spec-7-16-agent-avant-apres-pseudonymisation-et-outillage.md` (à lire d'abord).\nFichiers source modifiés par la story :\n- `src/usine/ui/ecrans.py`\n- `src/usine/ui/outillage.py`\n- `src/usine/ui/pseudonymisation.py`\n- `src/usine/ui/vues.py`\n- `src/usine/ui/serveur.py`\n- `src/usine/ui/cli.py`\nTests existants de la story :\n- `tests/unit/ui/test_ecrans_web.py`\n- `tests/unit/ui/test_vues_ecrans.py`\n- `tests/unit/ui/test_serveur.py`\n- `tests/unit/ui/test_chaine.py`\n\nRenforce les tests de cette story : ajoute des tests pytest qui vérifient précisément le comportement attendu (valeurs exactes, bornes, branches d'erreur). Ne modifie pas le code source.\n\nÉcris les nouveaux tests dans de nouveaux fichiers `tests/unit/ui/test_renf_*.py` ; ne modifie ni le code source ni les tests existants. Lance les tests avec `python -m pytest -q --tb=short <fichiers>` (l'environnement est prêt, rien à installer). Tous tes tests doivent passer. Termine par la liste des fichiers créés.",
+ "rc": 0,
+ "stderr": "",
+ "duree_mur_s": 109.9,
+ "modifies_suivis": [],
+ "crees": [
+  "tests/unit/ui/test_renf_ecrans.py"
+ ],
+ "sortie": {
+  "duration_api_ms": 100304,
+  "stop_reason": "end_turn",
+  "session_id": "d31da4ed-8d2b-480a-ac6d-f294f26046f7",
+  "total_cost_usd": 0.42295559999999993,
+  "usage": {
+   "input_tokens": 20,
+   "cache_creation_input_tokens": 53787,
+   "cache_read_input_tokens": 361876,
+   "output_tokens": 17158,
+   "output_tokens_details": {
+    "thinking_tokens": 561
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 53787,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 1262,
+     "cache_read_input_tokens": 60867,
+     "cache_creation_input_tokens": 183,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 183
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-sonnet-5-5": {
+    "inputTokens": 20,
+    "outputTokens": 17158,
+    "cacheReadInputTokens": 361876,
+    "cacheCreationInputTokens": 53787,
+    "webSearchRequests": 0,
+    "costUSD": 0.42295559999999993,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 561,
+    "canonicalModel": "claude-sonnet-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [
+   {
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_01AAUFgYxDnsSR1pbrTz2vWx",
+    "tool_input": {
+     "command": "cd /t/s/u16-A2/tests/unit/ui && python - <<'E'\nimport re\np='test_renf_ecrans.py'\ns=open(p,encoding='utf-8').read()\ns=s.replace('passage_id: str = \"p\") -> None:\\n        self._textes','passage_id: str = PA) -> None:\\n        self._textes')\ns=s.replace('DEBUT = datetime(2026','PA = \"20261012T073000Z-aaaaaa\"\\nPB = \"20261012T073000Z-bbbbbb\"\\nDEBUT = datetime(2026',1)\ns=s.replace('_Consultation(passage_id=\"a\"), _Consultation(passage_id=\"b\")','_Consultation(passage_id=PA), _Consultation(passage_id=PB)')\ns=s.replace('\"17,0 s\"','\"17 s\"').replace('\"10,0 s\"','\"10 s\"').replace('\"2,0 s\"','\"2 s\"').replace('\"0,0 s\"','\"0 s\"')\ns=s.replace('\"ValueError : première\"','\"ValueError : première \"')\nopen(p,'w',encoding='utf-8').write(s)\nE\ngrep -n '\"0,2 s\"' test_renf_ecrans.py; cd /t/s/u16-A2 && python -m pytest -q --tb=short tests/unit/ui/test_renf_ecrans.py 2>&1 | tail -30"
+    }
+   }
+  ],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 22,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "J'ai créé un fichier de tests, `tests/unit/ui/test_renf_ecrans.py`, avec 62 tests. Ils passent tous (`python -m pytest -q --tb=short`, 0,31 s). Je n'ai modifié ni le code source ni les tests existants.\n\nLes tests appellent directement les fonctions de `ecrans.py`, de `outillage.py` et de `pseudonymisation.py`, avec des doublures. Ils ne touchent ni LLM ni Presidio.\n\n- **Réponse de l'Agent** : les cas conforme, corrigé, non contrôlé et rejeté, avec le texte masqué quand la réponse est rejetée. Le refus est reconnu même avec des espaces autour. Un texte proche du refus ne l'est pas. Un rejet qui reprend le texte de refus reste « rejeté ». La mention de Mode repli est vérifiée.\n- **Écran Agent** : les cas erreur (Mode réel avec lien vers le repli, Mode repli sans lien), aucun Passage, saisie et suggestions en Mode réel, questions enregistrées dans l'ordre en Mode repli. Le refus d'un Passage étranger nomme la cause. Le Mode repli sans Passage ne lit pas les réponses enregistrées.\n- **`GardeSession`** : la session est gardée tant que le Passage ne change pas. Elle est fermée à chaque changement de Passage. Un échec de fabrique donne `SessionIndisponible` avec sa cause, et le nouvel essai réussit. Une exception qui n'est pas une `UsineErreur` n'est pas masquée.\n- **Avant / après** : valeurs exactes (120 min / 600 min, 3,4 s / 17 s) et colonnes du tableau. Les milliers sont séparés, le zéro minute et les durées sous la seconde sont couverts. Les cas config absente, classification initiale seule, les deux ensemble, et aucun Passage (la période est conservée) sont vérifiés. L'avertissement de config est volontairement ignoré quand il n'y a aucun Passage.\n- **Pseudonymisation** : tickets triés, ticket par défaut, descriptions vides ou nulles ignorées, ticket inconnu (le moteur n'est alors pas chargé). Les erreurs `UsineErreur` et les échecs du moteur sont vérifiés avec la première ligne de la cause. L'original reste en texte brut. `moteur_indisponible` est testée sur des messages vides, multilignes ou avec une clé.\n- **Outillage** : pastilles exactes (Oui, À surveiller, Non), titre `#` retiré, une carte par section, tableau défilant, HTML brut échappé, fiche vide. `lire_fiche` est testée sur fichier absent, BOM, octets non UTF-8 et répertoire à la place du fichier.\n\nLes valeurs de durée sont celles que le code produit : le formateur retire le zéro final (« 17 s » et non « 17,0 s », « 0 s » pour 0,04 s). J'ai calé les attendus sur ce comportement. La première ligne de l'erreur du moteur garde aussi son espace final (« première »). Je n'ai pas testé de nouvelles routes de `serveur.py` ni de `cli.py` : j'ai jugé que les tests existants couvrent déjà ces routes.\n\nFichier créé :\n- `tests/unit/ui/test_renf_ecrans.py`",
+  "ttft_ms": 2990,
+  "type": "result",
+  "duration_ms": 108706,
+  "uuid": "4d85dde0-1ec4-4d31-8c71-41cf63c6b738",
+  "ttft_stream_ms": 2294,
+  "time_to_request_ms": 960,
+  "first_content_frame_ms": 2295,
+  "queued_turn_count": 0,
+  "result_index": 0
+ }
+}

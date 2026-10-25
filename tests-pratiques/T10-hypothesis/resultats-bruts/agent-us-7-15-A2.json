@@ -1,0 +1,112 @@
+{
+ "story": "us-7-15",
+ "bras": "A",
+ "essai": 2,
+ "prompt": "Tu travailles dans un dépôt Python (le dossier courant). Voici la story à renforcer.\nSpec de la story : `_bmad-output/implementation-artifacts/spec-7-15-lancement-de-la-chaine-et-bouton-de-mode.md` (à lire d'abord).\nFichiers source modifiés par la story :\n- `src/usine/ui/chaine.py`\n- `src/usine/ui/vues.py`\n- `src/usine/ui/serveur.py`\n- `src/usine/ui/app.py`\n- `src/usine/ui/textes.py`\nTests existants de la story :\n- `tests/unit/ui/test_chaine.py`\n- `tests/unit/ui/test_serveur.py`\n- `tests/unit/ui/test_vues_ecrans.py`\n- `tests/unit/ui/test_cli.py`\n\nRenforce les tests de cette story : ajoute des tests pytest qui vérifient précisément le comportement attendu (valeurs exactes, bornes, branches d'erreur). Ne modifie pas le code source.\n\nÉcris les nouveaux tests dans de nouveaux fichiers `tests/unit/ui/test_renf_*.py` ; ne modifie ni le code source ni les tests existants. Lance les tests avec `python -m pytest -q --tb=short <fichiers>` (l'environnement est prêt, rien à installer). Tous tes tests doivent passer. Termine par la liste des fichiers créés.",
+ "rc": 0,
+ "stderr": "",
+ "duree_mur_s": 97.1,
+ "modifies_suivis": [],
+ "crees": [
+  "tests/unit/ui/test_renf_chaine.py"
+ ],
+ "sortie": {
+  "duration_api_ms": 87104,
+  "stop_reason": "end_turn",
+  "session_id": "09343d43-cc0e-4300-84a0-2ca8ea4adc64",
+  "total_cost_usd": 0.2366709,
+  "usage": {
+   "input_tokens": 16,
+   "cache_creation_input_tokens": 29770,
+   "cache_read_input_tokens": 183689,
+   "output_tokens": 9919,
+   "output_tokens_details": {
+    "thinking_tokens": 551
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 29770,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 630,
+     "cache_read_input_tokens": 36445,
+     "cache_creation_input_tokens": 554,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 554
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-sonnet-5-5": {
+    "inputTokens": 16,
+    "outputTokens": 9919,
+    "cacheReadInputTokens": 183689,
+    "cacheCreationInputTokens": 29770,
+    "webSearchRequests": 0,
+    "costUSD": 0.2366709,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 551,
+    "canonicalModel": "claude-sonnet-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 13,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "J'ai ajouté un fichier de tests de renfort pour la story 7.15. Les 45 tests passent.\n\nIls couvrent :\n- **Refus de lancement** : mode repli, racine absente ou inexistante, seconde Chaîne pendant une Chaîne en cours.\n- **`OSError` au démarrage** : la vue repasse en « attente » avec l'erreur affichée.\n- **Suivi** : numéros, états et durées des étapes, annonces, journal (le plus récent en haut), heures en UTC, ligne finale partielle ignorée, progression invalide, fichier de progression déjà présent avant le lancement.\n- **Fin de Chaîne** : bandeau de succès, et bandeau d'échec avec les cas « hors d'une étape », « à l'étape « kpi » » et « aucun message ».\n- **Lignes d'erreur** : 19, 20, 21 et 25 lignes pour vérifier la borne de 20.\n- **Routes** :\n  - 409 pour le repli, la racine absente, le second lancement et la bascule de mode pendant une Chaîne ;\n  - 422 pour un corps invalide ;\n  - 403 pour un `Origin` étranger ;\n  - 400 pour un `Host` forgé ;\n  - bascule du mode et retour au mode réel ;\n  - `REPLI_ABSENT` dans le cadre quand la copie manque, bouton de retour restant utilisable.\n\nUn premier essai a échoué à cause d'une erreur dans mon test : j'avais pris `kpi` pour la deuxième étape alors que c'est la troisième. J'ai corrigé le test, pas le code source.\n\nJe n'ai lancé que mon nouveau fichier, pas la suite complète ni les tests existants.\n\nFichier créé :\n- `tests/unit/ui/test_renf_chaine.py`",
+  "ttft_ms": 2110,
+  "type": "result",
+  "duration_ms": 95932,
+  "uuid": "5a2bdfb3-82b3-482a-86fa-1a66fa2bc561",
+  "ttft_stream_ms": 1510,
+  "time_to_request_ms": 372,
+  "first_content_frame_ms": 1510,
+  "queued_turn_count": 0,
+  "result_index": 0
+ }
+}

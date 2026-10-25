@@ -1,0 +1,120 @@
+{
+ "story": "wd-8-4",
+ "bras": "B",
+ "essai": 2,
+ "prompt": "Tu travailles dans un dépôt Python (le dossier courant). Voici la story à renforcer.\nSpec de la story : `_bmad-output/implementation-artifacts/8-4-bloquer-une-pr-quand-la-couverture-du-nouveau-code-passe-sou.md` (à lire d'abord).\nFichiers source modifiés par la story :\n- `src/wavedevsecops/ci/findings.py`\n- `src/wavedevsecops/scenarios/ops/replace_in_file.py`\n- `src/wavedevsecops/toolrun/__init__.py`\n- `src/wavedevsecops/ci/__init__.py`\nTests existants de la story :\n- `tests/test_quality_gate.py`\n\nRenforce les tests de cette story : ajoute des tests pytest qui vérifient précisément le comportement attendu (valeurs exactes, bornes, branches d'erreur). Ne modifie pas le code source. Utilise Hypothesis (tests de propriétés) là où une propriété générale existe ; garde des exemples ciblés pour le reste.\n\nÉcris les nouveaux tests dans de nouveaux fichiers `tests/test_renf_*.py` ; ne modifie ni le code source ni les tests existants. Lance les tests avec `python -m pytest -q --tb=short <fichiers>` (l'environnement est prêt, rien à installer). Tous tes tests doivent passer. Termine par la liste des fichiers créés.",
+ "rc": 0,
+ "stderr": "",
+ "duree_mur_s": 98.0,
+ "modifies_suivis": [],
+ "crees": [
+  "tests/test_renf_quality_gate.py"
+ ],
+ "sortie": {
+  "duration_api_ms": 92130,
+  "stop_reason": "end_turn",
+  "session_id": "f90099e3-67fc-41a8-a550-ac893f25273e",
+  "total_cost_usd": 0.412736,
+  "usage": {
+   "input_tokens": 14,
+   "cache_creation_input_tokens": 53545,
+   "cache_read_input_tokens": 229480,
+   "output_tokens": 17558,
+   "output_tokens_details": {
+    "thinking_tokens": 590
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 53545,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 1214,
+     "cache_read_input_tokens": 53190,
+     "cache_creation_input_tokens": 7683,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 7683
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-sonnet-5-5": {
+    "inputTokens": 14,
+    "outputTokens": 17558,
+    "cacheReadInputTokens": 229480,
+    "cacheCreationInputTokens": 53545,
+    "webSearchRequests": 0,
+    "costUSD": 0.412736,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 590,
+    "canonicalModel": "claude-sonnet-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [
+   {
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_01Q8BTH34YVNCQjNoxBmatAZ",
+    "tool_input": {
+     "command": "cat > tests/test_renf_quality_gate.py <<'EOF'\n\"\"\"Renfort de la story 8.4 : lecteurs de couverture (propriétés et bornes), commandes `before`\nde `ci.run_job`, `toolrun.with_tools_on_path` et op `replace_in_file`.\"\"\"\n\nfrom __future__ import annotations\n\nimport json\nfrom pathlib import Path\nfrom types import SimpleNamespace\nfrom typing import Any\n\nimport pytest\nfrom hypothesis import given, settings\nfrom hypothesis import strategies as st\n\nfrom wavedevsecops import ci, toolrun\nfrom wavedevsecops.ci import findings as parsers\nfrom wavedevsecops.config import Settings\nfrom wavedevsecops.scenarios import SetupError\nfrom wavedevsecops.scenarios.ops import replace_in_file\n\nTREE = Path(__file__).resolve().parent\n\n\ndef _ref_ranges(lines: list[int]) -> str:\n    out: list[str] = []\n    values = sorted(set(lines))\n    i = 0\n    while i < len(values):\n        j = i\n        while j + 1 < len(values) and values[j + 1] == values[j] + 1:\n            j += 1\n        out.append(str(values[i]) if i == j else f\"{values[i]}-{values[j]}\")\n        i = j + 1\n    return \", \".join(out)\n\n\ndef _payload(total: Any, percent: Any, stats: Any) -> str:\n    return json.dumps(\n        {\"total_num_lines\": total, \"total_percent_covered\": percent, \"src_stats\": stats}\n    )\n\n\n# ------------------------------------------------------------------ _ranges\ndef test_ranges_exemples_exacts() -> None:\n    assert parsers._ranges([59, 60, 61, 65]) == \"59-61, 65\"\n    assert parsers._ranges([]) == \"\"\n    assert parsers._ranges([7]) == \"7\"\n    assert parsers._ranges([3, 1, 2, 2]) == \"1-3\"\n    assert parsers._ranges([1, 3, 5]) == \"1, 3, 5\"\n    assert parsers._ranges([4, 5]) == \"4-5\"\n\n\n@given(st.lists(st.integers(min_value=1, max_value=60), max_size=30))\ndef test_ranges_correspond_a_la_reference_et_couvre_les_memes_lignes(lines: list[int]) -> None:\n    text = parsers._ranges(lines)\n    assert text == _ref_ranges(lines)\n    covered: set[int] = set()\n    for part in filter(None, text.split(\", \")):\n        low, _, high = part.partition(\"-\")\n        covered |= set(range(int(low), int(high or low) + 1))\n    assert covered == set(lines)\n\n\n# ------------------------------------------------------------------ diff_coverage_text\n@pytest.mark.parametrize(\n    (\"percent\", \"passed\", \"expected\"),\n    [\n        (0, False, \"Couverture du nouveau code 0 % · seuil 80 % · ✗\"),\n        (100, True, \"Couverture du nouveau code 100 % · seuil 80 % · ✓\"),\n        (None, True, \"Couverture du nouveau code aucune ligne à mesurer · seuil 80 % · ✓\"),\n    ],\n)\ndef test_diff_coverage_text(percent: int | None, passed: bool, expected: str) -> None:\n    assert parsers.diff_coverage_text(percent, passed) == expected\n\n\n# ------------------------------------------------------------------ parse_diff_cover_json\n@given(\n    total=st.integers(min_value=1, max_value=1000),\n    percent=st.floats(min_value=0, max_value=100, allow_nan=False),\n)\ndef test_diff_cover_seuil_exact_et_troncature(total: int, percent: float) -> None:\n    (summary,) = parsers.parse_diff_cover_json(_payload(total, percent, {}), TREE)\n    value = int(percent)\n    passed = value >= 80\n    assert summary.rule_id == \"diff_coverage\"\n    assert summary.severity == (\"info\" if passed else \"error\")\n    assert summary.message_text == parsers.diff_coverage_text(value, passed)\n\n\n@pytest.mark.parametrize(\n    (\"percent\", \"severity\", \"mark\"),\n    [(79, \"error\", \"✗\"), (79.99, \"error\", \"✗\"), (80, \"info\", \"✓\"), (80.0, \"info\", \"✓\")],\n)\ndef test_diff_cover_bornes_du_seuil(percent: float, severity: str, mark: str) -> None:\n    (summary,) = parsers.parse_diff_cover_json(_payload(10, percent, {}), TREE)\n    assert summary.severity == severity\n    assert summary.message_text.endswith(f\"seuil 80 % · {mark}\")\n\n\ndef test_diff_cover_sans_ligne_mesuree_ignore_le_pourcentage() -> None:\n    (summary,) = parsers.parse_diff_cover_json(_payload(0, None, {}), TREE)\n    assert (summary.rule_id, summary.severity) == (\"diff_coverage_none\", \"info\")\n    (other,) = parsers.parse_diff_cover_json(_payload(0, 3, {}), TREE)\n    assert other.message_text == summary.message_text\n\n\n@given(\n    missing=st.lists(st.integers(min_value=1, max_value=500), min_size=1, max_size=20),\n    passed=st.booleans(),\n)\ndef test_diff_cover_un_constat_par_fichier_non_couvert(missing: list[int], passed: bool) -> None:\n    percent = 90 if passed else 10\n    stats = {\"src/a.py\": {\"violation_lines\": missing}, \"src/ok.py\": {\"violation_lines\": []}}\n    summary, item = parsers.parse_diff_cover_json(_payload(10, percent, stats), TREE)\n    assert summary.severity == (\"info\" if passed else \"error\")\n    assert item.rule_id == \"uncovered_lines\"\n    assert item.severity == (\"info\" if passed else \"error\")\n    assert item.path == \"src/a.py\"\n    assert item.line == min(missing)\n    count = len(missing)\n    noun = \"ligne\" if count == 1 else \"lignes\"\n    assert item.message_text == (\n        f\"{count} {noun} du nouveau code sans test : {_ref_ranges(missing)}\"\n    )\n\n\ndef test_diff_cover_singulier_et_filtrage_des_entrees_invalides() -> None:\n    stats = {\n        \"src/a.py\": {\"violation_lines\": [4]},\n        \"src/b.py\": \"pas un dict\",\n        \"src/c.py\": {\"violation_lines\": [\"x\", None, 2.5]},\n        \"src/d.py\": {},\n        \"src/e.py\": {\"violation_lines\": None},\n    }\n    found = parsers.parse_diff_cover_json(_payload(5, 20, stats), TREE)\n    assert [f.path for f in found[1:]] == [\"src/a.py\"]\n    assert found[1].message_text == \"1 ligne du nouveau code sans test : 4\"\n    assert found[1].line == 4\n\n\n@pytest.mark.parametrize(\n    \"bad\",\n    [\n        _payload(\"5\", 50, {}),\n        _payload(None, 50, {}),\n        _payload(5, 50, []),\n        _payload(5, 50, None),\n        _payload(5, None, {}),\n        _payload(5, \"80\", {}),\n        '\"texte\"',\n        \"null\",\n    ],\n)\ndef test_diff_cover_refuse_une_forme_inattendue(bad: str) -> None:\n    with pytest.raises(ValueError):\n        parsers.parse_diff_cover_json(bad, TREE)\n\n\ndef test_diff_cover_messages_d_erreur() -> None:\n    with pytest.raises(ValueError, match=\"illisible\"):\n        parsers.parse_diff_cover_json(\"{pas json\", TREE)\n    with pytest.raises(ValueError, match=\"inattendue\"):\n        parsers.parse_diff_cover_json(\"[]\", TREE)\n\n\n# ------------------------------------------------------------------ parse_coverage_json\n@given(st.floats(min_value=0, max_value=100, allow_nan=False))\ndef test_coverage_json_tronque_le_pourcentage(percent: float) -> None:\n    text = json.dumps({\"files\": {\"a.py\": {}}, \"totals\": {\"percent_covered\": percent}})\n    (total,) = parsers.parse_coverage_json(text, TREE)\n    assert total.severity == \"info\" and total.rule_id == \"total_coverage\"\n    assert total.message_text == f\"Couverture de l'ensemble du dépôt : {int(percent)} % (information).\"\n\n\ndef test_coverage_json_accepte_un_pourcentage_texte_et_refuse_le_reste() -> None:\n    ok = json.dumps({\"files\": {\"a.py\": {}}, \"totals\": {\"percent_covered\": \"42.9\"}})\n    assert \"42 %\" in parsers.parse_coverage_json(ok, TREE)[0].message_text\n    for totals in ({}, {\"percent_covered\": None}, {\"percent_covered\": \"abc\"}, []):\n        text = json.dumps({\"files\": {\"a.py\": {}}, \"totals\": totals})\n        with pytest.raises(ValueError):\n            parsers.parse_coverage_json(text, TREE)\n    with pytest.raises(ValueError, match=\"vide\"):\n        parsers.parse_coverage_json(json.dumps({\"files\": [], \"totals\": {}}), TREE)\n\n\ndef test_les_lecteurs_de_couverture_sont_enregistres() -> None:\n    assert parsers.PARSERS[\"diff_cover_json\"] is parsers.parse_diff_cover_json\n    assert parsers.PARSERS[\"coverage_json\"] is parsers.parse_coverage_json\n\n\n# ------------------------------------------------------------------ Step et jetons\ndef test_step_refuse_le_jeton_report_et_les_jetons_inconnus() -> None:\n    assert ci.Step(tool=\"pytest\", argv=[\"--x={config}/a\", \"{reports}/b\"]).tool == \"pytest\"\n    for bad in ([\"{report}\"], [\"{inconnu}\"]):\n        with pytest.raises(ValueError):\n            ci.Step(tool=\"pytest\", argv=bad)\n    with pytest.raises(ValueError):\n        ci.Step(tool=\"\", argv=[\"x\"])\n    with pytest.raises(ValueError):\n        ci.Step(tool=\"pytest\", argv=[])\n    assert ci.MachineRun(argv=[\"{report}\"], parse=\"coverage_json\").tool is None\n\n\ndef test_expand_jeton_vide_ou_absent_leve_keyerror() -> None:\n    assert ci.expand([\"a={x}-{x}\"], {\"x\": \"1\"}) == [\"a=1-1\"]\n    with pytest.raises(KeyError):\n        ci.expand([\"{x}\"], {\"x\": \"\"})\n    with pytest.raises(KeyError):\n        ci.expand([\"{y}\"], {})\n\n\n# ------------------------------------------------------------------ run_job et `before`\nclass _Fake:\n    def __init__(self, outcomes: list[dict[str, Any]]) -> None:\n        self.outcomes = outcomes\n        self.calls: list[tuple[str, list[str]]] = []\n\n    def spawn(self, tool: str, argv: list[str], **_: Any) -> Any:\n        self.calls.append((tool, argv))\n        return SimpleNamespace(interrupted=False, outcome=self.outcomes[len(self.calls) - 1])\n\n    @staticmethod\n    def collect(handle: Any) -> Any:\n        base = {\"stdout\": \"\", \"stderr\": \"\", \"returncode\": 0, \"timed_out\": False}\n        return SimpleNamespace(**{**base, **handle.outcome})\n\n\ndef _job(**extra: Any) -> ci.Job:\n    return ci.Job(\n        job_id=\"quality_gate\",\n        label_text=\"QG\",\n        tool=\"diff-cover\",\n        before=[ci.Step(tool=\"pytest\", argv=[\"--cfg={config}/c.ini\", \"--o={reports}/x.xml\"])],\n        human=[\"{reports}/coverage.xml\", \"--compare-branch={base_sha}\"],\n        **extra,\n    )\n\n\ndef _patch(monkeypatch: pytest.MonkeyPatch, outcomes: list[dict[str, Any]]) -> _Fake:\n    fake = _Fake(outcomes)\n    monkeypatch.setattr(toolrun, \"spawn_tool\", fake.spawn)\n    monkeypatch.setattr(toolrun, \"collect\", fake.collect)\n    return fake\n\n\ndef _run(tmp_path: Path, job: ci.Job, tokens: dict[str, str] | None = None) -> ci.JobResult:\n    tree = tmp_path / \"tree\"\n    tree.mkdir(exist_ok=True)\n    return ci.run_job(\n        job,\n        tree=tree,\n        venv=None,\n        tokens={\"base_sha\": \"abc\"} if tokens is None else tokens,\n        settings=Settings(data_dir=tmp_path / \"data\"),\n    )\n\n\ndef test_before_en_echec_arrete_le_job_avec_le_constat_before_failed(\n    monkeypatch: pytest.MonkeyPatch, tmp_path: Path\n) -> None:\n    fake = _patch(monkeypatch, [{\"returncode\": 3, \"stdout\": \"OUT\", \"stderr\": \"ERR\"}])\n    result = _run(tmp_path, _job())\n    assert len(fake.calls) == 1  # diff-cover n'est pas lancé\n    assert result.state == \"failure\"\n    assert result.output == \"OUTERR\"\n    (finding,) = result.findings\n    assert finding.rule_id == ci.BEFORE_FAILED_RULE and finding.severity == \"error\"\n    assert finding.message_text == (\n        \"pytest a échoué (code 3) : diff-cover n'a rien à mesurer tant que pytest échoue.\"\n    )\n\n\ndef test_before_reussi_puis_sortie_humaine_concatenee(\n    monkeypatch: pytest.MonkeyPatch, tmp_path: Path\n) -> None:\n    fake = _patch(\n        monkeypatch,\n        [{\"stdout\": \"avant|\"}, {\"stdout\": \"apres\", \"stderr\": \"|e\", \"returncode\": 1}],\n    )\n    result = _run(tmp_path, _job())\n    assert [t for t, _ in fake.calls] == [\"pytest\", \"diff-cover\"]\n    assert result.state == \"failure\" and result.output == \"avant|apres|e\"\n    reports = str(ci.reports_dir(tmp_path / \"tree\"))\n    cfg = str(Settings(data_dir=tmp_path / \"data\").ci_config_path())\n    assert fake.calls[0][1] == [f\"--cfg={cfg}/c.ini\", f\"--o={reports}/x.xml\"]\n    assert fake.calls[1][1] == [f\"{reports}/coverage.xml\", \"--compare-branch=abc\"]\n\n\ndef test_before_sans_fin_est_une_erreur_de_l_outil(\n    monkeypatch: pytest.MonkeyPatch, tmp_path: Path\n) -> None:\n    for outcome in ({\"timed_out\": True, \"returncode\": 0}, {\"returncode\": None}):\n        fake = _patch(monkeypatch, [{**outcome, \"stdout\": \"partiel\"}])\n        result = _run(tmp_path, _job())\n        assert len(fake.calls) == 1\n        assert result.state == \"error\" and result.output == \"partiel\"\n        (finding,) = result.findings\n        assert finding.rule_id == ci.TOOL_ERROR_RULE\n        assert finding.message_text.startswith(\"diff-cover n'a pas fini en \")\n        assert finding.message_text.endswith(f\" s et a été arrêté. {ci.NOT_YOUR_CODE}\")\n\n\ndef test_jeton_manquant_est_une_erreur_sans_lancer_d_outil(\n    monkeypatch: pytest.MonkeyPatch, tmp_path: Path\n) -> None:\n    fake = _patch(monkeypatch, [])\n    result = _run(tmp_path, _job(), tokens={})\n    assert fake.calls == [] and result.state == \"error\"\n    assert \"{base_sha}\" in result.findings[0].message_text\n\n\ndef test_outil_before_indisponible_est_une_erreur(\n    monkeypatch: pytest.MonkeyPatch, tmp_path: Path\n) -> None:\n    def boom(*_: Any, **__: Any) -> Any:\n        raise OSError(\"non\")\n\n    monkeypatch.setattr(toolrun, \"spawn_tool\", boom)\n    result = _run(tmp_path, _job())\n    assert result.state == \"error\"\n    assert \"n'a pas démarré (OSError)\" in result.findings[0].message_text\n\n\n# ------------------------------------------------------------------ with_tools_on_path\ndef test_with_tools_on_path_met_les_dossiers_en_tete(\n    monkeypatch: pytest.MonkeyPatch, tmp_path: Path\n) -> None:\n    def resolve(tool_id: str, _settings: Settings) -> Any:\n        if tool_id == \"absent\":\n            return SimpleNamespace(ok=False, path=None)\n        return SimpleNamespace(ok=True, path=tmp_path / tool_id / \"bin\")\n\n    monkeypatch.setattr(toolrun, \"resolve\", resolve)\n    env = {\"Path\": \"ancien\", \"X\": \"1\"}\n    out = toolrun.with_tools_on_path(env, (\"git\", \"absent\", \"uv\"), Settings())\n    assert out[\"Path\"] == _join(str(tmp_path / \"git\"), str(tmp_path / \"uv\"), \"ancien\")\n    assert out[\"X\"] == \"1\" and env[\"Path\"] == \"ancien\"  # l'original n'est pas modifié\n    assert toolrun.with_tools_on_path({}, (\"absent\",), Settings()) == {\"PATH\": \"\"}\n    assert toolrun.with_tools_on_path({}, (\"git\",), Settings()) == {\"PATH\": str(tmp_path / \"git\")}\n\n\ndef _join(*parts: str) -> str:\n    import os\n\n    return os.pathsep.join(parts)\n\n\n# ------------------------------------------------------------------ replace_in_file\ndef _apply(repo: Path, path: str, old: str, new: str) -> str:\n    ctx = SimpleNamespace(layout=SimpleNamespace(repo=repo))\n    return replace_in_file.apply(\n        replace_in_file.Args(op=\"replace_in_file\", path=path, old=old, new=new),\n        ctx,  # type: ignore[arg-type]\n    )\n\n\ndef test_replace_in_file_normalise_les_fins_de_ligne_et_rend_l_identifiant(tmp_path: Path) -> None:\n    (tmp_path / \"f.txt\").write_bytes(b\"un\\r\\ndeux\\r\\ntrois\\r\\n\")\n    ident = _apply(tmp_path, \"f.txt\", \"un\\r\\ndeux\\n\", \"X\\n\")\n    assert (tmp_path / \"f.txt\").read_bytes().replace(b\"\\r\\n\", b\"\\n\") == b\"X\\ntrois\\n\"\n    assert \"f.txt\" in ident and ident\n\n\ndef test_replace_in_file_messages_et_fichier_intact(tmp_path: Path) -> None:\n    (tmp_path / \"f.txt\").write_text(\"a-a-b\", \"utf-8\")\n    with pytest.raises(SetupError, match=\"2 fois\"):\n        _apply(tmp_path, \"f.txt\", \"a\", \"z\")\n    with pytest.raises(SetupError, match=\"0 fois\"):\n        _apply(tmp_path, \"f.txt\", \"q\", \"z\")\n    assert (tmp_path / \"f.txt\").read_text(\"utf-8\") == \"a-a-b\"\n    with pytest.raises(SetupError, match=\"n'a pas pu être lu\"):\n        _apply(tmp_path, \"inexistant.txt\", \"a\", \"z\")\n    (tmp_path / \"bin.dat\").write_bytes(b\"\\xff\\xfe\\x00\")\n    with pytest.raises(SetupError, match=\"n'a pas pu être lu\"):\n        _apply(tmp_path, \"bin.dat\", \"a\", \"z\")\n\n\n@pytest.mark.parametrize(\"path\", [\"../x\", \"/abs\", \"a/../../x\", \".git/config\"])\ndef test_replace_in_file_refuse_les_chemins_hors_de_l_arbre(path: str) -> None:\n    with pytest.raises(ValueError):\n        replace_in_file.Args(op=\"replace_in_file\", path=path, old=\"a\", new=\"b\")\n\n\ndef test_replace_in_file_refuse_un_texte_vide() -> None:\n    with pytest.raises(ValueError, match=\"vide\"):\n        replace_in_file.Args(op=\"replace_in_file\", path=\"f\", old=\"\", new=\"b\")\n\n\n@settings(max_examples=60, deadline=None)\n@given(\n    prefix=st.text(alphabet=\"abc\\n\", max_size=20),\n    suffix=st.text(alphabet=\"abc\\n\", max_size=20),\n    new=st.text(alphabet=\"xyz\\n\", max_size=10),\n)\ndef test_replace_in_file_ne_touche_que_l_occurrence_unique(\n    tmp_path_factory: pytest.TempPathFactory, prefix: str, suffix: str, new: str\n) -> None:\n    repo = tmp_path_factory.mktemp(\"r\")\n    (repo / \"f.txt\").write_bytes((prefix + \"#\" + suffix).encode())\n    _apply(repo, \"f.txt\", \"#\", new)\n    assert (repo / \"f.txt\").read_bytes().decode() == prefix + new + suffix\nEOF\npython -m pytest -q --tb=short tests/test_renf_quality_gate.py 2>&1 | tail -40"
+    }
+   }
+  ],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 11,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "J'ai ajouté un fichier de tests, `tests/test_renf_quality_gate.py`. Ses 41 tests passent (`python -m pytest -q --tb=short tests/test_renf_quality_gate.py`, 1,85 s). Je n'ai modifié ni le code source ni les tests existants, et je n'ai pas relancé le reste de la suite.\n\nCe que les tests vérifient :\n\n- **`_ranges` et `diff_coverage_text`**\n  - Exemples exacts : `59-61, 65`, liste vide, doublons, ligne seule.\n  - Hypothesis : le résultat est identique à une implémentation de référence et couvre exactement les mêmes lignes.\n  - Les trois formes du message (0 %, 100 %, « aucune ligne à mesurer ») sont comparées au texte exact.\n- **`parse_diff_cover_json`**\n  - Hypothesis : le pourcentage est tronqué en entier (`int(percent)`) et le seuil est exact (la sévérité passe à `info` à partir de 80).\n  - Bornes ciblées : 79, 79,99, 80 et 80,0.\n  - Un diff sans ligne mesurée produit `diff_coverage_none` quel que soit le pourcentage.\n  - Hypothesis : un constat par fichier non couvert, avec la bonne ligne, le singulier/pluriel, les plages et une sévérité qui suit le résultat global.\n  - Entrées invalides ignorées (fichier qui n'est pas un dict, lignes qui ne sont pas des entiers) et JSON de forme inattendue refusé.\n- **`parse_coverage_json`**: Hypothesis sur la troncature, pourcentage donné en texte, mesure vide ou inattendue refusée, et enregistrement des deux lecteurs dans `PARSERS`.\n- **`ci.Step`, `MachineRun` et `expand`**: le jeton `{report}` est refusé dans un `before`, ainsi que les jetons inconnus, un outil vide et un `argv` vide. Un jeton vide ou absent lève `KeyError`.\n- **`ci.run_job` avec `before`**, sur des outils simulés :\n  - Un `before` qui échoue donne `failure` et le constat `before_failed`, sans lancer diff-cover.\n  - Un `before` réussi est suivi de diff-cover, et les sorties sont concaténées.\n  - Un `before` qui dépasse le délai ou n'a pas de code de retour donne `error`.\n  - Un jeton manquant ou un outil qui ne démarre pas donne `error`.\n  - Les jetons `{config}` et `{reports}` sont bien remplacés.\n- **`toolrun.with_tools_on_path`**: les dossiers des outils passent en tête du PATH, les outils non résolus sont ignorés, la clé de casse `Path` est respectée et l'environnement d'origine n'est pas modifié.\n- **`replace_in_file`**\n  - Les fins de ligne CRLF sont normalisées.\n  - Les messages d'erreur sont vérifiés : 0 occurrence, 2 occurrences, fichier absent ou binaire. Le fichier reste intact après un refus.\n  - Les chemins hors de l'arbre sont refusés (`../x`, absolu, `a/../../x`, `.git/config`), ainsi qu'un texte à remplacer vide.\n  - Hypothesis : seule l'occurrence unique est remplacée.\n\nFichier créé :\n- `tests/test_renf_quality_gate.py`",
+  "ttft_ms": 2625,
+  "type": "result",
+  "duration_ms": 96845,
+  "uuid": "92ae82be-b847-4240-ba1b-7ffd98c4c6cb",
+  "ttft_stream_ms": 2298,
+  "time_to_request_ms": 899,
+  "first_content_frame_ms": 2298,
+  "queued_turn_count": 0,
+  "result_index": 0
+ }
+}

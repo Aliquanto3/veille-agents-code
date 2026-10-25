@@ -1,0 +1,123 @@
+{
+ "story": "us-7-15",
+ "bras": "A",
+ "essai": 1,
+ "nouveaux_fichiers": [
+  "tests/unit/ui/test_renf_chaine.py"
+ ],
+ "modifies_suivis": [],
+ "cibles_total": 11,
+ "utilise_hypothesis": false,
+ "nb_given": 0,
+ "lignes_tests": 352,
+ "nb_tests_nouveaux": 36,
+ "union": {
+  "rc": 0,
+  "fin": "167 passed in 4.97s",
+  "secondes": 7.52
+ },
+ "passages": [
+  {
+   "rc": 0,
+   "secondes": 3.53,
+   "echecs": [],
+   "fichiers_en_erreur": [],
+   "fin": "36 passed in 1.19s"
+  },
+  {
+   "rc": 0,
+   "secondes": 3.8,
+   "echecs": [],
+   "fichiers_en_erreur": [],
+   "fin": "36 passed in 1.39s"
+  }
+ ],
+ "tests_faux": [],
+ "tests_instables": [],
+ "fichiers_en_erreur": [],
+ "secondes_nouveaux_tests": 3.53,
+ "rejeu_possible": true,
+ "rejeu": [
+  {
+   "id": "us-7-15:chaine.py:142",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 3.53,
+   "tue_au_second_tirage": false
+  },
+  {
+   "id": "us-7-15:chaine.py:172",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 3.86,
+   "tue_au_second_tirage": false
+  },
+  {
+   "id": "us-7-15:chaine.py:189",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 3.72,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "us-7-15:chaine.py:221",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 3.57,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "us-7-15:chaine.py:234",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 4.01,
+   "tue_au_second_tirage": false
+  },
+  {
+   "id": "us-7-15:chaine.py:262",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 4.31,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "us-7-15:chaine.py:271",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 4.38,
+   "tue_au_second_tirage": false
+  },
+  {
+   "id": "us-7-15:chaine.py:273",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 4.25,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "us-7-15:vues.py:343",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 4.44,
+   "tue_au_second_tirage": false
+  },
+  {
+   "id": "us-7-15:serveur.py:107",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 4.36,
+   "tue_au_second_tirage": false
+  },
+  {
+   "id": "us-7-15:textes.py:41",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 4.22,
+   "tue_au_second_tirage": null
+  }
+ ],
+ "tues": 5,
+ "tues_avec_second_tirage": 5,
+ "erreurs_rejeu": 0,
+ "modifies_suivis_apres": []
+}

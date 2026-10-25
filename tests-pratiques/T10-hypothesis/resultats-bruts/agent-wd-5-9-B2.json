@@ -1,0 +1,134 @@
+{
+ "story": "wd-5-9",
+ "bras": "B",
+ "essai": 2,
+ "prompt": "Tu travailles dans un dépôt Python (le dossier courant). Voici la story à renforcer.\nSpec de la story : `_bmad-output/implementation-artifacts/5-9-encart-ce-qui-l-aurait-bloqué-dans-les-scénarios-b.md` (à lire d'abord).\nFichiers source modifiés par la story :\n- `src/wavedevsecops/web/blockers.py`\n- `src/wavedevsecops/scenarios/model.py`\n- `src/wavedevsecops/scenarios/loader.py`\nTests existants de la story :\n- `tests/test_blockers.py`\n\nRenforce les tests de cette story : ajoute des tests pytest qui vérifient précisément le comportement attendu (valeurs exactes, bornes, branches d'erreur). Ne modifie pas le code source. Utilise Hypothesis (tests de propriétés) là où une propriété générale existe ; garde des exemples ciblés pour le reste.\n\nÉcris les nouveaux tests dans de nouveaux fichiers `tests/test_renf_*.py` ; ne modifie ni le code source ni les tests existants. Lance les tests avec `python -m pytest -q --tb=short <fichiers>` (l'environnement est prêt, rien à installer). Tous tes tests doivent passer. Termine par la liste des fichiers créés.",
+ "rc": 0,
+ "stderr": "",
+ "duree_mur_s": 73.7,
+ "modifies_suivis": [],
+ "crees": [
+  "tests/test_renf_blockers.py"
+ ],
+ "sortie": {
+  "duration_api_ms": 61560,
+  "stop_reason": "end_turn",
+  "session_id": "e4799038-352a-4eaa-9033-13e4418f28fe",
+  "total_cost_usd": 0.21222680000000002,
+  "usage": {
+   "input_tokens": 20,
+   "cache_creation_input_tokens": 24119,
+   "cache_read_input_tokens": 208608,
+   "output_tokens": 9485,
+   "output_tokens_details": {
+    "thinking_tokens": 362
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 24119,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 755,
+     "cache_read_input_tokens": 31136,
+     "cache_creation_input_tokens": 189,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 189
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-sonnet-5-5": {
+    "inputTokens": 20,
+    "outputTokens": 9485,
+    "cacheReadInputTokens": 208608,
+    "cacheCreationInputTokens": 24119,
+    "webSearchRequests": 0,
+    "costUSD": 0.21222680000000002,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 362,
+    "canonicalModel": "claude-sonnet-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [
+   {
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_01BWyevYLbYonkVuEai4arwY",
+    "tool_input": {
+     "command": "cd T:/s/wd59-B2 && grep -n \"def scenario_files\" -A12 src/wavedevsecops/scenarios/*.py; grep -n \"def scenarios_path\" -B2 -A6 src/wavedevsecops/config.py; grep -n \"class Settings\" -A15 src/wavedevsecops/config.py | head -40; python -c \"\nfrom wavedevsecops.web.catalogue import load_chain_texts as l\nc=l(None);print(c.map);print([(s.number,s.name,s.delivered,s.milestone) for s in c.stations])\""
+    }
+   },
+   {
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_01FYoPKnjjinEirGSdnQnejB",
+    "tool_input": {
+     "command": "cd T:/s/wd59-B2 && python -c \"\nfrom wavedevsecops.web.catalogue import load_chain_texts as l\nc=l(None);print(c.map);print([(s.number,s.name,s.delivered,s.milestone) for s in c.stations])\""
+    }
+   },
+   {
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_0168sQYPYS9pWBoeXyaDWZ4B",
+    "tool_input": {
+     "command": "cd T:/s/wd59-B2 && sed -i 's/test_titres_mode_a_prime_sur_mode_b_quel_que_soit_l_ordre/test_titres_mode_a_prime_sur_mode_b/' tests/test_renf_blockers.py && python -m pytest -q --tb=short tests/test_renf_blockers.py 2>&1 | tail -8"
+    }
+   }
+  ],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 15,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "J'ai ajouté `tests/test_renf_blockers.py` : 45 tests, tous passent avec `python -m pytest -q --tb=short tests/test_renf_blockers.py`. Je n'ai touché ni au code source ni aux tests existants.\n\nLes tests couvrent trois zones :\n- **Schéma `Blocker`** : stations 1 à 4 acceptées, 0, 5 et -1 refusées. Les identifiants qui ne sont pas en kebab-case sont refusés, de même que la phrase vide. Le modèle est figé. Un test Hypothesis vérifie que les valeurs valides sont conservées.\n- **Lint de `blocked_by`** : sans paramètres il ne vérifie rien, sauf les doublons, qui sont refusés quand même. Les barrières et le catalogue se vérifient chacun indépendamment. Le message de station incohérente cite les deux numéros. Toutes les erreurs sont remontées ensemble. Deux tests Hypothesis couvrent les déclarations cohérentes et la règle « station acceptée si et seulement si elle est celle de la chaîne ».\n- **Projection `blockers_body`, `chain_barriers` et `catalogue_scenario_titles`** :\n  - **`blockers_body`**, avec des chaînes simulées : valeur exacte de l'encart complet, chaîne absente, absence de déclaration, station inconnue, libellé de repli, avertissement journalisé. Les textes d'attente sont testés pour les trois cas : jalon, texte de la carte, « Bientôt ». Un test Hypothesis vérifie qu'on a un lien ou une étiquette, jamais les deux, et que l'ordre est conservé.\n  - **`catalogue_scenario_titles`**, sur un dossier de contenu temporaire : le mode A prime sur le mode B, un scénario hors catalogue est exclu, un fichier invalide ou non UTF-8 est ignoré, un dossier absent donne un résultat vide.\n  - **`chain_barriers`** : testée sur une chaîne simulée, sur une chaîne absente et sur le contenu réel.\n\nFichier créé :\n- `tests/test_renf_blockers.py`",
+  "ttft_ms": 2485,
+  "type": "result",
+  "duration_ms": 72795,
+  "uuid": "f17d64bb-be1b-4642-b66b-f6a6ca43c7ea",
+  "ttft_stream_ms": 2013,
+  "time_to_request_ms": 408,
+  "first_content_frame_ms": 2013,
+  "queued_turn_count": 0,
+  "result_index": 0
+ }
+}

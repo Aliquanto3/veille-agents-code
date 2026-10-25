@@ -1,0 +1,228 @@
+{
+ "story": "us-7-14",
+ "bras": "B",
+ "essai": 1,
+ "nouveaux_fichiers": [
+  "tests/unit/ui/test_renf_carte_detail.py"
+ ],
+ "modifies_suivis": [],
+ "cibles_total": 26,
+ "utilise_hypothesis": true,
+ "nb_given": 6,
+ "lignes_tests": 357,
+ "nb_tests_nouveaux": 47,
+ "union": {
+  "rc": 0,
+  "fin": "193 passed in 7.08s",
+  "secondes": 10.34
+ },
+ "passages": [
+  {
+   "rc": 0,
+   "secondes": 6.23,
+   "echecs": [],
+   "fichiers_en_erreur": [],
+   "fin": "47 passed in 2.90s"
+  },
+  {
+   "rc": 0,
+   "secondes": 6.74,
+   "echecs": [],
+   "fichiers_en_erreur": [],
+   "fin": "47 passed in 3.00s"
+  }
+ ],
+ "tests_faux": [],
+ "tests_instables": [],
+ "fichiers_en_erreur": [],
+ "secondes_nouveaux_tests": 6.23,
+ "rejeu_possible": true,
+ "rejeu": [
+  {
+   "id": "us-7-14:carte.py:239",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 6.67,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "us-7-14:carte.py:244",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 5.24,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "us-7-14:carte.py:246",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 5.11,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "us-7-14:carte.py:248",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 6.61,
+   "tue_au_second_tirage": false
+  },
+  {
+   "id": "us-7-14:carte.py:323",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 6.66,
+   "tue_au_second_tirage": false
+  },
+  {
+   "id": "us-7-14:carte.py:331",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 6.46,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "us-7-14:detail.py:346",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 6.62,
+   "tue_au_second_tirage": false
+  },
+  {
+   "id": "us-7-14:detail.py:349",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 6.26,
+   "tue_au_second_tirage": false
+  },
+  {
+   "id": "us-7-14:detail.py:360",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 5.71,
+   "tue_au_second_tirage": false
+  },
+  {
+   "id": "us-7-14:detail.py:419",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 6.56,
+   "tue_au_second_tirage": false
+  },
+  {
+   "id": "us-7-14:detail.py:427",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 5.61,
+   "tue_au_second_tirage": false
+  },
+  {
+   "id": "us-7-14:detail.py:433",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 5.74,
+   "tue_au_second_tirage": false
+  },
+  {
+   "id": "us-7-14:detail.py:436",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 6.49,
+   "tue_au_second_tirage": false
+  },
+  {
+   "id": "us-7-14:detail.py:457",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 6.31,
+   "tue_au_second_tirage": false
+  },
+  {
+   "id": "us-7-14:detail.py:461",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 6.0,
+   "tue_au_second_tirage": false
+  },
+  {
+   "id": "us-7-14:detail.py:488",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 5.42,
+   "tue_au_second_tirage": false
+  },
+  {
+   "id": "us-7-14:detail.py:492",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 6.08,
+   "tue_au_second_tirage": false
+  },
+  {
+   "id": "us-7-14:detail.py:517",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 5.44,
+   "tue_au_second_tirage": false
+  },
+  {
+   "id": "us-7-14:detail.py:572",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 5.22,
+   "tue_au_second_tirage": false
+  },
+  {
+   "id": "us-7-14:detail.py:592",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 5.75,
+   "tue_au_second_tirage": false
+  },
+  {
+   "id": "us-7-14:detail.py:633",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 5.0,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "us-7-14:detail.py:639",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 5.31,
+   "tue_au_second_tirage": false
+  },
+  {
+   "id": "us-7-14:vues.py:64",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 5.11,
+   "tue_au_second_tirage": false
+  },
+  {
+   "id": "us-7-14:serveur.py:125",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 5.16,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "us-7-14:serveur.py:140",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 5.29,
+   "tue_au_second_tirage": false
+  },
+  {
+   "id": "us-7-14:serveur.py:166",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 5.18,
+   "tue_au_second_tirage": false
+  }
+ ],
+ "tues": 6,
+ "tues_avec_second_tirage": 6,
+ "erreurs_rejeu": 0,
+ "modifies_suivis_apres": []
+}

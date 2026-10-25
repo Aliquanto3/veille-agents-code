@@ -1,0 +1,137 @@
+{
+ "story": "wd-8-4",
+ "bras": "B",
+ "essai": 2,
+ "nouveaux_fichiers": [
+  "tests/test_renf_quality_gate.py"
+ ],
+ "modifies_suivis": [],
+ "cibles_total": 13,
+ "utilise_hypothesis": true,
+ "nb_given": 5,
+ "lignes_tests": 399,
+ "nb_tests_nouveaux": 41,
+ "union": {
+  "rc": 0,
+  "fin": "64 passed in 36.20s",
+  "secondes": 37.07
+ },
+ "passages": [
+  {
+   "rc": 0,
+   "secondes": 3.13,
+   "echecs": [],
+   "fichiers_en_erreur": [],
+   "fin": "41 passed in 2.39s"
+  },
+  {
+   "rc": 0,
+   "secondes": 3.12,
+   "echecs": [],
+   "fichiers_en_erreur": [],
+   "fin": "41 passed in 2.18s"
+  }
+ ],
+ "tests_faux": [],
+ "tests_instables": [],
+ "fichiers_en_erreur": [],
+ "secondes_nouveaux_tests": 3.12,
+ "rejeu_possible": true,
+ "rejeu": [
+  {
+   "id": "wd-8-4:findings.py:367",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 2.05,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "wd-8-4:findings.py:370",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 1.94,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "wd-8-4:findings.py:392",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 4.21,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "wd-8-4:findings.py:393",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 2.22,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "wd-8-4:findings.py:406",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 4.5,
+   "tue_au_second_tirage": false
+  },
+  {
+   "id": "wd-8-4:findings.py:409",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 3.05,
+   "tue_au_second_tirage": false
+  },
+  {
+   "id": "wd-8-4:findings.py:412",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 2.04,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "wd-8-4:findings.py:416",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 2.53,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "wd-8-4:findings.py:433",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 2.76,
+   "tue_au_second_tirage": false
+  },
+  {
+   "id": "wd-8-4:findings.py:437",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 1.88,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "wd-8-4:replace_in_file.py:27",
+   "etat": "survit",
+   "rc": 0,
+   "secondes": 2.46,
+   "tue_au_second_tirage": false
+  },
+  {
+   "id": "wd-8-4:replace_in_file.py:35",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 1.93,
+   "tue_au_second_tirage": null
+  },
+  {
+   "id": "wd-8-4:replace_in_file.py:47",
+   "etat": "tue",
+   "rc": 1,
+   "secondes": 1.98,
+   "tue_au_second_tirage": null
+  }
+ ],
+ "tues": 9,
+ "tues_avec_second_tirage": 9,
+ "erreurs_rejeu": 0,
+ "modifies_suivis_apres": []
+}

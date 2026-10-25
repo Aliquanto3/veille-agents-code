@@ -1,0 +1,120 @@
+{
+ "story": "us-7-15",
+ "bras": "B",
+ "essai": 2,
+ "prompt": "Tu travailles dans un dépôt Python (le dossier courant). Voici la story à renforcer.\nSpec de la story : `_bmad-output/implementation-artifacts/spec-7-15-lancement-de-la-chaine-et-bouton-de-mode.md` (à lire d'abord).\nFichiers source modifiés par la story :\n- `src/usine/ui/chaine.py`\n- `src/usine/ui/vues.py`\n- `src/usine/ui/serveur.py`\n- `src/usine/ui/app.py`\n- `src/usine/ui/textes.py`\nTests existants de la story :\n- `tests/unit/ui/test_chaine.py`\n- `tests/unit/ui/test_serveur.py`\n- `tests/unit/ui/test_vues_ecrans.py`\n- `tests/unit/ui/test_cli.py`\n\nRenforce les tests de cette story : ajoute des tests pytest qui vérifient précisément le comportement attendu (valeurs exactes, bornes, branches d'erreur). Ne modifie pas le code source. Utilise Hypothesis (tests de propriétés) là où une propriété générale existe ; garde des exemples ciblés pour le reste.\n\nÉcris les nouveaux tests dans de nouveaux fichiers `tests/unit/ui/test_renf_*.py` ; ne modifie ni le code source ni les tests existants. Lance les tests avec `python -m pytest -q --tb=short <fichiers>` (l'environnement est prêt, rien à installer). Tous tes tests doivent passer. Termine par la liste des fichiers créés.",
+ "rc": 0,
+ "stderr": "",
+ "duree_mur_s": 98.2,
+ "modifies_suivis": [],
+ "crees": [
+  "tests/unit/ui/test_renf_chaine.py"
+ ],
+ "sortie": {
+  "duration_api_ms": 76251,
+  "stop_reason": "end_turn",
+  "session_id": "ef799271-76bc-4fdf-a8dd-94af51dd2f71",
+  "total_cost_usd": 0.28152479999999996,
+  "usage": {
+   "input_tokens": 22,
+   "cache_creation_input_tokens": 32080,
+   "cache_read_input_tokens": 311608,
+   "output_tokens": 12200,
+   "output_tokens_details": {
+    "thinking_tokens": 818
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 32080,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 953,
+     "cache_read_input_tokens": 39191,
+     "cache_creation_input_tokens": 165,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 165
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-sonnet-5-5": {
+    "inputTokens": 22,
+    "outputTokens": 12200,
+    "cacheReadInputTokens": 311608,
+    "cacheCreationInputTokens": 32080,
+    "webSearchRequests": 0,
+    "costUSD": 0.28152479999999996,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 818,
+    "canonicalModel": "claude-sonnet-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [
+   {
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_018BijesDbDdV244viUvUoPp",
+    "tool_input": {
+     "command": "cd tests/unit/ui && sed -i 's/message: str | None = None/message: str = \"\"/' test_renf_chaine.py && cd ../../.. && python -m pytest -q --tb=short tests/unit/ui/test_renf_chaine.py 2>&1 | tail -30"
+    }
+   }
+  ],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 14,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "J'ai ajouté 46 tests pour la story 7.15, tous verts (`python -m pytest -q --tb=short tests/unit/ui/test_renf_chaine.py`). Je n'ai touché ni au code source ni aux tests existants.\n\nFichier créé : `tests/unit/ui/test_renf_chaine.py`\n\nCe qu'ils couvrent :\n- **Refus de lancement :** Mode repli, racine absente ou inexistante, Chaîne déjà en cours (un seul processus), relance possible après la fin. Dans le cas du Mode repli, le motif est exactement `LANCEMENT_REPLI` sans ses marques Markdown.\n- **`OSError` au démarrage :** la vue repasse en `attente` avec l'erreur, et la relance suivante efface cette erreur.\n- **Vue des étapes :** valeurs exactes pour la numérotation, les descriptions, les états, les libellés, les durées (« 0,3 s »), le compteur « n / 10 » et l'annonce « Étape 3 sur 10 : kpi ».\n- **Journal :** ordre (récent en haut), message ajouté après « · », heure en UTC, ligne finale partielle ignorée, progression invalide signalée dans `erreur` sans interrompre le sondage.\n- **Fin de Chaîne :** bandeau de succès et lien « Voir la carte météo » ; bandeau d'échec avec l'étape ou « hors d'une étape », le code, « aucun message » et `AUCUN_RAPPORT`. La sortie d'erreur n'est lue qu'une fois.\n- **Boutons de mode :** libellés et mode cible en Mode repli, messages du dernier Passage, et les trois lignes de l'encart « Dernier Passage ».\n- **API :** bascule dans les deux sens, 409 pendant une Chaîne, 409 au lancement en Mode repli ou sans racine, 422 sur sept corps invalides, 403 sur cinq `Origin` étrangers (sans effet), 400 sur `Host` forgé, `localhost` accepté, `GET` qui ne lance rien.\n- **Propriétés Hypothesis :**\n  - `terminees` et le compteur valent le nombre d'étapes finies, pour n'importe quelle combinaison de statuts.\n  - Le bandeau garde exactement les 20 dernières lignes d'erreur, quel que soit leur nombre. La borne 20/21 est aussi testée en exemple.\n\nDeux ajustements en cours de route : la propriété sur les lignes d'erreur n'utilise pas d'espaces en bord de ligne, car la lecture de l'erreur standard les supprime. Les événements de progression synthétiques utilisent `message=\"\"`, le champ n'acceptant pas `None`.",
+  "ttft_ms": 2562,
+  "type": "result",
+  "duration_ms": 96983,
+  "uuid": "f98c8ba0-6920-42ad-ac49-ab45bc314c83",
+  "ttft_stream_ms": 1870,
+  "time_to_request_ms": 708,
+  "first_content_frame_ms": 1870,
+  "queued_turn_count": 0,
+  "result_index": 0
+ }
+}

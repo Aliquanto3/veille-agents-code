@@ -1,0 +1,141 @@
+{
+ "story": "us-7-16",
+ "bras": "B",
+ "essai": 2,
+ "prompt": "Tu travailles dans un dépôt Python (le dossier courant). Voici la story à renforcer.\nSpec de la story : `_bmad-output/implementation-artifacts/spec-7-16-agent-avant-apres-pseudonymisation-et-outillage.md` (à lire d'abord).\nFichiers source modifiés par la story :\n- `src/usine/ui/ecrans.py`\n- `src/usine/ui/outillage.py`\n- `src/usine/ui/pseudonymisation.py`\n- `src/usine/ui/vues.py`\n- `src/usine/ui/serveur.py`\n- `src/usine/ui/cli.py`\nTests existants de la story :\n- `tests/unit/ui/test_ecrans_web.py`\n- `tests/unit/ui/test_vues_ecrans.py`\n- `tests/unit/ui/test_serveur.py`\n- `tests/unit/ui/test_chaine.py`\n\nRenforce les tests de cette story : ajoute des tests pytest qui vérifient précisément le comportement attendu (valeurs exactes, bornes, branches d'erreur). Ne modifie pas le code source. Utilise Hypothesis (tests de propriétés) là où une propriété générale existe ; garde des exemples ciblés pour le reste.\n\nÉcris les nouveaux tests dans de nouveaux fichiers `tests/unit/ui/test_renf_*.py` ; ne modifie ni le code source ni les tests existants. Lance les tests avec `python -m pytest -q --tb=short <fichiers>` (l'environnement est prêt, rien à installer). Tous tes tests doivent passer. Termine par la liste des fichiers créés.",
+ "rc": 0,
+ "stderr": "",
+ "duree_mur_s": 133.0,
+ "modifies_suivis": [],
+ "crees": [
+  "tests/unit/ui/test_renf_ecrans.py"
+ ],
+ "sortie": {
+  "duration_api_ms": 119035,
+  "stop_reason": "end_turn",
+  "session_id": "73133cc9-9946-4101-82e9-bb7792f9353f",
+  "total_cost_usd": 0.4306372000000001,
+  "usage": {
+   "input_tokens": 26,
+   "cache_creation_input_tokens": 43563,
+   "cache_read_input_tokens": 403632,
+   "output_tokens": 21597,
+   "output_tokens_details": {
+    "thinking_tokens": 729
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 43563,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 1083,
+     "cache_read_input_tokens": 50704,
+     "cache_creation_input_tokens": 169,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 169
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-sonnet-5-5": {
+    "inputTokens": 26,
+    "outputTokens": 21597,
+    "cacheReadInputTokens": 403632,
+    "cacheCreationInputTokens": 43563,
+    "webSearchRequests": 0,
+    "costUSD": 0.4306372000000001,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 729,
+    "canonicalModel": "claude-sonnet-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [
+   {
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_015qqvxKtMMRcWmnuD8jgDqp",
+    "tool_input": {
+     "command": "cd src/usine/ui && wc -l ecrans.py outillage.py pseudonymisation.py vues.py serveur.py cli.py; ls ../../../tests/unit/ui"
+    }
+   },
+   {
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_0113tT2srPYNSmkxvYPvD7UP",
+    "tool_input": {
+     "command": "cd \"T:/s/u16-B2\"; sed -n 354,375p src/usine/ui/vues.py; python -c \"import hypothesis;print(hypothesis.__version__)\"; sed -n 1,30p src/usine/ui/liens.py | head -40; grep -n \"def vue_ticket\" -A12 src/usine/ui/liens.py"
+    }
+   },
+   {
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_01VEFny15raDq14oAguKX5no",
+    "tool_input": {
+     "command": "cd \"T:/s/u16-B2\"; cat > tests/unit/ui/test_renf_ecrans.py <<'EOF'\n\"\"\"Renfort de la Story 7.16 : vues des écrans Agent, Avant / après, Pseudonymisation, Outillage.\"\"\"\n\nfrom datetime import UTC, date, datetime, timedelta\nfrom types import SimpleNamespace\nfrom typing import Any\n\nimport polars as pl\nimport pytest\nfrom hypothesis import given, settings\nfrom hypothesis import strategies as st\nfrom pydantic import ValidationError\n\nfrom usine.contrats.erreurs import UsineErreur\nfrom usine.contrats.llm import ReponseAgent, StatutControle\nfrom usine.ui import agent, avant_apres, outillage, pseudonymisation\nfrom usine.ui import ecrans as e\nfrom usine.ui.vues import DemandeQuestion\n\nHORS = \"Je ne peux pas répondre.\"\n\n\ndef _rep(texte: str = \"ok\", statut: StatutControle = StatutControle.conforme, **kw: Any):\n    return ReponseAgent(question=\"Q ?\", texte=texte, statut_controle=statut, **kw)\n\n\n# --- vue_reponse_agent ---\n\n\ndef test_reponse_conforme() -> None:\n    v = e.vue_reponse_agent(_rep(\"Bonjour\", outils_appeles=(\"get_meteo\",)), HORS)\n    assert v.texte == \"Bonjour\"\n    assert v.texte_masque is None\n    assert v.badge_code == \"conforme\"\n    assert v.badge == \"Contrôle : conforme : chiffres et tickets vérifiés\"\n    assert v.outils == [\"get_meteo\"]\n    assert v.libelle_outils == e.LIBELLE_OUTILS\n    assert v.aucun_outil == \"aucun\"\n    assert v.annonce == e.ANNONCE_REPONSE\n    assert v.mention_repli is None\n\n\n@pytest.mark.parametrize(\"texte\", [HORS, f\"  {HORS}\\n\"])\ndef test_refus_hors_perimetre(texte: str) -> None:\n    v = e.vue_reponse_agent(_rep(texte, StatutControle.non_controle), HORS)\n    assert v.badge_code == \"hors_perimetre\"\n    assert v.badge == e.BADGE_HORS_PERIMETRE\n    assert v.outils == []\n\n\ndef test_refus_different_nest_pas_hors_perimetre() -> None:\n    v = e.vue_reponse_agent(_rep(HORS + \" !\"), HORS)\n    assert v.badge_code == \"conforme\"\n\n\ndef test_rejet_masque_le_texte_meme_si_refus() -> None:\n    v = e.vue_reponse_agent(_rep(HORS, StatutControle.rejete), HORS)\n    assert v.texte is None\n    assert v.texte_masque == e.REPONSE_REJETEE\n    assert v.badge_code == \"rejete\"\n    assert v.badge == \"Contrôle : rejetée par le contrôle\"\n\n\n@given(texte=st.text(min_size=1), statut=st.sampled_from(list(StatutControle)))\ndef test_texte_rejete_jamais_envoye(texte: str, statut: StatutControle) -> None:\n    v = e.vue_reponse_agent(_rep(texte, statut), HORS)\n    if statut is StatutControle.rejete:\n        assert v.texte is None and v.texte_masque == e.REPONSE_REJETEE\n    else:\n        assert v.texte == texte and v.texte_masque is None\n\n\ndef test_mention_repli() -> None:\n    enr = SimpleNamespace(horodatage=datetime(2026, 10, 1, 8, tzinfo=UTC), passage_id=\"P-1\")\n    v = e.vue_reponse_agent(_rep(), HORS, enr)  # type: ignore[arg-type]\n    assert v.mention_repli is not None\n    assert \"P-1\" in v.mention_repli and v.mention_repli.startswith(\"Mode repli\")\n\n\n# --- vue_agent ---\n\n\nclass _Consult:\n    def __init__(self, passage_id: str = \"P-1\", textes: pl.DataFrame | None = None) -> None:\n        self._id = passage_id\n        self._textes = textes\n        self.urls: dict[str, str] = {}\n\n    def manifeste(self) -> Any:\n        return SimpleNamespace(passage_id=self._id)\n\n    def textes_tickets(self) -> pl.DataFrame:\n        assert self._textes is not None\n        return self._textes\n\n    def url_ticket(self, cle: str) -> str | None:\n        return self.urls.get(cle)\n\n\ndef _services(**kw: Any) -> e.ServicesEcrans:\n    base: dict[str, Any] = {\n        \"session_agent\": lambda _c: None,\n        \"reponses_repli\": lambda _p: (),\n        \"questions_suggerees\": (\"a ?\", \"b ?\"),\n        \"texte_hors_perimetre\": HORS,\n        \"apercu_pseudonymisation\": lambda: str.upper,\n        \"config_demo\": lambda: None,\n        \"manifestes_avant_apres\": lambda _r: (None, None),\n        \"lire_fiche\": lambda: None,\n    }\n    return e.ServicesEcrans(**(base | kw))\n\n\ndef test_agent_reel_sans_passage() -> None:\n    v = e.vue_agent(repli=False, consultation=None, services=_services())\n    assert v.mode == \"reel\"\n    assert v.message == agent.AUCUN_PASSAGE\n    assert v.lien_message == e.LIEN_CHAINE\n    assert v.saisie is None and v.questions == []\n\n\ndef test_agent_reel_saisie_et_suggestions() -> None:\n    v = e.vue_agent(repli=False, consultation=_Consult(), services=_services())\n    assert v.saisie is not None\n    assert v.saisie.valeur_defaut == agent.QUESTION_DEMO\n    assert v.saisie.bouton == \"Envoyer\"\n    assert [(q.rang, q.question) for q in v.questions] == [(0, \"a ?\"), (1, \"b ?\")]\n    assert v.titre_questions == e.TITRE_QUESTIONS_REEL\n    assert v.legende == agent.LEGENDE\n    assert v.message_repli is None and v.erreur is None\n    assert [o.nom for o in v.outils] == [\n        \"get_meteo\",\n        \"list_anomalies\",\n        \"get_tendance\",\n        \"get_prevision\",\n        \"get_risques\",\n    ]\n\n\ndef test_agent_repli_liste_les_questions_enregistrees() -> None:\n    recus: list[str] = []\n\n    def repli(pid: str) -> tuple[Any, ...]:\n        recus.append(pid)\n        return tuple(SimpleNamespace(reponse=_rep()) for _ in range(3))\n\n    v = e.vue_agent(\n        repli=True, consultation=_Consult(\"P-9\"), services=_services(reponses_repli=repli)\n    )\n    assert recus == [\"P-9\"]\n    assert v.mode == \"repli\"\n    assert v.saisie is None\n    assert v.message_repli == agent.MESSAGE_REPLI\n    assert [q.rang for q in v.questions] == [0, 1, 2]\n    assert v.titre_questions == agent.LIBELLE_CHOIX\n\n\ndef test_agent_repli_refus_du_passage() -> None:\n    def refuse(_p: str) -> tuple[Any, ...]:\n        raise UsineErreur(\"passage étranger\")\n\n    v = e.vue_agent(repli=True, consultation=_Consult(), services=_services(reponses_repli=refuse))\n    assert v.erreur == f\"{agent.REFUS_REPLI} : passage étranger\"\n    assert v.questions == []\n\n\ndef test_agent_repli_sans_consultation() -> None:\n    v = e.vue_agent(repli=True, consultation=None, services=_services())\n    assert v.erreur is None and v.questions == [] and v.message_repli == agent.MESSAGE_REPLI\n\n\ndef test_agent_erreur_selon_le_mode() -> None:\n    reel = e.vue_agent_erreur(False, \"boom\")\n    assert reel.erreur == \"boom\" and reel.lien_repli == e.LIEN_REPLI and reel.message_repli is None\n    repli = e.vue_agent_erreur(True, \"boom\")\n    assert repli.lien_repli is None and repli.message_repli == agent.MESSAGE_REPLI\n\n\n# --- GardeSession ---\n\n\nclass _Session:\n    def __init__(self, passage_id: str) -> None:\n        self.passage_id = passage_id\n        self.fermee = False\n        self.questions: list[str] = []\n\n    def repondre(self, question: str) -> str:\n        self.questions.append(question)\n        return f\"{self.passage_id}:{question}\"\n\n    def fermer(self) -> None:\n        self.fermee = True\n\n\ndef test_garde_session_reutilise_puis_rebatit() -> None:\n    creees: list[_Session] = []\n\n    def fabrique(c: Any) -> _Session:\n        s = _Session(c.manifeste().passage_id)\n        creees.append(s)\n        return s\n\n    garde = e.GardeSession(fabrique)  # type: ignore[arg-type]\n    assert garde.repondre(_Consult(\"A\"), \"1\") == \"A:1\"  # type: ignore[arg-type,comparison-overlap]\n    garde.repondre(_Consult(\"A\"), \"2\")  # type: ignore[arg-type]\n    assert len(creees) == 1 and creees[0].questions == [\"1\", \"2\"]\n    assert garde.repondre(_Consult(\"B\"), \"3\") == \"B:3\"  # type: ignore[arg-type,comparison-overlap]\n    assert len(creees) == 2 and creees[0].fermee and not creees[1].fermee\n\n\ndef test_garde_session_echec_de_fabrique_nomme_la_cause_et_reessaie() -> None:\n    appels: list[int] = []\n\n    def fabrique(_c: Any) -> _Session:\n        appels.append(1)\n        if len(appels) == 1:\n            raise UsineErreur(\"clé absente\")\n        return _Session(\"A\")\n\n    garde = e.GardeSession(fabrique)  # type: ignore[arg-type]\n    with pytest.raises(e.SessionIndisponible, match=r\"la session ne peut être construite \\(clé absente\\)\"):\n        garde.repondre(_Consult(\"A\"), \"q\")  # type: ignore[arg-type]\n    assert garde.repondre(_Consult(\"A\"), \"q\") == \"A:q\"  # type: ignore[arg-type,comparison-overlap]\n\n\ndef test_garde_session_erreur_hors_usine_remonte() -> None:\n    def fabrique(_c: Any) -> _Session:\n        raise ValueError(\"x\")\n\n    with pytest.raises(ValueError):\n        e.GardeSession(fabrique).repondre(_Consult(), \"q\")  # type: ignore[arg-type]\n\n\n# --- DemandeQuestion ---\n\n\n@pytest.mark.parametrize(\"q\", [\"\", \"   \", \"\\n\\t \"])\ndef test_question_vide_refusee(q: str) -> None:\n    with pytest.raises(ValidationError):\n        DemandeQuestion(question=q)\n\n\ndef test_question_bornes() -> None:\n    assert DemandeQuestion(question=\"x\" * 2000).question == \"x\" * 2000\n    with pytest.raises(ValidationError):\n        DemandeQuestion(question=\"x\" * 2001)\n    with pytest.raises(ValidationError):\n        DemandeQuestion.model_validate({\"question\": \"a\", \"autre\": 1})\n\n\n@given(q=st.text(min_size=1, max_size=2000).filter(lambda s: s.strip()))\ndef test_question_rognee(q: str) -> None:\n    assert DemandeQuestion(question=q).question == q.strip()\n\n\n# --- Avant / après ---\n\n\ndef _manif(secondes: float = 12.34) -> Any:\n    debut = datetime(2026, 10, 12, 7, 30, tzinfo=UTC)\n    return SimpleNamespace(\n        passage_id=\"P-7\",\n        horodatage_debut=debut,\n        horodatage_fin=debut + timedelta(seconds=secondes),\n        date_arrete=date(2026, 10, 11),\n    )\n\n\ndef test_avant_apres_valeurs_exactes() -> None:\n    v = e.vue_avant_apres(minutes=120, mesure=_manif(4.4), dernier=_manif())\n    assert v.manuel is not None and v.chaine is not None\n    assert v.manuel.valeurs == {\"rapport\": \"120 min\", \"cumul\": \"600 min\"}\n    assert v.chaine.valeurs == {\"rapport\": \"4,4 s\", \"cumul\": \"22,0 s\"}\n    assert (v.manuel.etiquette, v.chaine.etiquette) == (\"déclaré\", \"mesuré\")\n    assert v.avertissements == []\n    assert v.tableau is not None\n    assert v.tableau.colonnes == [\"Rapport\", \"Reporting manuel (déclaré)\", \"Chaîne (mesuré)\"]\n    assert v.tableau.lignes == [\n        [\"Par Rapport quotidien\", \"120 min\", \"4,4 s\"],\n        [\"Cumulé sur 5 Rapports\", \"600 min\", \"22,0 s\"],\n    ]\n    assert v.legende == avant_apres.legende(_manif(4.4))\n\n\ndef test_avant_apres_milliers() -> None:\n    v = e.vue_avant_apres(minutes=1000, mesure=None, dernier=_manif())\n    assert v.manuel is not None and v.manuel.valeurs[\"cumul\"] == \"5 000 min\"\n\n\n@given(minutes=st.integers(0, 10**6), s=st.integers(0, 10**4))\n@settings(max_examples=50)\ndef test_avant_apres_cumul_cinq_fois(minutes: int, s: int) -> None:\n    v = e.vue_avant_apres(minutes=minutes, mesure=_manif(s), dernier=_manif())\n    assert v.manuel is not None and v.chaine is not None\n    assert v.manuel.valeurs[\"cumul\"] == e.formater_entier(minutes * 5) + \" min\"\n    assert v.chaine.valeurs[\"cumul\"] == e.texte_duree(timedelta(seconds=s) * 5)\n\n\ndef test_avant_apres_config_absente() -> None:\n    v = e.vue_avant_apres(minutes=None, mesure=_manif(), dernier=_manif())\n    assert v.avertissements == [avant_apres.CONFIG_ABSENTE]\n    assert v.manuel is None and v.chaine is not None\n    assert v.tableau is not None and v.tableau.colonnes == [\"Rapport\", \"Chaîne (mesuré)\"]\n    assert v.tableau.lignes[0] == [\"Par Rapport quotidien\", \"12,3 s\"]\n\n\ndef test_avant_apres_classification_initiale() -> None:\n    v = e.vue_avant_apres(minutes=30, mesure=None, dernier=_manif())\n    assert v.avertissements == [avant_apres.SEULE_CLASSIFICATION_INITIALE]\n    assert v.chaine is None and v.legende is None\n    assert v.tableau is not None and v.tableau.colonnes[1] == \"Reporting manuel (déclaré)\"\n\n\ndef test_avant_apres_aucun_passage() -> None:\n    v = e.vue_avant_apres(minutes=30, mesure=None, dernier=None, periode=\"cumul\")\n    assert v.message == avant_apres.AUCUN_PASSAGE\n    assert v.lien_message == e.LIEN_CHAINE\n    assert v.tableau is None and v.periode == \"cumul\"\n    assert v.avertissements == []\n\n\ndef test_avant_apres_rien_du_tout_cumule_les_avertissements() -> None:\n    v = e.vue_avant_apres(minutes=None, mesure=None, dernier=_manif())\n    assert v.avertissements == [\n        avant_apres.CONFIG_ABSENTE,\n        avant_apres.SEULE_CLASSIFICATION_INITIALE,\n    ]\n    assert v.tableau is None\n\n\ndef test_avant_apres_periode_et_options() -> None:\n    v = e.vue_avant_apres(minutes=1, mesure=_manif(), dernier=_manif(), periode=\"cumul\")\n    assert v.periode == \"cumul\"\n    assert [(p.valeur, p.libelle) for p in v.periodes] == [\n        (\"rapport\", \"Par Rapport quotidien\"),\n        (\"cumul\", \"Cumulé sur 5 Rapports\"),\n    ]\n    assert e.vue_avant_apres_erreur(\"x\").erreur == \"x\"\n    assert e.vue_avant_apres_erreur(\"x\").periode == \"rapport\"\n\n\n# --- Pseudonymisation ---\n\n\ndef _tickets(rows: list[tuple[str, str | None]]) -> pl.DataFrame:\n    return pl.DataFrame(\n        {\"cle_ticket\": [r[0] for r in rows], \"description\": [r[1] for r in rows]},\n        schema={\"cle_ticket\": pl.String, \"description\": pl.String},\n    )\n\n\ndef test_descriptions_filtre_vides_et_garde_l_ordre() -> None:\n    t = _tickets([(\"B-2\", \"deux\"), (\"A-1\", None), (\"C-3\", \"  \\n\"), (\"D-4\", \" quatre \")])\n    d = pseudonymisation.descriptions(t)\n    assert list(d.items()) == [(\"B-2\", \"deux\"), (\"D-4\", \" quatre \")]\n\n\ndef test_moteur_indisponible_premiere_ligne() -> None:\n    m = pseudonymisation.moteur_indisponible(OSError(\"modèle absent\\nsuite secrète\"))\n    assert m.endswith(\"OSError : modèle absent\")\n    assert \"secrète\" not in m and \"\\n\" not in m\n    assert pseudonymisation.moteur_indisponible(RuntimeError(\"  \")).endswith(\": RuntimeError\")\n\n\ndef test_pseudo_aucune_description() -> None:\n    c = _Consult(textes=_tickets([(\"A-1\", \" \")]))\n    v = e.vue_pseudonymisation(c, lambda: str.upper, None)  # type: ignore[arg-type]\n    assert v.message == pseudonymisation.AUCUNE_DESCRIPTION and v.tickets == []\n\n\ndef test_pseudo_defaut_premier_ticket_trie_et_url() -> None:\n    c = _Consult(textes=_tickets([(\"Z-9\", \"zz\"), (\"A-1\", \"aa\")]))\n    c.urls[\"A-1\"] = \"https://x.invalid/A-1\"\n    v = e.vue_pseudonymisation(c, lambda: str.upper, None)  # type: ignore[arg-type]\n    assert v.tickets == [\"A-1\", \"Z-9\"]\n    assert v.ticket is not None and v.ticket.cle == \"A-1\"\n    assert v.ticket.url == \"https://x.invalid/A-1\"\n    assert (v.original, v.pseudonymise) == (\"aa\", \"AA\")\n    assert v.legende == pseudonymisation.LEGENDE and v.erreur is None\n\n\ndef test_pseudo_ticket_choisi_sans_url() -> None:\n    c = _Consult(textes=_tickets([(\"Z-9\", \"zz\"), (\"A-1\", \"aa\")]))\n    v = e.vue_pseudonymisation(c, lambda: str.upper, \"Z-9\")  # type: ignore[arg-type]\n    assert v.ticket is not None and v.ticket.url is None and v.ticket.nom_accessible is None\n    assert v.original == \"zz\"\n\n\ndef test_pseudo_ticket_inconnu() -> None:\n    c = _Consult(textes=_tickets([(\"A-1\", \"aa\")]))\n    v = e.vue_pseudonymisation(c, lambda: str.upper, \"NOPE-1\")  # type: ignore[arg-type]\n    assert v.erreur == \"Le ticket NOPE-1 n'a pas de description non vide dans ce Passage.\"\n    assert v.tickets == [\"A-1\"] and v.original is None and v.pseudonymise is None\n\n\ndef test_pseudo_erreur_usine_et_moteur() -> None:\n    c = _Consult(textes=_tickets([(\"A-1\", \"aa\")]))\n\n    def cle_absente() -> Any:\n        raise UsineErreur(\"USINE_CLE_PSEUDO absente\")\n\n    v = e.vue_pseudonymisation(c, cle_absente, None)  # type: ignore[arg-type]\n    assert v.erreur == \"Aperçu de la Pseudonymisation impossible : USINE_CLE_PSEUDO absente\"\n    assert v.tickets == [\"A-1\"] and v.ticket is not None and v.original is None\n\n    def apercu_en_echec() -> Any:\n        def f(_t: str) -> str:\n            raise ValueError(\"spaCy\\ntrace\")\n\n        return f\n\n    v = e.vue_pseudonymisation(c, apercu_en_echec, None)  # type: ignore[arg-type]\n    assert v.erreur == pseudonymisation.moteur_indisponible(ValueError(\"spaCy\\ntrace\"))\n    assert v.tickets == [\"A-1\"] and v.pseudonymise is None\n\n\ndef test_pseudo_message_et_erreur() -> None:\n    assert e.vue_pseudonymisation_erreur(\"x\").erreur == \"x\"\n    m = e.vue_pseudonymisation_message(\"m\", e.LIEN_CHAINE)\n    assert m.message == \"m\" and m.lien_message == e.LIEN_CHAINE\n\n\n# --- Outillage ---\n\n\ndef test_vue_outillage_fiche_absente_et_erreur() -> None:\n    a = e.vue_outillage(None)\n    assert a.message == outillage.FICHE_ABSENTE and a.html is None and a.legende is None\n    r = e.vue_outillage_erreur(\"illisible\")\n    assert (r.erreur, r.message, r.html, r.legende) == (\"illisible\", None, None, None)\n\n\ndef test_vue_outillage_fiche_vide_est_une_fiche() -> None:\n    v = e.vue_outillage(\"\")\n    assert v.message is None and v.html == \"\" and v.legende == outillage.LEGENDE\n\n\ndef test_rendre_fiche_cartes_et_titre_h1_retire() -> None:\n    html = outillage.rendre_fiche(\"# Titre\\n\\nIntro\\n\\n## A\\n\\ntexte a\\n\\n## B\\n\\ntexte b\\n\")\n    assert \"Titre\" not in html\n    assert html.count('<section class=\"carte carte--fiche\">') == 3\n    assert \"<h2>A</h2>\" in html and \"<h2>B</h2>\" in html\n    assert html.startswith('<section class=\"carte carte--fiche\"><p>Intro</p>')\n\n\ndef test_rendre_fiche_sans_intro_pas_de_carte_vide() -> None:\n    html = outillage.rendre_fiche(\"# T\\n\\n## A\\n\\nx\\n\")\n    assert html.count(\"<section\") == 1 and html.startswith('<section class=\"carte carte--fiche\"><h2>')\n\n\ndef test_rendre_fiche_pastilles() -> None:\n    html = outillage.rendre_fiche(\"## S\\n\\n✅ ⚠\\ufe0f ❌ fin\\n\")\n    assert '<span class=\"pastille pastille--oui\">Oui</span>' in html\n    assert '<span class=\"pastille pastille--surveiller\">À surveiller</span>' in html\n    assert '<span class=\"pastille pastille--non\">Non</span>' in html\n    assert \"\\ufe0f\" not in html and \"✅\" not in html and \"❌\" not in html\n\n\ndef test_rendre_fiche_tableau_defilant() -> None:\n    html = outillage.rendre_fiche(\"## S\\n\\n| a | b |\\n|---|---|\\n| ✅ | x |\\n\")\n    assert html.count(\"<table>\") == 1\n    assert f'role=\"region\" tabindex=\"0\" aria-label=\"{outillage.LIBELLE_TABLEAU}\"><table>' in html\n    assert \"</table></div>\" in html and \"Oui\" in html\n\n\ndef test_rendre_fiche_html_brut_echappe() -> None:\n    html = outillage.rendre_fiche(\n        \"## S\\n\\n<script>alert(1)</script> <img src=x onerror=alert(1)>\\n\\n[l](javascript:alert(1))\\n\"\n    )\n    assert \"<script\" not in html and \"<img\" not in html\n    assert \"&lt;script&gt;\" in html\n    assert 'href=\"javascript' not in html\n\n\n@given(st.text(alphabet=st.characters(blacklist_categories=(\"Cs\",)), max_size=200))\ndef test_rendre_fiche_ne_laisse_passer_aucune_balise_script(texte: str) -> None:\n    html = outillage.rendre_fiche(\"## S\\n\\n\" + texte.replace(\"\\x00\", \"\"))\n    assert \"<script\" not in html.lower().replace(\"&lt;script\", \"\")\n\n\ndef test_lire_fiche(tmp_path: Any) -> None:\n    assert outillage.lire_fiche(tmp_path) is None\n    f = tmp_path / outillage.FICHIER_FICHE\n    f.parent.mkdir(parents=True)\n    f.write_bytes(\"\\ufeffbonjour é\".encode())\n    assert outillage.lire_fiche(tmp_path) == \"bonjour é\"\n    f.write_bytes(b\"\\xff\\xfe\\x00bad\\x80\")\n    with pytest.raises(UnicodeDecodeError):\n        outillage.lire_fiche(tmp_path)\nEOF\npython -m pytest -q --tb=short tests/unit/ui/test_renf_ecrans.py 2>&1 | tail -40"
+    }
+   },
+   {
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_015jJmPsNLRaHWovcSR4JAYt",
+    "tool_input": {
+     "command": "cd \"T:/s/u16-B2\" && sed -i 's/\"cumul\": \"22,0 s\"/\"cumul\": \"22 s\"/; s/\"Cumulé sur 5 Rapports\", \"600 min\", \"22,0 s\"/\"Cumulé sur 5 Rapports\", \"600 min\", \"22 s\"/; s/== \"5 000 min\"/== \"5\\\\u00a0000 min\"/' tests/unit/ui/test_renf_ecrans.py && python -m pytest -q --tb=short tests/unit/ui/test_renf_ecrans.py 2>&1 | tail -15"
+    }
+   }
+  ],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 19,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "J'ai écrit 46 tests dans un seul nouveau fichier, et ils passent tous. Je n'ai touché ni au code source ni aux tests existants.\n\n**Fichier créé :** `tests/unit/ui/test_renf_ecrans.py`\n\nIl couvre les vues et fonctions pures, sans passer par le serveur HTTP :\n- **Réponse de l'Agent :**\n  - Les badges selon le statut et le cas « hors périmètre », y compris un texte de refus entouré d'espaces.\n  - Le texte d'une réponse rejetée n'est jamais envoyé (test Hypothesis).\n  - La mention du Mode repli.\n- **Écran Agent :**\n  - Mode réel avec et sans Passage.\n  - Mode repli : questions enregistrées, refus d'un autre Passage, absence de consultation.\n  - Bandeau d'erreur selon le mode.\n- **`GardeSession` :**\n  - La session est réutilisée tant que le Passage ne change pas.\n  - Elle est fermée et rebâtie quand le Passage change.\n  - Un échec de la fabrique donne `SessionIndisponible` avec la cause, et un nouvel essai reste possible.\n  - Une erreur qui n'est pas une `UsineErreur` remonte telle quelle.\n- **`DemandeQuestion` :** question vide, bornes à 2000 et 2001 caractères, champ en trop refusé, question rognée (Hypothesis).\n- **Avant / après :**\n  - Valeurs exactes des deux périodes et du tableau.\n  - Cumul égal à cinq fois la valeur d'un Rapport (Hypothesis).\n  - Configuration absente, classification initiale seule, aucun Passage, avertissements cumulés.\n- **Pseudonymisation :**\n  - Filtrage des descriptions vides.\n  - Message du moteur indisponible (première ligne de la cause seulement).\n  - Ticket par défaut, ticket choisi, ticket inconnu.\n  - Erreur d'aperçu : la sélection de tickets reste utilisable.\n- **Outillage :**\n  - `rendre_fiche` : cartes par section `##`, titre `#` retiré, pastilles, tableau défilant.\n  - HTML brut et lien `javascript:` neutralisés, avec un test Hypothesis sur `<script`.\n  - `lire_fiche` : fichier absent, BOM toléré, octets non UTF-8.\n\n**Non couvert :** `serveur.py` et `cli.py`, dont les routes. Je me suis limité aux fonctions pures des écrans, pour lesquelles il existe des propriétés générales.\n\n**Deux attentes à connaître :** je les ai alignées sur le comportement actuel du code, qui est cohérent avec la spec.\n- Le cumul chronométré de 4,4 s s'affiche « 22 s » : le formatage retire la décimale nulle.\n- Les milliers sont séparés par une espace insécable : « 5 000 min » avec U+00A0.\n\nDans les tests, le manifeste du Passage est une doublure `SimpleNamespace`, pas un vrai `ManifestePassage`.",
+  "ttft_ms": 3842,
+  "type": "result",
+  "duration_ms": 131829,
+  "uuid": "dae1337a-3f84-4ffd-a456-59952b8e3cff",
+  "ttft_stream_ms": 3131,
+  "time_to_request_ms": 1832,
+  "first_content_frame_ms": 3131,
+  "queued_turn_count": 0,
+  "result_index": 0
+ }
+}

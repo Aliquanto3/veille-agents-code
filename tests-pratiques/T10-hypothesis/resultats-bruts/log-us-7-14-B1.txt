@@ -1,0 +1,1 @@
+us-7-14-B1 rc 0 cout 0.3436986 tours 13 api_ms 95610 mur_s 96.8 modifies [] crees ['tests/unit/ui/test_renf_carte_detail.py']

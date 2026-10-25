@@ -1,0 +1,127 @@
+{
+ "story": "us-7-15",
+ "bras": "B",
+ "essai": 1,
+ "prompt": "Tu travailles dans un dépôt Python (le dossier courant). Voici la story à renforcer.\nSpec de la story : `_bmad-output/implementation-artifacts/spec-7-15-lancement-de-la-chaine-et-bouton-de-mode.md` (à lire d'abord).\nFichiers source modifiés par la story :\n- `src/usine/ui/chaine.py`\n- `src/usine/ui/vues.py`\n- `src/usine/ui/serveur.py`\n- `src/usine/ui/app.py`\n- `src/usine/ui/textes.py`\nTests existants de la story :\n- `tests/unit/ui/test_chaine.py`\n- `tests/unit/ui/test_serveur.py`\n- `tests/unit/ui/test_vues_ecrans.py`\n- `tests/unit/ui/test_cli.py`\n\nRenforce les tests de cette story : ajoute des tests pytest qui vérifient précisément le comportement attendu (valeurs exactes, bornes, branches d'erreur). Ne modifie pas le code source. Utilise Hypothesis (tests de propriétés) là où une propriété générale existe ; garde des exemples ciblés pour le reste.\n\nÉcris les nouveaux tests dans de nouveaux fichiers `tests/unit/ui/test_renf_*.py` ; ne modifie ni le code source ni les tests existants. Lance les tests avec `python -m pytest -q --tb=short <fichiers>` (l'environnement est prêt, rien à installer). Tous tes tests doivent passer. Termine par la liste des fichiers créés.",
+ "rc": 0,
+ "stderr": "",
+ "duree_mur_s": 118.6,
+ "modifies_suivis": [],
+ "crees": [
+  "tests/unit/ui/test_renf_chaine.py"
+ ],
+ "sortie": {
+  "duration_api_ms": 88152,
+  "stop_reason": "end_turn",
+  "session_id": "f3e236d0-c0e8-437f-8185-66c6a9afc6d6",
+  "total_cost_usd": 0.36020019999999997,
+  "usage": {
+   "input_tokens": 28,
+   "cache_creation_input_tokens": 41935,
+   "cache_read_input_tokens": 467942,
+   "output_tokens": 14561,
+   "output_tokens_details": {
+    "thinking_tokens": 222
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 41935,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 997,
+     "cache_read_input_tokens": 47231,
+     "cache_creation_input_tokens": 674,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 674
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-sonnet-5-5": {
+    "inputTokens": 28,
+    "outputTokens": 14561,
+    "cacheReadInputTokens": 467942,
+    "cacheCreationInputTokens": 41935,
+    "webSearchRequests": 0,
+    "costUSD": 0.36020019999999997,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 222,
+    "canonicalModel": "claude-sonnet-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [
+   {
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_017CN1mCsae6Y3oRY2YGcH1f",
+    "tool_input": {
+     "command": "python - <<'EOF'\np='tests/unit/ui/test_renf_chaine.py'\ns=open(p,encoding='utf-8').read()\ns=s.replace('message: str | None = None) -> Any','message: str = \"\") -> Any')\ns=s.replace('passage_id=\"P-1\"','passage_id=\"20261012T073000Z-abc123\"').replace('\"Passage P-1\"','\"Passage 20261012T073000Z-abc123\"')\na=s.index('@pytest.mark.parametrize(\"route\", [\"/api/chaine\"')\nb=s.index('def test_serveur_host_forge_400')\nnew='''@pytest.mark.parametrize(\"route\", [\"/api/chaine\", \"/api/mode\"])\n@pytest.mark.parametrize(\n    (\"origine\", \"code\"),\n    [\n        (f\"http://{HOTE}\", 200),\n        (\"http://localhost\", 200),\n        (\"http://evil.test\", 403),\n        (\"null\", 403),\n        (f\"http://{HOTE}:9999\", 403),\n        (\"http://localhost.evil.test\", 403),\n    ],\n)\ndef test_serveur_origine(tmp_path: Path, route: str, origine: str, code: int) -> None:\n    \"\"\"Host légitime (sans port) ; seul l'`Origin` varie.\"\"\"\n    http, _ = client(tmp_path)\n    kwargs: dict[str, Any] = {\"headers\": {\"Origin\": origine}}\n    if route == \"/api/mode\":\n        kwargs[\"json\"] = {\"mode\": \"reel\"}\n    reponse = http.post(route, **kwargs)\n    if code == 200 and route == \"/api/chaine\":\n        code = 202\n    assert reponse.status_code == code\n\n\n'''\ns=s[:a]+new+s[b:]\ns=s.replace('    assert http.post(\"/api/chaine\").json if False else True\\n','')\nopen(p,'w',encoding='utf-8').write(s)\nEOF\npython -m pytest -q --tb=short tests/unit/ui/test_renf_chaine.py 2>&1 | tail -30"
+    }
+   },
+   {
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_011iT1bAmsYQ7a5wjQL2LwqM",
+    "tool_input": {
+     "command": "sed -i 's/== \"2,0 s\"/== \"2 s\"/; s|        (\"http://localhost\", 200),|        (\"http://localhost\", 403),  # autre hôte que le Host (127.0.0.1)|' tests/unit/ui/test_renf_chaine.py && sed -i 's/    assert vue.etapes\\[0\\].duree == \"1,2 s\" or vue.etapes\\[0\\].duree == \"1,3 s\"/    assert vue.etapes[0].duree in {\"1,2 s\", \"1,3 s\"}/' tests/unit/ui/test_renf_chaine.py && python -m pytest -q --tb=short tests/unit/ui/test_renf_chaine.py 2>&1 | tail -15"
+    }
+   }
+  ],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 23,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "J'ai ajouté `tests/unit/ui/test_renf_chaine.py`, qui contient 58 tests. Ils passent tous avec `python -m pytest -q --tb=short tests/unit/ui/test_renf_chaine.py`. Je n'ai pas modifié le code source ni les tests existants, et je n'ai pas lancé le reste de la suite.\n\nLes tests couvrent :\n\n- **`GestionChaine`, lancement :**\n  - Refus en Mode repli, avec un motif sans marques Markdown.\n  - Refus avec une racine absente, nulle ou qui n'est pas un dossier.\n  - Refus d'un second lancement, avec un seul processus démarré.\n  - Relance possible après la fin d'une Chaîne.\n  - `OSError` au démarrage ou à la lecture des fichiers de progression : l'erreur est signalée dans la vue et rien n'est lancé.\n- **`GestionChaine`, vue :**\n  - Statuts, libellés et motifs des deux boutons.\n  - Bandeaux de succès et d'échec.\n  - Texte « aucun message » et formule « hors d'une étape ».\n  - Les 20 dernières lignes d'erreur, pour 0, 1, 19, 20, 21 et 45 lignes.\n  - Message d'erreur lu une seule fois.\n  - Progression invalide : l'erreur est signalée, la vue reste en cours.\n  - Ligne finale partielle ignorée.\n  - Étapes sautée et en cours, compteur et annonce « Étape n sur 10 ».\n- **Fonctions pures :** `_annonce`, `_etape_courante`, `_lieu_echec`, `_journal` (récent en haut, UTC), `vue_dernier_passage` et `DESCRIPTIONS`.\n- **Serveur :**\n  - 202, 409 et 422 sur `/api/chaine` et `/api/mode`.\n  - Bascule aller-retour.\n  - Refus de la bascule pendant une Chaîne.\n  - `Origin` étranger, `null`, autre port ou autre nom que le `Host` : 403.\n  - `Host` forgé : 400.\n  - `Host: localhost` accepté avec un `Origin` identique.\n\nHypothesis sert pour `_sans_marques`, le numéro d'étape de `_annonce`, la taille et l'ordre de `_journal` et la forme de `vue_dernier_passage`.\n\nDeux comportements diffèrent de ce que j'attendais au départ, et les tests reprennent le comportement réel du code :\n- `Origin: http://localhost` est refusé (403) quand le `Host` est `127.0.0.1`, car la spec exige le même hôte et le même port.\n- La durée d'une étape de 2 secondes s'affiche « 2 s », pas « 2,0 s ».\n\nFichier créé :\n- `tests/unit/ui/test_renf_chaine.py`",
+  "ttft_ms": 1628,
+  "type": "result",
+  "duration_ms": 117391,
+  "uuid": "5973275a-21f1-4d47-826d-1813643673c7",
+  "ttft_stream_ms": 1017,
+  "time_to_request_ms": 197,
+  "first_content_frame_ms": 1017,
+  "queued_turn_count": 0,
+  "result_index": 0
+ }
+}

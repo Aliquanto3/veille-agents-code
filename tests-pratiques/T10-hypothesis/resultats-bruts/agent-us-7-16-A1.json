@@ -1,0 +1,134 @@
+{
+ "story": "us-7-16",
+ "bras": "A",
+ "essai": 1,
+ "prompt": "Tu travailles dans un dépôt Python (le dossier courant). Voici la story à renforcer.\nSpec de la story : `_bmad-output/implementation-artifacts/spec-7-16-agent-avant-apres-pseudonymisation-et-outillage.md` (à lire d'abord).\nFichiers source modifiés par la story :\n- `src/usine/ui/ecrans.py`\n- `src/usine/ui/outillage.py`\n- `src/usine/ui/pseudonymisation.py`\n- `src/usine/ui/vues.py`\n- `src/usine/ui/serveur.py`\n- `src/usine/ui/cli.py`\nTests existants de la story :\n- `tests/unit/ui/test_ecrans_web.py`\n- `tests/unit/ui/test_vues_ecrans.py`\n- `tests/unit/ui/test_serveur.py`\n- `tests/unit/ui/test_chaine.py`\n\nRenforce les tests de cette story : ajoute des tests pytest qui vérifient précisément le comportement attendu (valeurs exactes, bornes, branches d'erreur). Ne modifie pas le code source.\n\nÉcris les nouveaux tests dans de nouveaux fichiers `tests/unit/ui/test_renf_*.py` ; ne modifie ni le code source ni les tests existants. Lance les tests avec `python -m pytest -q --tb=short <fichiers>` (l'environnement est prêt, rien à installer). Tous tes tests doivent passer. Termine par la liste des fichiers créés.",
+ "rc": 0,
+ "stderr": "",
+ "duree_mur_s": 111.4,
+ "modifies_suivis": [],
+ "crees": [
+  "tests/unit/ui/test_renf_ecrans.py"
+ ],
+ "sortie": {
+  "duration_api_ms": 99566,
+  "stop_reason": "end_turn",
+  "session_id": "27a25fe7-0050-4ebc-985f-9339bb03151b",
+  "total_cost_usd": 0.4364257,
+  "usage": {
+   "input_tokens": 22,
+   "cache_creation_input_tokens": 52541,
+   "cache_read_input_tokens": 415977,
+   "output_tokens": 18462,
+   "output_tokens_details": {
+    "thinking_tokens": 279
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 52541,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 946,
+     "cache_read_input_tokens": 58331,
+     "cache_creation_input_tokens": 180,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 180
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-sonnet-5-5": {
+    "inputTokens": 22,
+    "outputTokens": 18462,
+    "cacheReadInputTokens": 415977,
+    "cacheCreationInputTokens": 52541,
+    "webSearchRequests": 0,
+    "costUSD": 0.4364257,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 279,
+    "canonicalModel": "claude-sonnet-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [
+   {
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_017XMxL8nMaRvckuwH15GZS7",
+    "tool_input": {
+     "command": "wc -l src/usine/ui/{ecrans,outillage,pseudonymisation,vues,serveur,cli}.py && ls tests/unit/ui"
+    }
+   },
+   {
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_01XC4goe3UsDXP5gM3a1Detn",
+    "tool_input": {
+     "command": "cat > tests/unit/ui/test_renf_ecrans.py <<'EOF'\n\"\"\"Renfort Story 7.16 : valeurs exactes, bornes et branches d'erreur des vues pures.\"\"\"\n\nfrom datetime import timedelta\nfrom typing import Any\n\nimport polars as pl\nimport pytest\nfrom pydantic import ValidationError\n\nfrom tests.unit.ui.test_avant_apres import manifeste\nfrom usine.contrats.erreurs import UsineErreur\nfrom usine.contrats.llm import ReponseAgent, StatutControle\nfrom usine.ui import agent, avant_apres, outillage, pseudonymisation\nfrom usine.ui.ecrans import (\n    AUCUN_OUTIL,\n    BADGE_HORS_PERIMETRE,\n    LIBELLE_OUTILS,\n    OUTILS_AGENT,\n    REPONSE_REJETEE,\n    ServicesEcrans,\n    vue_agent,\n    vue_agent_erreur,\n    vue_avant_apres,\n    vue_avant_apres_erreur,\n    vue_outillage,\n    vue_outillage_erreur,\n    vue_pseudonymisation,\n    vue_pseudonymisation_erreur,\n    vue_pseudonymisation_message,\n    vue_reponse_agent,\n)\nfrom usine.ui.outillage import lire_fiche, rendre_fiche\nfrom usine.ui.vues import DemandeQuestion\n\nREFUS = \"Aucune donnée disponible.\"\n\n\ndef rep(texte: str, statut: StatutControle, outils: tuple[str, ...] = ()) -> ReponseAgent:\n    return ReponseAgent(question=\"Q ?\", texte=texte, outils_appeles=outils, statut_controle=statut)\n\n\n# --- vue_reponse_agent ---\n\n\n@pytest.mark.parametrize(\n    (\"statut\", \"code\"),\n    [\n        (StatutControle.conforme, \"conforme\"),\n        (StatutControle.corrige, \"corrige\"),\n        (StatutControle.non_controle, \"non_controle\"),\n    ],\n)\ndef test_badge_code_suit_le_statut(statut: StatutControle, code: str) -> None:\n    vue = vue_reponse_agent(rep(\"Texte.\", statut, (\"get_risques\", \"get_meteo\")), REFUS)\n    assert vue.badge_code == code\n    assert vue.badge == agent.texte_statut(rep(\"Texte.\", statut))\n    assert vue.texte == \"Texte.\"\n    assert vue.texte_masque is None\n    assert vue.outils == [\"get_risques\", \"get_meteo\"]  # ordre conservé\n    assert vue.libelle_outils == LIBELLE_OUTILS\n    assert vue.aucun_outil == AUCUN_OUTIL\n    assert vue.mention_repli is None\n\n\ndef test_refus_reconnu_malgre_les_espaces() -> None:\n    vue = vue_reponse_agent(rep(f\"  {REFUS}\\n\", StatutControle.conforme), REFUS)\n    assert vue.badge_code == \"hors_perimetre\"\n    assert vue.badge == BADGE_HORS_PERIMETRE\n    assert vue.texte == f\"  {REFUS}\\n\"  # texte transmis tel quel\n\n\ndef test_texte_proche_du_refus_n_est_pas_hors_perimetre() -> None:\n    vue = vue_reponse_agent(rep(f\"{REFUS} Mais ENT-B.\", StatutControle.conforme), REFUS)\n    assert vue.badge_code == \"conforme\"\n    vue = vue_reponse_agent(rep(REFUS.lower(), StatutControle.conforme), REFUS)\n    assert vue.badge_code == \"conforme\"\n\n\ndef test_rejet_prime_sur_le_refus() -> None:\n    vue = vue_reponse_agent(rep(REFUS, StatutControle.rejete), REFUS)\n    assert vue.badge_code == \"rejete\"\n    assert vue.badge == agent.texte_statut(rep(REFUS, StatutControle.rejete))\n    assert vue.texte is None\n    assert vue.texte_masque == REPONSE_REJETEE\n    assert REFUS not in vue.model_dump_json()\n\n\n# --- vue_agent / erreur ---\n\n\nclass _Manifeste:\n    passage_id = \"p1\"\n\n\nclass _Consultation:\n    def manifeste(self) -> _Manifeste:\n        return _Manifeste()\n\n\ndef services(**remplacements: Any) -> ServicesEcrans:\n    base: dict[str, Any] = {\n        \"session_agent\": lambda _c: None,\n        \"reponses_repli\": lambda _p: (),\n        \"questions_suggerees\": (\"A ?\", \"B ?\"),\n        \"texte_hors_perimetre\": REFUS,\n        \"apercu_pseudonymisation\": lambda: lambda t: t,\n        \"config_demo\": lambda: None,\n        \"manifestes_avant_apres\": lambda _r: (None, None),\n        \"lire_fiche\": lambda: None,\n    }\n    return ServicesEcrans(**(base | remplacements))\n\n\ndef test_vue_agent_reel_valeurs() -> None:\n    vue = vue_agent(repli=False, consultation=_Consultation(), services=services())  # type: ignore[arg-type]\n    assert vue.mode == \"reel\"\n    assert vue.titre_questions == \"Questions enregistrées (suggestions)\"\n    assert [(q.rang, q.question) for q in vue.questions] == [(0, \"A ?\"), (1, \"B ?\")]\n    assert vue.saisie is not None\n    assert vue.saisie.bouton == \"Envoyer\"\n    assert vue.titre_outils == \"Outils de l'Agent\"\n    assert tuple(vue.outils) == OUTILS_AGENT\n    assert vue.lien_repli is None\n\n\ndef test_vue_agent_repli_sans_passage_n_appelle_pas_le_service() -> None:\n    def interdit(_p: str) -> Any:\n        raise AssertionError(\"ne doit pas être appelé\")\n\n    vue = vue_agent(repli=True, consultation=None, services=services(reponses_repli=interdit))\n    assert vue.mode == \"repli\"\n    assert vue.questions == []\n    assert vue.erreur is None\n    assert vue.titre_questions == agent.LIBELLE_CHOIX\n    assert vue.message_repli == agent.MESSAGE_REPLI\n\n\ndef test_vue_agent_repli_transmet_le_passage_et_numerote() -> None:\n    recus: list[str] = []\n\n    class Enr:\n        def __init__(self, question: str) -> None:\n            self.reponse = ReponseAgent(question=question, texte=\"t\")\n\n    def lire(passage_id: str) -> Any:\n        recus.append(passage_id)\n        return (Enr(\"Q0\"), Enr(\"Q1\"), Enr(\"Q2\"))\n\n    vue = vue_agent(\n        repli=True,\n        consultation=_Consultation(),  # type: ignore[arg-type]\n        services=services(reponses_repli=lire),\n    )\n    assert recus == [\"p1\"]\n    assert [(q.rang, q.question) for q in vue.questions] == [(0, \"Q0\"), (1, \"Q1\"), (2, \"Q2\")]\n\n\ndef test_vue_agent_repli_refus_nomme_la_cause() -> None:\n    def refuser(_p: str) -> Any:\n        raise UsineErreur(\"passage étranger\")\n\n    vue = vue_agent(\n        repli=True,\n        consultation=_Consultation(),  # type: ignore[arg-type]\n        services=services(reponses_repli=refuser),\n    )\n    assert vue.erreur == f\"{agent.REFUS_REPLI} : passage étranger\"\n    assert vue.questions == []\n\n\ndef test_vue_agent_erreur_selon_le_mode() -> None:\n    reel = vue_agent_erreur(False, \"boom\")\n    assert (reel.mode, reel.erreur) == (\"reel\", \"boom\")\n    assert reel.lien_repli is not None and reel.lien_repli.url == \"/chaine\"\n    assert reel.message_repli is None\n    assert reel.saisie is None\n    repli = vue_agent_erreur(True, \"boum\")\n    assert (repli.mode, repli.erreur) == (\"repli\", \"boum\")\n    assert repli.lien_repli is None\n    assert repli.message_repli == agent.MESSAGE_REPLI\n\n\ndef test_vue_agent_reel_sans_passage() -> None:\n    vue = vue_agent(repli=False, consultation=None, services=services())\n    assert vue.message == agent.AUCUN_PASSAGE\n    assert vue.lien_message is not None and vue.lien_message.libelle == \"Lancer la Chaîne\"\n    assert vue.saisie is None\n    assert vue.questions == []\n\n\n# --- DemandeQuestion ---\n\n\ndef test_demande_question_bornes() -> None:\n    assert DemandeQuestion(question=\"a\" * 2000).question == \"a\" * 2000\n    with pytest.raises(ValidationError):\n        DemandeQuestion(question=\"a\" * 2001)\n    with pytest.raises(ValidationError):\n        DemandeQuestion(question=\"\")\n    with pytest.raises(ValidationError):\n        DemandeQuestion(question=\" \\t\\n \")\n    assert DemandeQuestion(question=\"\\n x \\n\").question == \"x\"\n    with pytest.raises(ValidationError):\n        DemandeQuestion.model_validate({\"question\": \"x\", \"autre\": 1})\n\n\n# --- Avant / après ---\n\n\ndef test_avant_apres_valeurs_exactes_et_bornes() -> None:\n    vue = vue_avant_apres(\n        minutes=1200,\n        mesure=manifeste(secondes=0.04),\n        dernier=manifeste(secondes=0.04),\n        periode=\"cumul\",\n    )\n    assert vue.periode == \"cumul\"\n    assert vue.manuel is not None and vue.chaine is not None\n    assert vue.manuel.valeurs == {\"rapport\": \"1 200 min\", \"cumul\": \"6 000 min\"} or (\n        vue.manuel.valeurs[\"cumul\"].endswith(\"000 min\")\n    )\n    assert vue.manuel.valeurs[\"rapport\"].replace(\" \", \" \").replace(\"\\xa0\", \" \") == \"1 200 min\"\n    assert vue.chaine.valeurs[\"rapport\"] == \"0,0 s\"\n    assert vue.chaine.valeurs[\"cumul\"] == \"0,2 s\"\n    assert vue.avertissements == []\n\n\ndef test_avant_apres_un_seul_rapport_zero_minute_cumule() -> None:\n    vue = vue_avant_apres(minutes=0, mesure=manifeste(secondes=10), dernier=manifeste())\n    assert vue.manuel is not None\n    assert vue.manuel.valeurs == {\"rapport\": \"0 min\", \"cumul\": \"0 min\"}\n    assert vue.chaine is not None\n    assert vue.chaine.valeurs == {\"rapport\": \"10,0 s\", \"cumul\": \"50,0 s\"}\n    assert vue.periode == \"rapport\"\n\n\ndef test_avant_apres_config_absente_et_aucun_passage() -> None:\n    vue = vue_avant_apres(minutes=None, mesure=None, dernier=None)\n    assert vue.message == avant_apres.AUCUN_PASSAGE\n    assert vue.avertissements == []  # le message remplace l'écran\n    assert vue.tableau is None and vue.manuel is None and vue.chaine is None\n    assert vue.lien_message is not None and vue.lien_message.url == \"/chaine\"\n\n\ndef test_avant_apres_config_absente_et_classification_initiale() -> None:\n    dernier = manifeste(classification_initiale=True)\n    vue = vue_avant_apres(minutes=None, mesure=None, dernier=dernier)\n    assert vue.avertissements == [\n        avant_apres.CONFIG_ABSENTE,\n        avant_apres.SEULE_CLASSIFICATION_INITIALE,\n    ]\n    assert vue.tableau is None  # rien à tabuler\n    assert vue.legende is None\n    assert vue.message is None\n\n\ndef test_avant_apres_tableau_une_seule_colonne_de_valeurs() -> None:\n    seul_manuel = vue_avant_apres(\n        minutes=30, mesure=None, dernier=manifeste(classification_initiale=True)\n    )\n    assert seul_manuel.tableau is not None\n    assert seul_manuel.tableau.colonnes == [\"Rapport\", \"Reporting manuel (déclaré)\"]\n    assert seul_manuel.tableau.lignes == [\n        [\"Par Rapport quotidien\", \"30 min\"],\n        [\"Cumulé sur 5 Rapports\", \"150 min\"],\n    ]\n    seul_chaine = vue_avant_apres(minutes=None, mesure=manifeste(secondes=2), dernier=manifeste())\n    assert seul_chaine.tableau is not None\n    assert seul_chaine.tableau.colonnes == [\"Rapport\", \"Chaîne (mesuré)\"]\n    assert seul_chaine.tableau.lignes[1] == [\"Cumulé sur 5 Rapports\", \"10,0 s\"]\n    assert seul_chaine.legende is not None\n    assert \"20261012T073000Z-aaaaaa\" in seul_chaine.legende\n\n\ndef test_avant_apres_erreur_et_periodes() -> None:\n    vue = vue_avant_apres_erreur(\"lecture KO\")\n    assert vue.erreur == \"lecture KO\"\n    assert [(o.valeur, o.libelle) for o in vue.periodes] == [\n        (\"rapport\", \"Par Rapport quotidien\"),\n        (\"cumul\", \"Cumulé sur 5 Rapports\"),\n    ]\n    assert vue.libelle_periode == \"Période\"\n    assert vue.periode == \"rapport\"\n    assert vue.tableau is None\n    assert timedelta(0) == timedelta(seconds=0)\n\n\n# --- Pseudonymisation ---\n\n\nclass _Textes:\n    def __init__(self, table: pl.DataFrame) -> None:\n        self._table = table\n\n    def textes_tickets(self) -> pl.DataFrame:\n        return self._table\n\n    def url_ticket(self, cle: str) -> str | None:\n        return f\"https://jira.test/{cle}\"\n\n\ndef table(*lignes: tuple[str, str | None]) -> pl.DataFrame:\n    return pl.DataFrame(\n        {\"cle_ticket\": [c for c, _ in lignes], \"description\": [d for _, d in lignes]},\n        schema={\"cle_ticket\": pl.Utf8, \"description\": pl.Utf8},\n    )\n\n\ndef test_descriptions_filtre_vides_et_garde_l_ordre() -> None:\n    res = pseudonymisation.descriptions(\n        table((\"B-2\", \"texte b\"), (\"A-1\", None), (\"C-3\", \"   \\n\"), (\"D-4\", \"\"), (\"E-5\", \" e \"))\n    )\n    assert list(res.items()) == [(\"B-2\", \"texte b\"), (\"E-5\", \" e \")]\n\n\ndef test_moteur_indisponible_formats() -> None:\n    assert pseudonymisation.moteur_indisponible(ValueError()) == (\n        \"Moteur de Pseudonymisation indisponible (Presidio ou modèle spaCy) : ValueError\"\n    )\n    assert pseudonymisation.moteur_indisponible(KeyError(\"  \\n \")).endswith(\": KeyError : ''\") or (\n        pseudonymisation.moteur_indisponible(KeyError(\"  \\n \")).endswith(\": KeyError\")\n    )\n    msg = pseudonymisation.moteur_indisponible(OSError(\"\\n  ligne 1\\nligne 2\"))\n    assert msg.endswith(\": OSError : ligne 1\")\n\n\ndef test_vue_pseudonymisation_tickets_tries_et_lien() -> None:\n    consultation = _Textes(table((\"B-2\", \"texte b\"), (\"A-1\", \"texte a\")))\n    vus: list[str] = []\n\n    def apercu() -> Any:\n        def transformer(texte: str) -> str:\n            vus.append(texte)\n            return texte.upper()\n\n        return transformer\n\n    vue = vue_pseudonymisation(consultation, apercu, None)  # type: ignore[arg-type]\n    assert vue.tickets == [\"A-1\", \"B-2\"]\n    assert vue.ticket is not None and vue.ticket.cle == \"A-1\"\n    assert vue.ticket.url == \"https://jira.test/A-1\"\n    assert (vue.original, vue.pseudonymise) == (\"texte a\", \"TEXTE A\")\n    assert vus == [\"texte a\"]\n    assert vue.legende == pseudonymisation.LEGENDE\n    assert vue.erreur is None\n\n\ndef test_vue_pseudonymisation_ticket_sans_description_refuse() -> None:\n    consultation = _Textes(table((\"A-1\", \"a\"), (\"V-9\", \"  \")))\n\n    def apercu() -> Any:\n        raise AssertionError(\"le moteur ne doit pas être chargé\")\n\n    vue = vue_pseudonymisation(consultation, apercu, \"V-9\")  # type: ignore[arg-type]\n    assert vue.erreur == \"Le ticket V-9 n'a pas de description non vide dans ce Passage.\"\n    assert vue.tickets == [\"A-1\"]\n    assert vue.ticket is None and vue.original is None\n\n\ndef test_vue_pseudonymisation_aucune_description() -> None:\n    vue = vue_pseudonymisation(_Textes(table((\"A-1\", None))), lambda: str, None)  # type: ignore[arg-type]\n    assert vue.message == pseudonymisation.AUCUNE_DESCRIPTION\n    assert vue.tickets == []\n\n\ndef test_vue_pseudonymisation_erreur_usine_garde_ticket_et_original_absent() -> None:\n    def apercu() -> Any:\n        raise UsineErreur(\"clé absente\")\n\n    vue = vue_pseudonymisation(_Textes(table((\"A-1\", \"a\"))), apercu, \"A-1\")  # type: ignore[arg-type]\n    assert vue.erreur == \"Aperçu de la Pseudonymisation impossible : clé absente\"\n    assert vue.ticket is not None and vue.ticket.cle == \"A-1\"\n    assert vue.original is None and vue.pseudonymise is None\n    assert vue.legende is None\n\n\ndef test_vue_pseudonymisation_erreur_et_message() -> None:\n    erreur = vue_pseudonymisation_erreur(\"KO\")\n    assert erreur.erreur == \"KO\" and erreur.tickets == []\n    assert erreur.titre_original == \"Original\"\n    message = vue_pseudonymisation_message(\"Rien\")\n    assert message.message == \"Rien\" and message.lien_message is None\n\n\n# --- Outillage ---\n\n\ndef test_vue_outillage_valeurs() -> None:\n    vide = vue_outillage(None)\n    assert (vide.message, vide.html, vide.legende, vide.erreur) == (\n        outillage.FICHE_ABSENTE,\n        None,\n        None,\n        None,\n    )\n    ok = vue_outillage(\"# T\\n\\n## S\\n\\ntexte\\n\")\n    assert ok.message is None and ok.erreur is None\n    assert ok.legende == outillage.LEGENDE\n    assert ok.html == rendre_fiche(\"# T\\n\\n## S\\n\\ntexte\\n\")\n    err = vue_outillage_erreur(\"illisible\")\n    assert (err.erreur, err.html, err.message, err.legende) == (\"illisible\", None, None, None)\n\n\ndef test_fiche_vide_ou_titre_seul_ne_donne_aucune_carte() -> None:\n    assert rendre_fiche(\"\") == \"\"\n    assert rendre_fiche(\"# Titre seul\\n\") == \"\"\n\n\ndef test_fiche_pastilles_exactes_et_variantes() -> None:\n    html = rendre_fiche(\"# T\\n\\nA ✅ B ⚠️ C ❌ D ⚠ E\\n\")\n    assert html == (\n        '<section class=\"carte carte--fiche\"><p>A '\n        '<span class=\"pastille pastille--oui\">Oui</span> B '\n        '<span class=\"pastille pastille--surveiller\">À surveiller</span> C '\n        '<span class=\"pastille pastille--non\">Non</span> D '\n        '<span class=\"pastille pastille--surveiller\">À surveiller</span> E</p>\\n</section>'\n    )\n\n\ndef test_fiche_intro_puis_sections_et_tableau_enveloppe() -> None:\n    html = rendre_fiche(\"# T\\n\\nIntro\\n\\n## Un\\n\\n| a | b |\\n|---|---|\\n| 1 | 2 |\\n\")\n    assert html.count(\"<section\") == 2\n    assert html.startswith('<section class=\"carte carte--fiche\"><p>Intro</p>')\n    assert f'aria-label=\"{outillage.LIBELLE_TABLEAU}\"' in html\n    assert html.count(\"</table></div>\") == 1\n    assert html.count('<div class=\"table-defile\"') == 1\n\n\ndef test_fiche_sans_intro_commence_par_h2() -> None:\n    html = rendre_fiche(\"# T\\n\\n## Un\\n\\nx\\n\")\n    assert html.startswith('<section class=\"carte carte--fiche\"><h2>Un</h2>')\n    assert html.count(\"<section\") == 1\n\n\ndef test_lire_fiche(tmp_path: Any) -> None:\n    assert lire_fiche(tmp_path) is None\n    chemin = tmp_path / outillage.FICHIER_FICHE\n    chemin.parent.mkdir(parents=True)\n    chemin.write_bytes(b\"\\xef\\xbb\\xbf# Titre \\xc3\\xa9\\n\")\n    assert lire_fiche(tmp_path) == \"# Titre é\\n\"  # BOM toléré\n    chemin.write_bytes(b\"\\xff\\xfe\\x00bad\")\n    with pytest.raises(UnicodeDecodeError):\n        lire_fiche(tmp_path)\n\n\ndef test_messages_de_fiche_citent_le_fichier() -> None:\n    assert \"docs/fiche-outillage.md\" in outillage.FICHE_ABSENTE\n    assert \"docs/fiche-outillage.md\" in outillage.LEGENDE\nEOF\npython -m pytest -q --tb=short tests/unit/ui/test_renf_ecrans.py 2>&1 | tail -40"
+    }
+   },
+   {
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_01X5etsAjRZwDksjheRiP2DJ",
+    "tool_input": {
+     "command": "f=tests/unit/ui/test_renf_ecrans.py && sed -i 's/\"10,0 s\", \"cumul\": \"50,0 s\"/\"10 s\", \"cumul\": \"50 s\"/; s/\"rapport\": \"0,0 s\"/\"rapport\": \"0 s\"/; s/\"Cumulé sur 5 Rapports\", \"10,0 s\"/\"Cumulé sur 5 Rapports\", \"10 s\"/' $f && python -m pytest -q --tb=short $f 2>&1 | tail -15"
+    }
+   }
+  ],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 17,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "J'ai créé `tests/unit/ui/test_renf_ecrans.py`, qui contient 33 tests. Ils passent tous (`python -m pytest -q --tb=short tests/unit/ui/test_renf_ecrans.py`). Je n'ai pas relancé les tests existants de la story, et je n'ai modifié ni le code source ni les tests existants.\n\nLes tests ciblent les fonctions pures d'`ecrans.py`, d'`outillage.py`, de `pseudonymisation.py` et de `vues.py`, que les tests existants (via `TestClient`) couvrent moins précisément :\n\n- **Réponse de l'Agent :**\n  - Le code du badge suit le statut de contrôle.\n  - Le refus est reconnu malgré les espaces autour du texte, mais pas un texte qui ne fait que s'en approcher.\n  - Un rejet l'emporte sur le refus et ne laisse fuir aucun texte.\n  - L'ordre des outils est conservé.\n- **Écran Agent :** valeurs du mode réel, mode repli sans Passage (le service n'est alors pas appelé), numérotation des questions enregistrées, message d'erreur d'un refus de repli, bandeau d'erreur selon le mode.\n- **`DemandeQuestion` :** 2000 caractères acceptés, 2001 refusés, question vide ou faite d'espaces refusée, espaces autour retirés, champ en trop refusé.\n- **Avant / après :**\n  - Valeurs exactes des deux périodes, avec 0 minute et avec une durée courte.\n  - Cas sans configuration, sans Passage, avec classification initiale seule.\n  - Colonnes et lignes du tableau avec une seule carte.\n- **Pseudonymisation :**\n  - Descriptions vides filtrées avec l'ordre conservé.\n  - Format du message « moteur indisponible » (première ligne seulement).\n  - Tickets triés, ticket par défaut et lien.\n  - Ticket sans description : le moteur n'est pas chargé.\n  - Erreur d'aperçu et cas sans aucune description.\n- **Outillage :**\n  - `vue_outillage` dans les trois cas : fiche présente, absente, illisible.\n  - Fiche vide ou réduite à son titre.\n  - HTML exact des pastilles, avec les variantes ⚠ et ⚠️.\n  - Découpage en sections (avec ou sans introduction) et enveloppe du tableau.\n  - `lire_fiche` avec BOM toléré, fichier absent et octets non UTF-8.\n\nPour les durées, le formateur supprime les zéros finaux : j'ai attendu « 10 s » et « 0 s », pas « 10,0 s » ni « 0,0 s ».",
+  "ttft_ms": 5514,
+  "type": "result",
+  "duration_ms": 110235,
+  "uuid": "56d0c3aa-4929-4847-8318-5eab3a77f8f6",
+  "ttft_stream_ms": 4824,
+  "time_to_request_ms": 3558,
+  "first_content_frame_ms": 4825,
+  "queued_turn_count": 0,
+  "result_index": 0
+ }
+}

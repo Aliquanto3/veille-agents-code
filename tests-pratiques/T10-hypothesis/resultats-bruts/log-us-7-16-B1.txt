@@ -1,0 +1,1 @@
+us-7-16-B1 rc 0 cout 0.593183 tours 27 api_ms 206647 mur_s 207.8 modifies [] crees ['tests/unit/ui/test_renf_ecrans_routes.py', 'tests/unit/ui/test_renf_ecrans_vues.py', 'tests/unit/ui/test_renf_outillage.py']

@@ -1,0 +1,120 @@
+{
+ "story": "wd-8-4",
+ "bras": "A",
+ "essai": 2,
+ "prompt": "Tu travailles dans un dépôt Python (le dossier courant). Voici la story à renforcer.\nSpec de la story : `_bmad-output/implementation-artifacts/8-4-bloquer-une-pr-quand-la-couverture-du-nouveau-code-passe-sou.md` (à lire d'abord).\nFichiers source modifiés par la story :\n- `src/wavedevsecops/ci/findings.py`\n- `src/wavedevsecops/scenarios/ops/replace_in_file.py`\n- `src/wavedevsecops/toolrun/__init__.py`\n- `src/wavedevsecops/ci/__init__.py`\nTests existants de la story :\n- `tests/test_quality_gate.py`\n\nRenforce les tests de cette story : ajoute des tests pytest qui vérifient précisément le comportement attendu (valeurs exactes, bornes, branches d'erreur). Ne modifie pas le code source.\n\nÉcris les nouveaux tests dans de nouveaux fichiers `tests/test_renf_*.py` ; ne modifie ni le code source ni les tests existants. Lance les tests avec `python -m pytest -q --tb=short <fichiers>` (l'environnement est prêt, rien à installer). Tous tes tests doivent passer. Termine par la liste des fichiers créés.",
+ "rc": 0,
+ "stderr": "",
+ "duree_mur_s": 76.2,
+ "modifies_suivis": [],
+ "crees": [
+  "tests/test_renf_quality_gate.py"
+ ],
+ "sortie": {
+  "duration_api_ms": 70999,
+  "stop_reason": "end_turn",
+  "session_id": "6c8a7ecb-efd2-4dc1-96d8-141f59c0d797",
+  "total_cost_usd": 0.2649162,
+  "usage": {
+   "input_tokens": 12,
+   "cache_creation_input_tokens": 29708,
+   "cache_read_input_tokens": 105502,
+   "output_tokens": 13551,
+   "output_tokens_details": {
+    "thinking_tokens": 145
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 29708,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 776,
+     "cache_read_input_tokens": 30883,
+     "cache_creation_input_tokens": 6106,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 6106
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-sonnet-5-5": {
+    "inputTokens": 12,
+    "outputTokens": 13551,
+    "cacheReadInputTokens": 105502,
+    "cacheCreationInputTokens": 29708,
+    "webSearchRequests": 0,
+    "costUSD": 0.2649162,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 145,
+    "canonicalModel": "claude-sonnet-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [
+   {
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_01SxQitttYXX78XDkEhFKX3z",
+    "tool_input": {
+     "command": "cat > tests/test_renf_quality_gate.py <<'EOF'\n\"\"\"Renfort story 8.4 : valeurs exactes, bornes et branches d'erreur des lecteurs de couverture,\nde `with_tools_on_path` et de l'op `replace_in_file`.\"\"\"\n\nfrom __future__ import annotations\n\nimport json\nimport os\nfrom pathlib import Path\nfrom types import SimpleNamespace\n\nimport pytest\n\nfrom wavedevsecops import toolrun\nfrom wavedevsecops.ci import findings as parsers\nfrom wavedevsecops.config import Settings\nfrom wavedevsecops.scenarios import SetupError\nfrom wavedevsecops.scenarios.ops import replace_in_file\n\n\ndef _diff(total: object, percent: object, stats: object) -> str:\n    return json.dumps(\n        {\"total_num_lines\": total, \"total_percent_covered\": percent, \"src_stats\": stats}\n    )\n\n\n# ------------------------------------------------------------------ _ranges\n@pytest.mark.parametrize(\n    (\"lines\", \"expected\"),\n    [\n        ([], \"\"),\n        ([5], \"5\"),\n        ([59, 60, 61, 65], \"59-61, 65\"),\n        ([3, 1, 2], \"1-3\"),\n        ([2, 2, 2], \"2\"),\n        ([1, 3, 5], \"1, 3, 5\"),\n        ([1, 2, 4, 5, 9], \"1-2, 4-5, 9\"),\n    ],\n)\ndef test_ranges_regroupe_les_lignes_consecutives(lines: list[int], expected: str) -> None:\n    assert parsers._ranges(lines) == expected\n\n\n# ------------------------------------------------------------------ diff_coverage_text\ndef test_texte_du_constat_de_couverture() -> None:\n    assert parsers.QUALITY_GATE_THRESHOLD == 80\n    assert parsers.diff_coverage_text(100, True) == (\n        \"Couverture du nouveau code 100 % · seuil 80 % · ✓\"\n    )\n    assert parsers.diff_coverage_text(0, False) == (\n        \"Couverture du nouveau code 0 % · seuil 80 % · ✗\"\n    )\n    assert parsers.diff_coverage_text(None, True) == (\n        \"Couverture du nouveau code aucune ligne à mesurer · seuil 80 % · ✓\"\n    )\n\n\n# ------------------------------------------------------------------ parse_diff_cover_json\n@pytest.mark.parametrize(\n    (\"percent\", \"ok\"), [(79, False), (80, True), (81, True), (0, False), (100, True)]\n)\ndef test_borne_du_seuil(tmp_path: Path, percent: int, ok: bool) -> None:\n    (summary, *_) = parsers.parse_diff_cover_json(_diff(10, percent, {}), tmp_path)\n    assert summary.rule_id == \"diff_coverage\"\n    assert summary.severity == (\"info\" if ok else \"error\")\n    assert summary.message_text.endswith(\"✓\" if ok else \"✗\")\n\n\ndef test_pourcentage_flottant_tronque_vers_le_bas(tmp_path: Path) -> None:\n    (summary,) = parsers.parse_diff_cover_json(_diff(1000, 79.9, {}), tmp_path)\n    assert summary.severity == \"error\"\n    assert \"79 % · seuil\" in summary.message_text\n    (summary,) = parsers.parse_diff_cover_json(_diff(1000, 80.9, {}), tmp_path)\n    assert summary.severity == \"info\" and \"80 % ·\" in summary.message_text\n\n\ndef test_sans_ligne_mesuree_le_pourcentage_est_ignore(tmp_path: Path) -> None:\n    # Même un pourcentage absent ou absurde : pas de ligne mesurée, donc ni erreur ni ✗.\n    for percent in (None, \"x\", 0):\n        (summary,) = parsers.parse_diff_cover_json(_diff(0, percent, {}), tmp_path)\n        assert summary.rule_id == \"diff_coverage_none\"\n        assert summary.severity == \"info\"\n        assert \"aucune ligne à mesurer\" in summary.message_text\n\n\ndef test_pourcentage_absent_avec_des_lignes_mesurees_est_refuse(tmp_path: Path) -> None:\n    for percent in (None, \"80\", [80]):\n        with pytest.raises(ValueError, match=\"inattendue\"):\n            parsers.parse_diff_cover_json(_diff(3, percent, {}), tmp_path)\n\n\ndef test_champs_de_structure_invalides_sont_refuses(tmp_path: Path) -> None:\n    for text in (_diff(\"3\", 50, {}), _diff(None, 50, {}), _diff(3, 50, []), _diff(3, 50, None)):\n        with pytest.raises(ValueError, match=\"inattendue\"):\n            parsers.parse_diff_cover_json(text, tmp_path)\n    with pytest.raises(ValueError, match=\"illisible\"):\n        parsers.parse_diff_cover_json(\"{\", tmp_path)\n    with pytest.raises(ValueError, match=\"inattendue\"):\n        parsers.parse_diff_cover_json(\"[1]\", tmp_path)\n\n\ndef test_lignes_non_couvertes_singulier_et_pluriel(tmp_path: Path) -> None:\n    stats = {\n        \"src/one.py\": {\"violation_lines\": [7]},\n        \"src/many.py\": {\"violation_lines\": [10, 4, 5, 6]},\n    }\n    summary, one, many = parsers.parse_diff_cover_json(_diff(5, 0, stats), tmp_path)\n    assert summary.severity == \"error\"\n    assert one.message_text == \"1 ligne du nouveau code sans test : 7\"\n    assert (one.path, one.line, one.severity, one.rule_id) == (\n        \"src/one.py\",\n        7,\n        \"error\",\n        \"uncovered_lines\",\n    )\n    assert many.message_text == \"4 lignes du nouveau code sans test : 4-6, 10\"\n    assert many.line == 4\n\n\ndef test_lignes_non_couvertes_en_information_quand_le_seuil_est_atteint(tmp_path: Path) -> None:\n    stats = {\"src/a.py\": {\"violation_lines\": [3]}}\n    summary, detail = parsers.parse_diff_cover_json(_diff(10, 90, stats), tmp_path)\n    assert summary.severity == \"info\" and detail.severity == \"info\"\n\n\ndef test_fichiers_et_lignes_invalides_sont_ignores(tmp_path: Path) -> None:\n    stats = {\n        \"src/skip1.py\": \"texte\",\n        \"src/skip2.py\": {\"violation_lines\": []},\n        \"src/skip3.py\": {\"violation_lines\": None},\n        \"src/skip4.py\": {},\n        \"src/skip5.py\": {\"violation_lines\": [\"a\", None, 1.5]},\n        \"src/keep.py\": {\"violation_lines\": [\"x\", 2, 3]},\n    }\n    found = parsers.parse_diff_cover_json(_diff(5, 0, stats), tmp_path)\n    assert [f.path for f in found[1:]] == [\"src/keep.py\"]\n    assert found[1].message_text == \"2 lignes du nouveau code sans test : 2-3\"\n\n\ndef test_ligne_negative_ou_nulle_donne_une_ligne_absente(tmp_path: Path) -> None:\n    stats = {\"src/a.py\": {\"violation_lines\": [0, 4]}}\n    found = parsers.parse_diff_cover_json(_diff(5, 0, stats), tmp_path)\n    assert found[1].line is None  # min = 0, hors bornes\n\n\n# ------------------------------------------------------------------ parse_coverage_json\ndef _cov(totals: object, files: object = None) -> str:\n    return json.dumps({\"totals\": totals, \"files\": {\"a.py\": {}} if files is None else files})\n\n\ndef test_couverture_totale_tronquee_et_information(tmp_path: Path) -> None:\n    for raw, shown in ((87.6, 87), (0, 0), (100, 100), (\"42.9\", 42), (99.99, 99)):\n        (total,) = parsers.parse_coverage_json(_cov({\"percent_covered\": raw}), tmp_path)\n        assert total.rule_id == \"total_coverage\" and total.severity == \"info\"\n        assert total.message_text == f\"Couverture de l'ensemble du dépôt : {shown} % (information).\"\n\n\ndef test_couverture_totale_refuse_les_mesures_inattendues(tmp_path: Path) -> None:\n    for text in (\n        _cov({}),\n        _cov({\"percent_covered\": None}),\n        _cov({\"percent_covered\": \"abc\"}),\n        _cov([]),\n        _cov({\"percent_covered\": 5}, files=[]),\n        _cov({\"percent_covered\": 5}, files={}),\n        json.dumps({\"totals\": {\"percent_covered\": 5}}),\n    ):\n        with pytest.raises(ValueError, match=\"mesure de couverture\"):\n            parsers.parse_coverage_json(text, tmp_path)\n    with pytest.raises(ValueError, match=\"illisible\"):\n        parsers.parse_coverage_json(\"nope\", tmp_path)\n\n\ndef test_les_lecteurs_sont_enregistres() -> None:\n    assert parsers.PARSERS[\"diff_cover_json\"] is parsers.parse_diff_cover_json\n    assert parsers.PARSERS[\"coverage_json\"] is parsers.parse_coverage_json\n\n\n# ------------------------------------------------------------------ with_tools_on_path\ndef _fake_resolve(table: dict[str, Path | None]):\n    def resolve(tool_id: str, settings: Settings | None = None, **_: object) -> SimpleNamespace:\n        path = table.get(tool_id)\n        return SimpleNamespace(ok=path is not None, path=path)\n\n    return resolve\n\n\ndef test_with_tools_on_path_met_les_dossiers_en_tete(monkeypatch: pytest.MonkeyPatch) -> None:\n    monkeypatch.setattr(\n        toolrun,\n        \"resolve\",\n        _fake_resolve({\"git\": Path(\"/opt/git/bin/git\"), \"uv\": Path(\"/opt/uv/uv\")}),\n    )\n    env = {\"PATH\": \"/usr/bin\", \"OTHER\": \"1\"}\n    out = toolrun.with_tools_on_path(env, (\"git\", \"uv\"), Settings())\n    assert out[\"PATH\"] == os.pathsep.join([str(Path(\"/opt/git/bin\")), str(Path(\"/opt/uv\")), \"/usr/bin\"])\n    assert out[\"OTHER\"] == \"1\"\n    assert env == {\"PATH\": \"/usr/bin\", \"OTHER\": \"1\"}  # l'entrée n'est pas modifiée\n\n\ndef test_with_tools_on_path_ignore_un_outil_introuvable(monkeypatch: pytest.MonkeyPatch) -> None:\n    monkeypatch.setattr(toolrun, \"resolve\", _fake_resolve({\"git\": None}))\n    out = toolrun.with_tools_on_path({\"PATH\": \"/usr/bin\"}, (\"git\",), Settings())\n    assert out[\"PATH\"] == \"/usr/bin\"\n\n\ndef test_with_tools_on_path_sans_path_ni_separateur_pendant(\n    monkeypatch: pytest.MonkeyPatch,\n) -> None:\n    monkeypatch.setattr(toolrun, \"resolve\", _fake_resolve({\"git\": Path(\"/g/git\")}))\n    out = toolrun.with_tools_on_path({}, (\"git\",), Settings())\n    assert out[\"PATH\"] == str(Path(\"/g\"))\n    assert toolrun.with_tools_on_path({}, (), Settings())[\"PATH\"] == \"\"\n\n\ndef test_with_tools_on_path_respecte_la_casse_de_la_cle(monkeypatch: pytest.MonkeyPatch) -> None:\n    monkeypatch.setattr(toolrun, \"resolve\", _fake_resolve({\"git\": Path(\"/g/git\")}))\n    out = toolrun.with_tools_on_path({\"Path\": \"/usr/bin\"}, (\"git\",), Settings())\n    assert out[\"Path\"] == os.pathsep.join([str(Path(\"/g\")), \"/usr/bin\"])\n    assert \"PATH\" not in out\n\n\ndef test_hook_environment_garde_gitleaks_uv_et_le_venv(monkeypatch: pytest.MonkeyPatch) -> None:\n    monkeypatch.setattr(\n        toolrun, \"resolve\", _fake_resolve({\"gitleaks\": Path(\"/a/gitleaks\"), \"uv\": Path(\"/b/uv\")})\n    )\n    out = toolrun.hook_environment({\"PATH\": \"/p\"}, Path(\"/venv\"), Settings())\n    assert out[\"PATH\"] == os.pathsep.join([str(Path(\"/a\")), str(Path(\"/b\")), \"/p\"])\n    assert out[\"UV_PROJECT_ENVIRONMENT\"] == str(Path(\"/venv\"))\n\n\n# ------------------------------------------------------------------ replace_in_file\ndef _ctx(root: Path) -> SimpleNamespace:\n    return SimpleNamespace(layout=SimpleNamespace(repo=root))\n\n\ndef _args(path: str, old: str, new: str) -> replace_in_file.Args:\n    return replace_in_file.Args(op=\"replace_in_file\", path=path, old=old, new=new)\n\n\ndef test_replace_in_file_retourne_l_identifiant_et_ecrit(tmp_path: Path) -> None:\n    (tmp_path / \"f.txt\").write_text(\"alpha beta\", \"utf-8\")\n    result = replace_in_file.apply(_args(\"f.txt\", \"beta\", \"gamma\"), _ctx(tmp_path))  # type: ignore[arg-type]\n    assert result.endswith(\"f.txt\") and \"worktree\" in result\n    assert (tmp_path / \"f.txt\").read_text(\"utf-8\") == \"alpha gamma\"\n\n\ndef test_replace_in_file_message_compte_les_occurrences(tmp_path: Path) -> None:\n    (tmp_path / \"f.txt\").write_text(\"a a a\", \"utf-8\")\n    with pytest.raises(SetupError, match=\"3 fois\"):\n        replace_in_file.apply(_args(\"f.txt\", \"a\", \"b\"), _ctx(tmp_path))  # type: ignore[arg-type]\n    with pytest.raises(SetupError, match=\"0 fois\"):\n        replace_in_file.apply(_args(\"f.txt\", \"z\", \"b\"), _ctx(tmp_path))  # type: ignore[arg-type]\n    assert (tmp_path / \"f.txt\").read_text(\"utf-8\") == \"a a a\"  # rien d'écrit en cas d'échec\n\n\ndef test_replace_in_file_normalise_les_fins_de_ligne(tmp_path: Path) -> None:\n    (tmp_path / \"f.txt\").write_bytes(b\"x\\r\\ny\\r\\nz\\r\\n\")\n    replace_in_file.apply(_args(\"f.txt\", \"x\\r\\ny\\n\", \"X\\nY\\n\"), _ctx(tmp_path))  # type: ignore[arg-type]\n    assert (tmp_path / \"f.txt\").read_bytes().replace(b\"\\r\\n\", b\"\\n\") == b\"X\\nY\\nz\\n\"\n\n\ndef test_replace_in_file_fichier_absent_ou_illisible(tmp_path: Path) -> None:\n    with pytest.raises(SetupError, match=\"pas pu être lu\"):\n        replace_in_file.apply(_args(\"absent.txt\", \"a\", \"b\"), _ctx(tmp_path))  # type: ignore[arg-type]\n    (tmp_path / \"bin.dat\").write_bytes(b\"\\xff\\xfe\\x00\\x80\")\n    with pytest.raises(SetupError, match=\"pas pu être lu\"):\n        replace_in_file.apply(_args(\"bin.dat\", \"a\", \"b\"), _ctx(tmp_path))  # type: ignore[arg-type]\n\n\ndef test_replace_in_file_remplace_par_une_chaine_vide(tmp_path: Path) -> None:\n    (tmp_path / \"f.txt\").write_text(\"keep drop\", \"utf-8\")\n    replace_in_file.apply(_args(\"f.txt\", \" drop\", \"\"), _ctx(tmp_path))  # type: ignore[arg-type]\n    assert (tmp_path / \"f.txt\").read_text(\"utf-8\") == \"keep\"\n\n\n@pytest.mark.parametrize(\"path\", [\"../x\", \"/etc/passwd\", \"a/../../x\", \"C:/x\", \"\"])\ndef test_replace_in_file_refuse_les_chemins_hors_depot(path: str) -> None:\n    with pytest.raises(ValueError):\n        _args(path, \"a\", \"b\")\n\n\ndef test_replace_in_file_refuse_un_texte_vide() -> None:\n    with pytest.raises(ValueError, match=\"vide\"):\n        _args(\"f.txt\", \"\", \"b\")\n\n\ndef test_replace_in_file_refuse_un_champ_inconnu() -> None:\n    with pytest.raises(ValueError):\n        replace_in_file.Args(op=\"replace_in_file\", path=\"f\", old=\"a\", new=\"b\", extra=1)  # type: ignore[call-arg]\n    with pytest.raises(ValueError):\n        replace_in_file.Args(op=\"autre\", path=\"f\", old=\"a\", new=\"b\")  # type: ignore[arg-type]\nEOF\npython -m pytest -q --tb=short tests/test_renf_quality_gate.py 2>&1 | tail -40"
+    }
+   }
+  ],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 8,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "J'ai écrit `tests/test_renf_quality_gate.py` et ses 39 tests passent (`python -m pytest -q --tb=short tests/test_renf_quality_gate.py`). Je n'ai touché ni au code source ni aux tests existants, et je n'ai lancé que ce fichier.\n\nCe que les tests vérifient :\n- **`_ranges` et `diff_coverage_text`** : le regroupement des lignes consécutives et le texte exact du constat avec ✓, ✗ et « aucune ligne à mesurer ».\n- **`parse_diff_cover_json`**\n  - **Seuil** : 79, 80, 81, 0 et 100 %, et les flottants 79,9 et 80,9 tronqués vers le bas.\n  - **Diff sans ligne mesurée** : le pourcentage est ignoré.\n  - **Structures refusées** : pourcentage absent ou invalide, `src_stats` invalide, JSON illisible ou qui n'est pas un objet.\n  - **Constats par fichier** : singulier et pluriel, sévérité qui passe en information quand le seuil est atteint, entrées invalides ignorées, ligne 0 qui donne `line=None`.\n- **`parse_coverage_json`** : le pourcentage tronqué (87,6 devient 87, 99,99 devient 99, la chaîne « 42.9 » devient 42), les mesures vides ou inattendues refusées, et l'enregistrement des deux lecteurs dans `PARSERS`.\n- **`with_tools_on_path` et `hook_environment`** : dossiers placés en tête du `PATH`, outil introuvable ignoré, `PATH` absent sans séparateur final, casse de la clé conservée, entrée non modifiée, `UV_PROJECT_ENVIRONMENT` posé.\n- **`replace_in_file`** : l'identifiant retourné, le nombre d'occurrences dans le message d'erreur (3 fois et 0 fois), rien d'écrit en cas d'échec, fins de ligne CRLF normalisées, fichier absent ou binaire, remplacement par une chaîne vide, chemins hors dépôt et texte vide refusés.\n\nFichier créé :\n- `tests/test_renf_quality_gate.py`",
+  "ttft_ms": 2372,
+  "type": "result",
+  "duration_ms": 75191,
+  "uuid": "c9797de5-cb8b-4388-970e-b5dc97d1d49f",
+  "ttft_stream_ms": 1698,
+  "time_to_request_ms": 652,
+  "first_content_frame_ms": 1698,
+  "queued_turn_count": 0,
+  "result_index": 0
+ }
+}
