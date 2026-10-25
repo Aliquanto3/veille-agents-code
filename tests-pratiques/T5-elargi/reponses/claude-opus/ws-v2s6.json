@@ -1,0 +1,100 @@
+{
+ "duration_api_ms": 60308,
+ "stop_reason": "end_turn",
+ "session_id": "28b6b454-27d9-4a60-8ba3-d514097f7b37",
+ "total_cost_usd": 0.3578374000000001,
+ "usage": {
+  "input_tokens": 22,
+  "cache_creation_input_tokens": 25719,
+  "cache_read_input_tokens": 260287,
+  "output_tokens": 4997,
+  "output_tokens_details": {
+   "thinking_tokens": 2405
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 25719,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1558,
+    "cache_read_input_tokens": 31217,
+    "cache_creation_input_tokens": 1010,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 1010
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "modelUsage": {
+  "claude-opus-5-5": {
+   "inputTokens": 22,
+   "outputTokens": 4997,
+   "cacheReadInputTokens": 260287,
+   "cacheCreationInputTokens": 25719,
+   "webSearchRequests": 0,
+   "costUSD": 0.3578374000000001,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 2405,
+   "canonicalModel": "claude-opus-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "permission_denials": [],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "fast_mode_disabled_reason": "sdk_opt_in_required",
+ "subagent_stats": {
+  "spawned": 0,
+  "requested": {
+   "background": 0,
+   "foreground": 0,
+   "unset": 0
+  },
+  "started_in_background": 0,
+  "max_depth": 0,
+  "spawned_by_subagents": 0,
+  "completed": 0,
+  "failed": 0,
+  "killed": {
+   "parent": 0,
+   "user": 0,
+   "system": 0
+  },
+  "refused": {
+   "depth_limit": 0,
+   "concurrency_limit": 0,
+   "budget": 0
+  },
+  "by_type": {}
+ },
+ "safety_stops": 0,
+ "is_error": false,
+ "num_turns": 15,
+ "subtype": "success",
+ "api_error_status": null,
+ "result": "Je n'ai trouvé aucun constat Important. Le seul défaut réel est un Nit, que je n'ai pas corrigé puisque la revue est en lecture seule.\n\n- Base : sans objet.\n- Ce qui a été vérifié par lecture : le cache est bien branché dans `run_call` (`cloud_base.py:1011`). Côté interface, `cacheNode` est appelé dans `callBody` (`app.js:4781`) et `compressionFigure` affiche le montant en dollars (`app.js:5055`). Les clés i18n `main.orch.cache.*` et `compression.saved_usd` existent en fr, en et de. Les champs sont déclarés dans `catalog.py`. Les adaptateurs Anthropic et Responses comptent bien les tokens en cache dans `prompt_tokens`. `self._cloud` vaut `None` sur un modèle local (`app_session.py:2427`). Aucune structure ne grossit pendant l'exécution.\n\nNit | low | src/wavestack/models/cloud_base.py:341 | `cache_savings` borne l'écriture avec `max(-1, …)` alors que `call_cost` (ligne 303) borne avec `max(0, …)`. Si un fournisseur renvoyait un `prompt_tokens` négatif (`run_call` le prend tel quel, ligne 976), l'écriture vaudrait −1. Cette valeur est vraie en Python, donc un appel sans cache recevrait quand même toutes les clés `cache_*`, avec `cache_write_tokens = -1`. Le critère « absent quand ni lu ni écrit » serait alors violé. Avec les entrées normales, `_cached_tokens` renvoie des valeurs ≥ 0 et le cas n'arrive pas. | certain\n\nComplexité : 0 constat(s). Tests : non exécutés (lecture seule).",
+ "ttft_ms": 3310,
+ "type": "result",
+ "duration_ms": 60814,
+ "uuid": "142a0670-ecb5-4e67-885d-4c4ca79841f1",
+ "ttft_stream_ms": 2232,
+ "time_to_request_ms": 195,
+ "first_content_frame_ms": 2232,
+ "queued_turn_count": 0,
+ "result_index": 0,
+ "_duree_s": 61.7
+}

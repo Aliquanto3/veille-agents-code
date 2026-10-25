@@ -1,0 +1,100 @@
+{
+ "duration_api_ms": 49695,
+ "stop_reason": "end_turn",
+ "session_id": "d79b7274-bc62-4587-9a86-c489f06d1f40",
+ "total_cost_usd": 0.01655401,
+ "usage": {
+  "input_tokens": 14,
+  "cache_creation_input_tokens": 46445,
+  "cache_read_input_tokens": 223911,
+  "output_tokens": 10049,
+  "output_tokens_details": {
+   "thinking_tokens": 7728
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 46445,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 2182,
+    "cache_read_input_tokens": 50246,
+    "cache_creation_input_tokens": 2038,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 2038
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "modelUsage": {
+  "claude-haiku-5-5": {
+   "inputTokens": 14,
+   "outputTokens": 10049,
+   "cacheReadInputTokens": 223911,
+   "cacheCreationInputTokens": 46445,
+   "webSearchRequests": 0,
+   "costUSD": 0.01655401,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 7728,
+   "canonicalModel": "claude-haiku-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "permission_denials": [],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "fast_mode_disabled_reason": "sdk_opt_in_required",
+ "subagent_stats": {
+  "spawned": 0,
+  "requested": {
+   "background": 0,
+   "foreground": 0,
+   "unset": 0
+  },
+  "started_in_background": 0,
+  "max_depth": 0,
+  "spawned_by_subagents": 0,
+  "completed": 0,
+  "failed": 0,
+  "killed": {
+   "parent": 0,
+   "user": 0,
+   "system": 0
+  },
+  "refused": {
+   "depth_limit": 0,
+   "concurrency_limit": 0,
+   "budget": 0
+  },
+  "by_type": {}
+ },
+ "safety_stops": 0,
+ "is_error": false,
+ "num_turns": 14,
+ "subtype": "success",
+ "api_error_status": null,
+ "result": "base : sans objet\n\nImportant | medium | src/wavedevsecops/engine/designation.py:131 | `_exists` compare les SHA avec `s.sha >= segments[0]` (ordre lexicographique) au lieu d'une égalité. Un SHA de commit inexistant mais lexicographiquement inférieur à un SHA de stash passe la vérification. `_verify` ne refuse donc plus (409, sans essai consommé) un élément absent : il est corrigé et consomme l'unique essai. Preuve par lecture : `commit:0000000…` est accepté dès qu'un SHA de stash existe. Aucun test ne couvre un SHA inexistant dans `tests/test_scenario_b_stash_rebase.py`. | certain\n\nImportant | medium | content/scenarios/rebase.B.yaml:102-106 | L'`effect_text` de `--skip` dit « recommencez le scénario pour retrouver le rebase en conflit ». Or une mauvaise réponse de quiz laisse l'étape ouverte, et `restore_state` rétablit l'instantané d'avant le choix (src/wavedevsecops/terminal/quiz.py:6 et :9). Le texte oriente donc vers un redémarrage inutile et contredit le mécanisme de récupération. Non vérifié : que l'interface expose `restore_state` dans ce cas. | probable\n\nNit | low | src/wavedevsecops/projections/links.py:84 | Le nom accessible devient « stash stash@{0} » : `item.path` vaut `stash@{0} : message` (views.py, `build_staging`), donc `partition(' :')[0]` renvoie déjà `stash@{0}` et le préfixe `stash` est répété. Preuve par lecture de la construction de `path`. | certain",
+ "ttft_ms": 9132,
+ "type": "result",
+ "duration_ms": 50627,
+ "uuid": "6abe7592-fb3d-4180-bcd8-b50585219fcb",
+ "ttft_stream_ms": 1432,
+ "time_to_request_ms": 189,
+ "first_content_frame_ms": 1433,
+ "queued_turn_count": 0,
+ "result_index": 0,
+ "_duree_s": 51.5
+}

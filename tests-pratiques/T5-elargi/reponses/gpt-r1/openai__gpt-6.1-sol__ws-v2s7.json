@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "ws-v2s7",
+ "latence_s": 19.3,
+ "usage": {
+  "prompt_tokens": 7861,
+  "completion_tokens": 692,
+  "total_tokens": 8553,
+  "cost": 0.026571,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 7858,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.026571,
+   "upstream_inference_prompt_cost": 0.019651,
+   "upstream_inference_completions_cost": 0.00692
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 516,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.026571,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 692,
+   "cout_usd": 0.026571,
+   "latence_s": 19.3
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavestack/web/static/app.js\",\"ligne\":1,\"severite\":\"Nit\",\"description\":\"La partie interface prévue par la story n'apparaît pas dans le diff : aucun branchement des nouveaux champs de subagent_ended dans delegateBody (subCostNode), ni des champs kv_* dans callBody (kvCacheNode), et aucune traduction fr/en/de ajoutée. Les événements backend et leurs tests ne démontrent donc pas la livraison des lignes dépliables « Sous-agent » et « Mémoire de contexte », notamment du cas sans débit. Il manque un test de rendu couvrant ces événements ; faute de test pytest autonome de ce comportement avec les seules API fournies, ce constat reste classé Nit.\",\"test_pytest\":null}]}"
+}

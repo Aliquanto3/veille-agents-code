@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "wd81",
+ "latence_s": 32.2,
+ "usage": {
+  "prompt_tokens": 8120,
+  "completion_tokens": 3030,
+  "total_tokens": 11150,
+  "cost": 0.002529925,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 8117,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.002529925,
+   "upstream_inference_prompt_cost": 0.001014925,
+   "upstream_inference_completions_cost": 0.001515
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 2583,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.002529925,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 3030,
+   "cout_usd": 0.002529925,
+   "latence_s": 32.2
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"content/pipeline.yaml\",\"ligne\":1,\"severite\":\"Important\",\"description\":\"Le diff ne modifie pas le pipeline, qui avait encore trois jobs selon l’ancien contrat de test. Le job `bandit` exigé par la story n’est donc pas déclaré ni exécuté ; le check ne peut pas bloquer la PR.\",\"test_pytest\":\"from wavedevsecops import ci\\nfrom wavedevsecops.config import Settings\\n\\n\\ndef test_le_pipeline_declare_le_job_bandit() -> None:\\n    assert ci.load_pipeline(Settings()).job(\\\"bandit\\\") is not None\\n\"},{\"id\":\"C2\",\"fichier\":\"content/scenarios/code-vulnerable.A.yaml\",\"ligne\":1,\"severite\":\"Important\",\"description\":\"Le diff ajoute l’identifiant `code-vulnerable` à l’ordre des stations, mais ne fournit pas le scénario demandé. Sans ce fichier, le parcours sans IA de la story ne peut pas être chargé ni exécuté.\",\"test_pytest\":\"from wavedevsecops.config import Settings\\n\\n\\ndef test_le_fichier_du_scenario_code_vulnerable_est_livre() -> None:\\n    scenario = Settings().scenarios_path() / \\\"code-vulnerable.A.yaml\\\"\\n    assert scenario.is_file()\\n\"},{\"id\":\"C3\",\"fichier\":\"src/wavedevsecops/ci/findings.py\",\"ligne\":119,\"severite\":\"Important\",\"description\":\"Une sortie JSON mal formée mais décodable, comme `{}`, est acceptée comme un résultat vide (`results` vaut `[]` par défaut). Le job peut alors passer au vert sans avoir reçu une sortie Bandit valide, contrairement à l’exigence de lever `ValueError` pour une forme inattendue.\",\"test_pytest\":\"import pytest\\n\\nfrom wavedevsecops.ci.findings import parse_bandit_json\\n\\n\\ndef test_bandit_refuse_un_objet_json_sans_results(tmp_path) -> None:\\n    with pytest.raises(ValueError):\\n        parse_bandit_json(\\\"{}\\\", tmp_path)\\n\"}]}"
+}

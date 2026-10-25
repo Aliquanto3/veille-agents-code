@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "us713",
+ "latence_s": 18.0,
+ "usage": {
+  "prompt_tokens": 11701,
+  "completion_tokens": 579,
+  "total_tokens": 12280,
+  "cost": 0.035041,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 11698,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.035041,
+   "upstream_inference_prompt_cost": 0.029251,
+   "upstream_inference_completions_cost": 0.00579
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 452,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.035041,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 579,
+   "cout_usd": 0.035041,
+   "latence_s": 18.0
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"tests/unit/ui/test_serveur.py\",\"ligne\":127,\"severite\":\"Nit\",\"description\":\"Le test du serveur injoignable vérifie uniquement la présence du message dans le script. Il ne couvre ni son affichage après un échec JSON, ni l'absence de duplication après plusieurs échecs, ni son retrait après une réponse réussie, pourtant explicitement exigés. Un script contenant le message mais ne gérant aucun de ces comportements passerait ce test.\",\"test_pytest\":null}]}"
+}

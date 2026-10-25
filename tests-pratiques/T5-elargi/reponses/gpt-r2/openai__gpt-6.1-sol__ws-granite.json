@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "ws-granite",
+ "latence_s": 20.1,
+ "usage": {
+  "prompt_tokens": 6997,
+  "completion_tokens": 819,
+  "total_tokens": 7816,
+  "cost": 0.025681,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 6994,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.025681,
+   "upstream_inference_prompt_cost": 0.017491,
+   "upstream_inference_completions_cost": 0.00819
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 516,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.025681,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 819,
+   "cout_usd": 0.025681,
+   "latence_s": 20.1
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavestack/models/capabilities.py\",\"ligne\":91,\"severite\":\"Important\",\"description\":\"La condition `at < -1` n'est jamais vraie : `rfind` renvoie -1 lorsque la question est absente du rendu. La sonde analyse alors tout le rendu et peut prendre un exemple statique du prompt système pour l'appel passé. Un gabarit qui ignore complètement `tool_calls` reçoit ainsi le lecteur `hermes`, contrairement à la règle d'aller-retour. Il faut rejeter l'absence du marqueur avant de parser.\",\"test_pytest\":\"from wavestack.models.capabilities import hermes_round_trip\\n\\n\\ndef test_un_exemple_statique_ne_prouve_pas_le_rendu_de_l_appel():\\n    # Le gabarit annonce les outils mais ne restitue ni le contenu utilisateur\\n    # ni les appels assistant : seul son exemple statique est lisible.\\n    template = (\\n        '{% if tools %}'\\n        '<tool_call>{\\\"name\\\":\\\"calculator\\\",'\\n        '\\\"arguments\\\":{\\\"expression\\\":\\\"12*37\\\"}}</tool_call>'\\n        '{% endif %}'\\n        '{% for m in messages %}{{ m.role }}{% endfor %}'\\n    )\\n    assert hermes_round_trip(template) is False\\n\"}]}"
+}

@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "wd56",
+ "latence_s": 21.9,
+ "usage": {
+  "prompt_tokens": 9548,
+  "completion_tokens": 1869,
+  "total_tokens": 11417,
+  "cost": 0.002127925,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 9545,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.002127925,
+   "upstream_inference_prompt_cost": 0.001193425,
+   "upstream_inference_completions_cost": 0.0009345
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 1657,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.002127925,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 1869,
+   "cout_usd": 0.002127925,
+   "latence_s": 21.9
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavedevsecops/engine/steps.py\",\"ligne\":138,\"severite\":\"Important\",\"description\":\"La clause `except OSError, UnicodeDecodeError:` est une syntaxe invalide en Python 3. L’import de `wavedevsecops.engine.steps` échoue donc, ce qui empêche le moteur de démarrer et rend notamment impossible l’injection de `git` dans les étapes. Le test ci-dessous échoue sur le fichier fusionné et réussit après remplacement par `except (OSError, UnicodeDecodeError):`.\",\"test_pytest\":\"from pathlib import Path\\nimport ast\\n\\n\\ndef test_steps_module_has_valid_python_syntax() -> None:\\n    path = Path(__file__).resolve().parents[1] / \\\"src/wavedevsecops/engine/steps.py\\\"\\n    ast.parse(path.read_text(encoding=\\\"utf-8\\\"), filename=str(path))\"}]}"
+}

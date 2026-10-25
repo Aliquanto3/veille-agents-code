@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "us612",
+ "latence_s": 16.4,
+ "usage": {
+  "prompt_tokens": 4483,
+  "completion_tokens": 840,
+  "total_tokens": 5323,
+  "cost": 0.019606,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 4480,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.019606,
+   "upstream_inference_prompt_cost": 0.011206,
+   "upstream_inference_completions_cost": 0.0084
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 391,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.019606,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 840,
+   "cout_usd": 0.019606,
+   "latence_s": 16.4
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/usine/adaptateurs/llm/fournisseur.py\",\"ligne\":407,\"severite\":\"Important\",\"description\":\"La condition `config.fournisseur >= \\\"local\\\"` capture aussi `\\\"mistral\\\"` (comparaison lexicographique). Toutes les configurations Mistral passent désormais dans la branche locale : la clé fournie est remplacée par `sans-cle` et les requêtes sont dirigées vers localhost ou USINE_LLM_LOCAL_URL, au lieu du fournisseur Mistral. Cela casse le fournisseur existant. Utiliser une égalité stricte avec `\\\"local\\\"`.\",\"test_pytest\":\"from decimal import Decimal\\n\\nimport pytest\\n\\nimport usine.adaptateurs.llm.fournisseur as fournisseur\\nfrom usine.contrats.config import ConfigLLM\\n\\n\\ndef test_mistral_conserve_sa_cle_et_ne_devient_pas_local(monkeypatch):\\n    appels = []\\n\\n    class ConstructionInterceptee(Exception):\\n        pass\\n\\n    def faux_mistral(*args, **kwargs):\\n        appels.append(kwargs)\\n        raise ConstructionInterceptee\\n\\n    monkeypatch.setattr(fournisseur, \\\"Mistral\\\", faux_mistral)\\n    monkeypatch.setenv(\\\"USINE_LLM_LOCAL_URL\\\", \\\"http://127.0.0.1:8080\\\")\\n    config = ConfigLLM(\\n        fournisseur=\\\"mistral\\\",\\n        modele=\\\"mistral-large-latest\\\",\\n        plafond_cout_passage_eur=Decimal(1),\\n    )\\n\\n    # Interception avant toute création de transport ou requête réseau.\\n    with pytest.raises(ConstructionInterceptee):\\n        fournisseur.construire_fournisseur_llm(config, \\\"cle-factice-test\\\")\\n\\n    assert appels[0][\\\"api_key\\\"] == \\\"cle-factice-test\\\"\\n    assert appels[0].get(\\\"server_url\\\") != \\\"http://127.0.0.1:8080\\\"\\n\"}]}"
+}

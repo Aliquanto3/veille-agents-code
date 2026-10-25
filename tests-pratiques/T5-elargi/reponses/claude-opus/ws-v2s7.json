@@ -1,0 +1,100 @@
+{
+ "duration_api_ms": 78808,
+ "stop_reason": "end_turn",
+ "session_id": "052b7ed9-6081-471a-8790-d2772efd695f",
+ "total_cost_usd": 0.5642594,
+ "usage": {
+  "input_tokens": 26,
+  "cache_creation_input_tokens": 40784,
+  "cache_read_input_tokens": 447117,
+  "output_tokens": 7423,
+  "output_tokens_details": {
+   "thinking_tokens": 3700
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 40784,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1468,
+    "cache_read_input_tokens": 46812,
+    "cache_creation_input_tokens": 480,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 480
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "modelUsage": {
+  "claude-opus-5-5": {
+   "inputTokens": 26,
+   "outputTokens": 7423,
+   "cacheReadInputTokens": 447117,
+   "cacheCreationInputTokens": 40784,
+   "webSearchRequests": 0,
+   "costUSD": 0.5642594,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 3700,
+   "canonicalModel": "claude-opus-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "permission_denials": [],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "fast_mode_disabled_reason": "sdk_opt_in_required",
+ "subagent_stats": {
+  "spawned": 0,
+  "requested": {
+   "background": 0,
+   "foreground": 0,
+   "unset": 0
+  },
+  "started_in_background": 0,
+  "max_depth": 0,
+  "spawned_by_subagents": 0,
+  "completed": 0,
+  "failed": 0,
+  "killed": {
+   "parent": 0,
+   "user": 0,
+   "system": 0
+  },
+  "refused": {
+   "depth_limit": 0,
+   "concurrency_limit": 0,
+   "budget": 0
+  },
+  "by_type": {}
+ },
+ "safety_stops": 0,
+ "is_error": false,
+ "num_turns": 19,
+ "subtype": "success",
+ "api_error_status": null,
+ "result": "Base : sans objet.\n\nJ'ai relu le diff, son branchement dans `_delegate`, `_call_model_local` et `_call_model_chat`, l'interface `app.js` (`subCostNode` et `kvCacheNode`, toutes deux branchées) et les clés i18n (présentes en fr, en et de). Je n'ai rien exécuté : la revue se fait en lecture seule. Il y a 1 constat Important, 3 Nit et 1 Pre-existing. Complexité : 0 constat. Les tranches de `_delegate` sont bornées par le tour, et un seul worker tourne (`ThreadPoolExecutor(max_workers=1)`), donc deux délégations ne peuvent pas se chevaucher.\n\nImportant | medium | src/wavestack/session/app_session.py:8612 | Un appel cloud qui ne renvoie pas de `usage` (fournisseur sans `usage`, appel annulé) donne `prompt_tokens = 0`, et la valeur `(0, output_tokens)` part telle quelle dans `_turn_call_tokens` (ligne 8615). Dans le même appel, `run_call` facture pourtant le prompt estimé : `cloud_base.py:981` prend `usage.get(\"prompt_tokens\") or estimated_prompt`, et ce chiffre est passé à `call_cost` en 1005. Le `subagent_ended` affiche alors `input_tokens` à 0 avec un `cost_in_usd` supérieur à 0 et un `cost_source` à « estimate ». L'interface affiche « Entrée : 0 · ~x $ » (`app.js:2566`, `fmt(n ?? 0)`). C'est le « faux 0 » que la spec et le test `billed_then_failed` veulent justement éviter. Il faut ajouter l'estimation (`round(rendered.raw_total * self._ratio)`), ou ne pas ajouter d'entrée sans `usage`. | certain\n\nNit | low | src/wavestack/session/app_session.py:8319 | En local, `end(\"error\")` ajoute `(len(rendered.ids), 0)` même quand le serveur a refusé l'appel avant toute génération : un prompt jamais lu est compté dans les `input_tokens` du sous-agent. Le chemin cloud fait l'inverse : un appel en erreur n'ajoute aucun token (`ProviderError`, 8600-8607). Les deux chemins ne se comportent donc pas pareil. | certain\n\nNit | low | tests/test_reasoning_budget.py:466 | La doublure `_Cached` renvoie un `cache_n` pour la première génération, même quand celle-ci est coupée. Avec le vrai `LlamaServerEngine`, une génération coupée (`break` puis `fragments.close()`) n'atteint jamais le dernier bloc `timings` (`servers.py:534-545`), donc `_last_cache_n` reste à `None`. Le cas `(100, 50.0)` du paramètre ne peut pas arriver avec le vrai serveur. Conséquence : sur un vrai llama-server, la ligne « Mémoire de contexte » n'apparaît jamais sur un appel dont le raisonnement est coupé. Ce point n'est documenté ni dans la spec ni dans le test. | certain\n\nNit | low | src/wavestack/models/servers.py:543 | `isinstance(pps, (int, float))` laisse passer un booléen (`True` est accepté comme 1,0 tok/s), alors que `cache_n` exclut explicitement `bool` deux lignes plus haut. Le contrôle n'est pas cohérent, mais la portée est négligeable. | certain\n\nPre-existing | low | src/wavestack/models/servers.py:529 | Quand c'est le harnais qui détecte la séquence d'arrêt (`cut_stop`, puis `return` en 531), le bloc final `timings` n'est jamais lu. Le défaut existait déjà pour `prompt_n` (`evaluated_tokens`) ; la story le reprend maintenant pour `cache_n` et `prompt_per_second`, et la ligne KV disparaît sur ces appels. | probable",
+ "ttft_ms": 2349,
+ "type": "result",
+ "duration_ms": 79550,
+ "uuid": "b9084351-6e28-428a-b144-2293ce730f4a",
+ "ttft_stream_ms": 1462,
+ "time_to_request_ms": 264,
+ "first_content_frame_ms": 1462,
+ "queued_turn_count": 0,
+ "result_index": 0,
+ "_duree_s": 80.6
+}

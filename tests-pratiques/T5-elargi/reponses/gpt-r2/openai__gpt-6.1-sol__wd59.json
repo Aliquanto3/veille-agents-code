@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "wd59",
+ "latence_s": 26.5,
+ "usage": {
+  "prompt_tokens": 8538,
+  "completion_tokens": 1115,
+  "total_tokens": 9653,
+  "cost": 0.0324935,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 8535,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0324935,
+   "upstream_inference_prompt_cost": 0.0213435,
+   "upstream_inference_completions_cost": 0.01115
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 516,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.0324935,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 1115,
+   "cout_usd": 0.0324935,
+   "latence_s": 26.5
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavedevsecops/web/blockers.py\",\"ligne\":77,\"severite\":\"Important\",\"description\":\"Pour une station non livrée sans jalon, le texte de repli provient de chain.map.soon_text plutôt que d'être « Bientôt », comme l'exige la spec. Dès que le texte générique de la carte est différent, l'encart affiche ce texte à la place du repli prévu. Le test existant ne distingue pas ces sources parce que la chaîne utilisée porte déjà « Bientôt ».\",\"test_pytest\":\"from types import SimpleNamespace\\n\\nfrom wavedevsecops.web import blockers as blockers_module\\n\\n\\ndef test_station_sans_jalon_utilise_le_repli_de_l_encart(monkeypatch):\\n    station = SimpleNamespace(\\n        number=1,\\n        name=\\\"Poste local\\\",\\n        delivered=False,\\n        milestone=\\\"\\\",\\n        barriers=[SimpleNamespace(id=\\\"secret-scan\\\", label=\\\"Scan des secrets\\\")],\\n    )\\n    chain = SimpleNamespace(\\n        stations=[station],\\n        map=SimpleNamespace(soon_text=\\\"Texte réservé à la carte\\\"),\\n    )\\n    scenario = SimpleNamespace(\\n        key=\\\"add-commit.B\\\",\\n        blocked_by=[SimpleNamespace(\\n            barrier_id=\\\"secret-scan\\\",\\n            station=1,\\n            scenario_id=\\\"secret-dans-un-commit\\\",\\n            reason_text=\\\"Le scan aurait refusé le secret.\\\",\\n        )],\\n    )\\n    monkeypatch.setattr(blockers_module, \\\"load_chain_texts\\\", lambda settings: chain)\\n    monkeypatch.setattr(blockers_module, \\\"catalogue_scenario_titles\\\", lambda settings: {})\\n\\n    body = blockers_module.blockers_body(scenario, SimpleNamespace())\\n\\n    assert body[\\\"items\\\"][0][\\\"soon_text\\\"] == \\\"Bientôt\\\"\\n    assert body[\\\"items\\\"][0][\\\"scenario\\\"] is None\\n\"},{\"id\":\"C2\",\"fichier\":\"tests/test_blockers.py\",\"ligne\":184,\"severite\":\"Nit\",\"description\":\"Le test nommé « le panneau porte l'encart via le résolveur » appelle seulement _blockers_of : il ne vérifie ni le panneau terminé, ni l'absence d'encart pendant le scénario. De même, le test DOM injecte directement blockers. Aucun de ces tests ne couvre donc le parcours complet WorkspaceManager → StepRunner → panneau → rendu. Le diff fourni ne montre par ailleurs aucun changement de scenario.js, workspace.css ou des déclarations YAML : la livraison de ces parties de la spec reste à vérifier, sans pouvoir conclure à leur absence à partir du seul code visible.\",\"test_pytest\":null}]}"
+}

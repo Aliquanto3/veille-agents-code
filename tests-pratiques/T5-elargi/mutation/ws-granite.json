@@ -1,0 +1,120 @@
+{
+ "story": "ws-granite",
+ "test_command": "T:/v/wavestack/.venv/Scripts/python.exe -m pytest -q -x --tb=no -p no:cacheprovider tests/test_installers.py tests/test_model_catalog.py tests/test_tool_parser_granite4.py",
+ "tests_seconds": 15.9,
+ "tests_rc": 0,
+ "modules": [
+  {
+   "module": "src/wavestack/models/capabilities.py",
+   "generes": 335,
+   "effectifs": 43,
+   "echantillon": 43,
+   "executes": 30,
+   "tues": 20
+  }
+ ],
+ "budget_atteint": true,
+ "survivants": [
+  {
+   "module": "src/wavestack/models/capabilities.py",
+   "ligne": 188,
+   "colonne": 42,
+   "operateur": "core/AddNot",
+   "occurrence": 10,
+   "fonction": "capabilities_for",
+   "job_id": "886bd76d1b254a93b5385dcb54a92034",
+   "diff": "--- mutation diff ---\n--- a/src\\wavestack\\models\\capabilities.py\n+++ b/src\\wavestack\\models\\capabilities.py\n@@ -185,7 +185,7 @@\n             stop_sequences=_end_of_turn(template),\n             reasoning_variable=reasoning_variable,\n             native_context=meta.native_context,\n-            reasoning_tags=_THINK_TAGS if _THINK_TAGS[0] in template else None,\n+            reasoning_tags=_THINK_TAGS if not _THINK_TAGS[0] in template else None,\n             reasoning=reasoning_variable is not None,\n         )\n     return Capabilities("
+  },
+  {
+   "module": "src/wavestack/models/capabilities.py",
+   "ligne": 90,
+   "colonne": 46,
+   "operateur": "core/ReplaceBinaryOperator_Add_BitXor",
+   "occurrence": 0,
+   "fonction": "hermes_round_trip",
+   "job_id": "89ffc56012144973807ad8ebcda64bb2",
+   "diff": "--- mutation diff ---\n--- a/src\\wavestack\\models\\capabilities.py\n+++ b/src\\wavestack\\models\\capabilities.py\n@@ -87,7 +87,7 @@\n         at = text.rfind(_PROBE_QUESTION)\n         if at < 0:\n             return False\n-        calls, bad = parse_tool_calls(text[at + len(_PROBE_QUESTION) :], \"hermes\", {})\n+        calls, bad = parse_tool_calls(text[at ^ len(_PROBE_QUESTION) :], \"hermes\", {})\n     except Exception:  # noqa: BLE001 - a template the probe does not suit: no reader\n         return False\n     expected = (_PROBE_CALL[\"name\"], _PROBE_CALL[\"arguments\"])"
+  },
+  {
+   "module": "src/wavestack/models/capabilities.py",
+   "ligne": 89,
+   "colonne": 19,
+   "operateur": "core/ReplaceFalseWithTrue",
+   "occurrence": 2,
+   "fonction": "hermes_round_trip",
+   "job_id": "7dd37d3c5b274421964e7bcb7aca7c25",
+   "diff": "--- mutation diff ---\n--- a/src\\wavestack\\models\\capabilities.py\n+++ b/src\\wavestack\\models\\capabilities.py\n@@ -86,7 +86,7 @@\n         text = render_template(template, messages, tools=_PROBE_TOOLS)\n         at = text.rfind(_PROBE_QUESTION)\n         if at < 0:\n-            return False\n+            return True\n         calls, bad = parse_tool_calls(text[at + len(_PROBE_QUESTION) :], \"hermes\", {})\n     except Exception:  # noqa: BLE001 - a template the probe does not suit: no reader\n         return False"
+  },
+  {
+   "module": "src/wavestack/models/capabilities.py",
+   "ligne": 88,
+   "colonne": 16,
+   "operateur": "core/NumberReplacer",
+   "occurrence": 1,
+   "fonction": "hermes_round_trip",
+   "job_id": "5c0d6183591a4c1da69bae21a1cf0bf7",
+   "diff": "--- mutation diff ---\n--- a/src\\wavestack\\models\\capabilities.py\n+++ b/src\\wavestack\\models\\capabilities.py\n@@ -85,7 +85,7 @@\n     try:\n         text = render_template(template, messages, tools=_PROBE_TOOLS)\n         at = text.rfind(_PROBE_QUESTION)\n-        if at < 0:\n+        if at < -1:\n             return False\n         calls, bad = parse_tool_calls(text[at + len(_PROBE_QUESTION) :], \"hermes\", {})\n     except Exception:  # noqa: BLE001 - a template the probe does not suit: no reader"
+  },
+  {
+   "module": "src/wavestack/models/capabilities.py",
+   "ligne": 88,
+   "colonne": 14,
+   "operateur": "core/ReplaceComparisonOperator_Lt_Eq",
+   "occurrence": 0,
+   "fonction": "hermes_round_trip",
+   "job_id": "25734f7d93814ee09e5dc4528105b20d",
+   "diff": "--- mutation diff ---\n--- a/src\\wavestack\\models\\capabilities.py\n+++ b/src\\wavestack\\models\\capabilities.py\n@@ -85,7 +85,7 @@\n     try:\n         text = render_template(template, messages, tools=_PROBE_TOOLS)\n         at = text.rfind(_PROBE_QUESTION)\n-        if at < 0:\n+        if at == 0:\n             return False\n         calls, bad = parse_tool_calls(text[at + len(_PROBE_QUESTION) :], \"hermes\", {})\n     except Exception:  # noqa: BLE001 - a template the probe does not suit: no reader"
+  },
+  {
+   "module": "src/wavestack/models/capabilities.py",
+   "ligne": 90,
+   "colonne": 46,
+   "operateur": "core/ReplaceBinaryOperator_Add_BitOr",
+   "occurrence": 0,
+   "fonction": "hermes_round_trip",
+   "job_id": "1659cee4fdff48b8afdbc807378fe945",
+   "diff": "--- mutation diff ---\n--- a/src\\wavestack\\models\\capabilities.py\n+++ b/src\\wavestack\\models\\capabilities.py\n@@ -87,7 +87,7 @@\n         at = text.rfind(_PROBE_QUESTION)\n         if at < 0:\n             return False\n-        calls, bad = parse_tool_calls(text[at + len(_PROBE_QUESTION) :], \"hermes\", {})\n+        calls, bad = parse_tool_calls(text[at | len(_PROBE_QUESTION) :], \"hermes\", {})\n     except Exception:  # noqa: BLE001 - a template the probe does not suit: no reader\n         return False\n     expected = (_PROBE_CALL[\"name\"], _PROBE_CALL[\"arguments\"])"
+  },
+  {
+   "module": "src/wavestack/models/capabilities.py",
+   "ligne": 88,
+   "colonne": 16,
+   "operateur": "core/NumberReplacer",
+   "occurrence": 0,
+   "fonction": "hermes_round_trip",
+   "job_id": "ec9b91b8ecd7438aa845a528ba8e87ae",
+   "diff": "--- mutation diff ---\n--- a/src\\wavestack\\models\\capabilities.py\n+++ b/src\\wavestack\\models\\capabilities.py\n@@ -85,7 +85,7 @@\n     try:\n         text = render_template(template, messages, tools=_PROBE_TOOLS)\n         at = text.rfind(_PROBE_QUESTION)\n-        if at < 0:\n+        if at < 1:\n             return False\n         calls, bad = parse_tool_calls(text[at + len(_PROBE_QUESTION) :], \"hermes\", {})\n     except Exception:  # noqa: BLE001 - a template the probe does not suit: no reader"
+  },
+  {
+   "module": "src/wavestack/models/capabilities.py",
+   "ligne": 90,
+   "colonne": 46,
+   "operateur": "core/ReplaceBinaryOperator_Add_Pow",
+   "occurrence": 0,
+   "fonction": "hermes_round_trip",
+   "job_id": "9012fdf7baf74bd199014a8822182521",
+   "diff": "--- mutation diff ---\n--- a/src\\wavestack\\models\\capabilities.py\n+++ b/src\\wavestack\\models\\capabilities.py\n@@ -87,7 +87,7 @@\n         at = text.rfind(_PROBE_QUESTION)\n         if at < 0:\n             return False\n-        calls, bad = parse_tool_calls(text[at + len(_PROBE_QUESTION) :], \"hermes\", {})\n+        calls, bad = parse_tool_calls(text[at ** len(_PROBE_QUESTION) :], \"hermes\", {})\n     except Exception:  # noqa: BLE001 - a template the probe does not suit: no reader\n         return False\n     expected = (_PROBE_CALL[\"name\"], _PROBE_CALL[\"arguments\"])"
+  },
+  {
+   "module": "src/wavestack/models/capabilities.py",
+   "ligne": 90,
+   "colonne": 46,
+   "operateur": "core/ReplaceBinaryOperator_Add_Sub",
+   "occurrence": 0,
+   "fonction": "hermes_round_trip",
+   "job_id": "60384b80a247462ab2a2cf7c6c34bb00",
+   "diff": "--- mutation diff ---\n--- a/src\\wavestack\\models\\capabilities.py\n+++ b/src\\wavestack\\models\\capabilities.py\n@@ -87,7 +87,7 @@\n         at = text.rfind(_PROBE_QUESTION)\n         if at < 0:\n             return False\n-        calls, bad = parse_tool_calls(text[at + len(_PROBE_QUESTION) :], \"hermes\", {})\n+        calls, bad = parse_tool_calls(text[at - len(_PROBE_QUESTION) :], \"hermes\", {})\n     except Exception:  # noqa: BLE001 - a template the probe does not suit: no reader\n         return False\n     expected = (_PROBE_CALL[\"name\"], _PROBE_CALL[\"arguments\"])"
+  },
+  {
+   "module": "src/wavestack/models/capabilities.py",
+   "ligne": 188,
+   "colonne": 54,
+   "operateur": "core/NumberReplacer",
+   "occurrence": 5,
+   "fonction": "capabilities_for",
+   "job_id": "2966028e301f4a9cb63e1e11b4adb78b",
+   "diff": "--- mutation diff ---\n--- a/src\\wavestack\\models\\capabilities.py\n+++ b/src\\wavestack\\models\\capabilities.py\n@@ -185,7 +185,7 @@\n             stop_sequences=_end_of_turn(template),\n             reasoning_variable=reasoning_variable,\n             native_context=meta.native_context,\n-            reasoning_tags=_THINK_TAGS if _THINK_TAGS[0] in template else None,\n+            reasoning_tags=_THINK_TAGS if _THINK_TAGS[ -1] in template else None,\n             reasoning=reasoning_variable is not None,\n         )\n     return Capabilities("
+  }
+ ],
+ "total_seconds": 480.2
+}

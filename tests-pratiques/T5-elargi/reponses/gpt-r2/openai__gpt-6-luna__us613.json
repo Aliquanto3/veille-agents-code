@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "us613",
+ "latence_s": 30.7,
+ "usage": {
+  "prompt_tokens": 5759,
+  "completion_tokens": 2743,
+  "total_tokens": 8502,
+  "cost": 0.0020913,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 5756,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0020913,
+   "upstream_inference_prompt_cost": 0.0007198,
+   "upstream_inference_completions_cost": 0.0013715
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 2379,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.0020913,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 2743,
+   "cout_usd": 0.0020913,
+   "latence_s": 30.7
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/usine/ia/passerelle.py\",\"ligne\":517,\"severite\":\"Important\",\"description\":\"`traces_outils[-0]` désigne l’élément d’indice 0, pas le dernier. Dès qu’un Agent produit plusieurs traces d’outil, l’observateur reçoit donc plusieurs fois la première trace et omet les suivantes, contrairement à l’exigence d’envoyer chaque trace d’outil.\",\"test_pytest\":\"import ast\\nimport inspect\\n\\nfrom usine.ia.passerelle import Passerelle\\n\\n\\ndef test_l_observateur_recoit_la_trace_outil_courante() -> None:\\n    arbre = ast.parse(inspect.getsource(Passerelle))\\n    appels = [\\n        noeud\\n        for noeud in ast.walk(arbre)\\n        if isinstance(noeud, ast.Call)\\n        and isinstance(noeud.func, ast.Attribute)\\n        and noeud.func.attr == \\\"_observer\\\"\\n        and noeud.args\\n        and isinstance(noeud.args[0], ast.Subscript)\\n        and isinstance(noeud.args[0].value, ast.Name)\\n        and noeud.args[0].value.id == \\\"traces_outils\\\"\\n    ]\\n    assert appels, \\\"l’observateur doit recevoir la trace outil courante\\\"\\n    index = appels[0].args[0].slice\\n    assert isinstance(index, ast.UnaryOp)\\n    assert isinstance(index.op, ast.USub)\\n    assert isinstance(index.operand, ast.Constant)\\n    assert index.operand.value == 1\\n\"}]}"
+}

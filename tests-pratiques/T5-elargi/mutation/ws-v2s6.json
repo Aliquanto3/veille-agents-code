@@ -1,0 +1,94 @@
+{
+ "story": "ws-v2s6",
+ "test_command": "T:/v/wavestack/.venv/Scripts/python.exe -m pytest -q -x --tb=no -p no:cacheprovider tests/test_cloud_cap.py tests/test_compression.py",
+ "tests_seconds": 17.6,
+ "tests_rc": 0,
+ "modules": [
+  {
+   "module": "src/wavestack/models/cloud_base.py",
+   "generes": 1250,
+   "effectifs": 89,
+   "echantillon": 48,
+   "executes": 48,
+   "tues": 42
+  },
+  {
+   "module": "src/wavestack/session/app_session.py",
+   "generes": 11724,
+   "effectifs": 43,
+   "echantillon": 22,
+   "executes": 1,
+   "tues": 1
+  },
+  {
+   "module": "src/wavestack/trace/catalog.py",
+   "generes": 125,
+   "effectifs": 0,
+   "echantillon": 0
+  }
+ ],
+ "budget_atteint": true,
+ "survivants": [
+  {
+   "module": "src/wavestack/models/cloud_base.py",
+   "ligne": 341,
+   "colonne": 23,
+   "operateur": "core/NumberReplacer",
+   "occurrence": 29,
+   "fonction": "cache_savings",
+   "job_id": "86f52f6bdee741aa9990dd9181d086a4",
+   "diff": "--- mutation diff ---\n--- a/src\\wavestack\\models\\cloud_base.py\n+++ b/src\\wavestack\\models\\cloud_base.py\n@@ -338,7 +338,7 @@\n     that a session's sum is exact. `cache_priced`: False when a cached part has no declared\n     price (billed at the input price, so the net is unknown, never a third-party figure).\"\"\"\n     cached_read = max(0, min(cached_read, prompt_tokens))\n-    cached_write = max(0, min(cached_write, prompt_tokens - cached_read))\n+    cached_write = max( -1, min(cached_write, prompt_tokens - cached_read))\n     if not cached_read and not cached_write:\n         return None\n     price_in = pricing.input_usd_per_mtok"
+  },
+  {
+   "module": "src/wavestack/models/cloud_base.py",
+   "ligne": 341,
+   "colonne": 58,
+   "operateur": "core/ReplaceBinaryOperator_Sub_Pow",
+   "occurrence": 4,
+   "fonction": "cache_savings",
+   "job_id": "975b47f046dc49cd94fc3e919e5a96ed",
+   "diff": "--- mutation diff ---\n--- a/src\\wavestack\\models\\cloud_base.py\n+++ b/src\\wavestack\\models\\cloud_base.py\n@@ -338,7 +338,7 @@\n     that a session's sum is exact. `cache_priced`: False when a cached part has no declared\n     price (billed at the input price, so the net is unknown, never a third-party figure).\"\"\"\n     cached_read = max(0, min(cached_read, prompt_tokens))\n-    cached_write = max(0, min(cached_write, prompt_tokens - cached_read))\n+    cached_write = max(0, min(cached_write, prompt_tokens ** cached_read))\n     if not cached_read and not cached_write:\n         return None\n     price_in = pricing.input_usd_per_mtok"
+  },
+  {
+   "module": "src/wavestack/models/cloud_base.py",
+   "ligne": 346,
+   "colonne": 29,
+   "operateur": "core/ReplaceBinaryOperator_Mul_Pow",
+   "occurrence": 6,
+   "fonction": "cache_savings",
+   "job_id": "b059b846bc184d43b1407a51e6aab5d4",
+   "diff": "--- mutation diff ---\n--- a/src\\wavestack\\models\\cloud_base.py\n+++ b/src\\wavestack\\models\\cloud_base.py\n@@ -343,7 +343,7 @@\n         return None\n     price_in = pricing.input_usd_per_mtok\n     write_price = pricing.cache_write_usd_per_mtok\n-    full_usd = prompt_tokens * price_in / 1_000_000\n+    full_usd = prompt_tokens ** price_in / 1_000_000\n     write_usd = cached_write * (price_in if write_price is None else write_price) / 1_000_000\n     priced = (not cached_read or pricing.cache_read_usd_per_mtok is not None) and (\n         not cached_write or write_price is not None"
+  },
+  {
+   "module": "src/wavestack/models/cloud_base.py",
+   "ligne": 347,
+   "colonne": 84,
+   "operateur": "core/NumberReplacer",
+   "occurrence": 32,
+   "fonction": "cache_savings",
+   "job_id": "4c1c85a615734c53896952847894c8d2",
+   "diff": "--- mutation diff ---\n--- a/src\\wavestack\\models\\cloud_base.py\n+++ b/src\\wavestack\\models\\cloud_base.py\n@@ -344,7 +344,7 @@\n     price_in = pricing.input_usd_per_mtok\n     write_price = pricing.cache_write_usd_per_mtok\n     full_usd = prompt_tokens * price_in / 1_000_000\n-    write_usd = cached_write * (price_in if write_price is None else write_price) / 1_000_000\n+    write_usd = cached_write * (price_in if write_price is None else write_price) / 1000001\n     priced = (not cached_read or pricing.cache_read_usd_per_mtok is not None) and (\n         not cached_write or write_price is not None\n     )"
+  },
+  {
+   "module": "src/wavestack/models/cloud_base.py",
+   "ligne": 346,
+   "colonne": 29,
+   "operateur": "core/ReplaceBinaryOperator_Mul_FloorDiv",
+   "occurrence": 6,
+   "fonction": "cache_savings",
+   "job_id": "7041f6cca0ad466ea80e43d2fe4c9d55",
+   "diff": "--- mutation diff ---\n--- a/src\\wavestack\\models\\cloud_base.py\n+++ b/src\\wavestack\\models\\cloud_base.py\n@@ -343,7 +343,7 @@\n         return None\n     price_in = pricing.input_usd_per_mtok\n     write_price = pricing.cache_write_usd_per_mtok\n-    full_usd = prompt_tokens * price_in / 1_000_000\n+    full_usd = prompt_tokens // price_in / 1_000_000\n     write_usd = cached_write * (price_in if write_price is None else write_price) / 1_000_000\n     priced = (not cached_read or pricing.cache_read_usd_per_mtok is not None) and (\n         not cached_write or write_price is not None"
+  },
+  {
+   "module": "src/wavestack/models/cloud_base.py",
+   "ligne": 340,
+   "colonne": 22,
+   "operateur": "core/NumberReplacer",
+   "occurrence": 27,
+   "fonction": "cache_savings",
+   "job_id": "9c4b4d00202c44588136c447ec86a117",
+   "diff": "--- mutation diff ---\n--- a/src\\wavestack\\models\\cloud_base.py\n+++ b/src\\wavestack\\models\\cloud_base.py\n@@ -337,7 +337,7 @@\n     `cache_saved_usd`: the signed net, full price − paid (a write costs, a read saves), so\n     that a session's sum is exact. `cache_priced`: False when a cached part has no declared\n     price (billed at the input price, so the net is unknown, never a third-party figure).\"\"\"\n-    cached_read = max(0, min(cached_read, prompt_tokens))\n+    cached_read = max( -1, min(cached_read, prompt_tokens))\n     cached_write = max(0, min(cached_write, prompt_tokens - cached_read))\n     if not cached_read and not cached_write:\n         return None"
+  }
+ ],
+ "total_seconds": 480.1
+}

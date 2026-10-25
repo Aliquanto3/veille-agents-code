@@ -1,0 +1,63 @@
+{
+ "story": "wl94",
+ "test_command": "T:/v/wavelocalai/.venv/Scripts/python.exe -m pytest -q -x --tb=no -p no:cacheprovider tests/v2/e2e/test_documents_embedding.py tests/v2/unit/test_documents_static.py tests/v2/unit/test_embedder.py tests/v2/unit/test_rag_manage_settings_view.py tests/v2/web/test_rag_manage_api.py",
+ "tests_seconds": 25.7,
+ "tests_rc": 0,
+ "modules": [
+  {
+   "module": "src/wavelocalai/config.py",
+   "generes": 292,
+   "effectifs": 2,
+   "echantillon": 2,
+   "executes": 2,
+   "tues": 1
+  },
+  {
+   "module": "src/wavelocalai/errors.py",
+   "generes": 220,
+   "effectifs": 0,
+   "echantillon": 0
+  },
+  {
+   "module": "src/wavelocalai/models/fake.py",
+   "generes": 166,
+   "effectifs": 3,
+   "echantillon": 3,
+   "executes": 3,
+   "tues": 3
+  },
+  {
+   "module": "src/wavelocalai/rag/manage.py",
+   "generes": 326,
+   "effectifs": 3,
+   "echantillon": 3,
+   "executes": 3,
+   "tues": 3
+  },
+  {
+   "module": "src/wavelocalai/web/app.py",
+   "generes": 191,
+   "effectifs": 0,
+   "echantillon": 0
+  },
+  {
+   "module": "src/wavelocalai/web/routes_rag_base.py",
+   "generes": 28,
+   "effectifs": 0,
+   "echantillon": 0
+  }
+ ],
+ "survivants": [
+  {
+   "module": "src/wavelocalai/config.py",
+   "ligne": 229,
+   "colonne": 37,
+   "operateur": "core/ReplaceFalseWithTrue",
+   "occurrence": 1,
+   "fonction": "Settings",
+   "job_id": "017955441db54cb6b4d8ace3a23285d0",
+   "diff": "--- mutation diff ---\n--- a/src\\wavelocalai\\config.py\n+++ b/src\\wavelocalai\\config.py\n@@ -226,7 +226,7 @@\n     smtp: SmtpSettings = SmtpSettings()\n     api_keys: dict[str, SecretStr] = Field(default_factory=dict)\n     testing: bool = False  # autorise l'adaptateur `fake` (AD-8) ; jamais vrai hors des tests\n-    testing_no_fake_embedder: bool = False  # E2E (story 9.4) : aucun embedding, même `fake`\n+    testing_no_fake_embedder: bool = True  # E2E (story 9.4) : aucun embedding, même `fake`\n     base_dir: Path = PROJECT_ROOT  # base des chemins relatifs (dossier du `.toml`)\n     env_file: Path | None = None  # `.env` lu (et passé à `disable_telemetry`)\n "
+  }
+ ],
+ "total_seconds": 95.6
+}

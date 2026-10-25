@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "ws-v2s6",
+ "latence_s": 25.2,
+ "usage": {
+  "prompt_tokens": 4707,
+  "completion_tokens": 975,
+  "total_tokens": 5682,
+  "cost": 0.021516,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 4704,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.021516,
+   "upstream_inference_prompt_cost": 0.011766,
+   "upstream_inference_completions_cost": 0.00975
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 671,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.021516,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 975,
+   "cout_usd": 0.021516,
+   "latence_s": 25.2
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavestack/models/cloud_base.py\",\"ligne\":341,\"severite\":\"Nit\",\"description\":\"Le bornage de cached_write utilise max(-1, ...) au lieu de max(0, ...). Avec cached_read=0 et cached_write=-1, cache_savings émet une ligne de cache contenant un nombre de tokens et un coût d’écriture négatifs, alors qu’aucune lecture ni écriture positive n’est déclarée. Utiliser zéro comme borne inférieure, comme pour cached_read. Le diff ne permet toutefois pas de démontrer qu’un fournisseur puisse effectivement transmettre cette valeur négative.\",\"test_pytest\":null},{\"id\":\"C2\",\"fichier\":\"src/wavestack/session/app_session.py\",\"ligne\":6982,\"severite\":\"Nit\",\"description\":\"L’intégration d’interface annoncée n’est pas visible dans le diff : aucune modification de web/static/app.js ni des traductions fr/en/de n’accompagne les nouveaux champs. Vérifier que callBody consomme effectivement cache_saved_usd/cache_priced et affiche le détail repliable, et que compressionFigure affiche saved_usd avec le marqueur d’estimation. Les seuls tests ajoutés vérifient les événements backend, pas ces critères d’acceptation ; sans le code frontend, leur absence effective ne peut pas être prouvée ici.\",\"test_pytest\":null}]}"
+}

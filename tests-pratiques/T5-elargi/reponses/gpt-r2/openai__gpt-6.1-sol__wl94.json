@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "wl94",
+ "latence_s": 11.5,
+ "usage": {
+  "prompt_tokens": 7953,
+  "completion_tokens": 441,
+  "total_tokens": 8394,
+  "cost": 0.024291,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 7950,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.024291,
+   "upstream_inference_prompt_cost": 0.019881,
+   "upstream_inference_completions_cost": 0.00441
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 206,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.024291,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 441,
+   "cout_usd": 0.024291,
+   "latence_s": 11.5
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavelocalai/config.py\",\"ligne\":231,\"severite\":\"Important\",\"description\":\"Le nouveau champ `testing_no_fake_embedder` vaut `True` par défaut. Ainsi, `fake_embedders(Settings(testing=True))` renvoie désormais `{}`, alors que le mode testing ordinaire doit conserver son embedder factice ; seule l'activation explicite du réglage E2E doit le retirer. `load_settings` masque cette régression en écrasant le champ avec `False` lorsque la variable est absente, mais les constructions directes de `Settings` restent affectées. Définir la valeur par défaut à `False`.\",\"test_pytest\":\"from wavelocalai.config import Settings\\nfrom wavelocalai.models.fake import FAKE_EMBED_REF, fake_embedders\\n\\n\\ndef test_testing_ordinaire_conserve_son_embedder():\\n    settings = Settings(testing=True)\\n    assert list(fake_embedders(settings)) == [FAKE_EMBED_REF.tag]\\n\"}]}"
+}

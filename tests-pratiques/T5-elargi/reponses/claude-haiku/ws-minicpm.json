@@ -1,0 +1,100 @@
+{
+ "duration_api_ms": 102102,
+ "stop_reason": "end_turn",
+ "session_id": "a1362170-0140-4a6c-b96f-d1276c4c1ae2",
+ "total_cost_usd": 0.027603020000000002,
+ "usage": {
+  "input_tokens": 22,
+  "cache_creation_input_tokens": 53462,
+  "cache_read_input_tokens": 600692,
+  "output_tokens": 21803,
+  "output_tokens_details": {
+   "thinking_tokens": 17423
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 53462,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 3630,
+    "cache_read_input_tokens": 75046,
+    "cache_creation_input_tokens": 727,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 727
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "modelUsage": {
+  "claude-haiku-5-5": {
+   "inputTokens": 22,
+   "outputTokens": 21803,
+   "cacheReadInputTokens": 600692,
+   "cacheCreationInputTokens": 53462,
+   "webSearchRequests": 0,
+   "costUSD": 0.027603020000000002,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 17423,
+   "canonicalModel": "claude-haiku-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "permission_denials": [],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "fast_mode_disabled_reason": "sdk_opt_in_required",
+ "subagent_stats": {
+  "spawned": 0,
+  "requested": {
+   "background": 0,
+   "foreground": 0,
+   "unset": 0
+  },
+  "started_in_background": 0,
+  "max_depth": 0,
+  "spawned_by_subagents": 0,
+  "completed": 0,
+  "failed": 0,
+  "killed": {
+   "parent": 0,
+   "user": 0,
+   "system": 0
+  },
+  "refused": {
+   "depth_limit": 0,
+   "concurrency_limit": 0,
+   "budget": 0
+  },
+  "by_type": {}
+ },
+ "safety_stops": 0,
+ "is_error": false,
+ "num_turns": 24,
+ "subtype": "success",
+ "api_error_status": null,
+ "result": "base : sans objet\n\nImportant | high | tests/test_installers.py:188 | Le test paramétré lit `docs/installation.md`, et ce fichier n'existe pas dans le dépôt : `docs/` est absent (Glob `docs/**` vide, seul `README.md` existe, sans mention de MiniCPM). Le test lève `FileNotFoundError`. La documentation demandée par la spec (`docs/installation.md`, `docs/modeles.md`) n'est pas livrée. | certain\n\nImportant | medium | src/wavestack/tools/parser.py:128 | `return -0` vaut `0`, pas `-1`, quand un CDATA n'est jamais refermé. L'appelant (l. 184) ne voit pas « jamais fermé » : il prend `block = raw[start:0] = \"\"`, puis `_minicpm5(\"\")` renvoie « balise `<function …>` absente ou mal fermée » avec un fragment vide. Preuve par lecture : `<function name=\"x\"><param name=\"s\"><![CDATA[abc</function>` donne ce message au lieu de « jamais fermée », que la matrice impose. Aucun test ne couvre ce cas. | certain\n\nImportant | medium | src/wavestack/tools/parser.py:156 | `_minicpm5` ignore le texte parasite du corps : `_minicpm5_params` ne parcourt que les `<param name=\"`. Par exemple `<function name=\"x\">a</function>` ou `<function name=\"x\"><parameter=a>1</parameter></function>` donnent `ToolCall(\"x\", {})` sans `Malformed`. Le lecteur Qwen vérifie ce cas (`_qwen3_coder`, l. 81-82). Un outil part donc avec des arguments vides, sans signalement. | certain\n\nPre-existing : aucun.\n\nRien d'autre d'Important trouvé à la lecture. Le reste est vérifié comme correct : la détection du gabarit ne touche pas le gabarit Qwen3.5 (aucun `<function name=\"` dans sa fixture) ; `tool_call_tags(self._caps.tool_call_parser)` est sûr car `_caps` est affirmé non nul à `app_session.py:8486` ; `_hand_out` accepte `notice_text` ; les trois messages existent en fr, en et de ; l'installateur `.part` / idempotence / `DryRun` est correct en `.sh` et en `.ps1`.\n\nLimite de la revue : je n'ai pas exécuté les tests, car l'outil est en lecture seule. Les constats sont donc établis par lecture du code.",
+ "ttft_ms": 18517,
+ "type": "result",
+ "duration_ms": 103336,
+ "uuid": "4f08f48e-f86e-483c-b6a2-cca7313a16e3",
+ "ttft_stream_ms": 922,
+ "time_to_request_ms": 121,
+ "first_content_frame_ms": 923,
+ "queued_turn_count": 0,
+ "result_index": 0,
+ "_duree_s": 104.2
+}

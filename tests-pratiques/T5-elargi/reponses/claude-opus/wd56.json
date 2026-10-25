@@ -1,0 +1,100 @@
+{
+ "duration_api_ms": 83717,
+ "stop_reason": "end_turn",
+ "session_id": "06e8a48d-b1ab-41f3-8553-0925daa98d90",
+ "total_cost_usd": 0.5326492,
+ "usage": {
+  "input_tokens": 24,
+  "cache_creation_input_tokens": 39014,
+  "cache_read_input_tokens": 358106,
+  "output_tokens": 7441,
+  "output_tokens_details": {
+   "thinking_tokens": 4261
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 39014,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1313,
+    "cache_read_input_tokens": 40480,
+    "cache_creation_input_tokens": 1766,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 1766
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "modelUsage": {
+  "claude-opus-5-5": {
+   "inputTokens": 24,
+   "outputTokens": 7441,
+   "cacheReadInputTokens": 358106,
+   "cacheCreationInputTokens": 39014,
+   "webSearchRequests": 0,
+   "costUSD": 0.5326492,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 4261,
+   "canonicalModel": "claude-opus-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "permission_denials": [],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "fast_mode_disabled_reason": "sdk_opt_in_required",
+ "subagent_stats": {
+  "spawned": 0,
+  "requested": {
+   "background": 0,
+   "foreground": 0,
+   "unset": 0
+  },
+  "started_in_background": 0,
+  "max_depth": 0,
+  "spawned_by_subagents": 0,
+  "completed": 0,
+  "failed": 0,
+  "killed": {
+   "parent": 0,
+   "user": 0,
+   "system": 0
+  },
+  "refused": {
+   "depth_limit": 0,
+   "concurrency_limit": 0,
+   "budget": 0
+  },
+  "by_type": {}
+ },
+ "safety_stops": 0,
+ "is_error": false,
+ "num_turns": 16,
+ "subtype": "success",
+ "api_error_status": null,
+ "result": "Revue terminée, rien n'a été modifié (accès en lecture seule).\n\n- base : sans objet\n- Passe 1. Aucun constat de sévérité high. Deux Important medium, deux Nit low. Complexité : 1 constat, le premier ci-dessous.\n\nImportant | medium | src/wavedevsecops/engine/steps.py:185 | `make()` résout git (`resolve_git`) à chaque appel, sans rien garder en mémoire. Or `history_clean.check` l'appelle quatre fois par validation : dans `_leaking`, `_tracked`, `_is_ignored` et `_holders`. En production, `WorkspaceManager(settings)` (`web/app.py:228`) laisse `git_path=None`, que reçoivent le moteur puis `OpContext`. Chaque commande du terminal pendant l'étape relit donc 4 fois le registre et sonde 4 fois la version de git (`toolrun/__init__.py:366`, `_probe`), soit 4 processus de plus, en plus des 4 commandes git de l'étape. C'est coûteux sous Windows. Les tests passent `git_path` et ne voient pas ce coût. Correctif : appeler `ctx.git()` une seule fois dans `check` et transmettre le `Git` obtenu, ou garder la résolution en mémoire dans la fabrique | certain\n\nImportant | medium | src/wavedevsecops/scenarios/steps/history_clean.py:42 | `git log --all` ne parcourt que le sommet de `refs/stash`. Les entrées `stash@{1}` et suivantes n'existent que dans le reflog de `refs/stash`, et le docstring les exclut explicitement. Exemple : l'apprenant fait `git reset --soft HEAD~1`, puis `git stash`, ce qui enregistre `.env` dans le commit d'index du stash, puis un second `git stash`. L'étape est alors validée alors que `git stash list` et `git stash pop` redonnent la clé. La spec exige qu'aucun commit accessible depuis le stash ne contienne `.env`. Correctif : ajouter au parcours les commits de `git stash list --format=%H`, ou lancer `git log -g refs/stash` | certain\n\nNit | low | src/wavedevsecops/scenarios/ops/diff_line.py:56 | Avec `side: old` sur un commit racine, ou un chemin absent de la révision, `git.internal` lève une `GitError` générique (« vérifiez l'installation de git ») au lieu d'une `SetupError` qui expliquerait l'erreur de rédaction du scénario | certain\n\nNit | low | src/wavedevsecops/scenarios/ops/diff_line.py:60 | L'op ne vérifie pas que la ligne figure bien dans un hunk du diff. Une ligne inchangée hors du contexte affiché donnerait une bonne réponse impossible à désigner dans la vue Code. Sans conséquence pour `.env` ligne 1, qui est un ajout | certain\n\nLe reste du diff ne présente pas de défaut avéré :\n- La syntaxe `except OSError, UnicodeDecodeError:` est valide, le projet exigeant Python 3.14 ou plus (PEP 758).\n- La fabrique `git` est bien branchée sur `StepRunner.validate`.\n- Le scénario déclare l'alias `@ligne-cle` produit par `diff_line`.\n- Les tests jouent sur un vrai git, sans module interne simulé.\n\nJe n'ai lancé aucun test ni aucune commande : tout ce qui précède vient de la lecture du code.",
+ "ttft_ms": 8348,
+ "type": "result",
+ "duration_ms": 84463,
+ "uuid": "75faa3c9-7dee-4773-af90-8b190125e785",
+ "ttft_stream_ms": 1563,
+ "time_to_request_ms": 361,
+ "first_content_frame_ms": 1563,
+ "queued_turn_count": 0,
+ "result_index": 0,
+ "_duree_s": 85.6
+}

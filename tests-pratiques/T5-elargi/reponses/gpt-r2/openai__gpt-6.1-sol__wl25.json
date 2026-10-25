@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "wl25",
+ "latence_s": 21.6,
+ "usage": {
+  "prompt_tokens": 14328,
+  "completion_tokens": 1010,
+  "total_tokens": 15338,
+  "cost": 0.0459185,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 14325,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0459185,
+   "upstream_inference_prompt_cost": 0.0358185,
+   "upstream_inference_completions_cost": 0.0101
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 643,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.0459185,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 1010,
+   "cout_usd": 0.0459185,
+   "latence_s": 21.6
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavelocalai/greenops/cloud_estimate.py\",\"ligne\":29,\"severite\":\"Important\",\"description\":\"Le facteur de conversion vaut 999999 au lieu de 1000000 mg/kg : toutes les estimations et leurs bornes sont sous-évaluées, contrairement au critère 1. Par exemple, 1 kgCO2eq devient 999999 mg. Le test existant utilise pytest.approx avec sa tolérance relative par défaut de 10⁻⁶, qui masque précisément cet écart.\",\"test_pytest\":\"import sys\\nfrom types import ModuleType, SimpleNamespace\\n\\nfrom wavelocalai.greenops.cloud_estimate import estimate_cloud_co2\\n\\n\\ndef test_un_kilogramme_vaut_exactement_un_million_de_milligrammes(monkeypatch):\\n    utils = ModuleType(\\\"ecologits.tracers.utils\\\")\\n    utils.llm_impacts = lambda **kwargs: SimpleNamespace(\\n        errors=[], warnings=[], gwp=SimpleNamespace(value=1.0)\\n    )\\n    monkeypatch.setitem(sys.modules, \\\"ecologits.tracers.utils\\\", utils)\\n\\n    co2 = estimate_cloud_co2(\\n        \\\"openai\\\", \\\"gpt-4o\\\", output_tokens=200, latency_s=3.0\\n    )\\n\\n    assert co2.method == \\\"ecologits\\\"\\n    assert co2.mg == 1_000_000.0\\n    assert co2.range_mg == {\\\"low\\\": 1_000_000.0, \\\"high\\\": 1_000_000.0}\\n\"}]}"
+}

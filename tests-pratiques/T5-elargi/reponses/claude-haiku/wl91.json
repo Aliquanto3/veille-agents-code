@@ -1,0 +1,100 @@
+{
+ "duration_api_ms": 61551,
+ "stop_reason": "end_turn",
+ "session_id": "fecfa51e-ffc8-42f3-ae5d-469bdd4bd1a6",
+ "total_cost_usd": 0.01533166,
+ "usage": {
+  "input_tokens": 20,
+  "cache_creation_input_tokens": 32604,
+  "cache_read_input_tokens": 251886,
+  "output_tokens": 12580,
+  "output_tokens_details": {
+   "thinking_tokens": 8917
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 32604,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 844,
+    "cache_read_input_tokens": 35327,
+    "cache_creation_input_tokens": 3116,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 3116
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "modelUsage": {
+  "claude-haiku-5-5": {
+   "inputTokens": 20,
+   "outputTokens": 12580,
+   "cacheReadInputTokens": 251886,
+   "cacheCreationInputTokens": 32604,
+   "webSearchRequests": 0,
+   "costUSD": 0.01533166,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 8917,
+   "canonicalModel": "claude-haiku-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "permission_denials": [],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "fast_mode_disabled_reason": "sdk_opt_in_required",
+ "subagent_stats": {
+  "spawned": 0,
+  "requested": {
+   "background": 0,
+   "foreground": 0,
+   "unset": 0
+  },
+  "started_in_background": 0,
+  "max_depth": 0,
+  "spawned_by_subagents": 0,
+  "completed": 0,
+  "failed": 0,
+  "killed": {
+   "parent": 0,
+   "user": 0,
+   "system": 0
+  },
+  "refused": {
+   "depth_limit": 0,
+   "concurrency_limit": 0,
+   "budget": 0
+  },
+  "by_type": {}
+ },
+ "safety_stops": 0,
+ "is_error": false,
+ "num_turns": 16,
+ "subtype": "success",
+ "api_error_status": null,
+ "result": "Important | medium | src/wavelocalai/__main__.py:158 | Le fil de guet est créé avec `daemon=False`, alors que la spec prévoit `daemon=True`. Après `serve()`, l'interpréteur attend la fin du fil. Si `webbrowser.open` bloque (navigateur en console sur Linux, par exemple lynx ou w3m), la sortie du lanceur reste bloquée. Preuve par lecture seule : le code du diff ; non exécuté | probable\nImportant | low | src/wavelocalai/__main__.py:166 | Course à l'arrêt : `stop_browser.set()` arrive après `serve()`, mais le fil a pu passer le contrôle `stop.is_set()` juste avant. `webbrowser.open` peut alors ouvrir le navigateur pendant l'arrêt, puis `_write_url_instead` écrit dans le journal après `close_logging()`. Fenêtre très étroite. Raisonnement par lecture | probable\nNit | low | tests/v2/unit/test_browser_open.py:128 | Mocks de modules internes : `launcher.threading` est remplacé par `_FakeThreadingModule` (ligne 122 pour `Thread`) et `wavelocalai.web.server.serve` est patché (ligne 129). Le test ne prouve donc que le câblage de `main`, pas le démarrage réel. Constat par lecture | certain\nNit | low | src/wavelocalai/__main__.py:52 | Aucun défaut trouvé sur le reste : l'ordre `bind_socket` → `Store.open` → fil → `serve()` est sûr, car uvicorn ne met la socket en écoute (`listen`) qu'après le lifespan, donc la sonde TCP est vraie. Le port occupé échoue avant le fil, et les tests qui s'arrêtent avant `serve()` (`test_lifecycle.py:80`, `test_main.py`) n'atteignent pas le guet. Les trois lancements en sous-processus de `tests/v2` ont `--no-browser`. Vérifié par lecture | certain\n\nBase : sans objet (mesure git impossible en lecture seule).\n\nSynthèse : je n'ai trouvé aucun défaut de medium ou plus qui casse le critère 1 ou 4. Le seul écart réel par rapport à la spec est `daemon=False` (ligne 158). Je n'ai rien exécuté : les constats sont tirés de la lecture du code.",
+ "ttft_ms": 7200,
+ "type": "result",
+ "duration_ms": 62624,
+ "uuid": "6dca0f11-c102-4205-b0bb-d8afd8d2f628",
+ "ttft_stream_ms": 719,
+ "time_to_request_ms": 87,
+ "first_content_frame_ms": 719,
+ "queued_turn_count": 0,
+ "result_index": 0,
+ "_duree_s": 63.7
+}

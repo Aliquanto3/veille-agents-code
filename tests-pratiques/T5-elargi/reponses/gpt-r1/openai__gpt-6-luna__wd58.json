@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "wd58",
+ "latence_s": 27.2,
+ "usage": {
+  "prompt_tokens": 7199,
+  "completion_tokens": 2237,
+  "total_tokens": 9436,
+  "cost": 0.0020183,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 7196,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0020183,
+   "upstream_inference_prompt_cost": 0.0008998,
+   "upstream_inference_completions_cost": 0.0011185
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 1878,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.0020183,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 2237,
+   "cout_usd": 0.0020183,
+   "latence_s": 27.2
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"content/scenarios/stash.B.yaml\",\"ligne\":1,\"severite\":\"Important\",\"description\":\"Le diff ne livre ni `stash.B.yaml` ni `rebase.B.yaml`, pourtant requis par la story et chargés par les nouveaux tests. Sans ces fichiers, les scénarios ne peuvent pas être lancés.\",\"test_pytest\":\"from wavedevsecops.config import Settings\\n\\n\\ndef test_scenarios_b_stash_et_rebase_livres(tmp_path):\\n    settings = Settings(data_dir=tmp_path / \\\"data\\\")\\n    for name in (\\\"stash.B.yaml\\\", \\\"rebase.B.yaml\\\"):\\n        assert (settings.scenarios_path() / name).is_file(), f\\\"scénario manquant : {name}\\\"\\n\"},{\"id\":\"C2\",\"fichier\":\"src/wavedevsecops/engine/designation.py\",\"ligne\":132,\"severite\":\"Important\",\"description\":\"`s.sha >= segments[0]` compare les SHA lexicalement au lieu de vérifier une correspondance. Ainsi, un identifiant complet inexistant, mais inférieur au SHA du stash, est accepté comme désignation de l'entrée du stash.\",\"test_pytest\":\"from types import SimpleNamespace\\n\\nfrom wavedevsecops.engine.designation import _exists\\n\\n\\ndef test_sha_inexistant_n_est_pas_une_designation_de_stash():\\n    state = SimpleNamespace(\\n        commits=[],\\n        stash=[SimpleNamespace(sha=\\\"b\\\" * 40)],\\n    )\\n    assert not _exists(\\\"commit:\\\" + \\\"a\\\" * 40, state)\\n\"}]}"
+}

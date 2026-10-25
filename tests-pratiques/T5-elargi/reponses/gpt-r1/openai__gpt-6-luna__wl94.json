@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "wl94",
+ "latence_s": 44.4,
+ "usage": {
+  "prompt_tokens": 7953,
+  "completion_tokens": 3434,
+  "total_tokens": 11387,
+  "cost": 0.00271105,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 7950,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00271105,
+   "upstream_inference_prompt_cost": 0.00099405,
+   "upstream_inference_completions_cost": 0.001717
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 3073,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.00271105,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 3434,
+   "cout_usd": 0.00271105,
+   "latence_s": 44.4
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavelocalai/web/static/screens/documents-base.js\",\"ligne\":1,\"severite\":\"Important\",\"description\":\"Le diff ne monte pas l’encart dans l’écran Base documentaire et n’ajoute pas `documents-embedding-alert.js`. La story ne fournit donc ni le bouton d’installation ni le blocage de la zone de dépôt ; les critères d’acceptation centraux ne sont pas couverts.\",\"test_pytest\":\"from pathlib import Path\\n\\n\\ndef test_documents_base_mounts_the_embedding_alert():\\n    root = Path.cwd()\\n    alert = root / \\\"src/wavelocalai/web/static/screens/documents-embedding-alert.js\\\"\\n    base = root / \\\"src/wavelocalai/web/static/screens/documents-base.js\\\"\\n\\n    assert alert.is_file(), \\\"le composant d’alerte requis par la story est absent\\\"\\n    assert \\\"createEmbeddingAlert\\\" in base.read_text(encoding=\\\"utf-8\\\"), (\\n        \\\"documents-base.js doit instancier l’alerte sur l’écran Base documentaire\\\"\\n    )\"},{\"id\":\"C2\",\"fichier\":\"src/wavelocalai/config.py\",\"ligne\":231,\"severite\":\"Nit\",\"description\":\"La valeur par défaut `True` désactive le faux embedder pour tout `Settings(testing=True)` construit directement, même sans activer le réglage E2E. `load_settings` remet bien la valeur à `False` si la variable d’environnement est absente, mais le comportement par défaut de `Settings` contredit la contrainte « E2E seulement » pour ses autres appelants.\",\"test_pytest\":null}]}"
+}

@@ -1,0 +1,38 @@
+{
+ "openai/gpt-6-luna": {
+  "r1": 8,
+  "r2": 8,
+  "union": 10,
+  "inter": 6,
+  "gain_chaine_r1": [
+   "ws-v2s2"
+  ],
+  "gain_chaine_r2": [],
+  "gain_chaine_union": [
+   "ws-v2s2"
+  ],
+  "imp_r2": 7,
+  "important_r2": 23,
+  "chaine_plus_r2": 11,
+  "chaine_plus_union": 12
+ },
+ "openai/gpt-6.1-sol": {
+  "r1": 11,
+  "r2": 11,
+  "union": 12,
+  "inter": 10,
+  "gain_chaine_r1": [
+   "ws-v2s2"
+  ],
+  "gain_chaine_r2": [
+   "ws-v2s2"
+  ],
+  "gain_chaine_union": [
+   "ws-v2s2"
+  ],
+  "imp_r2": 9,
+  "important_r2": 20,
+  "chaine_plus_r2": 12,
+  "chaine_plus_union": 12
+ }
+}

@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "ws-v2s6",
+ "latence_s": 32.3,
+ "usage": {
+  "prompt_tokens": 4707,
+  "completion_tokens": 2733,
+  "total_tokens": 7440,
+  "cost": 0.0019548,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 4704,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0019548,
+   "upstream_inference_prompt_cost": 0.0005883,
+   "upstream_inference_completions_cost": 0.0013665
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 2486,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.0019548,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 2733,
+   "cout_usd": 0.0019548,
+   "latence_s": 32.3
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"web/static/app.js\",\"ligne\":1,\"severite\":\"Important\",\"description\":\"La story exige d’afficher le détail du cache dans le compteur d’appel et le montant économisé par compression dans l’étape d’orchestration, avec les clés i18n associées. Le diff ajoute les données backend, mais ne modifie ni `app.js` ni les traductions : ces nouveaux montants ne sont donc pas intégrés à l’interface. Test minimal vérifiant que l’interface consomme les champs ajoutés ; il échoue si ceux-ci ne sont pas traités côté client.\",\"test_pytest\":\"from pathlib import Path\\n\\n\\ndef test_finops_fields_are_rendered_by_the_frontend():\\n    app_js = Path(__file__).resolve().parents[1] / \\\"web\\\" / \\\"static\\\" / \\\"app.js\\\"\\n    source = app_js.read_text(encoding=\\\"utf-8\\\")\\n    assert \\\"cache_saved_usd\\\" in source\\n    assert \\\"cache_priced\\\" in source\\n    assert \\\"saved_usd\\\" in source\\n\"}]}"
+}

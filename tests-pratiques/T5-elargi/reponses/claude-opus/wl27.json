@@ -1,0 +1,100 @@
+{
+ "duration_api_ms": 45118,
+ "stop_reason": "end_turn",
+ "session_id": "23733c36-4116-43d0-821d-a5c291d78ad7",
+ "total_cost_usd": 0.5153384,
+ "usage": {
+  "input_tokens": 16,
+  "cache_creation_input_tokens": 46590,
+  "cache_read_input_tokens": 314172,
+  "output_tokens": 3986,
+  "output_tokens_details": {
+   "thinking_tokens": 1258
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 46590,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1003,
+    "cache_read_input_tokens": 52794,
+    "cache_creation_input_tokens": 304,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 304
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "modelUsage": {
+  "claude-opus-5-5": {
+   "inputTokens": 16,
+   "outputTokens": 3986,
+   "cacheReadInputTokens": 314172,
+   "cacheCreationInputTokens": 46590,
+   "webSearchRequests": 0,
+   "costUSD": 0.5153384,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 1258,
+   "canonicalModel": "claude-opus-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "permission_denials": [],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "fast_mode_disabled_reason": "sdk_opt_in_required",
+ "subagent_stats": {
+  "spawned": 0,
+  "requested": {
+   "background": 0,
+   "foreground": 0,
+   "unset": 0
+  },
+  "started_in_background": 0,
+  "max_depth": 0,
+  "spawned_by_subagents": 0,
+  "completed": 0,
+  "failed": 0,
+  "killed": {
+   "parent": 0,
+   "user": 0,
+   "system": 0
+  },
+  "refused": {
+   "depth_limit": 0,
+   "concurrency_limit": 0,
+   "budget": 0
+  },
+  "by_type": {}
+ },
+ "safety_stops": 0,
+ "is_error": false,
+ "num_turns": 16,
+ "subtype": "success",
+ "api_error_status": null,
+ "result": "Revue de la story 2.7, passe 1. Base : sans objet.\n\nImportant | medium | src/wavelocalai/models/catalog.py:66 | `_temperature` n'accepte que `0 <= value < MAX_TEMPERATURE`, donc 2 est exclu. Une entrée de catalogue `\"default_temperature\": 2` est ignorée et `GET /api/models` renvoie `null`, d'où le repli du curseur à 0,2. La spec (critère 1 et `deferred`) dit pourtant « de 0 à 2 ». `parse_temperature` (`src/wavelocalai/models/facts.py`, `0.0 <= value <= MAX_TEMPERATURE`) garde bien 2, et le curseur va jusqu'à `max = \"2\"`. Selon la source, la même valeur est donc acceptée par Ollama et refusée par le catalogue. Le test des valeurs refusées (`test_ollama_wins_over_the_catalog_and_bad_catalog_values_are_ignored` : 5, -1, \"0.5\", True, None) ne vérifie pas la borne 2. Correctif : remplacer par `<=` et ajouter au test le cas 2, qui doit rendre 2.0 | certain\n\nÀ part ce constat, je n'ai pas trouvé d'autre défaut. Les points vérifiés par lecture :\n- **Migration et cache SQLite** : `0005_model_parameters.sql`, l'instantané `schema_v5.sql`, et les requêtes de `facts_store.py`, qui passent toutes par `_COLUMNS` et ont 13 paramètres.\n- **Relecture des lignes sans `parameters`** dans `registry.py:188-200` : une ligne sans paramètres est relue une seule fois. Si Ollama ne répond pas, elle est gardée telle quelle et n'est pas écrasée.\n- **Modèles cloud** : `default_temperature` vaut `null`.\n- **Branchement front** : `wl-models-loaded` et `picker.selected`, `creativityTouched` (remis à zéro par « Effacer », mis à vrai à la réouverture d'une conversation), et la valeur envoyée, `Number(slider.value)`.\n- **Échap dans le menu** : il ne peut pas arrêter la réponse. `preventDefault` est appelé sur `root` avant que `document` ne reçoive l'événement, et `wl-run-status` ignore un événement déjà marqué `defaultPrevented`.\n- **Bascule CSS à 767,98 px**, clés i18n présentes, et pas d'import circulaire entre `catalog.py` et `facts.py`.\n\nJe n'ai rien exécuté (revue en lecture seule) : aucun test lancé, aucun fichier modifié.",
+ "ttft_ms": 5190,
+ "type": "result",
+ "duration_ms": 45510,
+ "uuid": "e4dbec2d-2974-4ad9-ba6f-8c4201e11bdf",
+ "ttft_stream_ms": 1964,
+ "time_to_request_ms": 181,
+ "first_content_frame_ms": 1964,
+ "queued_turn_count": 0,
+ "result_index": 0,
+ "_duree_s": 46.4
+}

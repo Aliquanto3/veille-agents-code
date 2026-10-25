@@ -1,0 +1,19 @@
+{
+ "haiku|wd56|1": "discutable",
+ "haiku|wl93|1": "discutable",
+ "haiku|ws-v2s7|1": "discutable",
+ "haiku|ws-v2s7|2": "discutable",
+ "opus|wd56|1": "discutable",
+ "opus|wd56|2": "discutable",
+ "opus|ws-v2s7|1": "discutable",
+ "openai/gpt-6-luna|us711|1": "artefact",
+ "openai/gpt-6-luna|wd56|1": "faux",
+ "openai/gpt-6-luna|wl93|1": "discutable",
+ "openai/gpt-6-luna|wl93|2": "discutable",
+ "openai/gpt-6-luna|ws-v2s7|1": "artefact",
+ "openai/gpt-6.1-sol|us711|1": "artefact",
+ "openai/gpt-6.1-sol|wd56|1": "discutable",
+ "openai/gpt-6.1-sol|wd56|2": "demontre",
+ "openai/gpt-6.1-sol|wl93|1": "discutable",
+ "openai/gpt-6.1-sol|wl93|2": "discutable"
+}

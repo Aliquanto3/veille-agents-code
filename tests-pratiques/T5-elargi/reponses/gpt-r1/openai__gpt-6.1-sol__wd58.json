@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "wd58",
+ "latence_s": 11.3,
+ "usage": {
+  "prompt_tokens": 7199,
+  "completion_tokens": 478,
+  "total_tokens": 7677,
+  "cost": 0.022776,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 7196,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.022776,
+   "upstream_inference_prompt_cost": 0.017996,
+   "upstream_inference_completions_cost": 0.00478
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 192,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.022776,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 478,
+   "cout_usd": 0.022776,
+   "latence_s": 11.3
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavedevsecops/engine/designation.py\",\"ligne\":131,\"severite\":\"Important\",\"description\":\"La vérification d'existence compare les SHA du stash avec `>=` au lieu de `==`. Avec un stash de SHA `ffff…`, un identifiant inexistant `commit:1111…` est donc considéré comme existant. Cela fausse la validation des éléments soumis au panneau de désignation : la présence d'un stash ne doit rendre désignables que les commits réellement présents, pas tous les SHA lexicographiquement inférieurs. Remplacer cette comparaison par une égalité, comme pour les commits de l'historique.\",\"test_pytest\":\"from types import SimpleNamespace\\n\\nfrom wavedevsecops.engine.designation import _exists\\n\\n\\ndef test_un_stash_ne_rend_pas_existant_un_autre_commit():\\n    stash_sha = 'f' * 40\\n    absent_sha = '1' * 40\\n    state = SimpleNamespace(\\n        commits=[],\\n        stash=[SimpleNamespace(sha=stash_sha)],\\n    )\\n\\n    assert _exists(f'commit:{stash_sha}', state) is True\\n    assert _exists(f'commit:{absent_sha}', state) is False\\n\"}]}"
+}

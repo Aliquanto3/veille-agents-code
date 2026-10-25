@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "wd59",
+ "latence_s": 41.3,
+ "usage": {
+  "prompt_tokens": 8538,
+  "completion_tokens": 3323,
+  "total_tokens": 11861,
+  "cost": 0.002728675,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 8535,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.002728675,
+   "upstream_inference_prompt_cost": 0.001067175,
+   "upstream_inference_completions_cost": 0.0016615
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 2932,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.002728675,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 3323,
+   "cout_usd": 0.002728675,
+   "latence_s": 41.3
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"content/scenarios/add-commit.B.yaml\",\"ligne\":1,\"severite\":\"Important\",\"description\":\"La story exige de déclarer `secret-scan` dans `add-commit.B` et `protection` dans `push-pull.B`, mais le diff ne modifie aucun fichier de scénario. Avec `blocked_by` vide par défaut, ces scénarios ne produisent aucun encart : `_blockers_of` renvoie `None`.\",\"test_pytest\":\"from wavedevsecops.config import Settings\\nfrom wavedevsecops.scenarios import load_scenario\\n\\n\\ndef test_scenarios_b_declarent_les_barrieres_de_la_story() -> None:\\n    settings = Settings()\\n    expected = {\\n        \\\"add-commit.B\\\": [(\\\"secret-scan\\\", 1, \\\"secret-dans-un-commit\\\")],\\n        \\\"push-pull.B\\\": [(\\\"protection\\\", 2, \\\"push-direct-main\\\")],\\n    }\\n    for key, declarations in expected.items():\\n        scenario = load_scenario(\\n            settings.scenarios_path() / f\\\"{key}.yaml\\\", settings\\n        ).scenario\\n        assert [\\n            (blocker.barrier_id, blocker.station, blocker.scenario_id)\\n            for blocker in scenario.blocked_by\\n        ] == declarations\"},{\"id\":\"C2\",\"fichier\":\"scenario.js\",\"ligne\":1,\"severite\":\"Nit\",\"description\":\"Le diff ne contient aucun changement côté front, alors que la story exige `blockersBlock` dans `scenario.js` pour rendre l’encart après la correction et avant « Recommencer ». Le panneau serveur peut donc fournir `blockers` sans que l’interface l’affiche.\" ,\"test_pytest\":null}]}"
+}

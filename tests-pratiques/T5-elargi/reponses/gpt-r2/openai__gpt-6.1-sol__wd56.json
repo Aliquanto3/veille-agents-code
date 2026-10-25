@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "wd56",
+ "latence_s": 65.9,
+ "usage": {
+  "prompt_tokens": 9548,
+  "completion_tokens": 2597,
+  "total_tokens": 12145,
+  "cost": 0.0498385,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 9545,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0498385,
+   "upstream_inference_prompt_cost": 0.0238685,
+   "upstream_inference_completions_cost": 0.02597
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 1998,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.0498385,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 2597,
+   "cout_usd": 0.0498385,
+   "latence_s": 65.9
+  }
+ ],
+ "contenu": "{\n  \"constats\": [\n    {\n      \"id\": \"C1\",\n      \"fichier\": \"src/wavedevsecops/scenarios/steps/history_clean.py\",\n      \"ligne\": 89,\n      \"severite\": \"Important\",\n      \"description\": \"`git check-ignore` tient aussi compte de `.git/info/exclude` et des exclusions globales. Après nettoyage de l'historique et de l'index, une exclusion provenant uniquement de ces sources valide donc l'étape sans aucune règle dans `.gitignore`, contrairement au critère demandé. Il faut vérifier la provenance de la règle applicable, pas seulement le code de retour de `check-ignore`.\",\n      \"test_pytest\": \"from types import SimpleNamespace\\n\\nfrom wavedevsecops.scenarios.steps import history_clean\\n\\n\\ndef test_exclusion_locale_ne_remplace_pas_gitignore(tmp_path):\\n    exclude = tmp_path / '.git' / 'info' / 'exclude'\\n    exclude.parent.mkdir(parents=True)\\n    exclude.write_text('.env\\\\n', encoding='utf-8')\\n\\n    class FakeGit:\\n        def run(self, *args, **kwargs):\\n            assert kwargs['cwd'] == tmp_path\\n            assert args[0] == 'check-ignore'\\n            # Git trouve une exclusion, mais sa provenance n'est pas .gitignore.\\n            verbose = '-v' in args or '--verbose' in args\\n            if verbose:\\n                stdout = (\\n                    '.git/info/exclude\\\\0' + '1\\\\0.env\\\\0.env\\\\0'\\n                    if '-z' in args\\n                    else '.git/info/exclude:1:.env\\\\t.env\\\\n'\\n                )\\n            else:\\n                stdout = ''\\n            return SimpleNamespace(ok=True, returncode=0, stdout=stdout)\\n\\n    git = FakeGit()\\n    ctx = SimpleNamespace(git=lambda: git, layout=SimpleNamespace(repo=tmp_path))\\n    assert history_clean._is_ignored(ctx, '.env') is False\\n\"\n    },\n    {\n      \"id\": \"C2\",\n      \"fichier\": \"src/wavedevsecops/scenarios/ops/diff_line.py\",\n      \"ligne\": 56,\n      \"severite\": \"Nit\",\n      \"description\": \"L'opération vérifie une ligne du fichier complet, mais jamais son appartenance au diff. Elle peut ainsi produire un identifiant `diffline` pour une ligne inchangée, voire pour un fichier que le commit ne modifie pas. Le scénario livré utilise bien une ligne ajoutée ; pour sécuriser cette opération partagée, vérifier aussi que le numéro et le côté correspondent à une ligne effectivement présente dans le diff.\",\n      \"test_pytest\": null\n    }\n  ]\n}"
+}

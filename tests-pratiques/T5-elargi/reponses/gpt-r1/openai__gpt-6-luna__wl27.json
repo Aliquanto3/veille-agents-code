@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "wl27",
+ "latence_s": 42.0,
+ "usage": {
+  "prompt_tokens": 13885,
+  "completion_tokens": 3591,
+  "total_tokens": 17476,
+  "cost": 0.00353105,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 13882,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00353105,
+   "upstream_inference_prompt_cost": 0.00173555,
+   "upstream_inference_completions_cost": 0.0017955
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 3096,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.00353105,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 3591,
+   "cout_usd": 0.00353105,
+   "latence_s": 42.0
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavelocalai/models/catalog.py\",\"ligne\":68,\"severite\":\"Important\",\"description\":\"Le catalogue exclut la valeur 2 avec `value < MAX_TEMPERATURE`, alors que la spec accepte toute valeur de 0 à 2 inclus. Une entrée catalogue à `default_temperature: 2` est donc ignorée et le modèle renvoie `null` au lieu de 2.\",\"test_pytest\":\"from wavelocalai.models.catalog import _temperature\\n\\n\\ndef test_catalog_accepts_the_inclusive_upper_temperature_bound():\\n    assert _temperature(2) == 2.0\\n\"},{\"id\":\"C2\",\"fichier\":\"src/wavelocalai/models/facts_store.py\",\"ligne\":26,\"severite\":\"Important\",\"description\":\"Le code lit et écrit désormais la colonne `model_facts.parameters`, mais le diff fourni ne contient pas la migration `0005_model_parameters.sql` annoncée par la spec. Sur une base migrée avec les migrations livrées, la colonne manque : les lectures/écritures du cache échouent avec `sqlite3.OperationalError`.\",\"test_pytest\":\"import sqlite3\\n\\nfrom wavelocalai.store.migrate import migrate\\n\\n\\ndef test_migration_adds_model_facts_parameters(tmp_path):\\n    database = tmp_path / \\\"wavelocalai.db\\\"\\n    migrate(database)\\n    with sqlite3.connect(database) as connection:\\n        columns = {row[1] for row in connection.execute(\\\"PRAGMA table_info(model_facts)\\\")}\\n    assert \\\"parameters\\\" in columns\\n\"},{\"id\":\"C3\",\"fichier\":\"src/wavelocalai/web/static/screens/chat.js\",\"ligne\":1,\"severite\":\"Nit\",\"description\":\"Le diff fourni ne modifie aucun composant front-end de production, alors que les critères exigent notamment le curseur lié au modèle et à la conversation, le menu d’export clavier/réactif, le message de chargement et la conservation du brouillon après un 409. Les tests E2E ajoutés spécifient ces comportements, mais ne les implémentent pas. Je ne peux pas fournir ici un test pytest autonome respectant les contraintes sans dépendre du navigateur ou d’un serveur.\",\"test_pytest\":null}]}"
+}

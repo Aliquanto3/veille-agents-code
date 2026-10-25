@@ -1,0 +1,100 @@
+{
+ "duration_api_ms": 40657,
+ "stop_reason": "end_turn",
+ "session_id": "7ec1302f-a946-47bc-8b4f-5b7fad757e84",
+ "total_cost_usd": 0.3486424,
+ "usage": {
+  "input_tokens": 14,
+  "cache_creation_input_tokens": 29653,
+  "cache_read_input_tokens": 182512,
+  "output_tokens": 3743,
+  "output_tokens_details": {
+   "thinking_tokens": 1263
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 29653,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1443,
+    "cache_read_input_tokens": 34639,
+    "cache_creation_input_tokens": 1522,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 1522
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "modelUsage": {
+  "claude-opus-5-5": {
+   "inputTokens": 14,
+   "outputTokens": 3743,
+   "cacheReadInputTokens": 182512,
+   "cacheCreationInputTokens": 29653,
+   "webSearchRequests": 0,
+   "costUSD": 0.3486424,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 1263,
+   "canonicalModel": "claude-opus-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "permission_denials": [],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "fast_mode_disabled_reason": "sdk_opt_in_required",
+ "subagent_stats": {
+  "spawned": 0,
+  "requested": {
+   "background": 0,
+   "foreground": 0,
+   "unset": 0
+  },
+  "started_in_background": 0,
+  "max_depth": 0,
+  "spawned_by_subagents": 0,
+  "completed": 0,
+  "failed": 0,
+  "killed": {
+   "parent": 0,
+   "user": 0,
+   "system": 0
+  },
+  "refused": {
+   "depth_limit": 0,
+   "concurrency_limit": 0,
+   "budget": 0
+  },
+  "by_type": {}
+ },
+ "safety_stops": 0,
+ "is_error": false,
+ "num_turns": 11,
+ "subtype": "success",
+ "api_error_status": null,
+ "result": "base : sans objet\n\nImportant | high | src/wavestack/models/capabilities.py:27 | `_PROBE_QUESTION = \"\"`, alors que le commentaire juste au-dessus annonce un « marqueur privé, absent de tout texte réel ». Avec une chaîne vide, `text.rfind(\"\")` vaut `len(text)` (l. 87), donc `text[at + 0:]` est vide. `parse_tool_calls` ne trouve alors aucun appel et `hermes_round_trip` renvoie toujours `False`. La nouvelle branche de `capabilities_for` (l. 175) ne se déclenche donc jamais : Granite, Qwen2.5/Hermes et EXAONE restent sans lecteur. Les deux critères d'acceptation échouent, ainsi que les tests `test_granite_capabilities`, `test_chatml_with_tool_call_gets_hermes`, `test_exaone4_gets_hermes_and_its_end_of_turn`, `test_round_trip_needs_the_same_call` et `test_full_cycle_calculator`. Correctif : un marqueur unique et non vide (par exemple `\"\\x00wavestack-probe\\x00\"`). | certain\n\nImportant | medium | src/wavestack/models/capabilities.py:88 | Le garde-fou `if at < -1` ne se déclenche jamais, car `rfind` renvoie au minimum -1. Si un gabarit n'affiche pas le contenu du message `user`, on a `at == -1` et la lecture reprend à `text[len(q) - 1:]`, donc presque tout le rendu, prompt système compris. L'exemple `<tool_call>` du prompt système, que la sonde devait justement ignorer, entre alors dans la lecture. Le gabarit peut ainsi être mal jugé : faux échec sur un exemple vide ou malformé, ou faux succès si l'exemple reprend le même appel. Correctif : `if at < 0: return False`. | certain\n\nNit | low | tests/test_tool_parser_granite4.py:85 | Aucun test ne couvre un gabarit qui omet le contenu de la question alors qu'un `<tool_call>` figure dans le prompt système, c'est-à-dire le cas du constat sur la ligne 88. Avec le marqueur vide de la ligne 27, la fixture `CHATML_TOOLS` n'exerce pas non plus le saut de l'exemple système. | certain\n\nNit | low | src/wavestack/models/capabilities.py:97 | `_end_of_turn` retient le premier marqueur écrit dans le gabarit, pas celui qui ferme vraiment les tours. Un gabarit qui cite `<|im_end|>` dans un texte d'instruction avant sa vraie fin de tour recevrait une mauvaise séquence d'arrêt. Les fixtures actuelles ne présentent pas ce cas : Granite n'écrit que `<|end_of_text|>` et EXAONE que `[|endofturn|]`. | probable\n\nNit | low | docs/ | La spec demande de mettre à jour `docs/modeles.md` et `docs/installation.md`, mais le dépôt courant n'a aucun fichier `docs/*.md` (vérifié par Glob). Je ne peux donc pas confirmer cette tâche, cochée dans la spec. | probable\n\nLes autres points vérifiés par lecture sont conformes : les entrées Granite de `install.ps1` et `install.sh` reprennent les URL, empreintes et tailles de `tests/test_installers.py`. L'architecture `granite` figure déjà dans `publishers.yaml` et dans ses traductions. Les branches `minicpm5` et `qwen3` n'ont pas changé.\n\nComplexité : 0 constat. La sonde est mise en cache par gabarit (`@cache`) et ne s'exécute pas à chaque événement.\n\nJe n'ai lancé aucun test : je n'ai accès qu'à la lecture des fichiers.",
+ "ttft_ms": 6737,
+ "type": "result",
+ "duration_ms": 41036,
+ "uuid": "6ea3e1b4-7149-4c41-9a6c-76191cae5fcc",
+ "ttft_stream_ms": 1218,
+ "time_to_request_ms": 111,
+ "first_content_frame_ms": 1218,
+ "queued_turn_count": 0,
+ "result_index": 0,
+ "_duree_s": 42.0
+}

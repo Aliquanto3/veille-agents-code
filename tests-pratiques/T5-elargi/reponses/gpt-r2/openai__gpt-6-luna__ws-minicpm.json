@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "ws-minicpm",
+ "latence_s": 41.5,
+ "usage": {
+  "prompt_tokens": 10712,
+  "completion_tokens": 3947,
+  "total_tokens": 14659,
+  "cost": 0.003312425,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 10709,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.003312425,
+   "upstream_inference_prompt_cost": 0.001338925,
+   "upstream_inference_completions_cost": 0.0019735
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 3300,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.003312425,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 3947,
+   "cout_usd": 0.003312425,
+   "latence_s": 41.5
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavestack/tools/parser.py\",\"ligne\":161,\"severite\":\"Important\",\"description\":\"Le parseur ne recherche que le préfixe exact `<function name=\\\"`. Une balise sans attribut `name`, par exemple `<function></function>`, est donc ignorée et renvoie `( [], None )` au lieu de produire le `Malformed` traduit exigé par la matrice.\",\"test_pytest\":\"from wavestack.tools.parser import parse_tool_calls\\n\\n\\ndef test_function_without_name_is_malformed():\\n    calls, malformed = parse_tool_calls(\\\"<function></function>\\\", \\\"minicpm5\\\", {})\\n\\n    assert calls == []\\n    assert malformed is not None\\n\"},{\"id\":\"C2\",\"fichier\":\"install.sh\",\"ligne\":1,\"severite\":\"Important\",\"description\":\"Le diff ne modifie ni `install.sh` ni `install.ps1`, alors que la story exige l’option explicite de téléchargement et l’URL MiniCPM5 dans les deux installateurs. L’option et le téléchargement facultatif ne sont donc pas implémentés par cette fusion.\",\"test_pytest\":\"from pathlib import Path\\n\\n\\ndef test_installers_offer_the_pinned_minicpm_download():\\n    root = Path(__file__).resolve().parents[1]\\n    url = (\\n        \\\"https://huggingface.co/openbmb/MiniCPM5-2B-GGUF/resolve/\\\"\\n        \\\"2079a22f3beaa4e306449978533478fe0522f4b3/MiniCPM5-2B-Q4_K_M.gguf\\\"\\n    )\\n\\n    for name in (\\\"install.sh\\\", \\\"install.ps1\\\"):\\n        content = (root / name).read_text(encoding=\\\"utf-8\\\")\\n        assert url in content\\n\\n    assert \\\"WAVESTACK_WITH_MINICPM\\\" in (root / \\\"install.sh\\\").read_text(encoding=\\\"utf-8\\\")\\n    assert \\\"WithMiniCPM\\\" in (root / \\\"install.ps1\\\").read_text(encoding=\\\"utf-8\\\")\\n\"},{\"id\":\"C3\",\"fichier\":\"tests/test_tool_parser_minicpm5.py\",\"ligne\":18,\"severite\":\"Important\",\"description\":\"Le nouveau module de tests charge `tests/fixtures/minicpm5_chat_template.jinja` à l’import, mais le diff ne fournit pas cette fixture pourtant requise par la spec. Si elle est absente, pytest échoue dès la collecte de ce module et les tests de capacité et de cycle complet ne peuvent pas s’exécuter.\",\"test_pytest\":\"from pathlib import Path\\n\\n\\ndef test_minicpm5_reference_template_fixture_exists():\\n    fixture = Path(__file__).resolve().parent / \\\"fixtures\\\" / \\\"minicpm5_chat_template.jinja\\\"\\n\\n    assert fixture.is_file(), \\\"la fixture de référence MiniCPM5 manque\\\"\\n\"}]}"
+}

@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "us711",
+ "latence_s": 18.0,
+ "usage": {
+  "prompt_tokens": 8892,
+  "completion_tokens": 1561,
+  "total_tokens": 10453,
+  "cost": 0.001891925,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 8889,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.001891925,
+   "upstream_inference_prompt_cost": 0.001111425,
+   "upstream_inference_completions_cost": 0.0007805
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 1349,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.001891925,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 1561,
+   "cout_usd": 0.001891925,
+   "latence_s": 18.0
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"demo/repli/agent/01.json\",\"ligne\":1,\"severite\":\"Important\",\"description\":\"Les cinq réponses versionnées demandées par la story (`01.json` à `05.json`) ne figurent pas dans le diff. Le Mode repli ne peut donc pas proposer les réponses attendues dans un checkout issu de cette fusion ; le test ajouté `test_reponses_versionnees` échoue également faute de fichiers à charger.\",\"test_pytest\":\"from pathlib import Path\\n\\n\\ndef test_reponses_agent_du_mode_repli_versionnees() -> None:\\n    repertoire = Path.cwd() / \\\"demo\\\" / \\\"repli\\\" / \\\"agent\\\"\\n    assert sorted(p.name for p in repertoire.glob(\\\"*.json\\\")) == [\\n        \\\"01.json\\\",\\n        \\\"02.json\\\",\\n        \\\"03.json\\\",\\n        \\\"04.json\\\",\\n        \\\"05.json\\\",\\n    ]\\n\"}]}"
+}

@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "wl94",
+ "latence_s": 17.9,
+ "usage": {
+  "prompt_tokens": 7953,
+  "completion_tokens": 1728,
+  "total_tokens": 9681,
+  "cost": 0.00185805,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 7950,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00185805,
+   "upstream_inference_prompt_cost": 0.00099405,
+   "upstream_inference_completions_cost": 0.000864
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 1525,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.00185805,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 1728,
+   "cout_usd": 0.00185805,
+   "latence_s": 17.9
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavelocalai/config.py\",\"ligne\":229,\"severite\":\"Important\",\"description\":\"`testing_no_fake_embedder` vaut `True` par défaut. Ainsi, un appelant qui construit directement `Settings(testing=True)` — sans passer par `load_settings`, qui remplace cette valeur — ne reçoit plus le modèle fake dans `fake_embedders`. Cela contredit le périmètre E2E seulement de ce réglage et peut casser les usages ordinaires de `Settings(testing=True)`.\",\"test_pytest\":\"from wavelocalai.config import Settings\\nfrom wavelocalai.models.fake import FAKE_EMBED_REF, fake_embedders\\n\\n\\ndef test_testing_settings_keep_the_fake_embedder_by_default():\\n    settings = Settings(testing=True)\\n    assert FAKE_EMBED_REF.tag in fake_embedders(settings)\\n\"}]}"
+}

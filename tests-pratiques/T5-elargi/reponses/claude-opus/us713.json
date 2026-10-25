@@ -1,0 +1,100 @@
+{
+ "duration_api_ms": 116128,
+ "stop_reason": "end_turn",
+ "session_id": "7f5cd9a4-413d-4430-a1fe-94ad414ed70a",
+ "total_cost_usd": 0.7316578000000001,
+ "usage": {
+  "input_tokens": 38,
+  "cache_creation_input_tokens": 50728,
+  "cache_read_input_tokens": 753409,
+  "output_tokens": 8750,
+  "output_tokens_details": {
+   "thinking_tokens": 4259
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 50728,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 2553,
+    "cache_read_input_tokens": 52774,
+    "cache_creation_input_tokens": 1186,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 1186
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "modelUsage": {
+  "claude-opus-5-5": {
+   "inputTokens": 38,
+   "outputTokens": 8750,
+   "cacheReadInputTokens": 753409,
+   "cacheCreationInputTokens": 50728,
+   "webSearchRequests": 0,
+   "costUSD": 0.7316578000000001,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 4259,
+   "canonicalModel": "claude-opus-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "permission_denials": [],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "fast_mode_disabled_reason": "sdk_opt_in_required",
+ "subagent_stats": {
+  "spawned": 0,
+  "requested": {
+   "background": 0,
+   "foreground": 0,
+   "unset": 0
+  },
+  "started_in_background": 0,
+  "max_depth": 0,
+  "spawned_by_subagents": 0,
+  "completed": 0,
+  "failed": 0,
+  "killed": {
+   "parent": 0,
+   "user": 0,
+   "system": 0
+  },
+  "refused": {
+   "depth_limit": 0,
+   "concurrency_limit": 0,
+   "budget": 0
+  },
+  "by_type": {}
+ },
+ "safety_stops": 0,
+ "is_error": false,
+ "num_turns": 24,
+ "subtype": "success",
+ "api_error_status": null,
+ "result": "J'ai relu le serveur, la CLI, les vues, le script, les pages, la feuille de style, les contrats d'import et les tests. Je n'ai rien exécuté : je n'ai que la lecture.\n\nbase : sans objet\n\nImportant | medium | demo/script-demo.md:51 | Le script de démo (l.3 « écran par écran de l'UI Streamlit », l.51-52) et `README.md:7` font toujours lancer `uv run usine ui`. Or `usine ui` sert désormais l'UI web, dont les sept écrans n'ont que la carte « Contenu de l'écran » en attente (`chaine.html:46-49`). Seul `usine ui --streamlit` (`src/usine/ui/cli.py:192`) donne encore les écrans. Jusqu'en 7.17, une démo qui suit le script tombe sur des pages vides. Il faut y écrire `usine ui --streamlit` | certain\nImportant | medium | src/usine/ui/statique/cadre.css:6 | La feuille déclare cinq polices (`polices/Fredoka-Variable.woff2`, `AtkinsonHyperlegible-Regular/Bold.woff2`, `JetBrainsMono-Regular/Bold.woff2`), mais `polices/` ne contient que les trois `OFL-*.txt`, et aucun `*.woff2` n'existe dans le dépôt. On aurait donc des 404 sur les polices, et `test_feuille_et_script_sans_requete_externe` échouerait (`status_code == 200`, `b\"wOF2\"`). Ce peut aussi être un instantané qui exclut les binaires : à vérifier avec `git ls-files src/usine/ui/statique/polices` | probable\nNit | low | src/usine/ui/cli.py:206 | La matrice demande, pour un port occupé, un « message qui nomme l'adresse ». La branche `OSError` affiche `({exc})` sans `HOTE:port`, contrairement à la branche `SystemExit` (l.212) | certain\nNit | low | src/usine/ui/cli.py:189 | `--port` n'est pas borné. Un port hors de 0 à 65535 provoque dans asyncio un `OverflowError`, qui n'est pas un `OSError` : ni `except OSError` ni `except SystemExit` ne le rattrapent, et on obtient une trace brute au lieu du code 1. Correctif possible : `typer.Option(min=1, max=65535)` | probable\nNit | low | src/usine/ui/cli.py:1 | Les docstrings sont périmées : celle du module (« démarre la page » Streamlit), `src/usine/ui/__init__.py:1` (« Interface de démo Streamlit ») et `CHEMIN_APP` (l.37, « Page Streamlit lancée par `usine ui` », alors que c'est `--streamlit` qui la lance) | certain\nPre-existing | low | outils/verifier_demo.py:45 | `REPERTOIRE_REPLI` y est recopié au lieu d'être importé (contrat « hors produit »). Seul `tests/unit/outils/test_verifier_demo.py:47` garde l'égalité, et ce test pointe toujours sur `ui_cli.REPERTOIRE_REPLI`, qui reste valide grâce à la réexportation `src/usine/ui/cli.py:33` | certain\n\nComplexité : 0 constat. Aucune structure ne grossit pendant l'exécution : les bandeaux sont uniques par `id`, et chaque appel à `/api/cadre` relit un seul manifeste.\n\nPoints vérifiés sans défaut :\n- **Branchement :** `ui` → `application_web` → `creer_application` → `lecture_manifeste`.\n- **Adresse d'écoute :** l'hôte est fixé à `127.0.0.1`.\n- **Routes :** `/docs` et `/openapi.json` sont désactivés.\n- **Erreurs de lecture :** `UsineErreur` et `OSError` sont rattrapées, et `ConsultationPassage` convertit déjà les erreurs JSON et pydantic en `UsineErreur`.\n- **Horodatage :** il est forcé en UTC par le type `Horodatage` (un `datetime` naïf est refusé).\n- **Pages :** les sept pages ont `aria-current`, un seul `<h1>`, le bon titre, aucun lien `http(s)`, et pas de bouton « Lancer la Chaîne » sur `/chaine`.\n- **Imports :** `httpx` (requis par `TestClient`) est bien installé par `uv sync --locked`, et le contrat d'import `ui` autorise fastapi, uvicorn et markdown_it.\n- **Doublures de test :** elles ne remplacent que `uvicorn.run` et `subprocess.run`, des frontières externes.\n\nRien de high : les deux constats Important sont medium.",
+ "ttft_ms": 6899,
+ "type": "result",
+ "duration_ms": 118537,
+ "uuid": "d12a6783-e7a8-4ff9-b294-8c2492a1d96c",
+ "ttft_stream_ms": 5661,
+ "time_to_request_ms": 1403,
+ "first_content_frame_ms": 5662,
+ "queued_turn_count": 0,
+ "result_index": 0,
+ "_duree_s": 119.7
+}

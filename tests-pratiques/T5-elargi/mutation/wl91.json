@@ -1,0 +1,66 @@
+{
+ "story": "wl91",
+ "test_command": "T:/v/wavelocalai/.venv/Scripts/python.exe -m pytest -q -x --tb=no -p no:cacheprovider tests/v2/unit/test_browser_open.py tests/v2/web/test_real_launch.py tests/v2/web/test_real_shutdown.py",
+ "tests_seconds": 20.5,
+ "tests_rc": 0,
+ "modules": [
+  {
+   "module": "src/wavelocalai/__main__.py",
+   "generes": 98,
+   "effectifs": 43,
+   "echantillon": 43,
+   "executes": 29,
+   "tues": 25
+  },
+  {
+   "module": "src/wavelocalai/config.py",
+   "generes": 290,
+   "effectifs": 1,
+   "echantillon": 1
+  }
+ ],
+ "budget_atteint": true,
+ "survivants": [
+  {
+   "module": "src/wavelocalai/__main__.py",
+   "ligne": 158,
+   "colonne": 27,
+   "operateur": "core/ReplaceTrueWithFalse",
+   "occurrence": 1,
+   "fonction": "main",
+   "job_id": "cc100be6f1fb4f42ac1558091d9013a8",
+   "diff": "--- mutation diff ---\n--- a/src\\wavelocalai\\__main__.py\n+++ b/src\\wavelocalai\\__main__.py\n@@ -155,7 +155,7 @@\n                 threading.Thread(\n                     target=_open_browser_when_ready,\n                     args=(url, settings.server.port, stop_browser),\n-                    daemon=True,\n+                    daemon=False,\n                 ).start()\n             try:\n                 serve(settings, sock, store)"
+  },
+  {
+   "module": "src/wavelocalai/__main__.py",
+   "ligne": 36,
+   "colonne": 26,
+   "operateur": "core/NumberReplacer",
+   "occurrence": 1,
+   "fonction": null,
+   "job_id": "ee2c59335fcb47d69f9d4e8f50859ac4",
+   "diff": "--- mutation diff ---\n--- a/src\\wavelocalai\\__main__.py\n+++ b/src\\wavelocalai\\__main__.py\n@@ -33,7 +33,7 @@\n \n # Fenêtre de sonde du port avant d'abandonner l'ouverture du navigateur (serveur très lent à\n # démarrer, ou qui ne démarre pas) : large, pour ne jamais ouvrir avant que le port réponde.\n-BROWSER_PROBE_TIMEOUT_S = 30.0\n+BROWSER_PROBE_TIMEOUT_S = 29.0\n BROWSER_PROBE_INTERVAL_S = 0.1\n \n "
+  },
+  {
+   "module": "src/wavelocalai/__main__.py",
+   "ligne": 66,
+   "colonne": 49,
+   "operateur": "core/ReplaceComparisonOperator_Lt_LtE",
+   "occurrence": 0,
+   "fonction": "_open_browser_when_ready",
+   "job_id": "1b516a8ed1b648ab9ab6d12f7499bdd1",
+   "diff": "--- mutation diff ---\n--- a/src\\wavelocalai\\__main__.py\n+++ b/src\\wavelocalai\\__main__.py\n@@ -63,7 +63,7 @@\n     d'ouverture (pas de navigateur, session sans affichage) écrit l'URL sur la console et dans le\n     journal ; le serveur, déjà en service, continue sans lui.\"\"\"\n     deadline = time.monotonic() + BROWSER_PROBE_TIMEOUT_S\n-    while not stop.is_set() and time.monotonic() < deadline:\n+    while not stop.is_set() and time.monotonic() <= deadline:\n         if _port_is_open(port):\n             break\n         time.sleep(BROWSER_PROBE_INTERVAL_S)"
+  },
+  {
+   "module": "src/wavelocalai/__main__.py",
+   "ligne": 55,
+   "colonne": 64,
+   "operateur": "core/NumberReplacer",
+   "occurrence": 4,
+   "fonction": "_port_is_open",
+   "job_id": "0528488d641140c58f82094473211d2c",
+   "diff": "--- mutation diff ---\n--- a/src\\wavelocalai\\__main__.py\n+++ b/src\\wavelocalai\\__main__.py\n@@ -52,7 +52,7 @@\n \n def _port_is_open(port: int) -> bool:\n     try:\n-        with socket.create_connection((LOOPBACK, port), timeout=0.2):\n+        with socket.create_connection((LOOPBACK, port), timeout= 1.2):\n             return True\n     except OSError:\n         return False"
+  }
+ ],
+ "total_seconds": 480.1
+}

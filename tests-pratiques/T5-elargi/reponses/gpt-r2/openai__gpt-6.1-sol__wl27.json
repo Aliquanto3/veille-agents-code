@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "wl27",
+ "latence_s": 26.5,
+ "usage": {
+  "prompt_tokens": 13885,
+  "completion_tokens": 1064,
+  "total_tokens": 14949,
+  "cost": 0.045351,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 13882,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.045351,
+   "upstream_inference_prompt_cost": 0.034711,
+   "upstream_inference_completions_cost": 0.01064
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 500,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.045351,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 1064,
+   "cout_usd": 0.045351,
+   "latence_s": 26.5
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavelocalai/models/catalog.py\",\"ligne\":66,\"severite\":\"Important\",\"description\":\"La borne supérieure du catalogue est exclue (`value < MAX_TEMPERATURE`), alors que le contrat accepte les températures de 0 à 2 inclus et que le parseur Ollama accepte bien 2. Une entrée de catalogue recommandant 2 est donc ignorée : sans température Ollama, le front recevra null et utilisera 0,2 au lieu de 2.\",\"test_pytest\":\"from wavelocalai.models.catalog import _temperature\\n\\n\\ndef test_catalogue_accepte_la_borne_superieure():\\n    assert _temperature(2.0) == 2.0\\n\"},{\"id\":\"C2\",\"fichier\":\"src/wavelocalai/models/facts_store.py\",\"ligne\":25,\"severite\":\"Important\",\"description\":\"Le cache lit et écrit désormais la colonne `parameters`, mais le diff fourni ne livre pas la migration `0005_model_parameters.sql` annoncée par la spec. Une base créée ou mise à jour avec les migrations livrées reste donc sans cette colonne ; les accès de SqliteFactsStore échoueront avec une erreur SQLite au lieu de servir les modèles. Il faut livrer la migration additive, pas seulement les tests qui la réclament.\",\"test_pytest\":\"import sqlite3\\n\\nfrom wavelocalai.store.migrate import migrate\\n\\n\\ndef test_les_migrations_livrent_la_colonne_parameters(tmp_path):\\n    path = tmp_path / 'wavelocalai.db'\\n    migrate(path)\\n    with sqlite3.connect(path) as connection:\\n        columns = {row[1] for row in connection.execute('PRAGMA table_info(model_facts)')}\\n    assert 'parameters' in columns, 'Le cache des modèles doit pouvoir lire et écrire parameters'\\n\"},{\"id\":\"C3\",\"fichier\":\"tests/v2/e2e/test_chat_creativity_export.py\",\"ligne\":1,\"severite\":\"Nit\",\"description\":\"Le diff ajoute les preuves E2E, mais aucune des modifications front annoncées : ni `components/export-menu.js`, ni le branchement dans `screens/chat.js`, ni `wl-models-loaded`, ni le message de premier chargement, ni les styles et traductions. Les tests seuls ne livrent pas les critères 3 à 7. Vérifier que ces changements sont réellement présents dans la fusion ; avec les seuls éléments fournis et sans exécuter un navigateur, leur comportement ne peut pas être prouvé par un pytest autonome respectant les contraintes de revue.\",\"test_pytest\":null}]}"
+}

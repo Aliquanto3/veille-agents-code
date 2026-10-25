@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "ws-v2s2",
+ "latence_s": 24.0,
+ "usage": {
+  "prompt_tokens": 7939,
+  "completion_tokens": 1206,
+  "total_tokens": 9145,
+  "cost": 0.031906,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 7936,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.031906,
+   "upstream_inference_prompt_cost": 0.019846,
+   "upstream_inference_completions_cost": 0.01206
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 516,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.031906,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 1206,
+   "cout_usd": 0.031906,
+   "latence_s": 24.0
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavestack/mcp/sandbox.py\",\"ligne\":28,\"severite\":\"Important\",\"description\":\"La liste des périphériques réservés omet LPT9 : range(1, 9) s'arrête à LPT8. Ainsi resolve(\\\"LPT9.txt\\\") accepte un nom de périphérique Windows, contrairement au contrat qui impose son refus avant toute opération disque, quelle que soit l'extension.\",\"test_pytest\":\"import pytest\\nfrom wavestack.mcp import sandbox\\n\\n\\n@pytest.mark.parametrize(\\\"name\\\", [\\\"LPT9\\\", \\\"lpt9.txt\\\", \\\"notes/LPT9.log\\\"])\\ndef test_lpt9_est_refuse(tmp_path, monkeypatch, name):\\n    monkeypatch.setattr(sandbox.config, \\\"data_dir\\\", lambda: tmp_path)\\n    with pytest.raises(sandbox.SandboxError):\\n        sandbox.resolve(name)\\n\"},{\"id\":\"C2\",\"fichier\":\"src/wavestack/mcp/local_server.py\",\"ligne\":142,\"severite\":\"Important\",\"description\":\"La purge des captures supprime indistinctement tous les fichiers *.png du dossier screenshots, y compris les fichiers créés par create_path et non des captures. Par exemple, un document screenshots/000-document.png est supprimé dès que le nombre total de PNG dépasse MAX_SCREENSHOTS. Prendre une capture peut donc détruire un fichier utilisateur sans rapport avec la rétention annoncée des captures.\",\"test_pytest\":\"from types import SimpleNamespace\\n\\nfrom wavestack.mcp import sandbox\\n\\n\\nclass FakeShot:\\n    monitors = [{}]\\n\\n    def __enter__(self):\\n        return self\\n\\n    def __exit__(self, *args):\\n        return False\\n\\n    def grab(self, monitor):\\n        return SimpleNamespace(rgb=b'\\\\x00\\\\x00\\\\x00', size=(1, 1))\\n\\n\\ndef test_capture_ne_supprime_pas_un_document(tmp_path, monkeypatch):\\n    monkeypatch.setattr(sandbox.config, \\\"data_dir\\\", lambda: tmp_path)\\n    from wavestack.mcp import local_server\\n\\n    monkeypatch.setattr(local_server.mss, \\\"mss\\\", FakeShot)\\n    monkeypatch.setattr(local_server.time, \\\"time_ns\\\", lambda: 123)\\n    monkeypatch.setattr(local_server, \\\"MAX_SCREENSHOTS\\\", 1)\\n\\n    def fake_to_png(rgb, size, output):\\n        from pathlib import Path\\n        Path(output).write_bytes(b'\\\\x89PNG\\\\r\\\\n\\\\x1a\\\\n')\\n\\n    monkeypatch.setattr(local_server.mss.tools, \\\"to_png\\\", fake_to_png)\\n    result = local_server.create_path(\\\"screenshots/000-document.png\\\", content=\\\"document utilisateur\\\")\\n    assert not result.is_error\\n    document = sandbox.sandbox_dir() / \\\"screenshots\\\" / \\\"000-document.png\\\"\\n\\n    local_server.take_screenshot()\\n\\n    assert document.exists(), \\\"La rétention des captures ne doit pas supprimer les documents utilisateur\\\"\\n    assert document.read_text(encoding=\\\"utf-8\\\") == \\\"document utilisateur\\\"\\n\"}]}"
+}

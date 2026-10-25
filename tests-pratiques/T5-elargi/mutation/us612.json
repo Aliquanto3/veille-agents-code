@@ -1,0 +1,123 @@
+{
+ "story": "us612",
+ "test_command": "T:/v/usine-migration-jira-demo/.venv/Scripts/python.exe -m pytest -q -x --tb=no -p no:cacheprovider tests/unit/adaptateurs/llm/test_fournisseur.py",
+ "tests_seconds": 8.4,
+ "tests_rc": 0,
+ "modules": [
+  {
+   "module": "src/usine/adaptateurs/llm/__init__.py",
+   "generes": 0,
+   "effectifs": 0,
+   "echantillon": 0
+  },
+  {
+   "module": "src/usine/adaptateurs/llm/fournisseur.py",
+   "generes": 244,
+   "effectifs": 19,
+   "echantillon": 19,
+   "executes": 19,
+   "tues": 15
+  },
+  {
+   "module": "src/usine/adaptateurs/llm/registre.py",
+   "generes": 132,
+   "effectifs": 11,
+   "echantillon": 11,
+   "executes": 11,
+   "tues": 6
+  }
+ ],
+ "survivants": [
+  {
+   "module": "src/usine/adaptateurs/llm/fournisseur.py",
+   "ligne": 407,
+   "colonne": 28,
+   "operateur": "core/ReplaceComparisonOperator_Eq_GtE",
+   "occurrence": 4,
+   "fonction": "construire_fournisseur_llm",
+   "job_id": "75d35b385d6b49a5bb2e0b1b74712144",
+   "diff": "--- mutation diff ---\n--- a/src\\usine\\adaptateurs\\llm\\fournisseur.py\n+++ b/src\\usine\\adaptateurs\\llm\\fournisseur.py\n@@ -404,7 +404,7 @@\n     if config.fournisseur == \"anthropic\":\n         client = anthropic.AsyncAnthropic(api_key=cle_api, http_client=client_http, max_retries=0)\n         modele = AnthropicModel(config.modele, provider=AnthropicProvider(anthropic_client=client))\n-    elif config.fournisseur == \"local\":\n+    elif config.fournisseur >= \"local\":\n         url = url_serveur or os.environ.get(VARIABLE_URL_LOCAL) or URL_LOCAL_DEFAUT\n         local = Mistral(api_key=\"sans-cle\", server_url=url.rstrip(\"/\"), async_client=client_http)\n         modele = MistralModel(config.modele, provider=MistralProvider(mistral_client=local))"
+  },
+  {
+   "module": "src/usine/adaptateurs/llm/fournisseur.py",
+   "ligne": 407,
+   "colonne": 28,
+   "operateur": "core/ReplaceComparisonOperator_Eq_LtE",
+   "occurrence": 4,
+   "fonction": "construire_fournisseur_llm",
+   "job_id": "5f98721ec52a4853a6b42ccbacb43657",
+   "diff": "--- mutation diff ---\n--- a/src\\usine\\adaptateurs\\llm\\fournisseur.py\n+++ b/src\\usine\\adaptateurs\\llm\\fournisseur.py\n@@ -404,7 +404,7 @@\n     if config.fournisseur == \"anthropic\":\n         client = anthropic.AsyncAnthropic(api_key=cle_api, http_client=client_http, max_retries=0)\n         modele = AnthropicModel(config.modele, provider=AnthropicProvider(anthropic_client=client))\n-    elif config.fournisseur == \"local\":\n+    elif config.fournisseur <= \"local\":\n         url = url_serveur or os.environ.get(VARIABLE_URL_LOCAL) or URL_LOCAL_DEFAUT\n         local = Mistral(api_key=\"sans-cle\", server_url=url.rstrip(\"/\"), async_client=client_http)\n         modele = MistralModel(config.modele, provider=MistralProvider(mistral_client=local))"
+  },
+  {
+   "module": "src/usine/adaptateurs/llm/fournisseur.py",
+   "ligne": 407,
+   "colonne": 28,
+   "operateur": "core/ReplaceComparisonOperator_Eq_Is",
+   "occurrence": 4,
+   "fonction": "construire_fournisseur_llm",
+   "job_id": "d8e4a3a5932f4084b1c8647d396c7fff",
+   "diff": "--- mutation diff ---\n--- a/src\\usine\\adaptateurs\\llm\\fournisseur.py\n+++ b/src\\usine\\adaptateurs\\llm\\fournisseur.py\n@@ -404,7 +404,7 @@\n     if config.fournisseur == \"anthropic\":\n         client = anthropic.AsyncAnthropic(api_key=cle_api, http_client=client_http, max_retries=0)\n         modele = AnthropicModel(config.modele, provider=AnthropicProvider(anthropic_client=client))\n-    elif config.fournisseur == \"local\":\n+    elif config.fournisseur is \"local\":\n         url = url_serveur or os.environ.get(VARIABLE_URL_LOCAL) or URL_LOCAL_DEFAUT\n         local = Mistral(api_key=\"sans-cle\", server_url=url.rstrip(\"/\"), async_client=client_http)\n         modele = MistralModel(config.modele, provider=MistralProvider(mistral_client=local))"
+  },
+  {
+   "module": "src/usine/adaptateurs/llm/fournisseur.py",
+   "ligne": 399,
+   "colonne": 26,
+   "operateur": "core/ReplaceComparisonOperator_NotEq_IsNot",
+   "occurrence": 0,
+   "fonction": "construire_fournisseur_llm",
+   "job_id": "26413b13cd634a4097b5b78e45edceb0",
+   "diff": "--- mutation diff ---\n--- a/src\\usine\\adaptateurs\\llm\\fournisseur.py\n+++ b/src\\usine\\adaptateurs\\llm\\fournisseur.py\n@@ -396,7 +396,7 @@\n             f\"config/llm.yaml, clé « fournisseur » : {config.fournisseur!r} inconnu ;\"\n             f\" valeurs admises : {', '.join(FOURNISSEURS)}\"\n         )\n-    if config.fournisseur != \"local\" and not cle_api.strip():\n+    if config.fournisseur is not \"local\" and not cle_api.strip():\n         raise UsineErreur(\n             f\"variable d'environnement {VARIABLES_CLE[config.fournisseur]} absente ou vide\"\n         )"
+  },
+  {
+   "module": "src/usine/adaptateurs/llm/registre.py",
+   "ligne": 68,
+   "colonne": 44,
+   "operateur": "core/NumberReplacer",
+   "occurrence": 36,
+   "fonction": null,
+   "job_id": "6c15e796139b483f95d0dd97365c8d39",
+   "diff": "--- mutation diff ---\n--- a/src\\usine\\adaptateurs\\llm\\registre.py\n+++ b/src\\usine\\adaptateurs\\llm\\registre.py\n@@ -65,7 +65,7 @@\n \"\"\"Tarifs par `version_modele` (`fournisseur:modele`).\"\"\"\n \n \n-LOCAL = TarifModele(Decimal(0), Decimal(0), 600, 10_000_000, gratuit=True)\n+LOCAL = TarifModele(Decimal(0), Decimal(0), 601, 10_000_000, gratuit=True)\n \"\"\"Modèle servi par `llama-server` sur le poste (`local:<modele>`) : aucun prix ni quota.\"\"\"\n \n "
+  },
+  {
+   "module": "src/usine/adaptateurs/llm/registre.py",
+   "ligne": 68,
+   "colonne": 69,
+   "operateur": "core/ReplaceTrueWithFalse",
+   "occurrence": 5,
+   "fonction": null,
+   "job_id": "105b07dd8fcf47c78f31eb8a30ed43ff",
+   "diff": "--- mutation diff ---\n--- a/src\\usine\\adaptateurs\\llm\\registre.py\n+++ b/src\\usine\\adaptateurs\\llm\\registre.py\n@@ -65,7 +65,7 @@\n \"\"\"Tarifs par `version_modele` (`fournisseur:modele`).\"\"\"\n \n \n-LOCAL = TarifModele(Decimal(0), Decimal(0), 600, 10_000_000, gratuit=True)\n+LOCAL = TarifModele(Decimal(0), Decimal(0), 600, 10_000_000, gratuit=False)\n \"\"\"Modèle servi par `llama-server` sur le poste (`local:<modele>`) : aucun prix ni quota.\"\"\"\n \n "
+  },
+  {
+   "module": "src/usine/adaptateurs/llm/registre.py",
+   "ligne": 68,
+   "colonne": 49,
+   "operateur": "core/NumberReplacer",
+   "occurrence": 39,
+   "fonction": null,
+   "job_id": "7107ad688acd436b8dceb28620ee7fdc",
+   "diff": "--- mutation diff ---\n--- a/src\\usine\\adaptateurs\\llm\\registre.py\n+++ b/src\\usine\\adaptateurs\\llm\\registre.py\n@@ -65,7 +65,7 @@\n \"\"\"Tarifs par `version_modele` (`fournisseur:modele`).\"\"\"\n \n \n-LOCAL = TarifModele(Decimal(0), Decimal(0), 600, 10_000_000, gratuit=True)\n+LOCAL = TarifModele(Decimal(0), Decimal(0), 600, 9999999, gratuit=True)\n \"\"\"Modèle servi par `llama-server` sur le poste (`local:<modele>`) : aucun prix ni quota.\"\"\"\n \n "
+  },
+  {
+   "module": "src/usine/adaptateurs/llm/registre.py",
+   "ligne": 68,
+   "colonne": 44,
+   "operateur": "core/NumberReplacer",
+   "occurrence": 37,
+   "fonction": null,
+   "job_id": "2eb3e3b86e5e4058ae2a3dda437555b2",
+   "diff": "--- mutation diff ---\n--- a/src\\usine\\adaptateurs\\llm\\registre.py\n+++ b/src\\usine\\adaptateurs\\llm\\registre.py\n@@ -65,7 +65,7 @@\n \"\"\"Tarifs par `version_modele` (`fournisseur:modele`).\"\"\"\n \n \n-LOCAL = TarifModele(Decimal(0), Decimal(0), 600, 10_000_000, gratuit=True)\n+LOCAL = TarifModele(Decimal(0), Decimal(0), 599, 10_000_000, gratuit=True)\n \"\"\"Modèle servi par `llama-server` sur le poste (`local:<modele>`) : aucun prix ni quota.\"\"\"\n \n "
+  },
+  {
+   "module": "src/usine/adaptateurs/llm/registre.py",
+   "ligne": 68,
+   "colonne": 49,
+   "operateur": "core/NumberReplacer",
+   "occurrence": 38,
+   "fonction": null,
+   "job_id": "3dc85afe4acb4af6900a57a34ba413a9",
+   "diff": "--- mutation diff ---\n--- a/src\\usine\\adaptateurs\\llm\\registre.py\n+++ b/src\\usine\\adaptateurs\\llm\\registre.py\n@@ -65,7 +65,7 @@\n \"\"\"Tarifs par `version_modele` (`fournisseur:modele`).\"\"\"\n \n \n-LOCAL = TarifModele(Decimal(0), Decimal(0), 600, 10_000_000, gratuit=True)\n+LOCAL = TarifModele(Decimal(0), Decimal(0), 600, 10000001, gratuit=True)\n \"\"\"Modèle servi par `llama-server` sur le poste (`local:<modele>`) : aucun prix ni quota.\"\"\"\n \n "
+  }
+ ],
+ "total_seconds": 238.2
+}

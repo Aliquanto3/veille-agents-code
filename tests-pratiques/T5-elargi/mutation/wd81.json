@@ -1,0 +1,39 @@
+{
+ "story": "wd81",
+ "test_command": "T:/v/wavedevsecops/.venv/Scripts/python.exe -m pytest -q -x --tb=no -p no:cacheprovider tests/test_catalogue_stations.py tests/test_code_vulnerable.py tests/test_pipeline.py tests/test_pipeline_files.py tests/test_pipeline_tabs_dom.py",
+ "tests_seconds": 64.7,
+ "tests_rc": 0,
+ "modules": [
+  {
+   "module": "src/wavedevsecops/ci/__init__.py",
+   "generes": 589,
+   "effectifs": 16,
+   "echantillon": 16,
+   "executes": 8,
+   "tues": 6
+  },
+  {
+   "module": "src/wavedevsecops/ci/findings.py",
+   "generes": 107,
+   "effectifs": 18,
+   "echantillon": 18,
+   "executes": 18,
+   "tues": 16
+  },
+  {
+   "module": "src/wavedevsecops/scenarios/order.py",
+   "generes": 38,
+   "effectifs": 0,
+   "echantillon": 0
+  },
+  {
+   "module": "src/wavedevsecops/scenarios/steps/pr_state.py",
+   "generes": 102,
+   "effectifs": 5,
+   "echantillon": 5
+  }
+ ],
+ "budget_atteint": true,
+ "survivants": [],
+ "total_seconds": 480.1
+}

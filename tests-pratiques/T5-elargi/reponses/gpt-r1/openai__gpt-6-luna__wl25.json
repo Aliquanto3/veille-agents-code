@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "wl25",
+ "latence_s": 33.8,
+ "usage": {
+  "prompt_tokens": 14328,
+  "completion_tokens": 2870,
+  "total_tokens": 17198,
+  "cost": 0.003225925,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 14325,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.003225925,
+   "upstream_inference_prompt_cost": 0.001790925,
+   "upstream_inference_completions_cost": 0.001435
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 2762,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.003225925,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 2870,
+   "cout_usd": 0.003225925,
+   "latence_s": 33.8
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavelocalai/greenops/cloud_estimate.py\",\"ligne\":30,\"severite\":\"Nit\",\"description\":\"La conversion kgCO2eq → mg utilise 999999 au lieu de 1 000 000. Les bornes et le milieu renvoyés sont donc systématiquement légèrement sous-évalués (par exemple, 1 kg devient 999999 mg).\",\"test_pytest\":null}]}"
+}

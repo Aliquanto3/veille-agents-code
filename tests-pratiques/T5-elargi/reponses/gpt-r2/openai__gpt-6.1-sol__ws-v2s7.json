@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "ws-v2s7",
+ "latence_s": 37.7,
+ "usage": {
+  "prompt_tokens": 7861,
+  "completion_tokens": 1295,
+  "total_tokens": 9156,
+  "cost": 0.032601,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 7858,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.032601,
+   "upstream_inference_prompt_cost": 0.019651,
+   "upstream_inference_completions_cost": 0.01295
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 1034,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.032601,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 1295,
+   "cout_usd": 0.032601,
+   "latence_s": 37.7
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavestack/web/static/app.js\",\"ligne\":1,\"severite\":\"Nit\",\"description\":\"Le diff ne contient aucun branchement des nouveaux événements dans l’interface : ni la ligne dépliable du sous-agent dans delegateBody, ni « Mémoire de contexte » dans callBody. Publier les champs backend ne couvre donc pas les critères d’acceptation d’affichage, notamment le cas des tokens repris sans débit exploitable. À vérifier et compléter côté interface ; aucun test pytest autonome de ce comportement JavaScript n’est démontrable avec les seuls points d’entrée fournis.\",\"test_pytest\":null},{\"id\":\"C2\",\"fichier\":\"src/wavestack/web/static/app.js\",\"ligne\":1,\"severite\":\"Nit\",\"description\":\"Les traductions main.orch.sub.cost_* et main.orch.kv.* demandées en français, anglais et allemand ne figurent pas dans le diff. Le volet i18n de la story reste donc non couvert par les modifications fournies. Les chemins et API des catalogues n’étant pas exposés, un test autonome fiable ne peut pas être fourni ici.\",\"test_pytest\":null}]}"
+}

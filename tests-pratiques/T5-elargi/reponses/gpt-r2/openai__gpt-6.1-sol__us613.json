@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "us613",
+ "latence_s": 22.3,
+ "usage": {
+  "prompt_tokens": 5759,
+  "completion_tokens": 1015,
+  "total_tokens": 6774,
+  "cost": 0.024546,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 5756,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.024546,
+   "upstream_inference_prompt_cost": 0.014396,
+   "upstream_inference_completions_cost": 0.01015
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 516,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.024546,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 1015,
+   "cout_usd": 0.024546,
+   "latence_s": 22.3
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/usine/ia/passerelle.py\",\"ligne\":519,\"severite\":\"Important\",\"description\":\"Dans la boucle des outils d’Agent, `traces_outils[-0]` désigne toujours la première trace (`-0 == 0`), et non celle qui vient d’être ajoutée. Dès qu’un Agent produit deux traces d’outils, l’observateur reçoit deux fois la première et jamais la seconde : les entrées, sorties et coûts exportés sont donc incorrects. Utiliser la dernière trace (`[-1]`). Le test isole et exécute l’instruction de notification réelle pour deux ajouts successifs, sans appeler de fournisseur.\",\"test_pytest\":\"import ast\\nimport inspect\\nimport textwrap\\nfrom types import SimpleNamespace\\n\\nfrom usine.ia.passerelle import Passerelle\\n\\n\\ndef test_observateur_recoit_chaque_nouvelle_trace_outil():\\n    arbre = ast.parse(textwrap.dedent(inspect.getsource(Passerelle)))\\n    appel = next(\\n        noeud\\n        for noeud in ast.walk(arbre)\\n        if isinstance(noeud, ast.Call)\\n        and isinstance(noeud.func, ast.Attribute)\\n        and noeud.func.attr == '_observer'\\n        and len(noeud.args) == 1\\n        and isinstance(noeud.args[0], ast.Subscript)\\n        and isinstance(noeud.args[0].value, ast.Name)\\n        and noeud.args[0].value.id == 'traces_outils'\\n    )\\n    instruction = ast.fix_missing_locations(\\n        ast.Module(body=[ast.Expr(value=appel)], type_ignores=[])\\n    )\\n    code = compile(instruction, '<notification-outil>', 'exec')\\n    recues = []\\n    traces = []\\n    contexte = {\\n        'self': SimpleNamespace(_observer=recues.append),\\n        'traces_outils': traces,\\n    }\\n    premiere, seconde = object(), object()\\n    for trace in (premiere, seconde):\\n        traces.append(trace)\\n        exec(code, contexte)\\n    assert recues == [premiere, seconde]\\n\"}]}"
+}

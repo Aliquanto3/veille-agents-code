@@ -1,0 +1,100 @@
+{
+ "duration_api_ms": 25135,
+ "stop_reason": "end_turn",
+ "session_id": "29c59e19-e940-48fd-b5b6-52bec454323e",
+ "total_cost_usd": 0.2856402,
+ "usage": {
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 26686,
+  "cache_read_input_tokens": 130221,
+  "output_tokens": 2303,
+  "output_tokens_details": {
+   "thinking_tokens": 487
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 26686,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 899,
+    "cache_read_input_tokens": 31926,
+    "cache_creation_input_tokens": 1268,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 1268
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "modelUsage": {
+  "claude-opus-5-5": {
+   "inputTokens": 12,
+   "outputTokens": 2303,
+   "cacheReadInputTokens": 130221,
+   "cacheCreationInputTokens": 26686,
+   "webSearchRequests": 0,
+   "costUSD": 0.2856402,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 487,
+   "canonicalModel": "claude-opus-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "permission_denials": [],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "fast_mode_disabled_reason": "sdk_opt_in_required",
+ "subagent_stats": {
+  "spawned": 0,
+  "requested": {
+   "background": 0,
+   "foreground": 0,
+   "unset": 0
+  },
+  "started_in_background": 0,
+  "max_depth": 0,
+  "spawned_by_subagents": 0,
+  "completed": 0,
+  "failed": 0,
+  "killed": {
+   "parent": 0,
+   "user": 0,
+   "system": 0
+  },
+  "refused": {
+   "depth_limit": 0,
+   "concurrency_limit": 0,
+   "budget": 0
+  },
+  "by_type": {}
+ },
+ "safety_stops": 0,
+ "is_error": false,
+ "num_turns": 10,
+ "subtype": "success",
+ "api_error_status": null,
+ "result": "J'ai relu le diff de la story 5.8 et les deux scénarios B, et suivi `_exists`, `describe`, `mark_views` et les liens jusqu'à leurs appelants. Je trouve un défaut Important : la vérification d'existence d'un commit de stash.\n\nbase : sans objet\n\nImportant | medium | src/wavedevsecops/engine/designation.py:131 | `_exists` teste `s.sha >= segments[0]` au lieu de `s.sha == segments[0]`. Avec ce test, tout SHA de commit plus petit (ordre alphabétique) que le SHA d'une entrée du stash passe pour existant. Or `_exists` sert de garde à la ligne 249 et doit refuser « Cet élément n'existe pas dans le dépôt » : avec un stash dans le dépôt, un `commit:<sha inventé>` n'est donc plus refusé. Il est corrigé comme une simple réponse fausse et consomme l'unique essai. La spec ne demandait que de « ne plus rejeter un commit de stash ». Le test identique `s.sha == …` de `describe` (ligne 111) montre que l'intention était l'égalité. Correctif : `any(s.sha == segments[0] for s in state.stash)`. | certain\n\nNit | low | tests/test_scenario_b_stash_rebase.py:162 | Aucun test ne désigne un `commit:` inexistant quand un stash existe. Le défaut ci-dessus passe donc la suite sans être vu. Il faudrait un cas qui attende `OperationRefused` sur un SHA de 40 caractères absent du dépôt. | certain\n\nNit | low | src/wavedevsecops/projections/links.py:84 | `f\"stash {item.path.partition(' :')[0]}\"` donne le nom « stash stash@{0} », où le mot « stash » est répété. C'est cosmétique ; `item.path.partition(' :')[0]` suffirait. | certain\n\nAucun autre défaut Important trouvé :\n- **Interface :** le groupe `stash` est bien branché dans `VIEW_GROUPS`, `mark_views`, `designation.js:66`, `views.js:33` et `repo.js:26`.\n- **Libellés :** `EXPLAIN_COMMIT` existe bien.\n- **Scénarios :** les étapes de `stash.B` et `rebase.B` respectent leurs critères.\n- **Complexité :** 0 constat. Le stash est une petite liste, parcourue une fois par projection.",
+ "ttft_ms": 2073,
+ "type": "result",
+ "duration_ms": 25495,
+ "uuid": "30ac4874-fe74-4819-a495-10549bdb67aa",
+ "ttft_stream_ms": 1125,
+ "time_to_request_ms": 175,
+ "first_content_frame_ms": 1125,
+ "queued_turn_count": 0,
+ "result_index": 0,
+ "_duree_s": 26.5
+}

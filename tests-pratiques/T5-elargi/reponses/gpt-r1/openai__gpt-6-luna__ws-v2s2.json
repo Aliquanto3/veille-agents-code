@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "ws-v2s2",
+ "latence_s": 62.7,
+ "usage": {
+  "prompt_tokens": 7939,
+  "completion_tokens": 5482,
+  "total_tokens": 13421,
+  "cost": 0.0037333,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 7936,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0037333,
+   "upstream_inference_prompt_cost": 0.0009923,
+   "upstream_inference_completions_cost": 0.002741
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 5101,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.0037333,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 5482,
+   "cout_usd": 0.0037333,
+   "latence_s": 62.7
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavestack/mcp/sandbox.py\",\"ligne\":28,\"severite\":\"Important\",\"description\":\"La liste des périphériques réservés inclut `LPT1` à `LPT8`, mais omet `LPT9`. Ainsi, `sandbox.resolve(\\\"LPT9.txt\\\")` accepte un nom de périphérique Windows, contrairement à la règle de la story, et l’outil peut ensuite tenter d’y écrire.\",\"test_pytest\":\"import pytest\\n\\nfrom wavestack.mcp import sandbox\\n\\n\\ndef test_lpt9_est_refuse_comme_peripherique_reserve(tmp_path, monkeypatch):\\n    monkeypatch.setattr(sandbox.config, \\\"data_dir\\\", lambda: tmp_path / \\\"data\\\")\\n\\n    with pytest.raises(sandbox.SandboxError):\\n        sandbox.resolve(\\\"LPT9.txt\\\")\"},{\"id\":\"C2\",\"fichier\":\"src/wavestack/mcp/local_server.py\",\"ligne\":26,\"severite\":\"Important\",\"description\":\"Le serveur importe désormais `mss` sans condition, mais le diff ne déclare pas cette dépendance dans `pyproject.toml`, alors que la story exige son ajout aux dépendances principales. Une installation propre dépourvue de `mss` échouera à l’import du serveur local, même si la capture d’écran n’est pas appelée.\",\"test_pytest\":\"from pathlib import Path\\n\\n\\ndef test_mss_est_declare_comme_dependance_du_projet():\\n    pyproject = Path(\\\"pyproject.toml\\\").read_text(encoding=\\\"utf-8\\\")\\n\\n    assert \\\"mss\\\" in pyproject.lower(), \\\"mss doit être déclaré dans les dépendances du projet\\\"\"}]}"
+}

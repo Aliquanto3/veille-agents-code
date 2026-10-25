@@ -1,0 +1,253 @@
+{
+ "story": "wd59",
+ "test_command": "T:/v/wavedevsecops/.venv/Scripts/python.exe -m pytest -x -q --tb=no -p no:cacheprovider tests/test_blockers.py",
+ "tests_seconds": 3.6,
+ "tests_rc": 0,
+ "modules": [
+  {
+   "module": "src/wavedevsecops/engine/manager.py",
+   "generes": 385,
+   "effectifs": 0,
+   "echantillon": 0
+  },
+  {
+   "module": "src/wavedevsecops/engine/steps.py",
+   "generes": 722,
+   "effectifs": 21,
+   "echantillon": 13,
+   "executes": 13,
+   "tues": 11
+  },
+  {
+   "module": "src/wavedevsecops/scenarios/loader.py",
+   "generes": 428,
+   "effectifs": 13,
+   "echantillon": 8,
+   "executes": 8,
+   "tues": 8
+  },
+  {
+   "module": "src/wavedevsecops/scenarios/model.py",
+   "generes": 110,
+   "effectifs": 22,
+   "echantillon": 15,
+   "executes": 15,
+   "tues": 10
+  },
+  {
+   "module": "src/wavedevsecops/web/app.py",
+   "generes": 198,
+   "effectifs": 1,
+   "echantillon": 1,
+   "executes": 1,
+   "tues": 0
+  },
+  {
+   "module": "src/wavedevsecops/web/blockers.py",
+   "generes": 68,
+   "effectifs": 35,
+   "echantillon": 23,
+   "executes": 23,
+   "tues": 12
+  },
+  {
+   "module": "src/wavedevsecops/web/catalogue.py",
+   "generes": 499,
+   "effectifs": 0,
+   "echantillon": 0
+  }
+ ],
+ "survivants": [
+  {
+   "module": "src/wavedevsecops/web/blockers.py",
+   "ligne": 65,
+   "colonne": 11,
+   "operateur": "core/AddNot",
+   "occurrence": 4,
+   "fonction": "blockers_body",
+   "job_id": "d293a302688640f494e411a823dc17b6",
+   "diff": "--- mutation diff ---\n--- a/src\\wavedevsecops\\web\\blockers.py\n+++ b/src\\wavedevsecops\\web\\blockers.py\n@@ -62,7 +62,7 @@\n         station = stations.get(blocker.station)\n         delivered = station is not None and station.delivered\n         title = titles.get(blocker.scenario_id)\n-        if delivered and title is None:\n+        if not delivered and title is None:\n             log.warning(\n                 \"Encart de %s : scénario « %s » absent du catalogue, barrière sans lien\",\n                 scenario.key,"
+  },
+  {
+   "module": "src/wavedevsecops/web/blockers.py",
+   "ligne": 44,
+   "colonne": 49,
+   "operateur": "core/ReplaceComparisonOperator_Eq_GtE",
+   "occurrence": 0,
+   "fonction": "catalogue_scenario_titles",
+   "job_id": "ff5af00d9f9f47ca89d4195c7a3b6239",
+   "diff": "--- mutation diff ---\n--- a/src\\wavedevsecops\\web\\blockers.py\n+++ b/src\\wavedevsecops\\web\\blockers.py\n@@ -41,7 +41,7 @@\n         except (ScenarioError, OSError, UnicodeDecodeError) as error:\n             log.warning(\"Scénario ignoré pour l'encart des barrières (%s) : %s\", path.name, error)\n             continue\n-        if scenario.catalogue and (scenario.mode == \"A\" or scenario.scenario_id not in titles):\n+        if scenario.catalogue and (scenario.mode >= \"A\" or scenario.scenario_id not in titles):\n             titles[scenario.scenario_id] = scenario.title_text\n     return titles\n "
+  },
+  {
+   "module": "src/wavedevsecops/web/blockers.py",
+   "ligne": 53,
+   "colonne": 24,
+   "operateur": "core/ReplaceOrWithAnd",
+   "occurrence": 1,
+   "fonction": "blockers_body",
+   "job_id": "aa6f876c902548eaa846bb32e13cc18e",
+   "diff": "--- mutation diff ---\n--- a/src\\wavedevsecops\\web\\blockers.py\n+++ b/src\\wavedevsecops\\web\\blockers.py\n@@ -50,7 +50,7 @@\n     \"\"\"Encart du scénario terminé ; `None` sans déclaration ou sans chaîne lisible.\"\"\"\n     if not scenario.blocked_by:\n         return None\n-    settings = settings or get_settings()\n+    settings = settings and get_settings()\n     chain = load_chain_texts(settings)\n     if chain is None:\n         return None"
+  },
+  {
+   "module": "src/wavedevsecops/web/blockers.py",
+   "ligne": 65,
+   "colonne": 31,
+   "operateur": "core/ReplaceComparisonOperator_Is_IsNot",
+   "occurrence": 2,
+   "fonction": "blockers_body",
+   "job_id": "f0a0488689684d4da5532f7306d5f17c",
+   "diff": "--- mutation diff ---\n--- a/src\\wavedevsecops\\web\\blockers.py\n+++ b/src\\wavedevsecops\\web\\blockers.py\n@@ -62,7 +62,7 @@\n         station = stations.get(blocker.station)\n         delivered = station is not None and station.delivered\n         title = titles.get(blocker.scenario_id)\n-        if delivered and title is None:\n+        if delivered and title is not None:\n             log.warning(\n                 \"Encart de %s : scénario « %s » absent du catalogue, barrière sans lien\",\n                 scenario.key,"
+  },
+  {
+   "module": "src/wavedevsecops/web/blockers.py",
+   "ligne": 43,
+   "colonne": 12,
+   "operateur": "core/ReplaceContinueWithBreak",
+   "occurrence": 0,
+   "fonction": "catalogue_scenario_titles",
+   "job_id": "419cfe252a13485c9d30ed3e6e01e275",
+   "diff": "--- mutation diff ---\n--- a/src\\wavedevsecops\\web\\blockers.py\n+++ b/src\\wavedevsecops\\web\\blockers.py\n@@ -40,7 +40,7 @@\n             scenario = load_scenario(path, settings).scenario\n         except (ScenarioError, OSError, UnicodeDecodeError) as error:\n             log.warning(\"Scénario ignoré pour l'encart des barrières (%s) : %s\", path.name, error)\n-            continue\n+            break\n         if scenario.catalogue and (scenario.mode == \"A\" or scenario.scenario_id not in titles):\n             titles[scenario.scenario_id] = scenario.title_text\n     return titles"
+  },
+  {
+   "module": "src/wavedevsecops/web/blockers.py",
+   "ligne": 44,
+   "colonne": 49,
+   "operateur": "core/ReplaceComparisonOperator_Eq_NotEq",
+   "occurrence": 0,
+   "fonction": "catalogue_scenario_titles",
+   "job_id": "8e2c66a0940e471298ee99b10f79e532",
+   "diff": "--- mutation diff ---\n--- a/src\\wavedevsecops\\web\\blockers.py\n+++ b/src\\wavedevsecops\\web\\blockers.py\n@@ -41,7 +41,7 @@\n         except (ScenarioError, OSError, UnicodeDecodeError) as error:\n             log.warning(\"Scénario ignoré pour l'encart des barrières (%s) : %s\", path.name, error)\n             continue\n-        if scenario.catalogue and (scenario.mode == \"A\" or scenario.scenario_id not in titles):\n+        if scenario.catalogue and (scenario.mode != \"A\" or scenario.scenario_id not in titles):\n             titles[scenario.scenario_id] = scenario.title_text\n     return titles\n "
+  },
+  {
+   "module": "src/wavedevsecops/web/blockers.py",
+   "ligne": 44,
+   "colonne": 56,
+   "operateur": "core/ReplaceOrWithAnd",
+   "occurrence": 0,
+   "fonction": "catalogue_scenario_titles",
+   "job_id": "9aee946b19724b32bf43c8d8b321dc6d",
+   "diff": "--- mutation diff ---\n--- a/src\\wavedevsecops\\web\\blockers.py\n+++ b/src\\wavedevsecops\\web\\blockers.py\n@@ -41,7 +41,7 @@\n         except (ScenarioError, OSError, UnicodeDecodeError) as error:\n             log.warning(\"Scénario ignoré pour l'encart des barrières (%s) : %s\", path.name, error)\n             continue\n-        if scenario.catalogue and (scenario.mode == \"A\" or scenario.scenario_id not in titles):\n+        if scenario.catalogue and (scenario.mode == \"A\" and scenario.scenario_id not in titles):\n             titles[scenario.scenario_id] = scenario.title_text\n     return titles\n "
+  },
+  {
+   "module": "src/wavedevsecops/web/blockers.py",
+   "ligne": 41,
+   "colonne": 40,
+   "operateur": "core/ExceptionReplacer",
+   "occurrence": 2,
+   "fonction": "catalogue_scenario_titles",
+   "job_id": "1a0ecad6fc764d859b0fc9729666e007",
+   "diff": "--- mutation diff ---\n--- a/src\\wavedevsecops\\web\\blockers.py\n+++ b/src\\wavedevsecops\\web\\blockers.py\n@@ -38,7 +38,7 @@\n     for path in scenario_files(settings):\n         try:\n             scenario = load_scenario(path, settings).scenario\n-        except (ScenarioError, OSError, UnicodeDecodeError) as error:\n+        except (ScenarioError, OSError, CosmicRayTestingException) as error:\n             log.warning(\"Scénario ignoré pour l'encart des barrières (%s) : %s\", path.name, error)\n             continue\n         if scenario.catalogue and (scenario.mode == \"A\" or scenario.scenario_id not in titles):"
+  },
+  {
+   "module": "src/wavedevsecops/web/blockers.py",
+   "ligne": 76,
+   "colonne": 47,
+   "operateur": "core/AddNot",
+   "occurrence": 6,
+   "fonction": "blockers_body",
+   "job_id": "964f6864929b45d6902617c27c503483",
+   "diff": "--- mutation diff ---\n--- a/src\\wavedevsecops\\web\\blockers.py\n+++ b/src\\wavedevsecops\\web\\blockers.py\n@@ -73,7 +73,7 @@\n         elif station is not None and station.milestone:\n             soon_text = SOON_TEXT.format(milestone=station.milestone)\n         else:\n-            soon_text = chain.map.soon_text if chain.map else SOON_FALLBACK_TEXT\n+            soon_text = chain.map.soon_text if not chain.map else SOON_FALLBACK_TEXT\n         items.append(\n             {\n                 \"barrier_id\": blocker.barrier_id,"
+  },
+  {
+   "module": "src/wavedevsecops/web/blockers.py",
+   "ligne": 44,
+   "colonne": 49,
+   "operateur": "core/ReplaceComparisonOperator_Eq_Lt",
+   "occurrence": 0,
+   "fonction": "catalogue_scenario_titles",
+   "job_id": "3ce7e970592c445e8906b78d794974db",
+   "diff": "--- mutation diff ---\n--- a/src\\wavedevsecops\\web\\blockers.py\n+++ b/src\\wavedevsecops\\web\\blockers.py\n@@ -41,7 +41,7 @@\n         except (ScenarioError, OSError, UnicodeDecodeError) as error:\n             log.warning(\"Scénario ignoré pour l'encart des barrières (%s) : %s\", path.name, error)\n             continue\n-        if scenario.catalogue and (scenario.mode == \"A\" or scenario.scenario_id not in titles):\n+        if scenario.catalogue and (scenario.mode < \"A\" or scenario.scenario_id not in titles):\n             titles[scenario.scenario_id] = scenario.title_text\n     return titles\n "
+  },
+  {
+   "module": "src/wavedevsecops/web/blockers.py",
+   "ligne": 44,
+   "colonne": 49,
+   "operateur": "core/ReplaceComparisonOperator_Eq_IsNot",
+   "occurrence": 0,
+   "fonction": "catalogue_scenario_titles",
+   "job_id": "8c31181125694743abc470a90357f662",
+   "diff": "--- mutation diff ---\n--- a/src\\wavedevsecops\\web\\blockers.py\n+++ b/src\\wavedevsecops\\web\\blockers.py\n@@ -41,7 +41,7 @@\n         except (ScenarioError, OSError, UnicodeDecodeError) as error:\n             log.warning(\"Scénario ignoré pour l'encart des barrières (%s) : %s\", path.name, error)\n             continue\n-        if scenario.catalogue and (scenario.mode == \"A\" or scenario.scenario_id not in titles):\n+        if scenario.catalogue and (scenario.mode is not \"A\" or scenario.scenario_id not in titles):\n             titles[scenario.scenario_id] = scenario.title_text\n     return titles\n "
+  },
+  {
+   "module": "src/wavedevsecops/scenarios/model.py",
+   "ligne": 63,
+   "colonne": 40,
+   "operateur": "core/NumberReplacer",
+   "occurrence": 6,
+   "fonction": "Blocker",
+   "job_id": "9a4089f0c20f4a06b4a186414dd3ac25",
+   "diff": "--- mutation diff ---\n--- a/src\\wavedevsecops\\scenarios\\model.py\n+++ b/src\\wavedevsecops\\scenarios\\model.py\n@@ -60,7 +60,7 @@\n     \"\"\"Station de la barrière ; le lint vérifie qu'elle est bien celle de la chaîne.\"\"\"\n     scenario_id: str = Field(pattern=KEBAB_PATTERN)\n     \"\"\"Scénario qui fait jouer la barrière (mode A en pratique) ; il doit exister au catalogue.\"\"\"\n-    reason_text: str = Field(min_length=1)\n+    reason_text: str = Field(min_length= 2)\n     \"\"\"Une phrase : pourquoi cette barrière aurait arrêté l'erreur (texte affiché).\"\"\"\n \n "
+  },
+  {
+   "module": "src/wavedevsecops/scenarios/model.py",
+   "ligne": 132,
+   "colonne": 50,
+   "operateur": "core/ReplaceComparisonOperator_NotEq_IsNot",
+   "occurrence": 0,
+   "fonction": "semantic_errors",
+   "job_id": "f5514d6e1cb34dc184b3b0923881262c",
+   "diff": "--- mutation diff ---\n--- a/src\\wavedevsecops\\scenarios\\model.py\n+++ b/src\\wavedevsecops\\scenarios\\model.py\n@@ -129,7 +129,7 @@\n                             f\"barrière inconnue de la chaîne : « {blocker.barrier_id} »\",\n                         )\n                     )\n-                elif barriers[blocker.barrier_id] != blocker.station:\n+                elif barriers[blocker.barrier_id] is not blocker.station:\n                     errors.append(\n                         (\n                             (*where, \"station\"),"
+  },
+  {
+   "module": "src/wavedevsecops/scenarios/model.py",
+   "ligne": 59,
+   "colonne": 34,
+   "operateur": "core/NumberReplacer",
+   "occurrence": 4,
+   "fonction": "Blocker",
+   "job_id": "0589e316effd442a93d7fbb100306a60",
+   "diff": "--- mutation diff ---\n--- a/src\\wavedevsecops\\scenarios\\model.py\n+++ b/src\\wavedevsecops\\scenarios\\model.py\n@@ -56,7 +56,7 @@\n \n     barrier_id: str = Field(pattern=KEBAB_PATTERN)\n     \"\"\"Barrière de `content/chain.yaml` (le lint de contenu refuse une barrière inconnue).\"\"\"\n-    station: int = Field(ge=1, le=4)\n+    station: int = Field(ge=1, le= 5)\n     \"\"\"Station de la barrière ; le lint vérifie qu'elle est bien celle de la chaîne.\"\"\"\n     scenario_id: str = Field(pattern=KEBAB_PATTERN)\n     \"\"\"Scénario qui fait jouer la barrière (mode A en pratique) ; il doit exister au catalogue.\"\"\""
+  },
+  {
+   "module": "src/wavedevsecops/scenarios/model.py",
+   "ligne": 63,
+   "colonne": 40,
+   "operateur": "core/NumberReplacer",
+   "occurrence": 7,
+   "fonction": "Blocker",
+   "job_id": "20490a04924c45749f8262e452bb16e4",
+   "diff": "--- mutation diff ---\n--- a/src\\wavedevsecops\\scenarios\\model.py\n+++ b/src\\wavedevsecops\\scenarios\\model.py\n@@ -60,7 +60,7 @@\n     \"\"\"Station de la barrière ; le lint vérifie qu'elle est bien celle de la chaîne.\"\"\"\n     scenario_id: str = Field(pattern=KEBAB_PATTERN)\n     \"\"\"Scénario qui fait jouer la barrière (mode A en pratique) ; il doit exister au catalogue.\"\"\"\n-    reason_text: str = Field(min_length=1)\n+    reason_text: str = Field(min_length= 0)\n     \"\"\"Une phrase : pourquoi cette barrière aurait arrêté l'erreur (texte affiché).\"\"\"\n \n "
+  },
+  {
+   "module": "src/wavedevsecops/scenarios/model.py",
+   "ligne": 59,
+   "colonne": 28,
+   "operateur": "core/NumberReplacer",
+   "occurrence": 3,
+   "fonction": "Blocker",
+   "job_id": "f144f5a85c1e4280b4b3db6c01fb516c",
+   "diff": "--- mutation diff ---\n--- a/src\\wavedevsecops\\scenarios\\model.py\n+++ b/src\\wavedevsecops\\scenarios\\model.py\n@@ -56,7 +56,7 @@\n \n     barrier_id: str = Field(pattern=KEBAB_PATTERN)\n     \"\"\"Barrière de `content/chain.yaml` (le lint de contenu refuse une barrière inconnue).\"\"\"\n-    station: int = Field(ge=1, le=4)\n+    station: int = Field(ge= 0, le=4)\n     \"\"\"Station de la barrière ; le lint vérifie qu'elle est bien celle de la chaîne.\"\"\"\n     scenario_id: str = Field(pattern=KEBAB_PATTERN)\n     \"\"\"Scénario qui fait jouer la barrière (mode A en pratique) ; il doit exister au catalogue.\"\"\""
+  },
+  {
+   "module": "src/wavedevsecops/engine/steps.py",
+   "ligne": 409,
+   "colonne": 34,
+   "operateur": "core/ReplaceOrWithAnd",
+   "occurrence": 23,
+   "fonction": "_blockers_of",
+   "job_id": "51d850d2974541c492833bc52a0cecc0",
+   "diff": "--- mutation diff ---\n--- a/src\\wavedevsecops\\engine\\steps.py\n+++ b/src\\wavedevsecops\\engine\\steps.py\n@@ -406,7 +406,7 @@\n \n     def _blockers_of(self, scenario: Scenario) -> dict[str, Any] | None:\n         \"\"\"Encart « Ce qui l'aurait bloqué » du scénario terminé ; `None` s'il n'en a pas.\"\"\"\n-        if self._blockers is None or not scenario.blocked_by:\n+        if self._blockers is None and not scenario.blocked_by:\n             return None\n         cached = self._blockers_cache.get(scenario.key)\n         if cached is not None and cached[0] is scenario:"
+  },
+  {
+   "module": "src/wavedevsecops/engine/steps.py",
+   "ligne": 469,
+   "colonne": 55,
+   "operateur": "core/ReplaceUnaryOperator_Delete_Not",
+   "occurrence": 11,
+   "fonction": "panel",
+   "job_id": "d97b355f75c2443fbf66ef105e5cd5ee",
+   "diff": "--- mutation diff ---\n--- a/src\\wavedevsecops\\engine\\steps.py\n+++ b/src\\wavedevsecops\\engine\\steps.py\n@@ -466,6 +466,6 @@\n             \"current_step_id\": current if position < len(ids) else \"\",\n             \"steps\": steps,\n             \"summary\": self._summary(run, scenario) if not current else None,\n-            \"blockers\": self._blockers_of(scenario) if not current else None,\n+            \"blockers\": self._blockers_of(scenario) if  current else None,\n         }\n "
+  },
+  {
+   "module": "src/wavedevsecops/web/app.py",
+   "ligne": 230,
+   "colonne": 28,
+   "operateur": "core/ReplaceOrWithAnd",
+   "occurrence": 1,
+   "fonction": "create_app",
+   "job_id": "81e8caa684e644b5bdcb84da03a303b6",
+   "diff": "--- mutation diff ---\n--- a/src\\wavedevsecops\\web\\app.py\n+++ b/src\\wavedevsecops\\web\\app.py\n@@ -227,7 +227,7 @@\n     if pr_intents.refresh_after_command not in terminal.AFTER_COMMAND_HOOKS:\n         terminal.AFTER_COMMAND_HOOKS.append(pr_intents.refresh_after_command)\n     register_exercise_intent()\n-    workspaces = workspaces or WorkspaceManager(\n+    workspaces = workspaces and WorkspaceManager(\n         settings,\n         osv_url=settings.osv_url(port),\n         blockers=lambda scenario: blockers_body(scenario, settings),"
+  }
+ ],
+ "total_seconds": 181.8
+}

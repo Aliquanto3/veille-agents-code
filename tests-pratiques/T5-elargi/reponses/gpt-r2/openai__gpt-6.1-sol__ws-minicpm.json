@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "ws-minicpm",
+ "latence_s": 42.1,
+ "usage": {
+  "prompt_tokens": 10712,
+  "completion_tokens": 1888,
+  "total_tokens": 12600,
+  "cost": 0.0456585,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 10709,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0456585,
+   "upstream_inference_prompt_cost": 0.0267785,
+   "upstream_inference_completions_cost": 0.01888
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 1034,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.0456585,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 1888,
+   "cout_usd": 0.0456585,
+   "latence_s": 42.1
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavestack/tools/parser.py\",\"ligne\":153,\"severite\":\"Important\",\"description\":\"La recherche du prochain </param> accepte un paramètre non fermé dès qu'un paramètre suivant possède une fermeture. Ainsi, <param name=\\\"a\\\">1<param name=\\\"b\\\">2</param> est interprété comme une valeur de a, puis l'appel est exécuté. Le paramètre a n'est pourtant jamais fermé : la matrice exige aucun appel et un Malformed, plutôt que l'exécution avec des arguments corrompus.\",\"test_pytest\":\"from wavestack.tools.parser import parse_tool_calls\\n\\n\\ndef test_unclosed_parameter_before_another_parameter_is_malformed():\\n    raw = (\\n        '<function name=\\\"x\\\">'\\n        '<param name=\\\"a\\\">1'\\n        '<param name=\\\"b\\\">2</param>'\\n        '</function>'\\n    )\\n    calls, malformed = parse_tool_calls(raw, 'minicpm5', {})\\n    assert calls == []\\n    assert malformed is not None\\n\"},{\"id\":\"C2\",\"fichier\":\"tests/fixtures/minicpm5_chat_template.jinja\",\"ligne\":1,\"severite\":\"Important\",\"description\":\"La fixture annoncée comme nouvelle dans la spec n'est pas ajoutée au diff. Le nouveau module test_tool_parser_minicpm5.py la lit dès son import : en l'absence de ce fichier, la collecte échoue avant tout test MiniCPM5. Le gabarit officiel de référence doit être livré avec ces tests.\",\"test_pytest\":\"def test_minicpm5_reference_template_is_delivered(pytestconfig):\\n    fixture = pytestconfig.rootpath / 'tests' / 'fixtures' / 'minicpm5_chat_template.jinja'\\n    assert fixture.is_file(), 'Le gabarit officiel MiniCPM5 doit être livré dans les fixtures'\\n    template = fixture.read_text(encoding='utf-8')\\n    assert '<|im_start|>' in template\\n    assert '<function name=\\\"' in template\\n    assert '<param name=\\\"' in template\\n    assert 'enable_thinking' in template\\n\"},{\"id\":\"C3\",\"fichier\":\"content/messages.yaml\",\"ligne\":682,\"severite\":\"Important\",\"description\":\"Le lecteur introduit trois clés tools.parser.minicpm5_* mais aucun des trois catalogues fr/en/de n'est modifié dans le diff. Les chemins d'erreur ne disposent donc pas des messages traduits exigés ; les clés doivent être ajoutées dans les trois langues.\",\"test_pytest\":\"import pytest\\n\\n\\n@pytest.mark.parametrize('relative_path', [\\n    'content/messages.yaml',\\n    'content/i18n/en/messages.yaml',\\n    'content/i18n/de/messages.yaml',\\n])\\n@pytest.mark.parametrize('key', [\\n    'minicpm5_function_tag',\\n    'minicpm5_param_unclosed',\\n    'minicpm5_never_closed',\\n])\\ndef test_minicpm5_error_messages_are_delivered(pytestconfig, relative_path, key):\\n    text = (pytestconfig.rootpath / relative_path).read_text(encoding='utf-8')\\n    assert key + ':' in text, f'Traduction absente : {relative_path} / {key}'\\n\"},{\"id\":\"C4\",\"fichier\":\"install.ps1\",\"ligne\":25,\"severite\":\"Nit\",\"description\":\"Aucune modification des installateurs n'apparaît dans le diff, alors que les tests et la documentation attendue introduisent -WithMiniCPM et WAVESTACK_WITH_MINICPM. Le téléchargement optionnel, son idempotence et son DryRun restent donc à implémenter dans install.ps1 et install.sh. Classé Nit ici faute de pouvoir fournir un test d'exécution autonome des installateurs sans sous-processus, conformément aux contraintes de revue.\",\"test_pytest\":null}]}"
+}

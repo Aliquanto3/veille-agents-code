@@ -1,0 +1,1033 @@
+[
+ {
+  "relecteur": "openai/gpt-6.1-sol",
+  "story": "ws-v2s6",
+  "n": 1,
+  "fichier": "src/wavestack/models/cloud_base.py",
+  "lignes": [
+   341,
+   341
+  ],
+  "refs": [
+   [
+    "src/wavestack/models/cloud_base.py",
+    341,
+    341
+   ]
+  ],
+  "severite": "Nit",
+  "etiquette": "Nit",
+  "important": false,
+  "description": "Le bornage de cached_write utilise max(-1, ...) au lieu de max(0, ...). Avec cached_read=0 et cached_write=-1, cache_savings émet une ligne de cache contenant un nombre de tokens et un coût d’écriture négatifs, alors qu’aucune lecture ni écriture positive n’est déclarée. Utiliser zéro comme borne inférieure, comme pour cached_read. Le diff ne permet toutefois pas de démontrer qu’un fournisseur puisse effectivement transmettre cette valeur négative.",
+  "test_pytest": false,
+  "cid": "c000"
+ },
+ {
+  "relecteur": "opus",
+  "story": "ws-v2s6",
+  "n": 1,
+  "fichier": "src/wavestack/models/cloud_base.py",
+  "lignes": [
+   341,
+   341
+  ],
+  "refs": [
+   [
+    "src/wavestack/models/cloud_base.py",
+    341,
+    341
+   ]
+  ],
+  "severite": "low",
+  "etiquette": "Nit",
+  "important": false,
+  "description": "Nit | low | src/wavestack/models/cloud_base.py:341 | `cache_savings` borne l'écriture avec `max(-1, …)` alors que `call_cost` (ligne 303) borne avec `max(0, …)`. Si un fournisseur renvoyait un `prompt_tokens` négatif (`run_call` le prend tel quel, ligne 976), l'écriture vaudrait −1. Cette valeur est vraie en Python, donc un appel sans cache recevrait quand même toutes les clés `cache_*`, avec `cache_write_tokens = -1`. Le critère « absent quand ni lu ni écrit » serait alors violé. Avec les entrées normales, `_cached_tokens` renvoie des valeurs ≥ 0 et le cas n'arrive pas. | certain",
+  "cid": "c001"
+ },
+ {
+  "relecteur": "openai/gpt-6-luna",
+  "story": "wl27",
+  "n": 1,
+  "fichier": "src/wavelocalai/models/catalog.py",
+  "lignes": [
+   68,
+   68
+  ],
+  "refs": [
+   [
+    "src/wavelocalai/models/catalog.py",
+    68,
+    68
+   ]
+  ],
+  "severite": "Important",
+  "etiquette": "Important",
+  "important": true,
+  "description": "Le catalogue exclut la valeur 2 avec `value < MAX_TEMPERATURE`, alors que la spec accepte toute valeur de 0 à 2 inclus. Une entrée catalogue à `default_temperature: 2` est donc ignorée et le modèle renvoie `null` au lieu de 2.",
+  "test_pytest": true,
+  "cid": "c002"
+ },
+ {
+  "relecteur": "opus",
+  "story": "ws-granite",
+  "n": 2,
+  "fichier": "src/wavestack/models/capabilities.py",
+  "lignes": [
+   88,
+   88
+  ],
+  "refs": [
+   [
+    "src/wavestack/models/capabilities.py",
+    88,
+    88
+   ]
+  ],
+  "severite": "medium",
+  "etiquette": "Important",
+  "important": true,
+  "description": "Important | medium | src/wavestack/models/capabilities.py:88 | Le garde-fou `if at < -1` ne se déclenche jamais, car `rfind` renvoie au minimum -1. Si un gabarit n'affiche pas le contenu du message `user`, on a `at == -1` et la lecture reprend à `text[len(q) - 1:]`, donc presque tout le rendu, prompt système compris. L'exemple `<tool_call>` du prompt système, que la sonde devait justement ignorer, entre alors dans la lecture. Le gabarit peut ainsi être mal jugé : faux échec sur un exemple vide ou malformé, ou faux succès si l'exemple reprend le même appel. Correctif : `if at < 0: return False`. | certain",
+  "cid": "c003"
+ },
+ {
+  "relecteur": "opus",
+  "story": "us612",
+  "n": 1,
+  "fichier": "src/usine/adaptateurs/llm/fournisseur.py",
+  "lignes": [
+   407,
+   407
+  ],
+  "refs": [
+   [
+    "src/usine/adaptateurs/llm/fournisseur.py",
+    407,
+    407
+   ]
+  ],
+  "severite": "high",
+  "etiquette": "Important",
+  "important": true,
+  "description": "Important | high | src/usine/adaptateurs/llm/fournisseur.py:407 | La condition `elif config.fournisseur >= \"local\"` compare des chaînes dans l'ordre alphabétique au lieu de tester l'égalité. Comme `\"mistral\" >= \"local\"` est vrai, toute configuration `fournisseur: mistral` entre dans la branche locale. Le client Mistral est alors construit avec `api_key=\"sans-cle\"` et vise `http://127.0.0.1:8080` (ou `USINE_LLM_LOCAL_URL`) au lieu de l'API Mistral. La clé `MISTRAL_API_KEY` passée par `composition.py:367` et `composition.py:392` est ignorée, donc le fournisseur Mistral ne fonctionne plus en production. La branche `else` (lignes 411-413) ne peut plus être atteinte. Il faut écrire `== \"local\"`. | certain",
+  "cid": "c004"
+ },
+ {
+  "relecteur": "openai/gpt-6-luna",
+  "story": "wl25",
+  "n": 1,
+  "fichier": "src/wavelocalai/greenops/cloud_estimate.py",
+  "lignes": [
+   30,
+   30
+  ],
+  "refs": [
+   [
+    "src/wavelocalai/greenops/cloud_estimate.py",
+    30,
+    30
+   ]
+  ],
+  "severite": "Nit",
+  "etiquette": "Nit",
+  "important": false,
+  "description": "La conversion kgCO2eq → mg utilise 999999 au lieu de 1 000 000. Les bornes et le milieu renvoyés sont donc systématiquement légèrement sous-évalués (par exemple, 1 kg devient 999999 mg).",
+  "test_pytest": false,
+  "cid": "c005"
+ },
+ {
+  "relecteur": "haiku",
+  "story": "wl27",
+  "n": 1,
+  "fichier": "src/wavelocalai/models/catalog.py",
+  "lignes": [
+   66,
+   66
+  ],
+  "refs": [
+   [
+    "src/wavelocalai/models/catalog.py",
+    66,
+    66
+   ]
+  ],
+  "severite": "low",
+  "etiquette": "Important",
+  "important": false,
+  "description": "Important | low | src/wavelocalai/models/catalog.py:66 | `_temperature` rejette 2.0 (`0 <= value < MAX_TEMPERATURE`), alors que la spec dit « de 0 à 2 » et que `parse_temperature` (facts.py:85) accepte 2.0. Une entrée de catalogue à 2.0 est donc ignorée et le repli tombe sur `null`, contrairement à Ollama. Aucun test ne couvre la borne côté catalogue (`test_ollama_wins_over_the_catalog_and_bad_catalog_values_are_ignored` teste 5, -1, \"0.5\", True, None). | certain",
+  "cid": "c006"
+ },
+ {
+  "relecteur": "opus",
+  "story": "wd81",
+  "n": 1,
+  "fichier": "src/wavedevsecops/ci/findings.py",
+  "lignes": [
+   142,
+   142
+  ],
+  "refs": [
+   [
+    "src/wavedevsecops/ci/findings.py",
+    142,
+    142
+   ]
+  ],
+  "severite": "low",
+  "etiquette": "Nit",
+  "important": false,
+  "description": "Nit | low | src/wavedevsecops/ci/findings.py:142 | `data.get(\"errors\") or []` n'est pas validé comme une liste, alors que `results` l'est (ligne 126). Un entier dans `errors` lèverait `TypeError`, que `_machine_findings` ne rattrape pas (`ci/__init__.py:356` ne rattrape que `OSError, UnicodeDecodeError, ValueError`), et `run_job` planterait au lieu de rendre « constats indisponibles ». bandit ne produit jamais cette forme, d'où la sévérité low. | certain",
+  "cid": "c007"
+ },
+ {
+  "relecteur": "openai/gpt-6.1-sol",
+  "story": "ws-granite",
+  "n": 1,
+  "fichier": "src/wavestack/models/capabilities.py",
+  "lignes": [
+   90,
+   90
+  ],
+  "refs": [
+   [
+    "src/wavestack/models/capabilities.py",
+    90,
+    90
+   ]
+  ],
+  "severite": "Important",
+  "etiquette": "Important",
+  "important": true,
+  "description": "La condition `at < -1` ne peut jamais être vraie : lorsque la question est absente du rendu, `rfind` renvoie -1 et la sonde analyse tout le texte. Un gabarit qui ignore les messages mais affiche un exemple statique identique à l'appel de la sonde reçoit donc le lecteur Hermes, contrairement à la règle d'aller-retour. Il faut refuser le rendu lorsque le marqueur de question est absent.",
+  "test_pytest": true,
+  "cid": "c008"
+ },
+ {
+  "relecteur": "opus",
+  "story": "wl27",
+  "n": 1,
+  "fichier": "src/wavelocalai/models/catalog.py",
+  "lignes": [
+   66,
+   66
+  ],
+  "refs": [
+   [
+    "src/wavelocalai/models/catalog.py",
+    66,
+    66
+   ]
+  ],
+  "severite": "medium",
+  "etiquette": "Important",
+  "important": true,
+  "description": "Important | medium | src/wavelocalai/models/catalog.py:66 | `_temperature` n'accepte que `0 <= value < MAX_TEMPERATURE`, donc 2 est exclu. Une entrée de catalogue `\"default_temperature\": 2` est ignorée et `GET /api/models` renvoie `null`, d'où le repli du curseur à 0,2. La spec (critère 1 et `deferred`) dit pourtant « de 0 à 2 ». `parse_temperature` (`src/wavelocalai/models/facts.py`, `0.0 <= value <= MAX_TEMPERATURE`) garde bien 2, et le curseur va jusqu'à `max = \"2\"`. Selon la source, la même valeur est donc acceptée par Ollama et refusée par le catalogue. Le test des valeurs refusées (`test_ollama_wins_over_the_catalog_and_bad_catalog_values_are_ignored` : 5, -1, \"0.5\", True, None) ne vérifie pas la borne 2. Correctif : remplacer par `<=` et ajouter au test le cas 2, qui doit rendre 2.0 | certain - **Migration et cache SQLite** : `0005_model_parameters.sql`, l'instantané `schema_v5.sql`, et les requêtes de `facts_store.py`, qui passent toutes par `_COLUMNS` et ont 13 paramètres. - **Relecture des lignes sans `parameters`** dans `registry.py:188-200` : une ligne sans paramètres est relue une seule fois. Si Ollama ne répond pas, elle est gardée telle quelle et n'est pas écrasée. - **Modèles cloud** : `default_temperature` vaut `null`. - **Branchement front** : `wl-models-loaded` et `picker.selected`, `creativityTouched` (remis à zéro par « Effacer », mis à vrai à la réouverture d'une conversation), et la valeur envoyée, `Number(slider.value)`. - **Échap dans le menu** : il ne peut pas arrêter la réponse. `preventDefault` est appelé sur `root` avant que `document` ne reçoive l'événement, et `wl-run-status` ignore un événement déjà marqué `defaultPrevented`. - **Bascule CSS à 767,98 px**, clés i18n présentes, et pas d'import circulaire entre `catalog.py` et `facts.py`.",
+  "cid": "c009"
+ },
+ {
+  "relecteur": "openai/gpt-6.1-sol",
+  "story": "ws-minicpm",
+  "n": 3,
+  "fichier": "src/wavestack/tools/parser.py",
+  "lignes": [
+   131,
+   131
+  ],
+  "refs": [
+   [
+    "src/wavestack/tools/parser.py",
+    131,
+    131
+   ]
+  ],
+  "severite": "Nit",
+  "etiquette": "Nit",
+  "important": false,
+  "description": "Le chemin CDATA non terminée retourne -0, donc 0, alors que le contrat de _minicpm5_end prévoit -1. Avec une CDATA ouverte contenant </function>, le lecteur découpe alors un bloc vide et signale une balise function absente, avec un fragment vide, plutôt que de conserver l'appel incomplet et son diagnostic de fermeture.",
+  "test_pytest": false,
+  "cid": "c010"
+ },
+ {
+  "relecteur": "openai/gpt-6-luna",
+  "story": "wd58",
+  "n": 2,
+  "fichier": "src/wavedevsecops/engine/designation.py",
+  "lignes": [
+   132,
+   132
+  ],
+  "refs": [
+   [
+    "src/wavedevsecops/engine/designation.py",
+    132,
+    132
+   ]
+  ],
+  "severite": "Important",
+  "etiquette": "Important",
+  "important": true,
+  "description": "`s.sha >= segments[0]` compare les SHA lexicalement au lieu de vérifier une correspondance. Ainsi, un identifiant complet inexistant, mais inférieur au SHA du stash, est accepté comme désignation de l'entrée du stash.",
+  "test_pytest": true,
+  "cid": "c011"
+ },
+ {
+  "relecteur": "haiku",
+  "story": "us612",
+  "n": 1,
+  "fichier": "src/usine/adaptateurs/llm/fournisseur.py",
+  "lignes": [
+   407,
+   407
+  ],
+  "refs": [
+   [
+    "src/usine/adaptateurs/llm/fournisseur.py",
+    407,
+    407
+   ]
+  ],
+  "severite": "high",
+  "etiquette": "Important",
+  "important": true,
+  "description": "Important | high | src/usine/adaptateurs/llm/fournisseur.py:407 | La branche `elif config.fournisseur >= \"local\":` compare des chaînes. `\"mistral\" >= \"local\"` vaut True (`m` > `l`), donc tout fournisseur Mistral passe dans la branche locale : clé remplacée par `\"sans-cle\"`, URL `http://127.0.0.1:8080`, et le client Mistral ne est jamais construit avec la vraie clé. Les appels Mistral existants cassent. Le même test `== \"local\"` que les autres branches est attendu. | certain (raisonnement par lecture : ordre des branches `anthropic` / `>= \"local\"` / `else`, et comparaison lexicographique de Python ; non exécuté, pas de shell)",
+  "cid": "c012"
+ },
+ {
+  "relecteur": "haiku",
+  "story": "wl25",
+  "n": 1,
+  "fichier": "src/wavelocalai/greenops/cloud_estimate.py",
+  "lignes": [
+   30,
+   30
+  ],
+  "refs": [
+   [
+    "src/wavelocalai/greenops/cloud_estimate.py",
+    30,
+    30
+   ]
+  ],
+  "severite": "low",
+  "etiquette": "Important",
+  "important": false,
+  "description": "Important | low | src/wavelocalai/greenops/cloud_estimate.py:30 | `KG_TO_MG = 999999.0` au lieu de 1 000 000 ; le dépôt a déjà la bonne constante `MG_PER_KG = 1_000_000.0` (src/wavelocalai/greenops/local_meter.py:38). Chaque borne `range_mg` et donc `mg` est fausse d'un facteur 0,999999. Le test `test_units_are_milligrams_from_kilograms_of_co2_equivalent` (tests/v2/unit/test_cloud_estimate.py:155) ne le détecte que par la tolérance de `pytest.approx` (rel 1e-6), qui laisse passer l'écart à la limite | certain",
+  "cid": "c013"
+ },
+ {
+  "relecteur": "openai/gpt-6-luna",
+  "story": "us612",
+  "n": 1,
+  "fichier": "src/usine/adaptateurs/llm/fournisseur.py",
+  "lignes": [
+   409,
+   409
+  ],
+  "refs": [
+   [
+    "src/usine/adaptateurs/llm/fournisseur.py",
+    409,
+    409
+   ]
+  ],
+  "severite": "Important",
+  "etiquette": "Important",
+  "important": true,
+  "description": "La condition `config.fournisseur >= \"local\"` compare les noms alphabétiquement : elle est aussi vraie pour `mistral`. Ainsi, toute configuration Mistral est routée vers le serveur local et utilise la clé factice `sans-cle`, au lieu du fournisseur configuré. Le test ci-dessous vérifie que la fabrique conserve la clé Mistral et ignore l’URL locale pour ce fournisseur.",
+  "test_pytest": true,
+  "cid": "c014"
+ },
+ {
+  "relecteur": "openai/gpt-6.1-sol",
+  "story": "wl91",
+  "n": 1,
+  "fichier": "src/wavelocalai/__main__.py",
+  "lignes": [
+   158,
+   158
+  ],
+  "refs": [
+   [
+    "src/wavelocalai/__main__.py",
+    158,
+    158
+   ]
+  ],
+  "severite": "Nit",
+  "etiquette": "Nit",
+  "important": false,
+  "description": "Le guetteur est créé avec daemon=False, contrairement à la variante documentée dans la spec. Si webbrowser.open reste bloqué (certains contrôleurs attendent la fermeture du navigateur), stop_browser.set() ne l'interrompt pas et le fil peut empêcher la terminaison du processus après l'arrêt du serveur. Conserver daemon=True éviterait que l'ouverture du navigateur retienne le processus.",
+  "test_pytest": false,
+  "cid": "c015"
+ },
+ {
+  "relecteur": "haiku",
+  "story": "us613",
+  "n": 1,
+  "fichier": "src/usine/ia/passerelle.py",
+  "lignes": [
+   518,
+   518
+  ],
+  "refs": [
+   [
+    "src/usine/ia/passerelle.py",
+    518,
+    518
+   ]
+  ],
+  "severite": "medium",
+  "etiquette": "Important",
+  "important": true,
+  "description": "Important | medium | src/usine/ia/passerelle.py:518 | `self._observer(traces_outils[-0])` : `[-0]` vaut toujours `traces_outils[0]`. Chaque appel d'outil d'Agent transmet donc la première trace de l'appel, et la dernière n'est jamais observée (la ligne 520 utilise `[-1]`). Preuve par lecture : lignes 499-520. Latent dans le câblage actuel : la passerelle observée de `_assembler_rapport` (composition.py:905-915) ne sert pas `executer_agent`, mais aucun test ne couvre l'observateur sur ce chemin. | certain",
+  "cid": "c016"
+ },
+ {
+  "relecteur": "haiku",
+  "story": "wl94",
+  "n": 2,
+  "fichier": "src/wavelocalai/config.py",
+  "lignes": [
+   229,
+   229
+  ],
+  "refs": [
+   [
+    "src/wavelocalai/config.py",
+    229,
+    229
+   ]
+  ],
+  "severite": "low",
+  "etiquette": "Important",
+  "important": false,
+  "description": "Important | low | src/wavelocalai/config.py:229 | Le défaut `testing_no_fake_embedder: bool = True` inverse la valeur attendue pour une construction directe de `Settings(testing=True)` : `fake_embedders` renvoie alors `{}`. `load_settings` (ligne 311) écrase la valeur, donc le chemin réel n'est pas touché, et aucun appel direct de ce type n'a été trouvé dans les tests. | probable",
+  "cid": "c017"
+ },
+ {
+  "relecteur": "haiku",
+  "story": "ws-granite",
+  "n": 2,
+  "fichier": "src/wavestack/models/capabilities.py",
+  "lignes": [
+   88,
+   88
+  ],
+  "refs": [
+   [
+    "src/wavestack/models/capabilities.py",
+    88,
+    88
+   ]
+  ],
+  "severite": "medium",
+  "etiquette": "Important",
+  "important": true,
+  "description": "Important | medium | src/wavestack/models/capabilities.py:88 | `if at < -1` n'est jamais vrai, car `rfind` renvoie `-1` quand le marqueur est absent. Dans ce cas, la tranche `text[-1 + len:]` relit tout le rendu, y compris l'exemple `<tool_call>` vide de l'invite système. Il faut `at < 0`. Preuve par lecture de la sémantique de `str.rfind` : certain",
+  "cid": "c018"
+ },
+ {
+  "relecteur": "openai/gpt-6.1-sol",
+  "story": "ws-v2s2",
+  "n": 1,
+  "fichier": "src/wavestack/mcp/sandbox.py",
+  "lignes": [
+   28,
+   28
+  ],
+  "refs": [
+   [
+    "src/wavestack/mcp/sandbox.py",
+    28,
+    28
+   ]
+  ],
+  "severite": "Important",
+  "etiquette": "Important",
+  "important": true,
+  "description": "La liste des périphériques réservés omet LPT9 : range(1, 9) s'arrête à LPT8. Ainsi resolve(\"LPT9.txt\") accepte un nom de périphérique Windows, contrairement au contrat qui impose son refus avant toute opération disque, quelle que soit l'extension.",
+  "test_pytest": true,
+  "cid": "c019"
+ },
+ {
+  "relecteur": "openai/gpt-6-luna",
+  "story": "ws-v2s2",
+  "n": 1,
+  "fichier": "src/wavestack/mcp/sandbox.py",
+  "lignes": [
+   28,
+   28
+  ],
+  "refs": [
+   [
+    "src/wavestack/mcp/sandbox.py",
+    28,
+    28
+   ]
+  ],
+  "severite": "Important",
+  "etiquette": "Important",
+  "important": true,
+  "description": "La liste des périphériques réservés inclut `LPT1` à `LPT8`, mais omet `LPT9`. Ainsi, `sandbox.resolve(\"LPT9.txt\")` accepte un nom de périphérique Windows, contrairement à la règle de la story, et l’outil peut ensuite tenter d’y écrire.",
+  "test_pytest": true,
+  "cid": "c020"
+ },
+ {
+  "relecteur": "haiku",
+  "story": "wl91",
+  "n": 1,
+  "fichier": "src/wavelocalai/__main__.py",
+  "lignes": [
+   158,
+   158
+  ],
+  "refs": [
+   [
+    "src/wavelocalai/__main__.py",
+    158,
+    158
+   ]
+  ],
+  "severite": "medium",
+  "etiquette": "Important",
+  "important": true,
+  "description": "Important | medium | src/wavelocalai/__main__.py:158 | Le fil de guet est créé avec `daemon=False`, alors que la spec prévoit `daemon=True`. Après `serve()`, l'interpréteur attend la fin du fil. Si `webbrowser.open` bloque (navigateur en console sur Linux, par exemple lynx ou w3m), la sortie du lanceur reste bloquée. Preuve par lecture seule : le code du diff ; non exécuté | probable",
+  "cid": "c021"
+ },
+ {
+  "relecteur": "opus",
+  "story": "wd96",
+  "n": 1,
+  "fichier": "src/wavedevsecops/projections/links.py",
+  "lignes": [
+   113,
+   113
+  ],
+  "refs": [
+   [
+    "src/wavedevsecops/projections/links.py",
+    113,
+    113
+   ]
+  ],
+  "severite": "low",
+  "etiquette": "Nit",
+  "important": false,
+  "description": "Nit | low | src/wavedevsecops/projections/links.py:113 | `ref <= EXPLAIN_CHECK` compare deux chaînes dans l'ordre alphabétique. La condition est toujours vraie, puisque `\"pipeline.*\" < \"remote.check\"` et `\"remote.check\" <= \"remote.check\"`. Elle ne filtre donc rien : un check hors pipeline donne aussi à sa sortie un nom et la clé `remote.check`, alors qu'avant la story cette sortie n'avait ni nom ni « i ». Le test de `test_pipeline_tabs_dom` valide ce comportement, mais l'intention est illisible : écrire simplement `if check.output_element_id:`, ou `ref != EXPLAIN_CHECK` si seules les sorties du pipeline doivent l'avoir | certain",
+  "cid": "c022"
+ },
+ {
+  "relecteur": "opus",
+  "story": "ws-minicpm",
+  "n": 3,
+  "fichier": "src/wavestack/tools/parser.py",
+  "lignes": [
+   132,
+   132
+  ],
+  "refs": [
+   [
+    "src/wavestack/tools/parser.py",
+    132,
+    132
+   ]
+  ],
+  "severite": "low",
+  "etiquette": "Nit",
+  "important": false,
+  "description": "Nit | low | src/wavestack/tools/parser.py:132 | `_minicpm5_params` ignore sans rien signaler le texte placé entre ou après les `<param>`. Par exemple, `<param name=\"a\">1</param>xyz` donne un appel valide et `xyz` disparaît. Ça ne gêne pas tant que le format est respecté, mais ce n'est pas signalé. | certain - **Capacités** : la branche MiniCPM5 passe avant Qwen3. Le gabarit Qwen3.5 utilise `<function=`, pas `<function name=\"`, donc il n'est pas détourné. - **Session** : `ChannelSplitter` reçoit les balises du lecteur courant (`app_session.py:8507`). - **Messages** : les trois messages existent en fr, en et de. - **Installateurs** : l'option est absente par défaut, ils restent idempotents, passent par `.part` puis renommage, et le mode à blanc sort avant tout téléchargement. - **Démarrage** : la préférence Qwen se fait par nom de fichier, casse ignorée, sans `_save_choice`. Le blocage `model.several` reste en place quand Qwen n'est pas présent.",
+  "cid": "c023"
+ },
+ {
+  "relecteur": "haiku",
+  "story": "ws-v2s6",
+  "n": 2,
+  "fichier": "src/wavestack/models/cloud_base.py",
+  "lignes": [
+   341,
+   341
+  ],
+  "refs": [
+   [
+    "src/wavestack/models/cloud_base.py",
+    341,
+    341
+   ]
+  ],
+  "severite": "low",
+  "etiquette": "Nit",
+  "important": false,
+  "description": "Nit | low | src/wavestack/models/cloud_base.py:341 | Même défaut que ci-dessus, mentionné séparément : la borne est incohérente avec `call_cost`, qui borne à 0. Une correction d'une ligne suffit. | certain",
+  "cid": "c024"
+ },
+ {
+  "relecteur": "opus",
+  "story": "us613",
+  "n": 1,
+  "fichier": "src/usine/ia/passerelle.py",
+  "lignes": [
+   518,
+   518
+  ],
+  "refs": [
+   [
+    "src/usine/ia/passerelle.py",
+    518,
+    518
+   ]
+  ],
+  "severite": "medium",
+  "etiquette": "Important",
+  "important": true,
+  "description": "Important | medium | src/usine/ia/passerelle.py:518 | `self._observer(traces_outils[-0])` : `-0` vaut `0`, donc chaque outil d'Agent renvoie à Langfuse la trace du **premier** outil. Le deuxième outil et les suivants n'y arrivent jamais, et la première trace part en double. `sur_trace` à la ligne 520 utilise bien `[-1]`, d'où l'écart entre le Journal et Langfuse. Aucun test de `test_langfuse.py` ne passe par `executer_agent` (ils utilisent tous `executer_structure`), donc rien ne l'a détecté. Correctif : `[-1]`, plus un test qui appelle deux outils. | certain",
+  "cid": "c025"
+ },
+ {
+  "relecteur": "openai/gpt-6-luna",
+  "story": "us613",
+  "n": 1,
+  "fichier": "src/usine/ia/passerelle.py",
+  "lignes": [
+   517,
+   517
+  ],
+  "refs": [
+   [
+    "src/usine/ia/passerelle.py",
+    517,
+    517
+   ]
+  ],
+  "severite": "Nit",
+  "etiquette": "Nit",
+  "important": false,
+  "description": "`traces_outils[-0]` désigne toujours l’élément d’index 0, pas le dernier. Si un Agent produit plusieurs traces d’outil, l’observateur reçoit donc plusieurs fois la première trace et ignore les suivantes, contrairement à l’exigence d’envoyer chaque trace. Je ne peux pas fournir un test pytest comportemental autonome fiable sans inventer l’API d’exécution des outils.",
+  "test_pytest": false,
+  "cid": "c026"
+ },
+ {
+  "relecteur": "opus",
+  "story": "ws-minicpm",
+  "n": 1,
+  "fichier": "src/wavestack/tools/parser.py",
+  "lignes": [
+   128,
+   128
+  ],
+  "refs": [
+   [
+    "src/wavestack/tools/parser.py",
+    128,
+    128
+   ]
+  ],
+  "severite": "medium",
+  "etiquette": "Important",
+  "important": true,
+  "description": "Important | medium | src/wavestack/tools/parser.py:128 | Dans `_minicpm5_end`, le cas « CDATA jamais refermée » renvoie `-0`, c'est-à-dire `0`, au lieu de `-1`. Exemple : `<function name=\"x\"><param name=\"s\"><![CDATA[a</function>`. Le `</function>` se trouve après `<![CDATA[`, et `]]>` n'apparaît jamais. Dans `_parse_minicpm5`, le test `end < 0` ne se déclenche donc pas, et on obtient `block = raw[start:0] == \"\"`. Ensuite `_minicpm5(\"\")` ne trouve pas d'en-tête et rend `Malformed(\"\", \"balise <function name=\\\"…\\\"> absente ou mal fermée\")`. Le fragment est vide et le message est faux : on attendait `minicpm5_never_closed`, comme le prévoit la ligne « Jamais fermé » de la matrice. Le même fragment vide repart ensuite dans la voie « coupée » (`app_session.py:8743`) quand la sortie est tronquée dans une CDATA. Correction : `return -1`. | certain",
+  "cid": "c027"
+ },
+ {
+  "relecteur": "openai/gpt-6.1-sol",
+  "story": "us613",
+  "n": 1,
+  "fichier": "src/usine/ia/passerelle.py",
+  "lignes": [
+   518,
+   518
+  ],
+  "refs": [
+   [
+    "src/usine/ia/passerelle.py",
+    518,
+    518
+   ]
+  ],
+  "severite": "Important",
+  "etiquette": "Important",
+  "important": true,
+  "description": "`traces_outils[-0]` désigne la première trace, pas la dernière. Dès qu'un Agent exécute deux outils, l'observateur reçoit de nouveau la trace du premier outil et ne reçoit jamais celle du second. Les générations et leurs jetons/coûts sont donc dupliqués ou omis dans Langfuse, contrairement à l'exigence de transmettre chaque trace. Utiliser la trace qui vient d'être ajoutée (`traces_outils[-1]`). Le test ci-dessous isole l'expression réelle de transmission pour exercer ce cas sans dépendre du fournisseur d'Agent.",
+  "test_pytest": true,
+  "cid": "c028"
+ },
+ {
+  "relecteur": "opus",
+  "story": "wd58",
+  "n": 1,
+  "fichier": "src/wavedevsecops/engine/designation.py",
+  "lignes": [
+   131,
+   131
+  ],
+  "refs": [
+   [
+    "src/wavedevsecops/engine/designation.py",
+    131,
+    131
+   ]
+  ],
+  "severite": "medium",
+  "etiquette": "Important",
+  "important": true,
+  "description": "Important | medium | src/wavedevsecops/engine/designation.py:131 | `_exists` teste `s.sha >= segments[0]` au lieu de `s.sha == segments[0]`. Avec ce test, tout SHA de commit plus petit (ordre alphabétique) que le SHA d'une entrée du stash passe pour existant. Or `_exists` sert de garde à la ligne 249 et doit refuser « Cet élément n'existe pas dans le dépôt » : avec un stash dans le dépôt, un `commit:<sha inventé>` n'est donc plus refusé. Il est corrigé comme une simple réponse fausse et consomme l'unique essai. La spec ne demandait que de « ne plus rejeter un commit de stash ». Le test identique `s.sha == …` de `describe` (ligne 111) montre que l'intention était l'égalité. Correctif : `any(s.sha == segments[0] for s in state.stash)`. | certain",
+  "cid": "c029"
+ },
+ {
+  "relecteur": "openai/gpt-6.1-sol",
+  "story": "wl27",
+  "n": 1,
+  "fichier": "src/wavelocalai/models/catalog.py",
+  "lignes": [
+   66,
+   66
+  ],
+  "refs": [
+   [
+    "src/wavelocalai/models/catalog.py",
+    66,
+    66
+   ]
+  ],
+  "severite": "Important",
+  "etiquette": "Important",
+  "important": true,
+  "description": "La validation du catalogue exclut 2 avec `value < MAX_TEMPERATURE`, alors que la plage autorisée est [0, 2], bornes incluses. Sans température publiée par Ollama, une entrée de catalogue à `default_temperature: 2` est donc ignorée : l’API renvoie null et le curseur se replie à 0,2 au lieu de 2. Utiliser une comparaison inclusive, comme dans `parse_temperature`.",
+  "test_pytest": true,
+  "cid": "c030"
+ },
+ {
+  "relecteur": "opus",
+  "story": "wl94",
+  "n": 1,
+  "fichier": "src/wavelocalai/config.py",
+  "lignes": [
+   229,
+   229
+  ],
+  "refs": [
+   [
+    "src/wavelocalai/config.py",
+    229,
+    229
+   ]
+  ],
+  "severite": "low",
+  "etiquette": "Important",
+  "important": true,
+  "description": "Important | low | src/wavelocalai/config.py:229 | `testing_no_fake_embedder` vaut `True` par défaut, à l'inverse de ce que disent la spec et le commentaire de `config.py:52` (« E2E seulement, jamais en `testing` ordinaire »). Seul `load_settings` (l.311) remet la valeur à `False`. Un `Settings(testing=True)` construit directement, ou un `model_copy(update={\"testing\": True})`, n'aurait donc aucun `fake` embedder (`models/fake.py:142`). Aucun appel de ce type n'existe aujourd'hui (vérifié par grep), donc le défaut est latent. Correctif : passer la valeur par défaut à `False` | certain",
+  "cid": "c031"
+ },
+ {
+  "relecteur": "openai/gpt-6.1-sol",
+  "story": "wl25",
+  "n": 1,
+  "fichier": "src/wavelocalai/greenops/cloud_estimate.py",
+  "lignes": [
+   29,
+   29
+  ],
+  "refs": [
+   [
+    "src/wavelocalai/greenops/cloud_estimate.py",
+    29,
+    29
+   ]
+  ],
+  "severite": "Important",
+  "etiquette": "Important",
+  "important": true,
+  "description": "La conversion kgCO2eq → mg utilise 999999 au lieu de 1000000 : toutes les estimations et leurs bornes sont sous-évaluées. Par exemple, une plage de 0,001 à 0,003 kg doit produire 1000 à 3000 mg, avec un milieu de 2000 mg. Le test existant masque cette erreur avec la tolérance relative par défaut de pytest.approx (10⁻⁶), égale à l'erreur introduite.",
+  "test_pytest": true,
+  "cid": "c032"
+ },
+ {
+  "relecteur": "openai/gpt-6-luna",
+  "story": "wl94",
+  "n": 2,
+  "fichier": "src/wavelocalai/config.py",
+  "lignes": [
+   231,
+   231
+  ],
+  "refs": [
+   [
+    "src/wavelocalai/config.py",
+    231,
+    231
+   ]
+  ],
+  "severite": "Nit",
+  "etiquette": "Nit",
+  "important": false,
+  "description": "La valeur par défaut `True` désactive le faux embedder pour tout `Settings(testing=True)` construit directement, même sans activer le réglage E2E. `load_settings` remet bien la valeur à `False` si la variable d’environnement est absente, mais le comportement par défaut de `Settings` contredit la contrainte « E2E seulement » pour ses autres appelants.",
+  "test_pytest": false,
+  "cid": "c033"
+ },
+ {
+  "relecteur": "opus",
+  "story": "wl91",
+  "n": 1,
+  "fichier": "src/wavelocalai/__main__.py",
+  "lignes": [
+   158,
+   158
+  ],
+  "refs": [
+   [
+    "src/wavelocalai/__main__.py",
+    158,
+    158
+   ]
+  ],
+  "severite": "medium",
+  "etiquette": "Important",
+  "important": true,
+  "description": "Important | medium | src/wavelocalai/__main__.py:158 | Le fil de guet est créé avec `daemon=False`, alors que la spec indique `daemon=True` et en fait un filet de sécurité (« le fil est de toute façon `daemon=True` »). `stop_browser.set()` ne sert qu'avant l'appel à `webbrowser.open`. Si cet appel bloque, la sortie de l'interpréteur attend la fin du fil après la fin de `serve()`. C'est le cas d'un navigateur console sur Linux sans affichage : `webbrowser` choisit alors lynx ou w3m via `GenericBrowser`, qui fait `p.wait()`. Le serveur arrêté, base fermée et verrou relâché, le processus ne rend donc pas la main. Correctif : `daemon=True`, conforme à la spec. | probable",
+  "cid": "c034"
+ },
+ {
+  "relecteur": "haiku",
+  "story": "wd96",
+  "n": 2,
+  "fichier": "src/wavedevsecops/projections/links.py",
+  "lignes": [
+   113,
+   113
+  ],
+  "refs": [
+   [
+    "src/wavedevsecops/projections/links.py",
+    113,
+    113
+   ]
+  ],
+  "severite": "low",
+  "etiquette": "Nit",
+  "important": false,
+  "description": "Nit | low | src/wavedevsecops/projections/links.py:113 | La garde `ref <= EXPLAIN_CHECK` est toujours vraie : `pipeline.*` et le défaut `remote.check` sont tous deux `<= \"remote.check\"` (comparaison de chaînes). Pas de bug aujourd'hui, mais la condition ne filtre rien et serait fausse si une clé préfixée au-delà de `r` apparaissait | certain",
+  "cid": "c035"
+ },
+ {
+  "relecteur": "openai/gpt-6.1-sol",
+  "story": "us612",
+  "n": 1,
+  "fichier": "src/usine/adaptateurs/llm/fournisseur.py",
+  "lignes": [
+   407,
+   407
+  ],
+  "refs": [
+   [
+    "src/usine/adaptateurs/llm/fournisseur.py",
+    407,
+    407
+   ]
+  ],
+  "severite": "Important",
+  "etiquette": "Important",
+  "important": true,
+  "description": "La condition `config.fournisseur >= \"local\"` capture aussi `\"mistral\"` (comparaison lexicographique). Toutes les configurations Mistral passent désormais dans la branche locale : la clé fournie est remplacée par `sans-cle` et les requêtes sont dirigées vers localhost ou USINE_LLM_LOCAL_URL, au lieu du fournisseur Mistral. Cela casse le fournisseur existant. Utiliser une égalité stricte avec `\"local\"`.",
+  "test_pytest": true,
+  "cid": "c036"
+ },
+ {
+  "relecteur": "haiku",
+  "story": "wd58",
+  "n": 1,
+  "fichier": "src/wavedevsecops/engine/designation.py",
+  "lignes": [
+   131,
+   131
+  ],
+  "refs": [
+   [
+    "src/wavedevsecops/engine/designation.py",
+    131,
+    131
+   ]
+  ],
+  "severite": "medium",
+  "etiquette": "Important",
+  "important": true,
+  "description": "Important | medium | src/wavedevsecops/engine/designation.py:131 | `_exists` compare les SHA avec `s.sha >= segments[0]` (ordre lexicographique) au lieu d'une égalité. Un SHA de commit inexistant mais lexicographiquement inférieur à un SHA de stash passe la vérification. `_verify` ne refuse donc plus (409, sans essai consommé) un élément absent : il est corrigé et consomme l'unique essai. Preuve par lecture : `commit:0000000…` est accepté dès qu'un SHA de stash existe. Aucun test ne couvre un SHA inexistant dans `tests/test_scenario_b_stash_rebase.py`. | certain",
+  "cid": "c037"
+ },
+ {
+  "relecteur": "openai/gpt-6-luna",
+  "story": "ws-minicpm",
+  "n": 1,
+  "fichier": "src/wavestack/tools/parser.py",
+  "lignes": [
+   124,
+   124
+  ],
+  "refs": [
+   [
+    "src/wavestack/tools/parser.py",
+    124,
+    124
+   ]
+  ],
+  "severite": "Nit",
+  "etiquette": "Nit",
+  "important": false,
+  "description": "`return -0` vaut `0`, pas une position négative. Si une valeur CDATA n’est jamais fermée, `_parse_minicpm5` traite donc l’appel comme un bloc vide et renvoie un fragment vide avec le message « balise function absente », au lieu d’un diagnostic pertinent sur l’appel mal formé. Retourner `-1` permettrait au chemin « jamais fermée » de le signaler correctement.",
+  "test_pytest": false,
+  "cid": "c038"
+ },
+ {
+  "relecteur": "haiku",
+  "story": "ws-v2s6",
+  "n": 1,
+  "fichier": "src/wavestack/models/cloud_base.py",
+  "lignes": [
+   341,
+   341
+  ],
+  "refs": [
+   [
+    "src/wavestack/models/cloud_base.py",
+    341,
+    341
+   ]
+  ],
+  "severite": "low",
+  "etiquette": "Important",
+  "important": false,
+  "description": "Important | low | src/wavestack/models/cloud_base.py:341 | `cache_savings` borne `cached_write` avec `max(-1, …)` au lieu de `max(0, …)`, contrairement à `call_cost` (ligne 303). Un `cached_write` négatif passerait dans le dict et `not cached_read and not cached_write` vaudrait faux, donc la ligne serait émise avec des tokens négatifs. Le pipeline ne peut pas le produire (`_cached_tokens` borne à `max(0, …)`, ligne 376), donc c'est latent. Preuve par lecture seule, rien n'a été exécuté. | certain",
+  "cid": "c039"
+ },
+ {
+  "relecteur": "haiku",
+  "story": "us612",
+  "n": 2,
+  "fichier": "src/usine/adaptateurs/llm/fournisseur.py",
+  "lignes": [
+   407,
+   407
+  ],
+  "refs": [
+   [
+    "src/usine/adaptateurs/llm/fournisseur.py",
+    407,
+    407
+   ]
+  ],
+  "severite": "medium",
+  "etiquette": "Important",
+  "important": true,
+  "description": "Important | medium | src/usine/adaptateurs/llm/fournisseur.py:407 | Conséquence sur les tests : la suite de contrat paramétrée par `FABRIQUES` et les tests Mistral de `tests/unit/adaptateurs/llm/test_fournisseur.py` vérifient les URL ou la clé du fournisseur Mistral ; ils devraient échouer dès que la branche `local` capte `mistral`. Non vérifié (pas d'exécution). | probable",
+  "cid": "c040"
+ },
+ {
+  "relecteur": "openai/gpt-6.1-sol",
+  "story": "wl94",
+  "n": 1,
+  "fichier": "src/wavelocalai/config.py",
+  "lignes": [
+   229,
+   229
+  ],
+  "refs": [
+   [
+    "src/wavelocalai/config.py",
+    229,
+    229
+   ]
+  ],
+  "severite": "Important",
+  "etiquette": "Important",
+  "important": true,
+  "description": "Le nouveau champ `testing_no_fake_embedder` vaut `True` par défaut, alors que la suppression du faux embedder doit être réservée à une activation explicite pour les E2E. Ainsi, `Settings(testing=True)` ne fournit désormais plus aucun faux embedder : `fake_embedders` renvoie `{}`, ce qui casse le dernier recours d'ingestion pour les appelants construisant directement les réglages. `load_settings` masque cette régression en réécrivant le champ à `False` lorsque la variable d'environnement est absente. La valeur par défaut du champ doit également être `False`.",
+  "test_pytest": true,
+  "cid": "c041"
+ },
+ {
+  "relecteur": "opus",
+  "story": "wl25",
+  "n": 1,
+  "fichier": "src/wavelocalai/greenops/cloud_estimate.py",
+  "lignes": [
+   30,
+   30
+  ],
+  "refs": [
+   [
+    "src/wavelocalai/greenops/cloud_estimate.py",
+    30,
+    30
+   ]
+  ],
+  "severite": "medium",
+  "etiquette": "Important",
+  "important": true,
+  "description": "Important | medium | src/wavelocalai/greenops/cloud_estimate.py:30 | `KG_TO_MG = 999999.0` au lieu de `1_000_000`. Chaque estimation cloud (`mg` et `range_mg.low/high`), donc la valeur écrite dans `runs` et la somme de session, est sous-estimée d'un facteur 1e-6. Le critère 1 (« kgCO2eq converti en mg ») n'est pas respecté. Le test `tests/v2/unit/test_cloud_estimate.py::test_units_are_milligrams_from_kilograms_of_co2_equivalent` ne voit pas l'erreur : il compare avec `pytest.approx(x * 1_000_000)`, dont la tolérance relative par défaut est exactement 1e-6, si bien que 999999 passe pile à la limite. Correctif : `KG_TO_MG = 1_000_000.0`, et `rel=1e-12` dans ce test. | certain",
+  "cid": "c042"
+ },
+ {
+  "relecteur": "haiku",
+  "story": "wd81",
+  "n": 3,
+  "fichier": "src/wavedevsecops/ci/findings.py",
+  "lignes": [
+   142,
+   142
+  ],
+  "refs": [
+   [
+    "src/wavedevsecops/ci/findings.py",
+    142,
+    142
+   ]
+  ],
+  "severite": "low",
+  "etiquette": "Important",
+  "important": false,
+  "description": "Important | low | src/wavedevsecops/ci/findings.py:142 | `data.get(\"errors\") or []` : si `errors` n'est pas une liste (par exemple un entier), `for item in ...` lève `TypeError`. `_machine_findings` ne rattrape que `OSError, UnicodeDecodeError, ValueError` (src/wavedevsecops/ci/__init__.py:356), donc l'exception sort de `run_job` au lieu de la `ValueError` annoncée par la spec. Déclencheur : sortie bandit malformée, peu réaliste. | certain",
+  "cid": "c043"
+ },
+ {
+  "relecteur": "haiku",
+  "story": "ws-minicpm",
+  "n": 2,
+  "fichier": "src/wavestack/tools/parser.py",
+  "lignes": [
+   128,
+   128
+  ],
+  "refs": [
+   [
+    "src/wavestack/tools/parser.py",
+    128,
+    128
+   ]
+  ],
+  "severite": "medium",
+  "etiquette": "Important",
+  "important": true,
+  "description": "Important | medium | src/wavestack/tools/parser.py:128 | `return -0` vaut `0`, pas `-1`, quand un CDATA n'est jamais refermé. L'appelant (l. 184) ne voit pas « jamais fermé » : il prend `block = raw[start:0] = \"\"`, puis `_minicpm5(\"\")` renvoie « balise `<function …>` absente ou mal fermée » avec un fragment vide. Preuve par lecture : `<function name=\"x\"><param name=\"s\"><![CDATA[abc</function>` donne ce message au lieu de « jamais fermée », que la matrice impose. Aucun test ne couvre ce cas. | certain",
+  "cid": "c044"
+ },
+ {
+  "relecteur": "openai/gpt-6.1-sol",
+  "story": "wd58",
+  "n": 1,
+  "fichier": "src/wavedevsecops/engine/designation.py",
+  "lignes": [
+   131,
+   131
+  ],
+  "refs": [
+   [
+    "src/wavedevsecops/engine/designation.py",
+    131,
+    131
+   ]
+  ],
+  "severite": "Important",
+  "etiquette": "Important",
+  "important": true,
+  "description": "La vérification d'existence compare les SHA du stash avec `>=` au lieu de `==`. Avec un stash de SHA `ffff…`, un identifiant inexistant `commit:1111…` est donc considéré comme existant. Cela fausse la validation des éléments soumis au panneau de désignation : la présence d'un stash ne doit rendre désignables que les commits réellement présents, pas tous les SHA lexicographiquement inférieurs. Remplacer cette comparaison par une égalité, comme pour les commits de l'historique.",
+  "test_pytest": true,
+  "cid": "c045"
+ }
+]

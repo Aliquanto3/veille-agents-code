@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "wd81",
+ "latence_s": 11.7,
+ "usage": {
+  "prompt_tokens": 8120,
+  "completion_tokens": 503,
+  "total_tokens": 8623,
+  "cost": 0.0253285,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 8117,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0253285,
+   "upstream_inference_prompt_cost": 0.0202985,
+   "upstream_inference_completions_cost": 0.00503
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 232,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.0253285,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 503,
+   "cout_usd": 0.0253285,
+   "latence_s": 11.7
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavedevsecops/ci/findings.py\",\"ligne\":122,\"severite\":\"Important\",\"description\":\"Le lecteur accepte silencieusement des sorties machine invalides : une chaîne vide est remplacée par {}, l'absence de results devient une liste vide et les résultats non objets sont ignorés. Ainsi, une sortie vide ou {\\\"results\\\":[null]} est présentée comme une absence de constats plutôt que comme des « constats indisponibles ». Cela viole le contrat explicite imposant ValueError pour une sortie illisible ou de forme inattendue. Le test ajouté qui attend [] pour une chaîne vide entérine ce défaut.\",\"test_pytest\":\"from pathlib import Path\\n\\nimport pytest\\n\\nfrom wavedevsecops.ci.findings import parse_bandit_json\\n\\n\\n@pytest.mark.parametrize(\\\"text\\\", [\\\"\\\", \\\"{}\\\", '{\\\"results\\\": [null]}', '{\\\"results\\\": [], \\\"errors\\\": \\\"inattendu\\\"}'])\\ndef test_bandit_refuse_une_sortie_machine_inattendue(tmp_path: Path, text: str) -> None:\\n    with pytest.raises(ValueError):\\n        parse_bandit_json(text, tmp_path)\\n\"}]}"
+}

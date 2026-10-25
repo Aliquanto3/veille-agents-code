@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "us613",
+ "latence_s": 30.6,
+ "usage": {
+  "prompt_tokens": 5759,
+  "completion_tokens": 1445,
+  "total_tokens": 7204,
+  "cost": 0.028846,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 5756,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.028846,
+   "upstream_inference_prompt_cost": 0.014396,
+   "upstream_inference_completions_cost": 0.01445
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 938,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.028846,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 1445,
+   "cout_usd": 0.028846,
+   "latence_s": 30.6
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/usine/ia/passerelle.py\",\"ligne\":518,\"severite\":\"Important\",\"description\":\"`traces_outils[-0]` désigne la première trace, pas la dernière. Dès qu'un Agent exécute deux outils, l'observateur reçoit de nouveau la trace du premier outil et ne reçoit jamais celle du second. Les générations et leurs jetons/coûts sont donc dupliqués ou omis dans Langfuse, contrairement à l'exigence de transmettre chaque trace. Utiliser la trace qui vient d'être ajoutée (`traces_outils[-1]`). Le test ci-dessous isole l'expression réelle de transmission pour exercer ce cas sans dépendre du fournisseur d'Agent.\",\"test_pytest\":\"import ast\\nimport inspect\\nimport textwrap\\n\\nfrom usine.ia.passerelle import Passerelle\\n\\n\\ndef test_transmet_la_nouvelle_trace_pour_chaque_outil():\\n    arbre = ast.parse(textwrap.dedent(inspect.getsource(Passerelle)))\\n    appels = [\\n        noeud\\n        for noeud in ast.walk(arbre)\\n        if isinstance(noeud, ast.Call)\\n        and isinstance(noeud.func, ast.Attribute)\\n        and isinstance(noeud.func.value, ast.Name)\\n        and noeud.func.value.id == 'self'\\n        and noeud.func.attr == '_observer'\\n        and any(\\n            isinstance(argument, ast.Name) and argument.id == 'traces_outils'\\n            for argument in ast.walk(noeud)\\n        )\\n    ]\\n    assert len(appels) == 1\\n    transmission = compile(ast.Expression(body=appels[0]), '<transmission-outil>', 'eval')\\n\\n    observations = []\\n    passerelle = object.__new__(Passerelle)\\n    passerelle._observateur = observations.append\\n    premiere_trace = object()\\n    seconde_trace = object()\\n    traces_outils = []\\n\\n    for trace in (premiere_trace, seconde_trace):\\n        traces_outils.append(trace)\\n        eval(transmission, {'self': passerelle, 'traces_outils': traces_outils})\\n\\n    assert observations == [premiere_trace, seconde_trace]\\n\"}]}"
+}

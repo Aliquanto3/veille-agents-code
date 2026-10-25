@@ -1,0 +1,100 @@
+{
+ "duration_api_ms": 171505,
+ "stop_reason": "end_turn",
+ "session_id": "bdf6e244-05aa-4327-8f99-e72b866ae19f",
+ "total_cost_usd": 0.04118238,
+ "usage": {
+  "input_tokens": 18,
+  "cache_creation_input_tokens": 88561,
+  "cache_read_input_tokens": 488138,
+  "output_tokens": 37174,
+  "output_tokens_details": {
+   "thinking_tokens": 33529
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 88561,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 4835,
+    "cache_read_input_tokens": 87081,
+    "cache_creation_input_tokens": 7319,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 7319
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "modelUsage": {
+  "claude-haiku-5-5": {
+   "inputTokens": 18,
+   "outputTokens": 37174,
+   "cacheReadInputTokens": 488138,
+   "cacheCreationInputTokens": 88561,
+   "webSearchRequests": 0,
+   "costUSD": 0.04118238,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 33529,
+   "canonicalModel": "claude-haiku-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "permission_denials": [],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "fast_mode_disabled_reason": "sdk_opt_in_required",
+ "subagent_stats": {
+  "spawned": 0,
+  "requested": {
+   "background": 0,
+   "foreground": 0,
+   "unset": 0
+  },
+  "started_in_background": 0,
+  "max_depth": 0,
+  "spawned_by_subagents": 0,
+  "completed": 0,
+  "failed": 0,
+  "killed": {
+   "parent": 0,
+   "user": 0,
+   "system": 0
+  },
+  "refused": {
+   "depth_limit": 0,
+   "concurrency_limit": 0,
+   "budget": 0
+  },
+  "by_type": {}
+ },
+ "safety_stops": 0,
+ "is_error": false,
+ "num_turns": 22,
+ "subtype": "success",
+ "api_error_status": null,
+ "result": "base : sans objet. Lecture seule, sans exécution de tests. Les fichiers JS, CSS et i18n ont été lus dans l'arbre, car le diff ne les contient pas.\n\nImportant | medium | src/wavelocalai/web/static/screens/arena-judge-banner.js:108 | L'AC2 demande « Juge : <modèle> · chargement » dès l'événement `judge`. `setJudge` remet `active` à vide, donc `text()` (l.80) affiche « en attente des réponses » jusqu'au premier `loading`. Le test E2E `tests/v2/e2e/test_arena.py:834` code ce comportement, et non la spec. | certain\n\nImportant | low | src/wavelocalai/evaluation/judge.py:121 | Le contrat veut `scoring` dès la prise de la place (D3). Pour un juge local, `scoring` n'est dit qu'après `LOAD_GRACE_S` (l.126-127) ou au premier fragment, donc la notation s'affiche en retard. Si `/api/ps` est lent, on obtient `scoring` puis `loading` (l.137-138). C'est documenté dans la docstring, mais ce n'est pas conforme à la spec. | certain\n\nImportant | medium | _bmad-output/specs/spec-wavelocalai-v2/contrat-api.md:1 | AC5 non tenue : `judge_progress` n'apparaît dans aucun fichier du dépôt, et `contrat-api.md` comme `EXPERIENCE.md` (§Arène) sont introuvables sous ces chemins (Glob vide). | probable (ces fichiers sont peut-être hors de ce dépôt)\n\nImportant | low | src/wavelocalai/web/static/screens/arena-judge-banner.js:132 | La spec pose `banner_down` « avant toute note réussie ». Le code le pose aussi après une note réussie : `score()` (l.131-132) fixe `down` dès qu'un `judge_score` porte la raison indisponible, quel que soit `scored`. Le comportement est défendable, mais il diffère de l'AC4. | certain\n\nNit | low | src/wavelocalai/inference/streaming.py:174 | La spec attribue à `_consume` le correctif « loading pour un appel silencieux », mais le fichier n'est pas dans le diff. La branche `capture` (l.174) avale toujours les `LoadState`, donc `on_phase(\"loading\")` (l.184-185) n'est jamais atteint pour la notation. Le `loading` passe en réalité par `_PhasedModel`. Le fonctionnement est correct, la spec est périmée. | certain\n\nVérifié sans défaut retenu : annulation et délai dans `_PhasedModel` (fermeture de `upstream`, pas de tâche orpheline), décompte du `total` à la baisse (`_refresh_judge_total`, `judge_live` vidé dans le `finally`), et compatibilité des signatures `LaneJudge.score` (un seul implémenteur). Aucun constat high ni medium côté code.",
+ "ttft_ms": 2582,
+ "type": "result",
+ "duration_ms": 172929,
+ "uuid": "917b24a3-4551-4e6a-9b6a-4f7d1ed9b854",
+ "ttft_stream_ms": 980,
+ "time_to_request_ms": 189,
+ "first_content_frame_ms": 980,
+ "queued_turn_count": 0,
+ "result_index": 0,
+ "_duree_s": 173.8
+}

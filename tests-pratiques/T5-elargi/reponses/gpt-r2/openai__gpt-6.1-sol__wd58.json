@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "wd58",
+ "latence_s": 11.1,
+ "usage": {
+  "prompt_tokens": 7199,
+  "completion_tokens": 461,
+  "total_tokens": 7660,
+  "cost": 0.022606,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 7196,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.022606,
+   "upstream_inference_prompt_cost": 0.017996,
+   "upstream_inference_completions_cost": 0.00461
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 187,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.022606,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 461,
+   "cout_usd": 0.022606,
+   "latence_s": 11.1
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavedevsecops/engine/designation.py\",\"ligne\":131,\"severite\":\"Important\",\"description\":\"La vérification d'existence compare le SHA du stash avec `>=` au lieu de `==`. Dès qu'un stash existe, tout SHA inexistant lexicographiquement inférieur est ainsi considéré comme un commit présent. Par exemple, un stash de SHA `bbbb…` fait accepter comme existant le commit absent `aaaa…`. Cela fausse le contrôle des éléments soumis au mécanisme de désignation ; il faut vérifier l'égalité exacte, comme pour les commits de l'historique.\",\"test_pytest\":\"from types import SimpleNamespace\\n\\nfrom wavedevsecops.engine import designation\\n\\n\\ndef test_un_stash_ne_rend_pas_existant_un_autre_commit():\\n    stash_sha = \\\"b\\\" * 40\\n    absent_sha = \\\"a\\\" * 40\\n    state = SimpleNamespace(\\n        commits=[],\\n        stash=[SimpleNamespace(sha=stash_sha)],\\n    )\\n\\n    assert designation._exists(f\\\"commit:{stash_sha}\\\", state)\\n    assert not designation._exists(f\\\"commit:{absent_sha}\\\", state)\\n\"}]}"
+}

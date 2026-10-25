@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "wd56",
+ "latence_s": 54.9,
+ "usage": {
+  "prompt_tokens": 9548,
+  "completion_tokens": 2764,
+  "total_tokens": 12312,
+  "cost": 0.0515085,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 9545,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0515085,
+   "upstream_inference_prompt_cost": 0.0238685,
+   "upstream_inference_completions_cost": 0.02764
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 1552,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.0515085,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 2764,
+   "cout_usd": 0.0515085,
+   "latence_s": 54.9
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavedevsecops/scenarios/steps/history_clean.py\",\"ligne\":44,\"severite\":\"Important\",\"description\":\"`--full-history` ne suffit pas à examiner les modifications des commits de fusion : sans option de diff des merges, `git log --diff-filter=AMRC` peut omettre un merge qui introduit lui-même `.env`, alors qu'aucun parent ne le contient. Après suppression du fichier dans un commit ultérieur et ajout à `.gitignore`, l'étape passe malgré ce commit contaminé toujours accessible. Il faut aussi examiner les diffs des merges.\",\"test_pytest\":\"from types import SimpleNamespace\\n\\nfrom wavedevsecops.scenarios.steps import history_clean\\n\\n\\ndef test_env_introduit_par_un_merge_reste_contaminant(tmp_path):\\n    # Historique simulé : deux parents propres, un merge ajoutant .env,\\n    # puis un commit supprimant .env et ajoutant .gitignore.\\n    sha = 'a' * 40\\n    (tmp_path / '.gitignore').write_text('.env\\\\n', encoding='utf-8')\\n\\n    class GitDouble:\\n        def run(self, *args, **kwargs):\\n            command = args[0]\\n            if command == 'log':\\n                # Sans demande explicite de diff des merges, git log ne\\n                # sélectionne pas ce merge avec --diff-filter=AMRC.\\n                inspecte_merges = any(\\n                    arg in ('-m', '-c', '--cc', '--remerge-diff')\\n                    or (arg.startswith('--diff-merges=')\\n                        and arg != '--diff-merges=off')\\n                    for arg in args\\n                )\\n                stdout = sha + '\\\\n' if inspecte_merges else ''\\n                return SimpleNamespace(ok=True, returncode=0, stdout=stdout)\\n            if command == 'ls-files':\\n                return SimpleNamespace(ok=True, returncode=0, stdout='')\\n            if command == 'check-ignore':\\n                return SimpleNamespace(ok=True, returncode=0, stdout='')\\n            if command == 'for-each-ref':\\n                return SimpleNamespace(ok=True, returncode=0, stdout='refs/heads/main\\\\n')\\n            raise AssertionError(args)\\n\\n    git = GitDouble()\\n    ctx = SimpleNamespace(\\n        git=lambda: git,\\n        layout=SimpleNamespace(repo=tmp_path),\\n        step=SimpleNamespace(path='.env', ignored=True, step_id='nettoyer'),\\n        previous=None,\\n    )\\n    verdict = history_clean.check(object(), ctx)\\n    assert verdict.status == 'failed'\\n    assert any(item.element_id == 'commit:' + sha for item in verdict.observed)\\n\"},{\"id\":\"C2\",\"fichier\":\"src/wavedevsecops/scenarios/steps/history_clean.py\",\"ligne\":90,\"severite\":\"Important\",\"description\":\"`git check-ignore -q --no-index` accepte aussi les exclusions de `.git/info/exclude` et du fichier global `core.excludesFile`. L'étape peut donc être validée sans aucune règle dans `.gitignore`, contrairement au critère explicite de la story et au message de validation. Il faut vérifier la provenance de la règle effective, pas seulement le code de retour de `check-ignore`.\",\"test_pytest\":\"from types import SimpleNamespace\\n\\nfrom wavedevsecops.scenarios.steps import history_clean\\n\\n\\ndef test_exclusion_locale_ne_remplace_pas_gitignore(tmp_path, monkeypatch):\\n    # Le fichier est sorti de l'historique et de l'index, mais seule\\n    # l'exclusion locale du dépôt l'ignore ; aucun .gitignore n'existe.\\n    info = tmp_path / '.git' / 'info'\\n    info.mkdir(parents=True)\\n    (info / 'exclude').write_text('.env\\\\n', encoding='utf-8')\\n    monkeypatch.setattr(history_clean, '_leaking', lambda ctx, path: [])\\n    monkeypatch.setattr(history_clean, '_tracked', lambda ctx, path: False)\\n\\n    class GitDouble:\\n        def run(self, *args, **kwargs):\\n            assert args[0] == 'check-ignore'\\n            verbose = '-v' in args or '--verbose' in args\\n            stdout = '.git/info/exclude:1:.env\\\\t.env\\\\n' if verbose else ''\\n            return SimpleNamespace(ok=True, returncode=0, stdout=stdout)\\n\\n    git = GitDouble()\\n    ctx = SimpleNamespace(\\n        git=lambda: git,\\n        layout=SimpleNamespace(repo=tmp_path),\\n        step=SimpleNamespace(path='.env', ignored=True, step_id='nettoyer'),\\n        previous=None,\\n    )\\n    verdict = history_clean.check(object(), ctx)\\n    assert verdict.status == 'failed'\\n\"},{\"id\":\"C3\",\"fichier\":\"src/wavedevsecops/scenarios/ops/diff_line.py\",\"ligne\":55,\"severite\":\"Nit\",\"description\":\"L'opération vérifie seulement que la ligne existe dans le fichier de la révision, pas qu'elle appartient au diff du commit. Une configuration visant une ligne inchangée peut donc produire un alias `diffline` qui ne correspond à aucune ligne désignable dans la revue. Le scénario fourni cible bien une ligne ajoutée ; ce défaut concerne surtout le garde-fou d'authoring du nouveau module partagé.\",\"test_pytest\":null}]}"
+}

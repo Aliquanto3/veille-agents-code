@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "wl91",
+ "latence_s": 24.1,
+ "usage": {
+  "prompt_tokens": 5165,
+  "completion_tokens": 1883,
+  "total_tokens": 7048,
+  "cost": 0.00158705,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 5162,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00158705,
+   "upstream_inference_prompt_cost": 0.00064555,
+   "upstream_inference_completions_cost": 0.0009415
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 1776,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.00158705,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 1883,
+   "cout_usd": 0.00158705,
+   "latence_s": 24.1
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"README.md\",\"ligne\":1,\"severite\":\"Nit\",\"description\":\"La story exige de documenter `--no-browser` et `[server] open_browser` dans le README ainsi que `open_browser` dans `wavelocalai.toml`, mais aucun de ces fichiers n’est modifié dans le diff. Le réglage et son option restent donc sans la documentation utilisateur prévue.\",\"test_pytest\":null}]}"
+}

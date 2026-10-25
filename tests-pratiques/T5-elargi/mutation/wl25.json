@@ -1,0 +1,153 @@
+{
+ "story": "wl25",
+ "test_command": "T:/v/wavelocalai/.venv/Scripts/python.exe -m pytest -q -x --tb=no -p no:cacheprovider --deselect=tests/v2/web/test_chat_cloud_api.py::test_cloud_chat_streams_without_the_local_slot_and_marks_the_run_as_cloud[openai] --deselect=tests/v2/web/test_chat_cloud_api.py::test_cloud_chat_streams_without_the_local_slot_and_marks_the_run_as_cloud[anthropic] tests/v2/e2e/test_chat.py tests/v2/e2e/test_topbar.py tests/v2/unit/test_carbon_session.py tests/v2/unit/test_cloud_estimate.py tests/v2/web/test_chat_cloud_api.py tests/v2/web/test_chat_cloud_co2.py tests/v2/web/test_topbar_support.py",
+ "tests_seconds": 11.0,
+ "tests_rc": 0,
+ "modules": [
+  {
+   "module": "src/wavelocalai/greenops/cloud_estimate.py",
+   "generes": 227,
+   "effectifs": 150,
+   "echantillon": 62,
+   "executes": 62,
+   "tues": 51
+  },
+  {
+   "module": "src/wavelocalai/greenops/session.py",
+   "generes": 45,
+   "effectifs": 6,
+   "echantillon": 3,
+   "executes": 3,
+   "tues": 3
+  },
+  {
+   "module": "src/wavelocalai/inference/chat.py",
+   "generes": 55,
+   "effectifs": 13,
+   "echantillon": 4,
+   "executes": 4,
+   "tues": 3
+  },
+  {
+   "module": "src/wavelocalai/inference/streaming.py",
+   "generes": 308,
+   "effectifs": 2,
+   "echantillon": 1,
+   "executes": 1,
+   "tues": 0
+  }
+ ],
+ "survivants": [
+  {
+   "module": "src/wavelocalai/greenops/cloud_estimate.py",
+   "ligne": 126,
+   "colonne": 51,
+   "operateur": "core/ReplaceComparisonOperator_Gt_NotEq",
+   "occurrence": 0,
+   "fonction": "_range_mg",
+   "job_id": "837c83fd6e7d4fcca89b557dac15476f",
+   "diff": "--- mutation diff ---\n--- a/src\\wavelocalai\\greenops\\cloud_estimate.py\n+++ b/src\\wavelocalai\\greenops\\cloud_estimate.py\n@@ -123,7 +123,7 @@\n             return None\n         low = high = value\n     low_mg, high_mg = float(low) * KG_TO_MG, float(high) * KG_TO_MG\n-    if not (0 <= low_mg <= high_mg) or not high_mg > 0:  # négatif, inversé, NaN ou nul : jamais 0\n+    if not (0 <= low_mg <= high_mg) or not high_mg != 0:  # négatif, inversé, NaN ou nul : jamais 0\n         return None\n     return low_mg, high_mg\n "
+  },
+  {
+   "module": "src/wavelocalai/greenops/cloud_estimate.py",
+   "ligne": 134,
+   "colonne": 4,
+   "operateur": "core/ReplaceBinaryOperator_Mul_Div",
+   "occurrence": 2,
+   "fonction": "estimate_cloud_co2",
+   "job_id": "d771a5fde31b4c85b11cc1b76d96d6f5",
+   "diff": "--- mutation diff ---\n--- a/src\\wavelocalai\\greenops\\cloud_estimate.py\n+++ b/src\\wavelocalai\\greenops\\cloud_estimate.py\n@@ -131,7 +131,7 @@\n def estimate_cloud_co2(\n     provider: str,\n     model: str,\n-    *,\n+    /,\n     output_tokens: int | None,\n     latency_s: float | None,\n     groq_table: Mapping[str, str] | None = None,"
+  },
+  {
+   "module": "src/wavelocalai/greenops/cloud_estimate.py",
+   "ligne": 148,
+   "colonne": 46,
+   "operateur": "core/ReplaceComparisonOperator_LtE_Lt",
+   "occurrence": 2,
+   "fonction": "estimate_cloud_co2",
+   "job_id": "3b15e4433d014955b0453a8df06f6f19",
+   "diff": "--- mutation diff ---\n--- a/src\\wavelocalai\\greenops\\cloud_estimate.py\n+++ b/src\\wavelocalai\\greenops\\cloud_estimate.py\n@@ -145,7 +145,7 @@\n         target = ecologits_target(provider, model, groq_table or {})\n         if isinstance(target, str):\n             return _unmeasurable(target)\n-        if not output_tokens or output_tokens <= 0:\n+        if not output_tokens or output_tokens < 0:\n             return _unmeasurable(\n                 f\"{PROVIDER_NAMES.get(provider, provider)} n'a pas indiqué le nombre de jetons \"\n                 \"générés : l'empreinte ne peut pas être calculée.\""
+  },
+  {
+   "module": "src/wavelocalai/greenops/cloud_estimate.py",
+   "ligne": 126,
+   "colonne": 12,
+   "operateur": "core/NumberReplacer",
+   "occurrence": 5,
+   "fonction": "_range_mg",
+   "job_id": "9ef49595cf534f50a866e714c0f2be78",
+   "diff": "--- mutation diff ---\n--- a/src\\wavelocalai\\greenops\\cloud_estimate.py\n+++ b/src\\wavelocalai\\greenops\\cloud_estimate.py\n@@ -123,7 +123,7 @@\n             return None\n         low = high = value\n     low_mg, high_mg = float(low) * KG_TO_MG, float(high) * KG_TO_MG\n-    if not (0 <= low_mg <= high_mg) or not high_mg > 0:  # négatif, inversé, NaN ou nul : jamais 0\n+    if not ( -1 <= low_mg <= high_mg) or not high_mg > 0:  # négatif, inversé, NaN ou nul : jamais 0\n         return None\n     return low_mg, high_mg\n "
+  },
+  {
+   "module": "src/wavelocalai/greenops/cloud_estimate.py",
+   "ligne": 126,
+   "colonne": 24,
+   "operateur": "core/ReplaceComparisonOperator_LtE_IsNot",
+   "occurrence": 1,
+   "fonction": "_range_mg",
+   "job_id": "0469704b766a4860a470c81c804b2c6d",
+   "diff": "--- mutation diff ---\n--- a/src\\wavelocalai\\greenops\\cloud_estimate.py\n+++ b/src\\wavelocalai\\greenops\\cloud_estimate.py\n@@ -123,7 +123,7 @@\n             return None\n         low = high = value\n     low_mg, high_mg = float(low) * KG_TO_MG, float(high) * KG_TO_MG\n-    if not (0 <= low_mg <= high_mg) or not high_mg > 0:  # négatif, inversé, NaN ou nul : jamais 0\n+    if not (0 <= low_mg is not high_mg) or not high_mg > 0:  # négatif, inversé, NaN ou nul : jamais 0\n         return None\n     return low_mg, high_mg\n "
+  },
+  {
+   "module": "src/wavelocalai/greenops/cloud_estimate.py",
+   "ligne": 148,
+   "colonne": 46,
+   "operateur": "core/ReplaceComparisonOperator_LtE_Eq",
+   "occurrence": 2,
+   "fonction": "estimate_cloud_co2",
+   "job_id": "6546230e9bfa4ceda620418873698cf7",
+   "diff": "--- mutation diff ---\n--- a/src\\wavelocalai\\greenops\\cloud_estimate.py\n+++ b/src\\wavelocalai\\greenops\\cloud_estimate.py\n@@ -145,7 +145,7 @@\n         target = ecologits_target(provider, model, groq_table or {})\n         if isinstance(target, str):\n             return _unmeasurable(target)\n-        if not output_tokens or output_tokens <= 0:\n+        if not output_tokens or output_tokens == 0:\n             return _unmeasurable(\n                 f\"{PROVIDER_NAMES.get(provider, provider)} n'a pas indiqué le nombre de jetons \"\n                 \"générés : l'empreinte ne peut pas être calculée.\""
+  },
+  {
+   "module": "src/wavelocalai/greenops/cloud_estimate.py",
+   "ligne": 126,
+   "colonne": 14,
+   "operateur": "core/ReplaceComparisonOperator_LtE_NotEq",
+   "occurrence": 0,
+   "fonction": "_range_mg",
+   "job_id": "ab822765bbe9476f9ac1587b6d11c4ce",
+   "diff": "--- mutation diff ---\n--- a/src\\wavelocalai\\greenops\\cloud_estimate.py\n+++ b/src\\wavelocalai\\greenops\\cloud_estimate.py\n@@ -123,7 +123,7 @@\n             return None\n         low = high = value\n     low_mg, high_mg = float(low) * KG_TO_MG, float(high) * KG_TO_MG\n-    if not (0 <= low_mg <= high_mg) or not high_mg > 0:  # négatif, inversé, NaN ou nul : jamais 0\n+    if not (0 != low_mg <= high_mg) or not high_mg > 0:  # négatif, inversé, NaN ou nul : jamais 0\n         return None\n     return low_mg, high_mg\n "
+  },
+  {
+   "module": "src/wavelocalai/greenops/cloud_estimate.py",
+   "ligne": 148,
+   "colonne": 29,
+   "operateur": "core/ReplaceOrWithAnd",
+   "occurrence": 9,
+   "fonction": "estimate_cloud_co2",
+   "job_id": "628ebd30817a451b936c2fe1c4be48d6",
+   "diff": "--- mutation diff ---\n--- a/src\\wavelocalai\\greenops\\cloud_estimate.py\n+++ b/src\\wavelocalai\\greenops\\cloud_estimate.py\n@@ -145,7 +145,7 @@\n         target = ecologits_target(provider, model, groq_table or {})\n         if isinstance(target, str):\n             return _unmeasurable(target)\n-        if not output_tokens or output_tokens <= 0:\n+        if not output_tokens and output_tokens <= 0:\n             return _unmeasurable(\n                 f\"{PROVIDER_NAMES.get(provider, provider)} n'a pas indiqué le nombre de jetons \"\n                 \"générés : l'empreinte ne peut pas être calculée.\""
+  },
+  {
+   "module": "src/wavelocalai/greenops/cloud_estimate.py",
+   "ligne": 30,
+   "colonne": 11,
+   "operateur": "core/NumberReplacer",
+   "occurrence": 1,
+   "fonction": null,
+   "job_id": "cea40512882c49fca5c243ade63c70b8",
+   "diff": "--- mutation diff ---\n--- a/src\\wavelocalai\\greenops\\cloud_estimate.py\n+++ b/src\\wavelocalai\\greenops\\cloud_estimate.py\n@@ -27,7 +27,7 @@\n \n logger = logging.getLogger(\"wavelocalai.greenops\")\n \n-KG_TO_MG = 1_000_000.0\n+KG_TO_MG = 999999.0\n \n # Fournisseur de `wavelocalai.toml` -> fournisseur d'ecologits. Groq n'y figure pas : ses modèles\n # passent par la table `[cloud.groq_ecologits]` vers l'entrée `huggingface_hub` du modèle ouvert."
+  },
+  {
+   "module": "src/wavelocalai/inference/chat.py",
+   "ligne": 121,
+   "colonne": 28,
+   "operateur": "core/ReplaceComparisonOperator_NotEq_IsNot",
+   "occurrence": 0,
+   "fonction": "_cloud_estimator",
+   "job_id": "3f1ac89fafc646ecade33698eb2f45bc",
+   "diff": "--- mutation diff ---\n--- a/src\\wavelocalai\\inference\\chat.py\n+++ b/src\\wavelocalai\\inference\\chat.py\n@@ -118,7 +118,7 @@\n \n     def _cloud_estimator(self, model: ChatModel) -> Callable[[ChatResult], Co2] | None:\n         \"\"\"Estimation ecologits d'une réponse cloud (AD-11) ; rien pour un modèle local.\"\"\"\n-        if model.ref.origin != \"cloud\":\n+        if model.ref.origin is not \"cloud\":\n             return None\n         provider, name = provider_of(model.ref.tag), model_of(model.ref.tag)\n         groq_table = self._settings.cloud.groq_ecologits"
+  },
+  {
+   "module": "src/wavelocalai/inference/streaming.py",
+   "ligne": 249,
+   "colonne": 15,
+   "operateur": "core/ExceptionReplacer",
+   "occurrence": 4,
+   "fonction": "_play",
+   "job_id": "4085ff81b1eb4fcc9a755af6cf9edb9b",
+   "diff": "--- mutation diff ---\n--- a/src\\wavelocalai\\inference\\streaming.py\n+++ b/src\\wavelocalai\\inference\\streaming.py\n@@ -246,7 +246,7 @@\n     elif estimate_co2 is not None:  # cloud : estimé après l'appel, sur les jetons et la durée réels\n         try:\n             co2 = await asyncio.to_thread(estimate_co2, result)\n-        except Exception as exc:  # noqa: BLE001 - aucune mesure n'interrompt un run (AD-11)\n+        except CosmicRayTestingException as exc:  # noqa: BLE001 - aucune mesure n'interrompt un run (AD-11)\n             logger.warning(\"Estimation du CO2 impossible : %r\", exc)\n             co2 = Co2(mg=None, method=\"unmeasurable\", reason=\"l'estimation a échoué\")\n     hub.publish(run_id, \"metrics\", _metrics(lane, result, origin, co2, footprint))"
+  }
+ ],
+ "total_seconds": 365.9
+}

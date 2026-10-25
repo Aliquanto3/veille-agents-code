@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "us713",
+ "latence_s": 10.4,
+ "usage": {
+  "prompt_tokens": 11701,
+  "completion_tokens": 364,
+  "total_tokens": 12065,
+  "cost": 0.032891,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 11698,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.032891,
+   "upstream_inference_prompt_cost": 0.029251,
+   "upstream_inference_completions_cost": 0.00364
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 247,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.032891,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 364,
+   "cout_usd": 0.032891,
+   "latence_s": 10.4
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"tests/unit/ui/test_serveur.py\",\"ligne\":125,\"severite\":\"Nit\",\"description\":\"Le test du serveur injoignable vérifie seulement que le message figure dans le script. Il ne démontre ni l’affichage d’un unique bandeau après plusieurs échecs JSON, ni son retrait après un appel réussi, pourtant explicitement exigés. Ajouter un test comportemental du script avec des réponses réseau simulées.\",\"test_pytest\":null}]}"
+}

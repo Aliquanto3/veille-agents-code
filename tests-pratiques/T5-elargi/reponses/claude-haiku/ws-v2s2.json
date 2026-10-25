@@ -1,0 +1,100 @@
+{
+ "duration_api_ms": 77567,
+ "stop_reason": "end_turn",
+ "session_id": "68bae8cc-f79b-4ef1-85d6-a49a785b4dbe",
+ "total_cost_usd": 0.01731461,
+ "usage": {
+  "input_tokens": 10,
+  "cache_creation_input_tokens": 38339,
+  "cache_read_input_tokens": 125281,
+  "output_tokens": 16786,
+  "output_tokens_details": {
+   "thinking_tokens": 14076
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 38339,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 5805,
+    "cache_read_input_tokens": 40862,
+    "cache_creation_input_tokens": 3316,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 3316
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "modelUsage": {
+  "claude-haiku-5-5": {
+   "inputTokens": 10,
+   "outputTokens": 16786,
+   "cacheReadInputTokens": 125281,
+   "cacheCreationInputTokens": 38339,
+   "webSearchRequests": 0,
+   "costUSD": 0.01731461,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 14076,
+   "canonicalModel": "claude-haiku-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "permission_denials": [],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "fast_mode_disabled_reason": "sdk_opt_in_required",
+ "subagent_stats": {
+  "spawned": 0,
+  "requested": {
+   "background": 0,
+   "foreground": 0,
+   "unset": 0
+  },
+  "started_in_background": 0,
+  "max_depth": 0,
+  "spawned_by_subagents": 0,
+  "completed": 0,
+  "failed": 0,
+  "killed": {
+   "parent": 0,
+   "user": 0,
+   "system": 0
+  },
+  "refused": {
+   "depth_limit": 0,
+   "concurrency_limit": 0,
+   "budget": 0
+  },
+  "by_type": {}
+ },
+ "safety_stops": 0,
+ "is_error": false,
+ "num_turns": 14,
+ "subtype": "success",
+ "api_error_status": null,
+ "result": "base : sans objet\n\nImportant | medium | src/wavestack/mcp/local_server.py:138 | `take_screenshot` appelle `target.parent.mkdir(exist_ok=True)` sur `screenshots/`. Si un fichier nommé `screenshots` existe, `mkdir` lève `FileExistsError`, non rattrapée. `create_path(\"screenshots\", kind=\"file\")` suffit, et aucun outil ne supprime ce fichier : l'outil de capture reste en échec pour toute la sandbox. Certain (lecture du code).\n\nImportant | low | src/wavestack/mcp/sandbox.py:60 | `_RESERVED` ignore les variantes exposantes `COM¹ COM² COM³ LPT¹ LPT² LPT³`, réservées par Windows. Elles passent `resolve()`, alors que la spec promet le refus « quelle que soit son extension ». Impact limité : `open(\"xb\")` et `mkdir` échouent sur un périphérique. Probable (non exécuté, Windows requis).\n\nImportant | low | src/wavestack/mcp/local_server.py:111 | `create_path` n'attrape que `SandboxError` autour de `sandbox.resolve`. Un `\\x00` dans `path` fait lever `ValueError` par `resolve()` sur Windows, qui sort de l'outil sans résultat MCP `isError`. Probable (non exécuté).\n\nImportant | low | src/wavestack/mcp/local_server.py:139 | `mss.mss()` ou `grab` (pas d'écran, session sans affichage) lève une exception non gérée, et le dossier `screenshots/` reste créé. Pas de résultat d'erreur propre. Probable : dépend de la conversion d'exception par le framework MCP.\n\nImportant | low | src/wavestack/mcp/local_server.py:84 | `config.system_memory()` lève si l'OS ne fournit pas la RAM (documenté dans `config.py:481`), et l'outil n'a pas de repli. Probable.\n\nImportant | low | src/wavestack/mcp/local_server.py:97 | Les plafonds ne couvrent que la taille par fichier (1 Mo) et les captures. `create_path` n'a aucune limite de nombre ni de volume total, et le commentaire « caps against filling the disk » surestime la protection. Certain (lecture du code).\n\nImportant | low | src/wavestack/mcp/local_server.py:140 | `shot.monitors[1]` est le premier écran mss, pas forcément l'écran principal demandé par la spec. Probable.\n\nNit | local_server.py:121 → src/wavestack/mcp/local_server.py:121 | `create_path(kind=\"folder\")` sur un dossier existant renvoie « Dossier créé », message trompeur, car `exist_ok=True` ne crée rien. Certain.\n\nNon vérifié : `mss.tools.to_png` (accès à `mss.tools` après `import mss`). Le dépôt n'a pas de venv lisible en lecture seule, donc je ne peux pas confirmer l'attribut sans exécuter.",
+ "ttft_ms": 1561,
+ "type": "result",
+ "duration_ms": 79009,
+ "uuid": "d46ef274-d5db-4ec8-9a79-c4f90d9ae94a",
+ "ttft_stream_ms": 881,
+ "time_to_request_ms": 193,
+ "first_content_frame_ms": 881,
+ "queued_turn_count": 0,
+ "result_index": 0,
+ "_duree_s": 80.0
+}

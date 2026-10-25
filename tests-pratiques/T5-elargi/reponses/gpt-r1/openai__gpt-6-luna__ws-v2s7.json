@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "ws-v2s7",
+ "latence_s": 24.2,
+ "usage": {
+  "prompt_tokens": 7861,
+  "completion_tokens": 2244,
+  "total_tokens": 10105,
+  "cost": 0.00210455,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 7858,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00210455,
+   "upstream_inference_prompt_cost": 0.00098255,
+   "upstream_inference_completions_cost": 0.001122
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 2070,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.00210455,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 2244,
+   "cout_usd": 0.00210455,
+   "latence_s": 24.2
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"web/static/app.js\",\"ligne\":1,\"severite\":\"Important\",\"description\":\"La story exige les lignes dépliables de coût/empreinte du sous-agent et de réutilisation KV-cache, ainsi que leurs clés i18n. Aucun changement de l’interface ni des traductions n’apparaît dans le diff : les nouveaux champs de trace ne peuvent donc pas être affichés comme spécifié.\",\"test_pytest\":\"from pathlib import Path\\n\\n\\ndef test_finops_rows_are_rendered_in_the_frontend():\\n    source = Path(\\\"web/static/app.js\\\").read_text(encoding=\\\"utf-8\\\")\\n    assert \\\"subCostNode\\\" in source\\n    assert \\\"kvCacheNode\\\" in source\"}]}"
+}

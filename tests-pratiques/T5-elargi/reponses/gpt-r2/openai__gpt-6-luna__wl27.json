@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "wl27",
+ "latence_s": 14.7,
+ "usage": {
+  "prompt_tokens": 13885,
+  "completion_tokens": 1271,
+  "total_tokens": 15156,
+  "cost": 0.00237105,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 13882,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00237105,
+   "upstream_inference_prompt_cost": 0.00173555,
+   "upstream_inference_completions_cost": 0.0006355
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 1121,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.00237105,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 1271,
+   "cout_usd": 0.00237105,
+   "latence_s": 14.7
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavelocalai/models/catalog.py\",\"ligne\":67,\"severite\":\"Important\",\"description\":\"La validation exclut la borne supérieure : `_temperature(2.0)` renvoie `None` à cause de `< MAX_TEMPERATURE`. La spec autorise les valeurs de 0 à 2 inclus ; une température de catalogue valide est donc perdue au lieu d’être servie.\",\"test_pytest\":\"from wavelocalai.models.catalog import _temperature\\n\\n\\ndef test_catalog_accepts_the_inclusive_upper_temperature_bound():\\n    assert _temperature(2.0) == 2.0\\n\"}]}"
+}

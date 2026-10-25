@@ -1,0 +1,100 @@
+{
+ "duration_api_ms": 86773,
+ "stop_reason": "end_turn",
+ "session_id": "94bd3244-078f-4273-8d2a-8a4c82d21213",
+ "total_cost_usd": 0.02377331,
+ "usage": {
+  "input_tokens": 18,
+  "cache_creation_input_tokens": 54106,
+  "cache_read_input_tokens": 327431,
+  "output_tokens": 19352,
+  "output_tokens_details": {
+   "thinking_tokens": 16141
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 54106,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 2235,
+    "cache_read_input_tokens": 57467,
+    "cache_creation_input_tokens": 2478,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 2478
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "modelUsage": {
+  "claude-haiku-5-5": {
+   "inputTokens": 18,
+   "outputTokens": 19352,
+   "cacheReadInputTokens": 327431,
+   "cacheCreationInputTokens": 54106,
+   "webSearchRequests": 0,
+   "costUSD": 0.02377331,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 16141,
+   "canonicalModel": "claude-haiku-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "permission_denials": [],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "fast_mode_disabled_reason": "sdk_opt_in_required",
+ "subagent_stats": {
+  "spawned": 0,
+  "requested": {
+   "background": 0,
+   "foreground": 0,
+   "unset": 0
+  },
+  "started_in_background": 0,
+  "max_depth": 0,
+  "spawned_by_subagents": 0,
+  "completed": 0,
+  "failed": 0,
+  "killed": {
+   "parent": 0,
+   "user": 0,
+   "system": 0
+  },
+  "refused": {
+   "depth_limit": 0,
+   "concurrency_limit": 0,
+   "budget": 0
+  },
+  "by_type": {}
+ },
+ "safety_stops": 0,
+ "is_error": false,
+ "num_turns": 20,
+ "subtype": "success",
+ "api_error_status": null,
+ "result": "Revue en lecture seule (Read, Grep, Glob). Base : sans objet. Aucun Important de severite medium ou high : les criteres d'acceptation et la matrice tiennent par lecture.\n\nConstats :\n\n- Important | low | src/usine/ia/agent/repli.py:74 | `enregistrer_reponses` supprime tous les `*.json` (l.73-74) avant d'ecrire les nouveaux (l.76-79). Si une ecriture echoue en cours de route, le repertoire reste partiel, et `charger_reponses` (l.83 et suivantes) n'exige pas le nombre de `QUESTIONS_DEMO` : l'UI affichera moins de questions sans erreur. Preuve par lecture seule, non executee. | probable\n- Nit | low | src/usine/ia/agent/cli.py:18 | `REPERTOIRE_PASSAGE_REPLI = Path(\"demo/repli/passage\")` duplique `REPERTOIRE_REPLI` de src/usine/ui/cli.py:32 : deux sources pour la meme copie. | certain\n- Nit | low | src/usine/ui/app.py:471 | `or rang is None` ne peut pas etre vrai : `st.radio` recoit `range(...)` et renvoie toujours un index. La branche est morte. | certain\n\nCe que j'ai verifie et qui tient : `consultation_repli` ne retombe jamais sur `sorties/passages/` (src/usine/ui/cli.py:82-90) ; `evals` n'est importe nulle part dans `src/usine` ; `ReponseAgentEnregistree` est inchangee ; `enregistrer_reponses` n'ecrit rien si une question est rejetee ; les 5 fichiers `demo/repli/agent/*.json` portent le `passage_id` de `demo/repli/passage/manifeste.json` (20261012T221158Z-96c621) et les questions de `QUESTIONS_DEMO`. Je n'ai pas execute les tests : l'outillage de ce banc ne le permet pas.",
+ "ttft_ms": 10533,
+ "type": "result",
+ "duration_ms": 87292,
+ "uuid": "dbd798ec-5add-4369-b75d-ba5b7d21c695",
+ "ttft_stream_ms": 912,
+ "time_to_request_ms": 276,
+ "first_content_frame_ms": 912,
+ "queued_turn_count": 0,
+ "result_index": 0,
+ "_duree_s": 88.3
+}

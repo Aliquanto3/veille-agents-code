@@ -1,0 +1,100 @@
+{
+ "duration_api_ms": 143327,
+ "stop_reason": "end_turn",
+ "session_id": "15745ac1-183f-427a-9c62-ff8233711e07",
+ "total_cost_usd": 0.03764457,
+ "usage": {
+  "input_tokens": 32,
+  "cache_creation_input_tokens": 71653,
+  "cache_read_input_tokens": 819677,
+  "output_tokens": 30228,
+  "output_tokens_details": {
+   "thinking_tokens": 24912
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 71653,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 2556,
+    "cache_read_input_tokens": 74128,
+    "cache_creation_input_tokens": 3364,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 3364
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "modelUsage": {
+  "claude-haiku-5-5": {
+   "inputTokens": 32,
+   "outputTokens": 30228,
+   "cacheReadInputTokens": 819677,
+   "cacheCreationInputTokens": 71653,
+   "webSearchRequests": 0,
+   "costUSD": 0.03764457,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 24912,
+   "canonicalModel": "claude-haiku-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "permission_denials": [],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "fast_mode_disabled_reason": "sdk_opt_in_required",
+ "subagent_stats": {
+  "spawned": 0,
+  "requested": {
+   "background": 0,
+   "foreground": 0,
+   "unset": 0
+  },
+  "started_in_background": 0,
+  "max_depth": 0,
+  "spawned_by_subagents": 0,
+  "completed": 0,
+  "failed": 0,
+  "killed": {
+   "parent": 0,
+   "user": 0,
+   "system": 0
+  },
+  "refused": {
+   "depth_limit": 0,
+   "concurrency_limit": 0,
+   "budget": 0
+  },
+  "by_type": {}
+ },
+ "safety_stops": 0,
+ "is_error": false,
+ "num_turns": 28,
+ "subtype": "success",
+ "api_error_status": null,
+ "result": "base : sans objet\n\nImportant | medium | src/wavedevsecops/scenarios/steps/history_clean.py:42 | Le contrôle cherche le chemin littéral `.env` (`git log --all -- :(literal).env`). Si le commit fautif est réécrit pour renommer le fichier (ex. `.env.bak` ou `config.txt`), la clé reste dans l'historique accessible, mais l'étape passe. Lecture seule, non exécuté. Le cas est déclaré « non couvert » dans la spec, donc c'est un faux succès connu à rendre explicite. | certain\n\nNit | low | src/wavedevsecops/scenarios/steps/history_clean.py:113 | La condition de réussite exige aussi que `.env` ne soit plus suivi par l'index (`tracked`). La spec écrit seulement « aucun commit ne l'ajoute ou ne le modifie, et `.gitignore` l'ignore ». Le code est plus strict, et le test `test_env_encore_dans_l_index_n_est_pas_valide` le couvre, mais la spec n'a pas été mise à jour. | certain\n\nNit | low | tests/test_scenario_b_env.py:118 | `with warnings.catch_warnings():` ne capte rien : l'assertion sur `authoring_warnings()` ne lit pas le module `warnings`. Le bloc donne une fausse impression de contrôle. | certain\n\nNit | low | src/wavedevsecops/scenarios/steps/_base.py:120 | `StepContext.git` est typé `Callable[[], Any]` alors que la fabrique renvoie un `Git`. Ce typage affaiblit la vérification statique des helpers de `history_clean`. | certain\n\nNit | low | src/wavedevsecops/scenarios/ops/diff_line.py:55 | `ctx.git.internal(\"show\", …)` lève `GitError` si le fichier n'existe pas dans la révision, ou pour `side: old` sur un commit racine. L'erreur n'est pas une `SetupError` avec une cause claire. Cela ne touche que l'auteur du scénario, pas l'apprenant. | certain\n\nVérifié par lecture, sans défaut relevé : la version Python du projet (3.14) rend valide `except A, B:` dans `steps.py:138`, comme dans le reste du code. Les appels `Git.for_workspace` et `resolve_git`, les imports (pas de cycle `gitio`), l'enregistrement automatique des types `history_clean` et des ops `diff_line`, et l'accès `ctx.git_path` (`OpContext`) existent. Les points d'entrée `resolve_sha`, `build_operation`, `designationFor` et `installDesignation` sont présents. Non vérifié : l'exécution des tests et la vue Code dans un navigateur (outils en lecture seule).",
+ "ttft_ms": 11320,
+ "type": "result",
+ "duration_ms": 144697,
+ "uuid": "b5bb3e1a-e8ca-4e41-b1e9-e110e37ada4d",
+ "ttft_stream_ms": 1063,
+ "time_to_request_ms": 271,
+ "first_content_frame_ms": 1064,
+ "queued_turn_count": 0,
+ "result_index": 0,
+ "_duree_s": 145.8
+}

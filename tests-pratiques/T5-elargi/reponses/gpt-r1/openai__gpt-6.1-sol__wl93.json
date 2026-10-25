@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "wl93",
+ "latence_s": 32.0,
+ "usage": {
+  "prompt_tokens": 10098,
+  "completion_tokens": 1689,
+  "total_tokens": 11787,
+  "cost": 0.0421335,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 10095,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0421335,
+   "upstream_inference_prompt_cost": 0.0252435,
+   "upstream_inference_completions_cost": 0.01689
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 882,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.0421335,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 1689,
+   "cout_usd": 0.0421335,
+   "latence_s": 32.0
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavelocalai/evaluation/judge.py\",\"ligne\":125,\"severite\":\"Important\",\"description\":\"Le contrat impose `scoring` dès la prise de la place, éventuellement suivi de `loading`. Or `_PhasedModel`, dont le flux commence après cette prise, attend le premier fragment ou 250 ms avant de publier `scoring` ; si le premier fragment est `loading`, il attend même la fin du chargement. Un juge froid conserve donc la colonne en « En file pour la notation » alors qu'elle occupe déjà la place. Les nouveaux tests imposent l'ordre inverse de celui demandé et masquent cette violation.\",\"test_pytest\":\"import asyncio\\n\\nfrom wavelocalai.evaluation.judge import _PhasedModel\\nfrom wavelocalai.models.fake import FakeChatModel\\nfrom wavelocalai.models.port import ChatMessage, ChatRequest, LoadState, ModelRef, TextDelta\\n\\n\\ndef test_scoring_est_annonce_avant_le_chargement_apres_prise_de_place():\\n    async def scenario():\\n        phases = []\\n        model = FakeChatModel(\\n            [LoadState('loading'), LoadState('loaded', 0.1), TextDelta('{}')],\\n            ModelRef('fake:j', 'fake', 'local', 'chat'),\\n        )\\n        request = ChatRequest([ChatMessage('user', 'Note.')])\\n        # Le flux de cette enveloppe est démarré une fois la place prise.\\n        async for _ in _PhasedModel(model, phases.append).stream(request):\\n            pass\\n        assert phases[0] == 'scoring', phases\\n\\n    asyncio.run(scenario())\\n\"},{\"id\":\"C2\",\"fichier\":\"src/wavelocalai/inference/arena.py\",\"ligne\":565,\"severite\":\"Important\",\"description\":\"`_judge_progress` recalcule le total en excluant les colonnes terminées sans notation, alors que le contrat fixe `total` au nombre de colonnes de la comparaison dès le départ. Avec deux colonnes dont une réponse vide, la colonne notée annonce ainsi « 1 sur 1 » au lieu de « 1 sur 2 ». L'absence de `judge_progress` pour une réponse vide ne doit pas modifier ce dénominateur. Le nouveau test qui attend un total décroissant valide un comportement contraire à la spec.\",\"test_pytest\":\"from types import SimpleNamespace\\n\\nfrom wavelocalai.inference.arena import ArenaService\\n\\n\\ndef test_total_reste_le_nombre_initial_de_colonnes():\\n    events = []\\n    lane = SimpleNamespace(tag='fake:a', status='judging')\\n    empty_lane = SimpleNamespace(tag='fake:b', status='done')\\n    arena = SimpleNamespace(\\n        run_id='comparison',\\n        judge=SimpleNamespace(ref=SimpleNamespace(tag='fake:j')),\\n        judge_done=1,\\n        judge_total=2,\\n        judge_live={},\\n        lanes=[lane, empty_lane],\\n    )\\n    hub = SimpleNamespace(\\n        publish=lambda run_id, event, data: events.append((event, data))\\n    )\\n    service = SimpleNamespace(\\n        _hub=hub,\\n        _judge_total=ArenaService._judge_total,\\n    )\\n\\n    ArenaService._judge_progress(service, arena, lane, 'scoring', 1)\\n\\n    assert events[0][0] == 'judge_progress'\\n    assert events[0][1]['position'] == 1\\n    assert events[0][1]['total'] == 2\\n    assert arena.judge_total == 2\\n\"}]}"
+}

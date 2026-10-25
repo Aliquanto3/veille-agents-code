@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "wl91",
+ "latence_s": 28.4,
+ "usage": {
+  "prompt_tokens": 5165,
+  "completion_tokens": 2738,
+  "total_tokens": 7903,
+  "cost": 0.00201455,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 5162,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00201455,
+   "upstream_inference_prompt_cost": 0.00064555,
+   "upstream_inference_completions_cost": 0.001369
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 2070,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.00201455,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 2738,
+   "cout_usd": 0.00201455,
+   "latence_s": 28.4
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavelocalai/__main__.py\",\"ligne\":73,\"severite\":\"Important\",\"description\":\"Si `webbrowser.open` lève une exception, le code journalise seulement un message générique : il n’écrit pas l’URL sur stderr ni dans le journal, contrairement au critère d’acceptation. L’utilisateur ne sait donc pas quelle URL ouvrir manuellement.\",\"test_pytest\":\"import logging\\nimport socket\\nimport threading\\n\\nimport wavelocalai.__main__ as launcher\\n\\n\\ndef test_exception_douverture_affiche_et_journalise_url(monkeypatch, capsys, caplog):\\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\\n    sock.bind((\\\"127.0.0.1\\\", 0))\\n    sock.listen()\\n    port = sock.getsockname()[1]\\n    url = f\\\"http://127.0.0.1:{port}/\\\"\\n\\n    def fail(_url):\\n        raise RuntimeError(\\\"navigateur indisponible\\\")\\n\\n    monkeypatch.setattr(launcher.webbrowser, \\\"open\\\", fail)\\n    caplog.set_level(logging.WARNING)\\n    try:\\n        launcher._open_browser_when_ready(url, port, threading.Event())\\n    finally:\\n        sock.close()\\n\\n    assert url in capsys.readouterr().err\\n    assert any(url in record.getMessage() for record in caplog.records)\"},{\"id\":\"C2\",\"fichier\":\"src/wavelocalai/__main__.py\",\"ligne\":159,\"severite\":\"Important\",\"description\":\"Le fil est explicitement non-daemon, alors que la story prévoit un fil daemon arrêté à la sortie de `serve()`. Si `webbrowser.open` reste bloqué, ce fil peut empêcher le processus de se terminer après l’arrêt du serveur.\",\"test_pytest\":\"import socket\\nimport threading\\n\\nimport wavelocalai.__main__ as launcher\\n\\n\\ndef test_fil_de_guet_est_daemon(monkeypatch, tmp_path):\\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\\n    sock.bind((\\\"127.0.0.1\\\", 0))\\n    port = sock.getsockname()[1]\\n    sock.close()\\n\\n    created = []\\n\\n    class ThreadSpy:\\n        def __init__(self, target=None, args=(), daemon=None):\\n            created.append(daemon)\\n\\n        def start(self):\\n            pass\\n\\n    class ThreadingSpy:\\n        Thread = ThreadSpy\\n        Event = threading.Event\\n\\n    def fake_serve(_settings, server_socket, store=None):\\n        server_socket.close()\\n\\n    monkeypatch.setattr(launcher, \\\"threading\\\", ThreadingSpy)\\n    monkeypatch.setattr(\\\"wavelocalai.web.server.serve\\\", fake_serve)\\n    launcher.main([\\\"--port\\\", str(port), \\\"--data-dir\\\", str(tmp_path / \\\"data\\\")])\\n\\n    assert created == [True]\"}]}"
+}

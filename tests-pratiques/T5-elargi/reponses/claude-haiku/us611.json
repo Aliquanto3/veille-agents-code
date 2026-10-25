@@ -1,0 +1,100 @@
+{
+ "duration_api_ms": 106895,
+ "stop_reason": "end_turn",
+ "session_id": "0a8ab46f-e9bb-44d6-b8a8-bae5333ecd62",
+ "total_cost_usd": 0.0265187,
+ "usage": {
+  "input_tokens": 14,
+  "cache_creation_input_tokens": 59861,
+  "cache_read_input_tokens": 241810,
+  "output_tokens": 24254,
+  "output_tokens_details": {
+   "thinking_tokens": 20708
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 59861,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 3803,
+    "cache_read_input_tokens": 58179,
+    "cache_creation_input_tokens": 7521,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 7521
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "modelUsage": {
+  "claude-haiku-5-5": {
+   "inputTokens": 14,
+   "outputTokens": 24254,
+   "cacheReadInputTokens": 241810,
+   "cacheCreationInputTokens": 59861,
+   "webSearchRequests": 0,
+   "costUSD": 0.0265187,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 20708,
+   "canonicalModel": "claude-haiku-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "permission_denials": [],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "fast_mode_disabled_reason": "sdk_opt_in_required",
+ "subagent_stats": {
+  "spawned": 0,
+  "requested": {
+   "background": 0,
+   "foreground": 0,
+   "unset": 0
+  },
+  "started_in_background": 0,
+  "max_depth": 0,
+  "spawned_by_subagents": 0,
+  "completed": 0,
+  "failed": 0,
+  "killed": {
+   "parent": 0,
+   "user": 0,
+   "system": 0
+  },
+  "refused": {
+   "depth_limit": 0,
+   "concurrency_limit": 0,
+   "budget": 0
+  },
+  "by_type": {}
+ },
+ "safety_stops": 0,
+ "is_error": false,
+ "num_turns": 17,
+ "subtype": "success",
+ "api_error_status": null,
+ "result": "base : sans objet\n\nAucun défaut high ni medium trouvé. Les constats ci-dessous sont des défauts de faible sévérité, vérifiés par lecture du code.\n\nImportant | low | src/usine/ia/doublons.py:38 | `NFKD` ne décompose pas « œ » (U+0153), et `encode(\"ascii\",\"ignore\")` le supprime : « cœur » devient « cur » (jeton écarté sous 4 caractères), « œuvre » devient « uvre » alors que « oeuvre » reste « oeuvre ». Deux textes quasi identiques écrits « œ » / « oe » ne se rapprochent pas. | certain (mécanisme), impact probable\nImportant | low | tests/unit/ia/test_doublons.py:104 | `test_composition_sans_ecriture` remplace par monkeypatch `composition.consultation_repertoire` et `composition.apercu_pseudonymisation` et renvoie `anomalies=()`. Le chemin réel (filtre des ouvertes, `cle_ticket` vers `detecter_doublons`, pseudonymiseur réel) n'est jamais exécuté, et l'assertion `iterdir() == []` ne prouve rien puisque le mock n'écrit pas. | certain\nImportant | low | tests/unit/ia/test_doublons.py:50 | `test_ignore_non_anomalies_et_fermees` ne teste pas de ticket fermé. Le filtre `STATUTS_FERMES` est dans `ConsultationPassage.anomalies` (src/usine/consultation/passage.py:411) et n'est couvert par aucun test de la story, alors que la matrice I/O le cite. | certain\nNit | low | tests/unit/ia/test_doublons.py:88 | `\"Dupont\" not in sortie.model_dump_json()` est vrai quelle que soit la pseudonymisation, car la sortie ne contient que clés et scores. L'assertion ne prouve pas que le score est calculé sur le texte pseudonymisé. | certain\nNit | low | src/usine/composition.py:642 | `consultation.anomalies(limite=None)` garde le palier 2 par défaut, donc lit la classification LLM (`causes`) dont `detecter_doublons` n'a pas besoin. `palier=1` suffirait et découplerait la détection des sorties LLM. | probable\nNit | low | src/usine/contrats/llm.py:5 | La docstring du module dit « pour chaque tâche, un `Reponse<Tache>` de ce module », alors que `Tache.doublons` (llm.py:35) n'en a pas, comme le choix de conception le prévoit. Contradiction documentaire. | certain\nNit | low | src/usine/contrats/llm.py:245 | La docstring de `PaireDoublon` dit « `cle_a` précède `cle_b` par rang », mais `_distinctes` ne vérifie que l'égalité. L'ordre n'est garanti que par `detecter_doublons` (doublons.py:83). | certain\nNit | low | src/usine/ia/cli.py:1 | La docstring du module dit encore « passerelle, classification, explications » ; `doublons` a été ajouté à l'aide (lignes 12 et 18). | certain\nNit | low | src/usine/ia/cli.py:24 | Les bornes `min/max` de Typer rejettent `--seuil` et `--limite` avant `detecter_doublons` : sortie code 2 au lieu d'une `UsineErreur` (doublons.py:66-69), comme le dit la matrice. Pas de bug de comportement, seulement un écart avec la matrice. | certain\nNit | low | (spec, Code Map) | La spec donne `CONTRATS_VERSION 1.9.0` ; le code vaut 1.11.0 (src/usine/contrats/versions.py:9), ce qui est cohérent avec la base à 1.10.0. La spec est périmée, pas le code. | certain",
+ "ttft_ms": 10534,
+ "type": "result",
+ "duration_ms": 107330,
+ "uuid": "683bc483-20ae-4c38-8e65-810d2ad87151",
+ "ttft_stream_ms": 1066,
+ "time_to_request_ms": 198,
+ "first_content_frame_ms": 1066,
+ "queued_turn_count": 0,
+ "result_index": 0,
+ "_duree_s": 108.2
+}

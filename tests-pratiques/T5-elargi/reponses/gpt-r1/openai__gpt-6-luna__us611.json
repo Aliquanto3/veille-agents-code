@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "us611",
+ "latence_s": 35.0,
+ "usage": {
+  "prompt_tokens": 8154,
+  "completion_tokens": 2913,
+  "total_tokens": 11067,
+  "cost": 0.002475675,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 8151,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.002475675,
+   "upstream_inference_prompt_cost": 0.001019175,
+   "upstream_inference_completions_cost": 0.0014565
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 2782,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.002475675,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 2913,
+   "cout_usd": 0.002475675,
+   "latence_s": 35.0
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/usine/ia/doublons.py\",\"ligne\":79,\"severite\":\"Nit\",\"description\":\"Les scores sont arrondis à 4 décimales avant le tri. Deux paires dont les scores réels diffèrent peuvent ainsi être ex æquo après arrondi et rester dans l’ordre des clés, ce qui ne garantit pas le tri décroissant des scores réels demandé par la spec. Trier les scores non arrondis avant de construire les résultats éviterait ce cas limite.\",\"test_pytest\":null}]}"
+}

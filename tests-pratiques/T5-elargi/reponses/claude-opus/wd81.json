@@ -1,0 +1,100 @@
+{
+ "duration_api_ms": 101139,
+ "stop_reason": "end_turn",
+ "session_id": "deec05b8-c2c7-4a6f-b1d4-18119cf2452a",
+ "total_cost_usd": 0.68952,
+ "usage": {
+  "input_tokens": 34,
+  "cache_creation_input_tokens": 46412,
+  "cache_read_input_tokens": 684240,
+  "output_tokens": 9062,
+  "output_tokens_details": {
+   "thinking_tokens": 5073
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 46412,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1994,
+    "cache_read_input_tokens": 52496,
+    "cache_creation_input_tokens": 424,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 424
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "modelUsage": {
+  "claude-opus-5-5": {
+   "inputTokens": 34,
+   "outputTokens": 9062,
+   "cacheReadInputTokens": 684240,
+   "cacheCreationInputTokens": 46412,
+   "webSearchRequests": 0,
+   "costUSD": 0.68952,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 5073,
+   "canonicalModel": "claude-opus-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "permission_denials": [],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "fast_mode_disabled_reason": "sdk_opt_in_required",
+ "subagent_stats": {
+  "spawned": 0,
+  "requested": {
+   "background": 0,
+   "foreground": 0,
+   "unset": 0
+  },
+  "started_in_background": 0,
+  "max_depth": 0,
+  "spawned_by_subagents": 0,
+  "completed": 0,
+  "failed": 0,
+  "killed": {
+   "parent": 0,
+   "user": 0,
+   "system": 0
+  },
+  "refused": {
+   "depth_limit": 0,
+   "concurrency_limit": 0,
+   "budget": 0
+  },
+  "by_type": {}
+ },
+ "safety_stops": 0,
+ "is_error": false,
+ "num_turns": 25,
+ "subtype": "success",
+ "api_error_status": null,
+ "result": "Lecture terminée : je n'ai trouvé aucun défaut Important dans cette story. Il reste quatre Nit et aucun constat de complexité.\n\nbase : sans objet\n\nNit | low | content/scenarios/code-vulnerable.A.yaml:124 | L'étape `corriger_et_pousser` ne vérifie que `bandit: success`. Le scénario voisin `check-en-echec.A.yaml:126` demande en plus `mergeable: true`. Ici, l'étape passe même si la correction casse un autre check obligatoire (ruff, pytest et gitleaks sont `required: true`). La PR reste alors bloquée alors que le scénario se dit réussi. | certain\n\nNit | low | src/wavedevsecops/ci/findings.py:142 | `data.get(\"errors\") or []` n'est pas validé comme une liste, alors que `results` l'est (ligne 126). Un entier dans `errors` lèverait `TypeError`, que `_machine_findings` ne rattrape pas (`ci/__init__.py:356` ne rattrape que `OSError, UnicodeDecodeError, ValueError`), et `run_job` planterait au lieu de rendre « constats indisponibles ». bandit ne produit jamais cette forme, d'où la sévérité low. | certain\n\nNit | low | src/wavedevsecops/ci/__init__.py:425 | Le passage de `success` à `failure` dépend de la seule exécution machine. Si elle échoue (délai dépassé, JSON illisible, `found is None`) alors que la sortie humaine a rendu 0, un fichier sauté par bandit (syntaxe cassée) laisse le check au vert, sans constat. C'est le cas que la revue précédente voulait fermer, dans une forme résiduelle et rare. | certain\n\nNit | low | spec de la story, section « Livré » | La spec décrit encore la sortie humaine `-r src -q` et un « nouveau champ `checks` » de `pr_state`. Le code livré utilise `-r src -q --ignore-nosec` (`content/pipeline.yaml:95`) et le champ `check_states`, qui existait déjà (`scenarios/steps/pr_state.py:36`) ; la story n'y a ajouté qu'un validateur de `job_id`. | certain\n\nComplexité : 0 constat. `run_job` ne fait qu'un seul `any(...)` sur les constats d'un job, à chaque exécution ; aucune structure ne grossit pendant l'exécution.\n\nPoints vérifiés :\n- **Branchement** : le job `bandit` est dans `pipeline.yaml`, dans `ci.Parse` et dans `PARSERS`. Le scénario est dans `STATION_ORDER` ; la station 3 « Sécurité et qualité » est déclarée dans `chain.yaml`. L'empreinte est dans `fingerprints.json`, et les gabarits CI (GitHub Actions, GitLab CI, Jenkins) sont alignés sur `--ignore-nosec`.\n- **Analyse du gabarit** : le code de `content/exercise/no_ai/src` ne contient aucun motif que bandit signale, donc la correction peut bien repasser au vert.\n- **CI** : bandit est installé (groupe `chain` par défaut, plus `--group chain`) et les tests `slow` sont lancés en CI.\n- **Tests** : je n'ai rien exécuté (revue en lecture seule).",
+ "ttft_ms": 1838,
+ "type": "result",
+ "duration_ms": 101861,
+ "uuid": "3102a604-3ccc-4d75-a476-db10a865127e",
+ "ttft_stream_ms": 1442,
+ "time_to_request_ms": 161,
+ "first_content_frame_ms": 1442,
+ "queued_turn_count": 0,
+ "result_index": 0,
+ "_duree_s": 102.7
+}

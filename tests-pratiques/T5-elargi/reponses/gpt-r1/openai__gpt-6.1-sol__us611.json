@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "us611",
+ "latence_s": 23.0,
+ "usage": {
+  "prompt_tokens": 8154,
+  "completion_tokens": 1254,
+  "total_tokens": 9408,
+  "cost": 0.0329235,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 8151,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0329235,
+   "upstream_inference_prompt_cost": 0.0203835,
+   "upstream_inference_completions_cost": 0.01254
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 709,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.0329235,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 1254,
+   "cout_usd": 0.0329235,
+   "latence_s": 23.0
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/usine/ia/doublons.py\",\"ligne\":82,\"severite\":\"Important\",\"description\":\"Les scores sont arrondis avant le tri et l'application de `limite`, ce qui peut éliminer la meilleure paire, contrairement à la spécification. Avec trois textes contenant respectivement 200 jetons, ces mêmes jetons plus un, puis ces mêmes jetons plus deux, les scores des paires (1, 2) et (2, 3) valent respectivement 200/201 et 201/202. Tous deux sont arrondis à 0,995 : avec limite=1, le tri stable conserve (1, 2), alors que (2, 3) est strictement meilleure. Il faut classer et sélectionner sur les scores non arrondis, puis éventuellement arrondir pour la sortie.\",\"test_pytest\":\"from datetime import date\\n\\nimport polars as pl\\n\\nfrom usine.contrats.tickets import TypeTicket\\nfrom usine.ia.doublons import detecter_doublons\\n\\n\\ndef test_limite_conserve_la_paire_reellement_la_plus_similaire():\\n    commun = ' '.join(f'mot{i:04d}' for i in range(200))\\n    titres = [\\n        commun,\\n        commun + ' supplementalpha',\\n        commun + ' supplementalpha supplementbeta',\\n    ]\\n    textes = pl.DataFrame([\\n        {\\n            'cle_ticket': f'DEMO-{i}',\\n            'type_ticket': TypeTicket.anomalie.value,\\n            'entite': 'E1',\\n            'titre': titre,\\n            'description': '',\\n        }\\n        for i, titre in enumerate(titres, start=1)\\n    ])\\n\\n    sortie = detecter_doublons(\\n        textes,\\n        ('DEMO-1', 'DEMO-2', 'DEMO-3'),\\n        date(2026, 10, 12),\\n        lambda texte: texte,\\n        limite=1,\\n    )\\n\\n    # Ajouter un jeton à un ensemble de 201 mots conserve davantage\\n    # de similarité que l'ajouter à un ensemble de 200 mots.\\n    assert [(p.cle_a, p.cle_b) for p in sortie.paires] == [('DEMO-2', 'DEMO-3')]\\n\"}]}"
+}

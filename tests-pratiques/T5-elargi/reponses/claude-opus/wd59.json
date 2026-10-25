@@ -1,0 +1,100 @@
+{
+ "duration_api_ms": 72289,
+ "stop_reason": "end_turn",
+ "session_id": "b9653cac-e6fd-49cb-b3c3-c7641b5ac794",
+ "total_cost_usd": 0.46170220000000006,
+ "usage": {
+  "input_tokens": 32,
+  "cache_creation_input_tokens": 28716,
+  "cache_read_input_tokens": 550231,
+  "output_tokens": 6090,
+  "output_tokens_details": {
+   "thinking_tokens": 2543
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 28716,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1198,
+    "cache_read_input_tokens": 47609,
+    "cache_creation_input_tokens": 764,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 764
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "modelUsage": {
+  "claude-opus-5-5": {
+   "inputTokens": 32,
+   "outputTokens": 6090,
+   "cacheReadInputTokens": 550231,
+   "cacheCreationInputTokens": 28716,
+   "webSearchRequests": 0,
+   "costUSD": 0.46170220000000006,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 2543,
+   "canonicalModel": "claude-opus-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "permission_denials": [],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "fast_mode_disabled_reason": "sdk_opt_in_required",
+ "subagent_stats": {
+  "spawned": 0,
+  "requested": {
+   "background": 0,
+   "foreground": 0,
+   "unset": 0
+  },
+  "started_in_background": 0,
+  "max_depth": 0,
+  "spawned_by_subagents": 0,
+  "completed": 0,
+  "failed": 0,
+  "killed": {
+   "parent": 0,
+   "user": 0,
+   "system": 0
+  },
+  "refused": {
+   "depth_limit": 0,
+   "concurrency_limit": 0,
+   "budget": 0
+  },
+  "by_type": {}
+ },
+ "safety_stops": 0,
+ "is_error": false,
+ "num_turns": 20,
+ "subtype": "success",
+ "api_error_status": null,
+ "result": "**Revue de la story 5.9 (passe 1).** Base : sans objet. Je n'ai trouvé aucun défaut Important. Le schéma, le lint, les déclarations, la projection serveur et le rendu front sont tous branchés : `web/app.py:230` → `WorkspaceManager` → `StepRunner` → `panel()` → `scenario.js:420`. Le panneau est relu au fait `scenario_completed` (`store.js:235`), donc l'encart apparaît sans rechargement. Les scénarios cités existent au catalogue et les stations déclarées sont cohérentes avec `content/chain.yaml`. Revue faite par lecture seule : aucun test n'a été lancé.\n\nNit | low | src/wavedevsecops/engine/steps.py:412 | Le cache de l'encart ne se vide que si le fichier du scénario B change (`cached[0] is scenario`). Or l'encart dépend aussi de `content/chain.yaml` (`delivered`, `milestone`) et des titres du catalogue. Une modification de ces fichiers n'est donc visible qu'après redémarrage du serveur. De même, une chaîne illisible donne `None`, et ce `None` reste en cache. | certain\n\nNit | low | src/wavedevsecops/engine/steps.py:416 | Quand le résolveur lève une exception, rien n'est mis en cache. Il est donc rappelé à chaque calcul du panneau et produit à chaque fois un `log.exception` avec la trace complète. Les journaux grossissent tant que le scénario reste terminé. | certain\n\nNit | low | src/wavedevsecops/web/blockers.py:64 | Si la station est livrée mais que le scénario est absent du catalogue, l'item n'a ni `scenario` ni `soon_text`. `scenario.js:165-173` n'affiche alors ni lien ni étiquette : la barrière apparaît sans suite. Le lint évite ce cas pour le contenu actuel, et un avertissement est journalisé. | certain\n\nNit | low | src/wavedevsecops/web/blockers.py:84 | Si la station n'existe pas dans la chaîne, `station_text` devient « Station N · » (séparateur suivi de rien). Ce cas n'arrive que si le lint n'a pas été lancé. | certain\n\nNit | low | tests/test_blockers.py:185 | Les tests appellent la méthode privée `_blockers_of`, jamais `StepRunner.panel()`. Le critère « `blockers` présent quand le scénario est terminé, `None` sinon » (`if not current`, `steps.py:469`) n'est donc couvert par aucun test. | certain\n\nNit | low | tests/test_blockers.py:124 | `_chain_with` remplace par monkeypatch un module interne du projet (`blockers_module.load_chain_texts`). Pointer vers un `content/chain.yaml` temporaire (`tmp_path`) testerait aussi la lecture du champ `milestone` depuis le YAML. | certain\n\nComplexité : 0 constat. Le cache par scénario borne `catalogue_scenario_titles`, qui parcourt tous les scénarios, à un seul calcul par lecture du fichier.",
+ "ttft_ms": 2927,
+ "type": "result",
+ "duration_ms": 73023,
+ "uuid": "b8d75c1c-8be5-4084-b03b-93669fec5eb6",
+ "ttft_stream_ms": 1254,
+ "time_to_request_ms": 134,
+ "first_content_frame_ms": 1254,
+ "queued_turn_count": 0,
+ "result_index": 0,
+ "_duree_s": 74.0
+}

@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "us611",
+ "latence_s": 19.2,
+ "usage": {
+  "prompt_tokens": 8154,
+  "completion_tokens": 999,
+  "total_tokens": 9153,
+  "cost": 0.0303735,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 8151,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0303735,
+   "upstream_inference_prompt_cost": 0.0203835,
+   "upstream_inference_completions_cost": 0.00999
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 456,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.0303735,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 999,
+   "cout_usd": 0.0303735,
+   "latence_s": 19.2
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/usine/ia/doublons.py\",\"ligne\":85,\"severite\":\"Important\",\"description\":\"Les scores sont arrondis avant le tri et l'application de la limite : deux similarités différentes peuvent devenir égales, et une paire moins similaire est alors conservée à la place de la meilleure. Par exemple, avec DEMO-1 contenant 200 jetons, DEMO-2 les 199 premiers et DEMO-3 les 201 premiers, les scores DEMO-1/DEMO-2 (0,995) et DEMO-1/DEMO-3 (environ 0,99502488) deviennent tous deux 0,995. Avec limite=1, le code renvoie DEMO-1/DEMO-2, contrairement à l'exigence de conserver les meilleures paires. Trier et sélectionner sur les scores non arrondis, puis arrondir éventuellement pour la restitution.\",\"test_pytest\":\"from datetime import date\\n\\nimport polars as pl\\n\\nfrom usine.contrats.tickets import SCHEMA_TICKET_TEXTE\\nfrom usine.ia.doublons import detecter_doublons\\n\\n\\ndef test_limite_conserve_la_paire_reellement_la_plus_similaire():\\n    mots = [f\\\"mot{i:04d}\\\" for i in range(201)]\\n    textes = pl.DataFrame(\\n        [\\n            {\\n                \\\"cle_ticket\\\": cle,\\n                \\\"type_ticket\\\": \\\"anomalie\\\",\\n                \\\"entite\\\": \\\"E1\\\",\\n                \\\"titre\\\": \\\" \\\".join(mots[:nombre]),\\n                \\\"description\\\": \\\"\\\",\\n            }\\n            for cle, nombre in [(\\\"DEMO-1\\\", 200), (\\\"DEMO-2\\\", 199), (\\\"DEMO-3\\\", 201)]\\n        ],\\n        schema=dict(SCHEMA_TICKET_TEXTE.colonnes),\\n    )\\n    sortie = detecter_doublons(\\n        textes,\\n        (\\\"DEMO-1\\\", \\\"DEMO-2\\\", \\\"DEMO-3\\\"),\\n        date(2026, 10, 12),\\n        lambda texte: texte,\\n        limite=1,\\n    )\\n    assert [(p.cle_a, p.cle_b) for p in sortie.paires] == [(\\\"DEMO-1\\\", \\\"DEMO-3\\\")]\\n\"}]}"
+}

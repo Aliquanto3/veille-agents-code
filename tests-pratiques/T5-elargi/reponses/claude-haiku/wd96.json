@@ -1,0 +1,100 @@
+{
+ "duration_api_ms": 103423,
+ "stop_reason": "end_turn",
+ "session_id": "1e131cf7-3a75-4b11-bb88-764294f44154",
+ "total_cost_usd": 0.029929989999999997,
+ "usage": {
+  "input_tokens": 28,
+  "cache_creation_input_tokens": 61587,
+  "cache_read_input_tokens": 672079,
+  "output_tokens": 21778,
+  "output_tokens_details": {
+   "thinking_tokens": 15956
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 61587,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 3508,
+    "cache_read_input_tokens": 75358,
+    "cache_creation_input_tokens": 2760,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 2760
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "modelUsage": {
+  "claude-haiku-5-5": {
+   "inputTokens": 28,
+   "outputTokens": 21778,
+   "cacheReadInputTokens": 672079,
+   "cacheCreationInputTokens": 61587,
+   "webSearchRequests": 0,
+   "costUSD": 0.029929989999999997,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 15956,
+   "canonicalModel": "claude-haiku-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "permission_denials": [],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "fast_mode_disabled_reason": "sdk_opt_in_required",
+ "subagent_stats": {
+  "spawned": 0,
+  "requested": {
+   "background": 0,
+   "foreground": 0,
+   "unset": 0
+  },
+  "started_in_background": 0,
+  "max_depth": 0,
+  "spawned_by_subagents": 0,
+  "completed": 0,
+  "failed": 0,
+  "killed": {
+   "parent": 0,
+   "user": 0,
+   "system": 0
+  },
+  "refused": {
+   "depth_limit": 0,
+   "concurrency_limit": 0,
+   "budget": 0
+  },
+  "by_type": {}
+ },
+ "safety_stops": 0,
+ "is_error": false,
+ "num_turns": 27,
+ "subtype": "success",
+ "api_error_status": null,
+ "result": "Base : sans objet (lecture seule, pas de git). Aucun défaut high ou medium trouvé : le lien, les clés, le rendu sans lien mort et la pose des « i » se tiennent à la lecture. Constats :\n\nImportant | low | tests/test_pipeline_explain.py:56 | `test_sans_dernier_espace_ou_avec_espace_disparu_pas_de_lien` ne teste que le cas « aucun dernier scénario » (`last_opened` absent). La branche « espace disparu » (`workspace_exists` renvoie False, `glossary.py:131`) n'est jamais exécutée par un test Python ; le nom du test promet plus que ce qu'il vérifie | certain\nNit | low | src/wavedevsecops/projections/links.py:113 | La garde `ref <= EXPLAIN_CHECK` est toujours vraie : `pipeline.*` et le défaut `remote.check` sont tous deux `<= \"remote.check\"` (comparaison de chaînes). Pas de bug aujourd'hui, mais la condition ne filtre rien et serait fausse si une clé préfixée au-delà de `r` apparaissait | certain\nNit | low | src/wavedevsecops/web/glossary.py:171 | `open_station_workspace` relit et valide tout le catalogue (`load_catalogue`) à chaque `GET /api/glossary`, alors qu'une seule entrée est cherchée. Coût inutile sur la page Vocabulaire, sans effet fonctionnel | certain\nNit | low | tests/test_pipeline_tabs_dom.py:332 | Deux commentaires JS consécutifs commencent par la même phrase « La doublure de DOM n'a pas de MutationObserver… » ; le premier est une version périmée du second | certain\n\nVérifié sans défaut : `progress.json` non-objet ou illisible lève `UnreadableDataError` (AppError), donc attrapé ; `WorkspaceNotFound` est aussi une AppError ; `el()` ignore `false`, donc `data-explain-ref` absent pour une tâche sans clé ; la boucle générique de `explain.js:112` saute les boutons sans `data-element-id`, donc pas de second « i » ; `main.js` lit `?vue=` et `mountWorkspace` le traite ; les sept `pipeline.*` et leurs `barrier_id` sont présents dans `content/explanations.yaml`.",
+ "ttft_ms": 7357,
+ "type": "result",
+ "duration_ms": 105446,
+ "uuid": "8ee6a669-71ac-4c60-b5fc-aa69e53447c7",
+ "ttft_stream_ms": 974,
+ "time_to_request_ms": 215,
+ "first_content_frame_ms": 975,
+ "queued_turn_count": 0,
+ "result_index": 0,
+ "_duree_s": 106.3
+}

@@ -1,0 +1,43 @@
+{
+ "story": "ws-v2s2",
+ "test_command": "T:/v/wavestack/.venv/Scripts/python.exe -m pytest -q -x --tb=no -p no:cacheprovider --deselect=tests/test_mcp.py::test_local_server_lifecycle_call_and_shutdown --deselect=tests/test_mcp.py::test_app_lifespan_attaches_the_loop_and_stops_the_local_server --deselect=tests/test_mcp.py::test_mcp_card_is_pending_until_the_next_send --deselect=tests/test_mcp.py::test_invalid_call_with_the_mcp_brick_alone_belongs_to_mcp --deselect=tests/test_mcp_lab.py::test_local_handshake_lists_the_three_primitives_and_leaves_the_brick --deselect=tests/test_mcp_lab.py::test_valid_call_and_is_error_are_results --deselect=tests/test_mcp_lab.py::test_resource_and_prompt_then_sent_to_the_model --deselect=tests/test_mcp_lab.py::test_by_the_model_one_tool_through_the_host --deselect=tests/test_mcp_lab.py::test_without_a_tool_a_refused_call_and_a_window_too_small --deselect=tests/test_mcp_lab.py::test_lazy_loading_reaches_the_bound_of_calls --deselect=tests/test_mcp_lab.py::test_a_second_tool_ends_the_workshop --deselect=tests/test_mcp_lab.py::test_an_output_cut_at_the_reserve_ends_the_workshop --deselect=tests/test_mcp_lab.py::test_the_turn_after_an_ask_keeps_its_prefix --deselect=tests/test_mcp_lab.py::test_a_stateless_engine_says_the_workshop_took_its_cache --deselect=tests/test_mcp_lab.py::test_an_end_always_comes[connect] --deselect=tests/test_mcp_lab.py::test_an_end_always_comes[call] --deselect=tests/test_mcp_lab.py::test_an_end_always_comes[read] --deselect=tests/test_mcp_lab.py::test_an_end_always_comes[prompt] --deselect=tests/test_mcp_lab.py::test_ask_needs_a_model_that_calls_tools --deselect=tests/test_mcp_lab.py::test_stop_during_a_generation_keeps_the_connection --deselect=tests/test_mcp_lab.py::test_a_call_needs_the_workshops_connection_and_a_listed_tool --deselect=tests/test_mcp_lab.py::test_next_connection_language_change_reset_and_close --deselect=tests/test_mcp_lab.py::test_german_page_texts_and_the_local_tools_in_german --deselect=tests/test_mcp_lab.py::test_stop_during_a_call_to_the_local_glossary_closes_its_process --deselect=tests/test_mcp_lab.py::test_the_main_screens_intentions_are_refused_during_a_workshop_exchange --deselect=tests/test_mcp_lab.py::test_a_server_gone_closes_the_workshops_connection --deselect=tests/test_mcp_lab.py::test_lifespan_closes_the_workshops_connection --deselect=tests/test_mcp_lab.py::test_a_turn_uses_the_bricks_connection_while_the_workshops_is_open --deselect=tests/test_mcp_lab.py::test_routes_page_snapshot_refusals --deselect=tests/test_mcp_lazy.py::test_toggle_swaps_the_documentation_for_one_line_per_tool --deselect=tests/test_mcp_lazy.py::test_load_then_call_in_the_same_turn_then_the_next_turn --deselect=tests/test_mcp_lazy.py::test_undocumented_call_is_refused_before_sending_and_counts_as_a_retry --deselect=tests/test_mcp_lazy.py::test_loading_twice_or_an_unknown_name --deselect=tests/test_mcp_lazy.py::test_everything_loaded_keeps_the_meta_tool_then_clearing_unloads --deselect=tests/test_mcp_lazy.py::test_a_loaded_documentation_waits_while_its_server_is_off --deselect=tests/test_mcp_lazy.py::test_short_memory_off_reads_no_documentation_and_gives_it_again --deselect=tests/test_mcp_lazy.py::test_chat_mode_documented_tool_enters_tools_at_the_next_call --deselect=tests/test_mcp_lazy.py::test_chat_mode_everything_loaded_in_the_turn_drops_the_meta_tool tests/test_backend_messages.py tests/test_mcp.py tests/test_mcp_lab.py tests/test_mcp_lazy.py tests/test_mcp_sandbox.py",
+ "tests_seconds": 61.3,
+ "tests_rc": 0,
+ "modules": [
+  {
+   "module": "src/wavestack/mcp/local_server.py",
+   "generes": 143,
+   "effectifs": 92,
+   "echantillon": 45
+  },
+  {
+   "module": "src/wavestack/mcp/policy.py",
+   "generes": 7,
+   "effectifs": 0,
+   "echantillon": 0
+  },
+  {
+   "module": "src/wavestack/mcp/sandbox.py",
+   "generes": 53,
+   "effectifs": 53,
+   "echantillon": 21,
+   "executes": 6,
+   "tues": 6
+  },
+  {
+   "module": "src/wavestack/mcp/servers.py",
+   "generes": 86,
+   "effectifs": 6,
+   "echantillon": 3
+  },
+  {
+   "module": "tools/e2e/run_e2e.py",
+   "generes": 19962,
+   "effectifs": 2,
+   "echantillon": 1
+  }
+ ],
+ "budget_atteint": true,
+ "survivants": [],
+ "total_seconds": 480.1
+}

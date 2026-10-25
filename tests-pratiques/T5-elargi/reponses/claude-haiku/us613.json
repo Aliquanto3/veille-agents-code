@@ -1,0 +1,100 @@
+{
+ "duration_api_ms": 79079,
+ "stop_reason": "end_turn",
+ "session_id": "ac61f8ab-6b37-4e4e-aa1d-7bb0fe85a6eb",
+ "total_cost_usd": 0.01967724,
+ "usage": {
+  "input_tokens": 14,
+  "cache_creation_input_tokens": 45234,
+  "cache_read_input_tokens": 200504,
+  "output_tokens": 17248,
+  "output_tokens_details": {
+   "thinking_tokens": 14045
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 45234,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 3986,
+    "cache_read_input_tokens": 45720,
+    "cache_creation_input_tokens": 5353,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 5353
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "modelUsage": {
+  "claude-haiku-5-5": {
+   "inputTokens": 14,
+   "outputTokens": 17248,
+   "cacheReadInputTokens": 200504,
+   "cacheCreationInputTokens": 45234,
+   "webSearchRequests": 0,
+   "costUSD": 0.01967724,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 14045,
+   "canonicalModel": "claude-haiku-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "permission_denials": [],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "fast_mode_disabled_reason": "sdk_opt_in_required",
+ "subagent_stats": {
+  "spawned": 0,
+  "requested": {
+   "background": 0,
+   "foreground": 0,
+   "unset": 0
+  },
+  "started_in_background": 0,
+  "max_depth": 0,
+  "spawned_by_subagents": 0,
+  "completed": 0,
+  "failed": 0,
+  "killed": {
+   "parent": 0,
+   "user": 0,
+   "system": 0
+  },
+  "refused": {
+   "depth_limit": 0,
+   "concurrency_limit": 0,
+   "budget": 0
+  },
+  "by_type": {}
+ },
+ "safety_stops": 0,
+ "is_error": false,
+ "num_turns": 16,
+ "subtype": "success",
+ "api_error_status": null,
+ "result": "base : sans objet\n\nImportant | medium | src/usine/ia/passerelle.py:518 | `self._observer(traces_outils[-0])` : `[-0]` vaut toujours `traces_outils[0]`. Chaque appel d'outil d'Agent transmet donc la première trace de l'appel, et la dernière n'est jamais observée (la ligne 520 utilise `[-1]`). Preuve par lecture : lignes 499-520. Latent dans le câblage actuel : la passerelle observée de `_assembler_rapport` (composition.py:905-915) ne sert pas `executer_agent`, mais aucun test ne couvre l'observateur sur ce chemin. | certain\n\nImportant | medium | src/usine/adaptateurs/observabilite/langfuse.py:67 | `self._client.flush()` est appelé de façon synchrone à chaque trace, dans le fil du Passage. La spec interdit de « ralentir un Passage quand Langfuse est absent » ; un `flush` vers un hôte injoignable peut bloquer jusqu'à un délai d'expiration par trace. Non exécuté ici (pas de serveur, groupe `bonus` absent) ; le risque repose sur le comportement bloquant documenté de `flush`. | probable\n\nNit | low | tests/unit/adaptateurs/observabilite/test_langfuse.py:110 | `Secrets()` sans `_env_file=None` lit le `.env` réel et l'environnement : le test `test_envoi_desactive_par_defaut` échoue si un développeur a `USINE_LANGFUSE=true` dans son `.env`. | probable",
+ "ttft_ms": 7360,
+ "type": "result",
+ "duration_ms": 79498,
+ "uuid": "a9b21dd3-4989-4412-be63-2c39e0a9d9c4",
+ "ttft_stream_ms": 1346,
+ "time_to_request_ms": 107,
+ "first_content_frame_ms": 1346,
+ "queued_turn_count": 0,
+ "result_index": 0,
+ "_duree_s": 80.4
+}

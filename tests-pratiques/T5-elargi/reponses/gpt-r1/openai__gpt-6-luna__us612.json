@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "us612",
+ "latence_s": 28.8,
+ "usage": {
+  "prompt_tokens": 4483,
+  "completion_tokens": 2483,
+  "total_tokens": 6966,
+  "cost": 0.0018018,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 4480,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0018018,
+   "upstream_inference_prompt_cost": 0.0005603,
+   "upstream_inference_completions_cost": 0.0012415
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 2064,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.0018018,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 2483,
+   "cout_usd": 0.0018018,
+   "latence_s": 28.8
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/usine/adaptateurs/llm/fournisseur.py\",\"ligne\":409,\"severite\":\"Important\",\"description\":\"La condition `config.fournisseur >= \\\"local\\\"` compare les noms alphabétiquement : elle est aussi vraie pour `mistral`. Ainsi, toute configuration Mistral est routée vers le serveur local et utilise la clé factice `sans-cle`, au lieu du fournisseur configuré. Le test ci-dessous vérifie que la fabrique conserve la clé Mistral et ignore l’URL locale pour ce fournisseur.\",\"test_pytest\":\"from decimal import Decimal\\n\\nimport pytest\\n\\nimport usine.adaptateurs.llm.fournisseur as fournisseur\\nfrom usine.contrats.config import ConfigLLM\\n\\n\\ndef test_mistral_ne_doit_pas_etre_route_vers_le_serveur_local(monkeypatch):\\n    url_locale = \\\"http://serveur-local.test:8080\\\"\\n    monkeypatch.setenv(fournisseur.VARIABLE_URL_LOCAL, url_locale)\\n    config = ConfigLLM(\\n        fournisseur=\\\"mistral\\\",\\n        modele=\\\"mistral-large-latest\\\",\\n        plafond_cout_passage_eur=Decimal(1),\\n    )\\n    arguments = {}\\n\\n    class ArretConstruction(Exception):\\n        pass\\n\\n    def capturer_mistral(**kwargs):\\n        arguments.update(kwargs)\\n        raise ArretConstruction\\n\\n    monkeypatch.setattr(fournisseur, \\\"Mistral\\\", capturer_mistral)\\n    with pytest.raises(ArretConstruction):\\n        fournisseur.construire_fournisseur_llm(\\n            config, \\\"cle-mistral\\\", client_http=object()\\n        )\\n\\n    assert arguments.get(\\\"api_key\\\") == \\\"cle-mistral\\\"\\n    assert arguments.get(\\\"server_url\\\") != url_locale\\n\"}]}"
+}

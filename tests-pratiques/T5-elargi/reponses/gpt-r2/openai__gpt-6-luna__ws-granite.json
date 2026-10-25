@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "ws-granite",
+ "latence_s": 39.3,
+ "usage": {
+  "prompt_tokens": 6997,
+  "completion_tokens": 3636,
+  "total_tokens": 10633,
+  "cost": 0.00269255,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 6994,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00269255,
+   "upstream_inference_prompt_cost": 0.00087455,
+   "upstream_inference_completions_cost": 0.001818
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 3402,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.00269255,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 3636,
+   "cout_usd": 0.00269255,
+   "latence_s": 39.3
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavestack/models/capabilities.py\",\"ligne\":89,\"severite\":\"Important\",\"description\":\"La condition `at < -1` ne peut jamais être vraie : si le gabarit n'affiche pas la question-sonde, `at` vaut `-1` et le parseur reçoit quand même le rendu. Un gabarit contenant seulement un exemple `<tool_call>` statique peut donc réussir la sonde, alors qu'il ne rend pas l'appel passé exigé par la spec, et recevoir à tort le lecteur Hermes.\",\"test_pytest\":\"from wavestack.models.capabilities import hermes_round_trip\\n\\n\\ndef test_probe_rejects_static_example_without_rendered_question():\\n    template = (\\n        'x<tool_call>\\\\n'\\n        '{\\\"name\\\": \\\"calculator\\\", \\\"arguments\\\": {\\\"expression\\\": \\\"12*37\\\"}}\\\\n'\\n        '</tool_call>'\\n    )\\n    assert hermes_round_trip(template) is False\\n\"}]}"
+}

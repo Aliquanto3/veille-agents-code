@@ -1,0 +1,144 @@
+{
+ "story": "ws-minicpm",
+ "test_command": "T:/v/wavestack/.venv/Scripts/python.exe -m pytest -q -x --tb=no -p no:cacheprovider tests/test_cli_diagnostic.py tests/test_installers.py tests/test_model_catalog.py tests/test_tool_parser_minicpm5.py",
+ "tests_seconds": 17.1,
+ "tests_rc": 0,
+ "modules": [
+  {
+   "module": "src/wavestack/config.py",
+   "generes": 1787,
+   "effectifs": 0,
+   "echantillon": 0
+  },
+  {
+   "module": "src/wavestack/models/capabilities.py",
+   "generes": 292,
+   "effectifs": 5,
+   "echantillon": 1
+  },
+  {
+   "module": "src/wavestack/session/app_session.py",
+   "generes": 12411,
+   "effectifs": 1,
+   "echantillon": 1
+  },
+  {
+   "module": "src/wavestack/session/diagnostic.py",
+   "generes": 1104,
+   "effectifs": 9,
+   "echantillon": 2
+  },
+  {
+   "module": "src/wavestack/tools/parser.py",
+   "generes": 469,
+   "effectifs": 310,
+   "echantillon": 66,
+   "executes": 23,
+   "tues": 13
+  }
+ ],
+ "budget_atteint": true,
+ "survivants": [
+  {
+   "module": "src/wavestack/tools/parser.py",
+   "ligne": 122,
+   "colonne": 35,
+   "operateur": "core/ReplaceComparisonOperator_Lt_LtE",
+   "occurrence": 1,
+   "fonction": "_minicpm5_end",
+   "job_id": "315a49b260ba4c48bb855f4009bf4fce",
+   "diff": "--- mutation diff ---\n--- a/src\\wavestack\\tools\\parser.py\n+++ b/src\\wavestack\\tools\\parser.py\n@@ -119,7 +119,7 @@\n     while True:\n         end, cdata = raw.find(close, pos), raw.find(_CDATA[0], pos)\n         opening = raw.find('<function name=\"', pos)\n-        if end < 0 or 0 <= opening < end and (cdata < 0 or opening < cdata):\n+        if end < 0 or 0 <= opening <= end and (cdata < 0 or opening < cdata):\n             return -1\n         if cdata < 0 or end < cdata:\n             return end + len(close)"
+  },
+  {
+   "module": "src/wavestack/tools/parser.py",
+   "ligne": 180,
+   "colonne": 36,
+   "operateur": "core/ReplaceBinaryOperator_Add_FloorDiv",
+   "occurrence": 9,
+   "fonction": "_parse_minicpm5",
+   "job_id": "bb2cd823e6c940058a0bb5b6b9c9ce03",
+   "diff": "--- mutation diff ---\n--- a/src\\wavestack\\tools\\parser.py\n+++ b/src\\wavestack\\tools\\parser.py\n@@ -177,7 +177,7 @@\n         if head is None:\n             tag_end = raw.find(\">\", start)\n             return [], Malformed(\n-                raw[start : tag_end + 1 if tag_end >= 0 else None],\n+                raw[start : tag_end // 1 if tag_end >= 0 else None],\n                 Message(\"tools.parser.minicpm5_function_tag\"),\n             )\n         end = _minicpm5_end(raw, head.end())"
+  },
+  {
+   "module": "src/wavestack/tools/parser.py",
+   "ligne": 180,
+   "colonne": 38,
+   "operateur": "core/NumberReplacer",
+   "occurrence": 54,
+   "fonction": "_parse_minicpm5",
+   "job_id": "18cb40f2458643aea3f867800d0f61ab",
+   "diff": "--- mutation diff ---\n--- a/src\\wavestack\\tools\\parser.py\n+++ b/src\\wavestack\\tools\\parser.py\n@@ -177,7 +177,7 @@\n         if head is None:\n             tag_end = raw.find(\">\", start)\n             return [], Malformed(\n-                raw[start : tag_end + 1 if tag_end >= 0 else None],\n+                raw[start : tag_end + 2 if tag_end >= 0 else None],\n                 Message(\"tools.parser.minicpm5_function_tag\"),\n             )\n         end = _minicpm5_end(raw, head.end())"
+  },
+  {
+   "module": "src/wavestack/tools/parser.py",
+   "ligne": 217,
+   "colonne": 18,
+   "operateur": "core/ReplaceBinaryOperator_Add_BitOr",
+   "occurrence": 12,
+   "fonction": "parse_tool_calls",
+   "job_id": "44d83f70648f47bb86dd376719ab0c7a",
+   "diff": "--- mutation diff ---\n--- a/src\\wavestack\\tools\\parser.py\n+++ b/src\\wavestack\\tools\\parser.py\n@@ -214,6 +214,6 @@\n         if isinstance(result, str):\n             return [], Malformed(block, result)\n         calls.append(ToolCall(result.name, result.arguments, block))\n-        pos = end + len(close_tag)\n+        pos = end | len(close_tag)\n     return calls, None\n "
+  },
+  {
+   "module": "src/wavestack/tools/parser.py",
+   "ligne": 213,
+   "colonne": 33,
+   "operateur": "core/ReplaceBinaryOperator_Add_Sub",
+   "occurrence": 11,
+   "fonction": "parse_tool_calls",
+   "job_id": "87c7eb706a8a434d8b4b0ccee50a3567",
+   "diff": "--- mutation diff ---\n--- a/src\\wavestack\\tools\\parser.py\n+++ b/src\\wavestack\\tools\\parser.py\n@@ -210,7 +210,7 @@\n         if end < 0:\n             return [], Malformed(raw[start:], Message(\"tools.parser.never_closed\"))\n         block = raw[start : end + len(close_tag)]\n-        result = parse(raw[start + len(open_tag) : end], schemas)\n+        result = parse(raw[start - len(open_tag) : end], schemas)\n         if isinstance(result, str):\n             return [], Malformed(block, result)\n         calls.append(ToolCall(result.name, result.arguments, block))"
+  },
+  {
+   "module": "src/wavestack/tools/parser.py",
+   "ligne": 180,
+   "colonne": 54,
+   "operateur": "core/NumberReplacer",
+   "occurrence": 56,
+   "fonction": "_parse_minicpm5",
+   "job_id": "1ecfea8992f14105a309c052ef4a7b8e",
+   "diff": "--- mutation diff ---\n--- a/src\\wavestack\\tools\\parser.py\n+++ b/src\\wavestack\\tools\\parser.py\n@@ -177,7 +177,7 @@\n         if head is None:\n             tag_end = raw.find(\">\", start)\n             return [], Malformed(\n-                raw[start : tag_end + 1 if tag_end >= 0 else None],\n+                raw[start : tag_end + 1 if tag_end >= 1 else None],\n                 Message(\"tools.parser.minicpm5_function_tag\"),\n             )\n         end = _minicpm5_end(raw, head.end())"
+  },
+  {
+   "module": "src/wavestack/tools/parser.py",
+   "ligne": 212,
+   "colonne": 32,
+   "operateur": "core/ReplaceBinaryOperator_Add_RShift",
+   "occurrence": 10,
+   "fonction": "parse_tool_calls",
+   "job_id": "8eb5799312b9440aae5ea63f84f51576",
+   "diff": "--- mutation diff ---\n--- a/src\\wavestack\\tools\\parser.py\n+++ b/src\\wavestack\\tools\\parser.py\n@@ -209,7 +209,7 @@\n         end = raw.find(close_tag, start)\n         if end < 0:\n             return [], Malformed(raw[start:], Message(\"tools.parser.never_closed\"))\n-        block = raw[start : end + len(close_tag)]\n+        block = raw[start : end >> len(close_tag)]\n         result = parse(raw[start + len(open_tag) : end], schemas)\n         if isinstance(result, str):\n             return [], Malformed(block, result)"
+  },
+  {
+   "module": "src/wavestack/tools/parser.py",
+   "ligne": 129,
+   "colonne": 37,
+   "operateur": "core/NumberReplacer",
+   "occurrence": 23,
+   "fonction": "_minicpm5_end",
+   "job_id": "f2cbffdb3ade44e68a4bf697f01d6bee",
+   "diff": "--- mutation diff ---\n--- a/src\\wavestack\\tools\\parser.py\n+++ b/src\\wavestack\\tools\\parser.py\n@@ -126,7 +126,7 @@\n         cdata_end = raw.find(_CDATA[1], cdata)\n         if cdata_end < 0:\n             return -1\n-        pos = cdata_end + len(_CDATA[1])\n+        pos = cdata_end + len(_CDATA[ 0])\n \n \n def _minicpm5_params(body: str) -> list[tuple[str, str]] | None:"
+  },
+  {
+   "module": "src/wavestack/tools/parser.py",
+   "ligne": 128,
+   "colonne": 20,
+   "operateur": "core/NumberReplacer",
+   "occurrence": 21,
+   "fonction": "_minicpm5_end",
+   "job_id": "9f9486e4e92c4338aaabd28881b0836c",
+   "diff": "--- mutation diff ---\n--- a/src\\wavestack\\tools\\parser.py\n+++ b/src\\wavestack\\tools\\parser.py\n@@ -125,7 +125,7 @@\n             return end + len(close)\n         cdata_end = raw.find(_CDATA[1], cdata)\n         if cdata_end < 0:\n-            return -1\n+            return - 0\n         pos = cdata_end + len(_CDATA[1])\n \n "
+  },
+  {
+   "module": "src/wavestack/tools/parser.py",
+   "ligne": 217,
+   "colonne": 18,
+   "operateur": "core/ReplaceBinaryOperator_Add_Div",
+   "occurrence": 12,
+   "fonction": "parse_tool_calls",
+   "job_id": "dc4df4ee2ec3410ea37bd60d57be713d",
+   "diff": "--- mutation diff ---\n--- a/src\\wavestack\\tools\\parser.py\n+++ b/src\\wavestack\\tools\\parser.py\n@@ -214,6 +214,6 @@\n         if isinstance(result, str):\n             return [], Malformed(block, result)\n         calls.append(ToolCall(result.name, result.arguments, block))\n-        pos = end + len(close_tag)\n+        pos = end / len(close_tag)\n     return calls, None\n "
+  }
+ ],
+ "total_seconds": 480.2
+}

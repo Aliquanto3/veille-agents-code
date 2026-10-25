@@ -1,0 +1,100 @@
+{
+ "duration_api_ms": 47118,
+ "stop_reason": "end_turn",
+ "session_id": "1fabb278-6d9e-4f4b-a4e0-749255e2cc00",
+ "total_cost_usd": 0.36375579999999996,
+ "usage": {
+  "input_tokens": 14,
+  "cache_creation_input_tokens": 30349,
+  "cache_read_input_tokens": 172339,
+  "output_tokens": 4322,
+  "output_tokens_details": {
+   "thinking_tokens": 2037
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 30349,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1276,
+    "cache_read_input_tokens": 32840,
+    "cache_creation_input_tokens": 741,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 741
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "modelUsage": {
+  "claude-opus-5-5": {
+   "inputTokens": 14,
+   "outputTokens": 4322,
+   "cacheReadInputTokens": 172339,
+   "cacheCreationInputTokens": 30349,
+   "webSearchRequests": 0,
+   "costUSD": 0.36375579999999996,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 2037,
+   "canonicalModel": "claude-opus-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "permission_denials": [],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "fast_mode_disabled_reason": "sdk_opt_in_required",
+ "subagent_stats": {
+  "spawned": 0,
+  "requested": {
+   "background": 0,
+   "foreground": 0,
+   "unset": 0
+  },
+  "started_in_background": 0,
+  "max_depth": 0,
+  "spawned_by_subagents": 0,
+  "completed": 0,
+  "failed": 0,
+  "killed": {
+   "parent": 0,
+   "user": 0,
+   "system": 0
+  },
+  "refused": {
+   "depth_limit": 0,
+   "concurrency_limit": 0,
+   "budget": 0
+  },
+  "by_type": {}
+ },
+ "safety_stops": 0,
+ "is_error": false,
+ "num_turns": 13,
+ "subtype": "success",
+ "api_error_status": null,
+ "result": "Rien d'Important : aucun défaut bloquant trouvé par lecture. Les trois critères d'acceptation sont couverts et branchés :\n- `usine agent` est enregistré dans `src/usine/cli.py:21`, et une `UsineErreur` y devient le code 1 (`src/usine/cli.py:54`).\n- L'écran Agent appelle `_afficher_agent_repli` en Mode repli (`src/usine/ui/app.py:395`).\n- Les questions de `QUESTIONS_DEMO` sont bien q01, q02, q03, q08 et q14 de `evals/agent/questions.json`.\n- Les 5 fichiers `demo/repli/agent/0x.json` portent tous `20261012T221158Z-96c621` et le statut `conforme`.\n- `tests/unit/ui/test_app.py:190` suppose encore que le seul encadré d'information est `MESSAGE_REPLI`, et cela reste vrai.\n\nBase : sans objet.\n\nNit | low | src/usine/ia/agent/repli.py:73 | Les anciens `*.json` sont supprimés avant que les nouveaux soient écrits. Si une écriture échoue en cours de route (disque, droits), il reste un jeu incomplet de réponses versionnées. Écrire dans un répertoire temporaire puis remplacer éviterait ce cas. | certain\nNit | low | src/usine/ia/agent/repli.py:89 | `charger_reponses` accepte un fichier dont le `statut_controle` vaut `rejete`, par exemple après une retouche à la main. L'UI le rejouerait alors comme un avertissement, alors que la règle « une réponse rejetée n'est jamais enregistrée » n'est vérifiée qu'à l'écriture. | certain\nNit | low | tests/unit/ui/test_app_agent.py:183 | Le test « Passage différent » vérifie l'absence de bouton, mais pas l'absence du radio, alors que la matrice exige « aucun choix proposé ». Le code est correct : le `return` a lieu avant `st.radio`. Seul l'oracle est incomplet. | certain\nNit | low | tests/unit/ia/agent/test_repli.py:98 | `test_cli_enregistrer` remplace par un monkeypatch le module interne `composition.construire_session_agent`, au lieu d'injecter une doublure à la frontière (le fournisseur LLM). L'assemblage réel de la session par la CLI n'est donc pas exercé. | certain\n\nComplexité : 0 constat. Les réponses sont 5 fichiers fixes, lus une fois par rendu.",
+ "ttft_ms": 6468,
+ "type": "result",
+ "duration_ms": 47983,
+ "uuid": "fdfb0d56-c226-41fa-88ae-4787d9265ac7",
+ "ttft_stream_ms": 2390,
+ "time_to_request_ms": 321,
+ "first_content_frame_ms": 2390,
+ "queued_turn_count": 0,
+ "result_index": 0,
+ "_duree_s": 49.2
+}

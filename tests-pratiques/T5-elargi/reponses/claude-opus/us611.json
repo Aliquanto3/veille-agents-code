@@ -1,0 +1,100 @@
+{
+ "duration_api_ms": 53992,
+ "stop_reason": "end_turn",
+ "session_id": "e09c9b01-a529-497a-8ff6-fa946ed7b3b4",
+ "total_cost_usd": 0.4007876,
+ "usage": {
+  "input_tokens": 14,
+  "cache_creation_input_tokens": 32777,
+  "cache_read_input_tokens": 194578,
+  "output_tokens": 4980,
+  "output_tokens_details": {
+   "thinking_tokens": 2647
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 32777,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 2345,
+    "cache_read_input_tokens": 38479,
+    "cache_creation_input_tokens": 806,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 806
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "modelUsage": {
+  "claude-opus-5-5": {
+   "inputTokens": 14,
+   "outputTokens": 4980,
+   "cacheReadInputTokens": 194578,
+   "cacheCreationInputTokens": 32777,
+   "webSearchRequests": 0,
+   "costUSD": 0.4007876,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 2647,
+   "canonicalModel": "claude-opus-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "permission_denials": [],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "fast_mode_disabled_reason": "sdk_opt_in_required",
+ "subagent_stats": {
+  "spawned": 0,
+  "requested": {
+   "background": 0,
+   "foreground": 0,
+   "unset": 0
+  },
+  "started_in_background": 0,
+  "max_depth": 0,
+  "spawned_by_subagents": 0,
+  "completed": 0,
+  "failed": 0,
+  "killed": {
+   "parent": 0,
+   "user": 0,
+   "system": 0
+  },
+  "refused": {
+   "depth_limit": 0,
+   "concurrency_limit": 0,
+   "budget": 0
+  },
+  "by_type": {}
+ },
+ "safety_stops": 0,
+ "is_error": false,
+ "num_turns": 9,
+ "subtype": "success",
+ "api_error_status": null,
+ "result": "Revue de la passe 1 terminée (base : sans objet). Le code de la story fait ce que demandent les critères : seules les Anomalies ouvertes entrent, les textes passent par `apercu` avant comparaison, l'ordre est correct (tri stable par score, sur des paires générées dans l'ordre des rangs), les paramètres invalides lèvent une `UsineErreur`, une clé absente aussi (elle remonte jusqu'à `main` et donne le code 1), et rien n'est écrit. Aucun constat **Important**. Je n'ai rien pu exécuter ni corriger : tout ce qui suit vient de la lecture du code.\n\nNit | medium | src/usine/ia/doublons.py:82 | Complexité : `combinations(cles, 2)` calcule les n²/2 scores en Python pur. Surtout, chaque paire au-dessus du seuil devient un `PaireDoublon` Pydantic avant le tri, et la coupe à `limite` ne vient qu'après (ligne 90). La CLI accepte `--seuil 0`. Or presque toutes les Anomalies d'un même périmètre partagent au moins un mot de 4 lettres ou plus (« solde », « client », « reprise »). Avec quelques milliers d'Anomalies ouvertes, on construit des millions d'objets, donc des minutes de calcul et beaucoup de mémoire, pour n'en afficher que 50. Correctif proposé : garder des tuples `(score, a, b)`, sélectionner avec `heapq.nsmallest(limite, …, key=(-score, rang))`, puis construire les `PaireDoublon` sur ce seul résultat. Au seuil par défaut de 0,6, l'impact reste faible | probable\n\nNit | medium | tests/unit/ia/test_doublons.py:106 | `test_composition_sans_ecriture` remplace par des doublures deux modules internes, `consultation_repertoire` et `apercu_pseudonymisation`. En plus, sa fausse `anomalies()` renvoie `anomalies=()`. La sortie attendue est donc vide d'office, et le test ne vérifie pas que les clés des Anomalies ouvertes sont bien transmises à `detecter_doublons`. Il faudrait le remplacer par un vrai Passage de fixture lu par `ConsultationPassage`, avec au moins une paire attendue | certain\n\nNit | low | tests/unit/ia/test_doublons.py:124 | `test_cli_affiche_les_paires` remplace par une doublure `composition.doublons_passage`, qui est interne au projet. La chaîne CLI → composition → Passage n'est donc jamais exécutée de bout en bout | certain\n\nNit | low | src/usine/contrats/llm.py:35 | La spec n'est plus à jour : sa Code Map annonce `CONTRATS_VERSION` 1.9.0 et un commit « contrats 1.8 », alors que le code passe en 1.11.0. Le code est cohérent, puisque la base était en 1.10.0 ; c'est la Code Map de la spec qu'il faut corriger | certain\n\nNit | low | src/usine/ia/doublons.py:39 | Le passage en ASCII (`NFKD` puis `encode(\"ascii\", \"ignore\")`) supprime les ligatures qui ne se décomposent pas, comme `œ` : « cœur » devient « cur ». Comme les deux textes comparés subissent le même traitement, l'effet sur le score reste marginal | certain",
+ "ttft_ms": 8057,
+ "type": "result",
+ "duration_ms": 54458,
+ "uuid": "012f39a4-3b33-44cc-bdaf-5ab2b7a49a6a",
+ "ttft_stream_ms": 1340,
+ "time_to_request_ms": 211,
+ "first_content_frame_ms": 1340,
+ "queued_turn_count": 0,
+ "result_index": 0,
+ "_duree_s": 55.4
+}

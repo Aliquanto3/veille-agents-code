@@ -1,0 +1,100 @@
+{
+ "duration_api_ms": 115613,
+ "stop_reason": "end_turn",
+ "session_id": "b660aee0-52b0-4963-8f03-46c03c0ab511",
+ "total_cost_usd": 0.028897370000000002,
+ "usage": {
+  "input_tokens": 20,
+  "cache_creation_input_tokens": 60586,
+  "cache_read_input_tokens": 410467,
+  "output_tokens": 25347,
+  "output_tokens_details": {
+   "thinking_tokens": 20723
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 60586,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 3098,
+    "cache_read_input_tokens": 63295,
+    "cache_creation_input_tokens": 3130,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 3130
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "modelUsage": {
+  "claude-haiku-5-5": {
+   "inputTokens": 20,
+   "outputTokens": 25347,
+   "cacheReadInputTokens": 410467,
+   "cacheCreationInputTokens": 60586,
+   "webSearchRequests": 0,
+   "costUSD": 0.028897370000000002,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 20723,
+   "canonicalModel": "claude-haiku-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "permission_denials": [],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "fast_mode_disabled_reason": "sdk_opt_in_required",
+ "subagent_stats": {
+  "spawned": 0,
+  "requested": {
+   "background": 0,
+   "foreground": 0,
+   "unset": 0
+  },
+  "started_in_background": 0,
+  "max_depth": 0,
+  "spawned_by_subagents": 0,
+  "completed": 0,
+  "failed": 0,
+  "killed": {
+   "parent": 0,
+   "user": 0,
+   "system": 0
+  },
+  "refused": {
+   "depth_limit": 0,
+   "concurrency_limit": 0,
+   "budget": 0
+  },
+  "by_type": {}
+ },
+ "safety_stops": 0,
+ "is_error": false,
+ "num_turns": 24,
+ "subtype": "success",
+ "api_error_status": null,
+ "result": "base : sans objet\n\nImportant | medium | `src/wavestack/session/app_session.py:8375` | Sur une coupe de raisonnement, le générateur est fermé avant le dernier bloc `timings` : `fragments.close()` (8375) lève `GeneratorExit` dans `complete()` avant `data.get(\"stop\")` (`src/wavestack/models/servers.py:534-545`). `_last_cache_n` reste à `None`, donc `kv_reuse` reste `None` (8378) et `_kv_fields` renvoie `{}`. La ligne « Mémoire de contexte » disparaît donc précisément sur les appels dont la première génération a été coupée, alors que le serveur a bien réutilisé le cache. Le test `test_the_kv_cache_line_is_the_first_generations_own` (`tests/test_reasoning_budget.py`) utilise un faux moteur `_Cached` qui fixe `None` et ne vérifie pas le flux réel. Le même mécanisme touche déjà `prompt_n` (commentaire 8285), ce qui est pré-existant. | certain\n\nImportant | medium | `src/wavestack/session/app_session.py:8615` | `prompt_tokens` vaut `(call.usage or {}).get(\"prompt_tokens\") or 0` (8612). Si le fournisseur n'envoie pas d'`usage`, `run_call` met `source=\"estimate\"` (`src/wavestack/models/cloud_base.py:982`) et `call.usage` reste vide. Un appel réussi ajoute alors `(0, sortie estimée)` à `_turn_call_tokens`, sans garde. Si c'est le seul appel du sous-agent, `_delegate` émet `input_tokens: 0` (`app_session.py:5150-5151`, slice non vide), un faux zéro d'entrée, et une sortie estimée présentée comme exacte. L'interface l'affiche en « 0 » (`src/wavestack/web/static/app.js:2570`, `fmt(n ?? 0)`). Les tests ne couvrent que l'appel facturé puis en erreur, qui saute cet `append`. | probable (dépend d'un fournisseur sans `usage`)\n\nNit | low | `src/wavestack/session/app_session.py:8258` | L'annotation `kv_reuse: tuple[int, float] | None` ne correspond pas au retour de `_kv_reuse` (716 : `tuple[int, float | None] | None`). Sans effet à l'exécution ; la CI n'exécute que ruff (`pyproject.toml`, pas de mypy). | certain\n\nAucun autre défaut medium ou plus trouvé en lecture. Vérifiés sans constat : clés i18n `main.orch.sub.cost_*` et `main.orch.kv.*` présentes en fr, en, de sous `orch` ; slices `_turn_costs`/`_turn_impacts`/`_turn_call_tokens` réinitialisés ensemble (6763-6765) ; `_turn_cost`/`_turn_impact` gardent `is None` (un slice vide reste vide) ; `subagent_ended` émis dans le `finally` (5132), donc aussi en erreur. Rien n'a été exécuté : les outils disponibles sont en lecture seule.",
+ "ttft_ms": 12742,
+ "type": "result",
+ "duration_ms": 116893,
+ "uuid": "b3caea40-f66c-4e67-8aff-dbdab07f7f58",
+ "ttft_stream_ms": 896,
+ "time_to_request_ms": 188,
+ "first_content_frame_ms": 897,
+ "queued_turn_count": 0,
+ "result_index": 0,
+ "_duree_s": 117.8
+}

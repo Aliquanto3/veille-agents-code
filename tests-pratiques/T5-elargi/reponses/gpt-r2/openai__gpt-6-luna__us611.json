@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "us611",
+ "latence_s": 55.8,
+ "usage": {
+  "prompt_tokens": 8154,
+  "completion_tokens": 5482,
+  "total_tokens": 13636,
+  "cost": 0.003760175,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 8151,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.003760175,
+   "upstream_inference_prompt_cost": 0.001019175,
+   "upstream_inference_completions_cost": 0.002741
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 4887,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.003760175,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 5482,
+   "cout_usd": 0.003760175,
+   "latence_s": 55.8
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/usine/ia/doublons.py\",\"ligne\":63,\"severite\":\"Important\",\"description\":\"Le score est arrondi à 4 décimales avant le tri. Deux paires aux scores réels différents peuvent alors être à égalité et l’ordre par rang des clés peut placer la moins similaire en premier ; avec `limite=1`, la paire réellement la meilleure est omise, contrairement à la promesse de conserver les meilleures paires. Le test ci-dessous construit deux scores de 0,499975 et 0,5, qui sont tous deux arrondis à 0,5.\",\"test_pytest\":\"from datetime import date\\n\\nimport polars as pl\\n\\nfrom usine.contrats.tickets import SCHEMA_TICKET_TEXTE\\nfrom usine.ia.doublons import detecter_doublons\\n\\n\\ndef test_limite_garde_la_paire_au_meilleur_score_reel() -> None:\\n    n = 20_000\\n    base = [f\\\"base{i:05d}\\\" for i in range(n)]\\n    extras_b = [f\\\"bextra{i:05d}\\\" for i in range(n)]\\n    extras_c = [f\\\"cextra{i:05d}\\\" for i in range(n)]\\n    textes = pl.DataFrame(\\n        [\\n            {\\\"cle_ticket\\\": \\\"DEMO-1\\\", \\\"type_ticket\\\": \\\"anomalie\\\", \\\"entite\\\": \\\"E1\\\", \\\"titre\\\": \\\" \\\".join(base), \\\"description\\\": \\\"\\\"},\\n            {\\\"cle_ticket\\\": \\\"DEMO-2\\\", \\\"type_ticket\\\": \\\"anomalie\\\", \\\"entite\\\": \\\"E1\\\", \\\"titre\\\": \\\" \\\".join(base[:-1] + extras_b), \\\"description\\\": \\\"\\\"},\\n            {\\\"cle_ticket\\\": \\\"DEMO-3\\\", \\\"type_ticket\\\": \\\"anomalie\\\", \\\"entite\\\": \\\"E1\\\", \\\"titre\\\": \\\" \\\".join(base + extras_c), \\\"description\\\": \\\"\\\"},\\n        ],\\n        schema=dict(SCHEMA_TICKET_TEXTE.colonnes),\\n    )\\n\\n    sortie = detecter_doublons(\\n        textes,\\n        (\\\"DEMO-1\\\", \\\"DEMO-2\\\", \\\"DEMO-3\\\"),\\n        date(2026, 10, 12),\\n        lambda texte: texte,\\n        seuil=0.49,\\n        limite=1,\\n    )\\n\\n    assert [(paire.cle_a, paire.cle_b) for paire in sortie.paires] == [(\\\"DEMO-1\\\", \\\"DEMO-3\\\")]\\n\"}]}"
+}

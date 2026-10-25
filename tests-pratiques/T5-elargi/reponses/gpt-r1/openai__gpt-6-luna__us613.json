@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "us613",
+ "latence_s": 28.4,
+ "usage": {
+  "prompt_tokens": 5759,
+  "completion_tokens": 2402,
+  "total_tokens": 8161,
+  "cost": 0.0019208,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 5756,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0019208,
+   "upstream_inference_prompt_cost": 0.0007198,
+   "upstream_inference_completions_cost": 0.001201
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 2263,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.0019208,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 2402,
+   "cout_usd": 0.0019208,
+   "latence_s": 28.4
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/usine/ia/passerelle.py\",\"ligne\":517,\"severite\":\"Nit\",\"description\":\"`traces_outils[-0]` désigne toujours l’élément d’index 0, pas le dernier. Si un Agent produit plusieurs traces d’outil, l’observateur reçoit donc plusieurs fois la première trace et ignore les suivantes, contrairement à l’exigence d’envoyer chaque trace. Je ne peux pas fournir un test pytest comportemental autonome fiable sans inventer l’API d’exécution des outils.\",\"test_pytest\":null}]}"
+}

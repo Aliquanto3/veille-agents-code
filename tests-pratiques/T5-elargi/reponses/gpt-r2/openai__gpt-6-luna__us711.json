@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "us711",
+ "latence_s": 18.0,
+ "usage": {
+  "prompt_tokens": 8892,
+  "completion_tokens": 1580,
+  "total_tokens": 10472,
+  "cost": 0.001901425,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 8889,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.001901425,
+   "upstream_inference_prompt_cost": 0.001111425,
+   "upstream_inference_completions_cost": 0.00079
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 1368,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.001901425,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 1580,
+   "cout_usd": 0.001901425,
+   "latence_s": 18.0
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/usine/ui/app.py\",\"ligne\":401,\"severite\":\"Important\",\"description\":\"Le diff n'ajoute aucun fichier `demo/repli/agent/*.json`, alors que la story exige cinq réponses versionnées. En l'état, l'écran Agent en Mode repli appelle `reponses_repli` puis affiche l'erreur invitant à lancer `usine agent --enregistrer` au lieu de proposer les questions ; le critère de rejeu nominal n'est donc pas satisfait.\",\"test_pytest\":\"from pathlib import Path\\n\\n\\ndef test_reponses_du_mode_repli_versionnees():\\n    repertoire = Path(\\\"demo/repli/agent\\\")\\n    assert sorted(p.name for p in repertoire.glob(\\\"*.json\\\")) == [\\n        \\\"01.json\\\",\\n        \\\"02.json\\\",\\n        \\\"03.json\\\",\\n        \\\"04.json\\\",\\n        \\\"05.json\\\",\\n    ]\"}]}"
+}

@@ -1,0 +1,417 @@
+{
+ "us611": {
+  "id": "us611",
+  "depot": "usine-migration-jira-demo",
+  "base": "22305e61e4",
+  "post": "bad2e74ea7",
+  "diff_caracteres": 20438,
+  "spec_caracteres": 2885,
+  "spec_source": "_bmad-output/implementation-artifacts/spec-6-11-detection-de-doublons.md",
+  "src": [
+   "src/usine/composition.py",
+   "src/usine/contrats/llm.py",
+   "src/usine/contrats/versions.py",
+   "src/usine/ia/cli.py",
+   "src/usine/ia/doublons.py"
+  ],
+  "tests": [
+   "tests/unit/adaptateurs/journal/test_source_journal.py",
+   "tests/unit/consultation/test_passage.py",
+   "tests/unit/contrats/test_evenements.py",
+   "tests/unit/contrats/test_inventaire.py",
+   "tests/unit/contrats/test_llm.py",
+   "tests/unit/contrats/test_passage.py",
+   "tests/unit/contrats/test_versions.py",
+   "tests/unit/ia/test_doublons.py"
+  ]
+ },
+ "us612": {
+  "id": "us612",
+  "depot": "usine-migration-jira-demo",
+  "base": "709cd90062",
+  "post": "d82b42d636",
+  "diff_caracteres": 8757,
+  "spec_caracteres": 3526,
+  "spec_source": "_bmad-output/implementation-artifacts/spec-6-12-mode-llm-local.md",
+  "src": [
+   "src/usine/adaptateurs/llm/__init__.py",
+   "src/usine/adaptateurs/llm/fournisseur.py",
+   "src/usine/adaptateurs/llm/registre.py"
+  ],
+  "tests": [
+   "tests/unit/adaptateurs/llm/test_fournisseur.py"
+  ]
+ },
+ "us613": {
+  "id": "us613",
+  "depot": "usine-migration-jira-demo",
+  "base": "72ef4586b5",
+  "post": "5a448819cf",
+  "diff_caracteres": 14424,
+  "spec_caracteres": 3352,
+  "spec_source": "_bmad-output/implementation-artifacts/spec-6-13-observabilite-externe.md",
+  "src": [
+   "src/usine/adaptateurs/observabilite/__init__.py",
+   "src/usine/adaptateurs/observabilite/langfuse.py",
+   "src/usine/composition.py",
+   "src/usine/config/secrets.py",
+   "src/usine/ia/passerelle.py"
+  ],
+  "tests": [
+   "tests/depot/test_import_linter.py",
+   "tests/unit/adaptateurs/observabilite/test_langfuse.py"
+  ]
+ },
+ "us711": {
+  "id": "us711",
+  "depot": "usine-migration-jira-demo",
+  "base": "c9dd263d32",
+  "post": "846542d926",
+  "diff_caracteres": 22808,
+  "spec_caracteres": 5321,
+  "spec_source": "_bmad-output/implementation-artifacts/spec-7-11-reponses-enregistrees-de-l-agent-et-mode-repli-complet.md",
+  "src": [
+   "src/usine/ia/agent/cli.py",
+   "src/usine/ia/agent/repli.py",
+   "src/usine/ui/agent.py",
+   "src/usine/ui/app.py",
+   "src/usine/ui/cli.py",
+   "src/usine/ui/navigation.py"
+  ],
+  "tests": [
+   "tests/unit/ia/agent/test_repli.py",
+   "tests/unit/ui/test_app_agent.py"
+  ]
+ },
+ "us713": {
+  "id": "us713",
+  "depot": "usine-migration-jira-demo",
+  "base": "84d943cc0d",
+  "post": "bc8ab219fc",
+  "diff_caracteres": 28335,
+  "spec_caracteres": 8184,
+  "spec_source": "_bmad-output/implementation-artifacts/spec-7-13-socle-web-fastapi-et-cadre-commun.md",
+  "src": [
+   "src/usine/ui/app.py",
+   "src/usine/ui/cli.py",
+   "src/usine/ui/serveur.py",
+   "src/usine/ui/textes.py",
+   "src/usine/ui/vues.py"
+  ],
+  "tests": [
+   "tests/depot/test_environnement.py",
+   "tests/depot/test_import_linter.py",
+   "tests/unit/ui/test_cli.py",
+   "tests/unit/ui/test_serveur.py"
+  ]
+ },
+ "wd56": {
+  "id": "wd56",
+  "depot": "wavedevsecops",
+  "base": "0b7f946462",
+  "post": "9071c0533c",
+  "diff_caracteres": 28193,
+  "spec_caracteres": 3099,
+  "spec_source": "_bmad-output/implementation-artifacts/5-6-le-scénario-b-env-committé.md",
+  "src": [
+   "src/wavedevsecops/engine/steps.py",
+   "src/wavedevsecops/scenarios/ops/diff_line.py",
+   "src/wavedevsecops/scenarios/steps/_base.py",
+   "src/wavedevsecops/scenarios/steps/history_clean.py"
+  ],
+  "tests": [
+   "tests/test_code_dom.py",
+   "tests/test_scenario_b_env.py"
+  ]
+ },
+ "wd58": {
+  "id": "wd58",
+  "depot": "wavedevsecops",
+  "base": "d129d59e08",
+  "post": "da4a38bafd",
+  "diff_caracteres": 19268,
+  "spec_caracteres": 3189,
+  "spec_source": "_bmad-output/implementation-artifacts/5-8-les-scénarios-b-stash-oublié-et-rebase-laissé-en-conflit.md",
+  "src": [
+   "src/wavedevsecops/contracts/views.py",
+   "src/wavedevsecops/engine/designation.py",
+   "src/wavedevsecops/projections/links.py",
+   "src/wavedevsecops/projections/views.py"
+  ],
+  "tests": [
+   "tests/test_scenario_b_stash_rebase.py"
+  ]
+ },
+ "wd59": {
+  "id": "wd59",
+  "depot": "wavedevsecops",
+  "base": "cd1ab1397d",
+  "post": "4c0a0e936c",
+  "diff_caracteres": 25450,
+  "spec_caracteres": 3174,
+  "spec_source": "_bmad-output/implementation-artifacts/5-9-encart-ce-qui-l-aurait-bloqué-dans-les-scénarios-b.md",
+  "src": [
+   "src/wavedevsecops/engine/manager.py",
+   "src/wavedevsecops/engine/steps.py",
+   "src/wavedevsecops/scenarios/loader.py",
+   "src/wavedevsecops/scenarios/model.py",
+   "src/wavedevsecops/web/app.py",
+   "src/wavedevsecops/web/blockers.py",
+   "src/wavedevsecops/web/catalogue.py"
+  ],
+  "tests": [
+   "tests/test_blockers.py"
+  ]
+ },
+ "wd81": {
+  "id": "wd81",
+  "depot": "wavedevsecops",
+  "base": "c1b7410cb6",
+  "post": "69fdb68fe2",
+  "diff_caracteres": 22711,
+  "spec_caracteres": 2937,
+  "spec_source": "_bmad-output/implementation-artifacts/8-1-bloquer-une-pr-sur-du-code-vulnérable-avec-bandit-sast.md",
+  "src": [
+   "src/wavedevsecops/ci/__init__.py",
+   "src/wavedevsecops/ci/findings.py",
+   "src/wavedevsecops/scenarios/order.py",
+   "src/wavedevsecops/scenarios/steps/pr_state.py"
+  ],
+  "tests": [
+   "tests/test_catalogue_stations.py",
+   "tests/test_code_vulnerable.py",
+   "tests/test_pipeline.py",
+   "tests/test_pipeline_files.py",
+   "tests/test_pipeline_tabs_dom.py"
+  ]
+ },
+ "wd96": {
+  "id": "wd96",
+  "depot": "wavedevsecops",
+  "base": "f917b1a89f",
+  "post": "d57132f746",
+  "diff_caracteres": 18382,
+  "spec_caracteres": 3519,
+  "spec_source": "_bmad-output/implementation-artifacts/9-6-explications-de-la-vue-pipeline-et-lien-actif-traçabilité.md",
+  "src": [
+   "src/wavedevsecops/projections/links.py",
+   "src/wavedevsecops/projections/views.py",
+   "src/wavedevsecops/web/app.py",
+   "src/wavedevsecops/web/code.py",
+   "src/wavedevsecops/web/glossary.py"
+  ],
+  "tests": [
+   "tests/test_glossary.py",
+   "tests/test_pipeline_explain.py",
+   "tests/test_pipeline_tabs_dom.py",
+   "tests/test_workspace_dom.py"
+  ]
+ },
+ "wl25": {
+  "id": "wl25",
+  "depot": "wavelocalai",
+  "base": "33adc497c4",
+  "post": "a5585c3c66",
+  "diff_caracteres": 38300,
+  "spec_caracteres": 7857,
+  "spec_source": "_bmad-output/implementation-artifacts/story-2-5.md",
+  "src": [
+   "src/wavelocalai/greenops/cloud_estimate.py",
+   "src/wavelocalai/greenops/session.py",
+   "src/wavelocalai/inference/chat.py",
+   "src/wavelocalai/inference/streaming.py"
+  ],
+  "tests": [
+   "tests/v2/e2e/test_chat.py",
+   "tests/v2/e2e/test_topbar.py",
+   "tests/v2/unit/test_carbon_session.py",
+   "tests/v2/unit/test_cloud_estimate.py",
+   "tests/v2/web/test_chat_cloud_api.py",
+   "tests/v2/web/test_chat_cloud_co2.py",
+   "tests/v2/web/test_topbar_support.py"
+  ]
+ },
+ "wl27": {
+  "id": "wl27",
+  "depot": "wavelocalai",
+  "base": "4635302e51",
+  "post": "f6e3841efc",
+  "diff_caracteres": 36590,
+  "spec_caracteres": 10449,
+  "spec_source": "_bmad-output/implementation-artifacts/story-2-7.md",
+  "src": [
+   "src/wavelocalai/models/catalog.py",
+   "src/wavelocalai/models/facts.py",
+   "src/wavelocalai/models/facts_store.py",
+   "src/wavelocalai/models/registry.py"
+  ],
+  "tests": [
+   "tests/v2/e2e/test_chat_creativity_export.py",
+   "tests/v2/integration/test_models_ollama.py",
+   "tests/v2/unit/test_default_temperature.py",
+   "tests/v2/unit/test_model_helpers.py",
+   "tests/v2/web/test_models.py"
+  ]
+ },
+ "wl91": {
+  "id": "wl91",
+  "depot": "wavelocalai",
+  "base": "ba606cb258",
+  "post": "257574a65b",
+  "diff_caracteres": 11330,
+  "spec_caracteres": 4709,
+  "spec_source": "_bmad-output/implementation-artifacts/story-9-1.md",
+  "src": [
+   "src/wavelocalai/__main__.py",
+   "src/wavelocalai/config.py"
+  ],
+  "tests": [
+   "tests/v2/unit/test_browser_open.py",
+   "tests/v2/web/test_real_launch.py",
+   "tests/v2/web/test_real_shutdown.py"
+  ]
+ },
+ "wl93": {
+  "id": "wl93",
+  "depot": "wavelocalai",
+  "base": "7001b3411c",
+  "post": "3f9e9a2b6a",
+  "diff_caracteres": 26158,
+  "spec_caracteres": 7479,
+  "spec_source": "_bmad-output/implementation-artifacts/story-9-3.md",
+  "src": [
+   "src/wavelocalai/evaluation/judge.py",
+   "src/wavelocalai/inference/arena.py",
+   "src/wavelocalai/inference/judge_port.py"
+  ],
+  "tests": [
+   "tests/v2/e2e/test_arena.py",
+   "tests/v2/unit/test_arena_judge_banner_static.py",
+   "tests/v2/web/test_arena_judge_api.py"
+  ]
+ },
+ "wl94": {
+  "id": "wl94",
+  "depot": "wavelocalai",
+  "base": "4472c5c88a",
+  "post": "dfa17ef8e9",
+  "diff_caracteres": 15008,
+  "spec_caracteres": 10577,
+  "spec_source": "_bmad-output/implementation-artifacts/story-9-4.md",
+  "src": [
+   "src/wavelocalai/config.py",
+   "src/wavelocalai/errors.py",
+   "src/wavelocalai/models/fake.py",
+   "src/wavelocalai/rag/manage.py",
+   "src/wavelocalai/web/app.py",
+   "src/wavelocalai/web/routes_rag_base.py"
+  ],
+  "tests": [
+   "tests/v2/e2e/test_documents_embedding.py",
+   "tests/v2/unit/test_documents_static.py",
+   "tests/v2/unit/test_embedder.py",
+   "tests/v2/unit/test_rag_manage_settings_view.py",
+   "tests/v2/web/test_rag_manage_api.py"
+  ]
+ },
+ "ws-granite": {
+  "id": "ws-granite",
+  "depot": "wavestack",
+  "base": "8174efcc73",
+  "post": "971f7c37ff",
+  "diff_caracteres": 13503,
+  "spec_caracteres": 7377,
+  "spec_source": "_bmad-output/implementation-artifacts/spec-slm-b-appels-json-tool-call.md",
+  "src": [
+   "src/wavestack/models/capabilities.py"
+  ],
+  "tests": [
+   "tests/test_installers.py",
+   "tests/test_model_catalog.py",
+   "tests/test_tool_parser_granite4.py"
+  ]
+ },
+ "ws-minicpm": {
+  "id": "ws-minicpm",
+  "depot": "wavestack",
+  "base": "1f3b8d9f97",
+  "post": "53793b6077",
+  "diff_caracteres": 21834,
+  "spec_caracteres": 12408,
+  "spec_source": "_bmad-output/implementation-artifacts/spec-minicpm5-2b-modele-local-optionnel.md",
+  "src": [
+   "src/wavestack/config.py",
+   "src/wavestack/models/capabilities.py",
+   "src/wavestack/session/app_session.py",
+   "src/wavestack/session/diagnostic.py",
+   "src/wavestack/tools/parser.py"
+  ],
+  "tests": [
+   "tests/test_cli_diagnostic.py",
+   "tests/test_installers.py",
+   "tests/test_model_catalog.py",
+   "tests/test_tool_parser_minicpm5.py"
+  ]
+ },
+ "ws-v2s2": {
+  "id": "ws-v2s2",
+  "depot": "wavestack",
+  "base": "5524d0b037",
+  "post": "1a7b015751",
+  "diff_caracteres": 18652,
+  "spec_caracteres": 6423,
+  "spec_source": "_bmad-output/specs/spec-wavestack-v1-1-vague-2/stories/2-outils-concrets-du-mcp-local.md",
+  "src": [
+   "src/wavestack/mcp/local_server.py",
+   "src/wavestack/mcp/policy.py",
+   "src/wavestack/mcp/sandbox.py",
+   "src/wavestack/mcp/servers.py",
+   "tools/e2e/run_e2e.py"
+  ],
+  "tests": [
+   "tests/test_backend_messages.py",
+   "tests/test_mcp.py",
+   "tests/test_mcp_lab.py",
+   "tests/test_mcp_lazy.py",
+   "tests/test_mcp_sandbox.py"
+  ]
+ },
+ "ws-v2s6": {
+  "id": "ws-v2s6",
+  "depot": "wavestack",
+  "base": "1a7b015751",
+  "post": "f3e45a7aa6",
+  "diff_caracteres": 10204,
+  "spec_caracteres": 3923,
+  "spec_source": "_bmad-output/specs/spec-wavestack-v1-1-vague-2/stories/6-finops-cache-compression.md",
+  "src": [
+   "src/wavestack/models/cloud_base.py",
+   "src/wavestack/session/app_session.py",
+   "src/wavestack/trace/catalog.py"
+  ],
+  "tests": [
+   "tests/test_cloud_cap.py",
+   "tests/test_compression.py"
+  ]
+ },
+ "ws-v2s7": {
+  "id": "ws-v2s7",
+  "depot": "wavestack",
+  "base": "4d5442b2ac",
+  "post": "998729ffc6",
+  "diff_caracteres": 20126,
+  "spec_caracteres": 5406,
+  "spec_source": "_bmad-output/specs/spec-wavestack-v1-1-vague-2/stories/7-finops-subagent-kv-cache.md",
+  "src": [
+   "src/wavestack/models/engine.py",
+   "src/wavestack/models/servers.py",
+   "src/wavestack/session/app_session.py",
+   "src/wavestack/trace/catalog.py"
+  ],
+  "tests": [
+   "tests/test_model_servers.py",
+   "tests/test_reasoning_budget.py",
+   "tests/test_subagent.py"
+  ]
+ }
+}

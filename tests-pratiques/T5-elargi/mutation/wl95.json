@@ -1,0 +1,54 @@
+{
+ "story": "wl95",
+ "test_command": "T:/v/wavelocalai/.venv/Scripts/python.exe -m pytest -q -x --tb=no -p no:cacheprovider tests/v2/e2e/test_models_reranker.py tests/v2/integration/test_rag_rerank_local.py tests/v2/unit/test_rag_rerank.py tests/v2/unit/test_rag_rerank_pull.py tests/v2/web/test_models_reranker_api.py tests/v2/web/test_rag_rerank_api.py",
+ "tests_seconds": 15.3,
+ "tests_rc": 0,
+ "modules": [
+  {
+   "module": "src/wavelocalai/rag/manage.py",
+   "generes": 290,
+   "effectifs": 0,
+   "echantillon": 0
+  },
+  {
+   "module": "src/wavelocalai/rag/query.py",
+   "generes": 444,
+   "effectifs": 0,
+   "echantillon": 0
+  },
+  {
+   "module": "src/wavelocalai/rag/rerank.py",
+   "generes": 213,
+   "effectifs": 4,
+   "echantillon": 4,
+   "executes": 4,
+   "tues": 4
+  },
+  {
+   "module": "src/wavelocalai/rag/rerank_fetch.py",
+   "generes": 45,
+   "effectifs": 0,
+   "echantillon": 0
+  },
+  {
+   "module": "src/wavelocalai/rag/rerank_pull.py",
+   "generes": 404,
+   "effectifs": 0,
+   "echantillon": 0
+  },
+  {
+   "module": "src/wavelocalai/web/routes_models.py",
+   "generes": 50,
+   "effectifs": 0,
+   "echantillon": 0
+  },
+  {
+   "module": "src/wavelocalai/web/routes_test.py",
+   "generes": 204,
+   "effectifs": 0,
+   "echantillon": 0
+  }
+ ],
+ "survivants": [],
+ "total_seconds": 51.1
+}

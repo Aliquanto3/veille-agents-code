@@ -1,0 +1,100 @@
+{
+ "duration_api_ms": 64088,
+ "stop_reason": "end_turn",
+ "session_id": "c6a671c5-c5a4-4fec-b62c-a1580d5b6b18",
+ "total_cost_usd": 0.43635860000000004,
+ "usage": {
+  "input_tokens": 22,
+  "cache_creation_input_tokens": 34497,
+  "cache_read_input_tokens": 303373,
+  "output_tokens": 4981,
+  "output_tokens_details": {
+   "thinking_tokens": 1969
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 34497,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1670,
+    "cache_read_input_tokens": 39435,
+    "cache_creation_input_tokens": 1570,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 1570
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "modelUsage": {
+  "claude-opus-5-5": {
+   "inputTokens": 22,
+   "outputTokens": 4981,
+   "cacheReadInputTokens": 303373,
+   "cacheCreationInputTokens": 34497,
+   "webSearchRequests": 0,
+   "costUSD": 0.43635860000000004,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 1969,
+   "canonicalModel": "claude-opus-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "permission_denials": [],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "fast_mode_disabled_reason": "sdk_opt_in_required",
+ "subagent_stats": {
+  "spawned": 0,
+  "requested": {
+   "background": 0,
+   "foreground": 0,
+   "unset": 0
+  },
+  "started_in_background": 0,
+  "max_depth": 0,
+  "spawned_by_subagents": 0,
+  "completed": 0,
+  "failed": 0,
+  "killed": {
+   "parent": 0,
+   "user": 0,
+   "system": 0
+  },
+  "refused": {
+   "depth_limit": 0,
+   "concurrency_limit": 0,
+   "budget": 0
+  },
+  "by_type": {}
+ },
+ "safety_stops": 0,
+ "is_error": false,
+ "num_turns": 14,
+ "subtype": "success",
+ "api_error_status": null,
+ "result": "# Revue de la story 6.13 : observabilité externe (Langfuse)\n\nBase : sans objet. J'ai relu le code sans rien exécuter ni modifier.\n\nJ'ai trois constats Important : un indice faux dans le code, les traces d'Agent jamais envoyées, et un Passage qui peut ralentir quand Langfuse est en panne. J'ai aussi trois Nit et aucun Pre-existing. Complexité : 0 constat.\n\nImportant | medium | src/usine/ia/passerelle.py:518 | `self._observer(traces_outils[-0])` : `-0` vaut `0`, donc chaque outil d'Agent renvoie à Langfuse la trace du **premier** outil. Le deuxième outil et les suivants n'y arrivent jamais, et la première trace part en double. `sur_trace` à la ligne 520 utilise bien `[-1]`, d'où l'écart entre le Journal et Langfuse. Aucun test de `test_langfuse.py` ne passe par `executer_agent` (ils utilisent tous `executer_structure`), donc rien ne l'a détecté. Correctif : `[-1]`, plus un test qui appelle deux outils. | certain\n\nImportant | medium | src/usine/composition.py:639 | `construire_session_agent` passe par `_passerelle_evaluation`, et la `Passerelle` des lignes 517-527 est créée sans `observateur`. En production, aucune trace d'Agent (outils ou réponse) n'atteint Langfuse. La ligne de la matrice « Trace d'outil d'Agent : envoyée comme les autres » et la Code Map (« réponse d'Agent ») ne sont donc pas tenues. Le report « passerelles d'évaluation » masque cette conséquence. Correctif : brancher `_observateur_langfuse(secrets_usine)` dans `_passerelle_evaluation`, au moins pour la session d'Agent. | certain\n\nImportant | medium | src/usine/adaptateurs/observabilite/langfuse.py:67 | `self._client.flush()` est appelé de façon synchrone après chaque trace, dans le fil du Passage. Quand le serveur Langfuse ne répond pas, chaque `flush` attend le délai d'export du SDK avant que l'exception soit avalée. Le Passage ralentit alors d'autant à chaque appel LLM, ce que le « Never » de la spec interdit (« ralentir un Passage quand Langfuse est absent »). Le report « un flush par trace » n'évoque que la latence normale, pas le cas de panne. | probable\n\nNit | low | src/usine/adaptateurs/observabilite/langfuse.py:44 | L'observation est démarrée puis terminée tout de suite après l'appel, et `EntreeTrace` ne contient aucune durée. La latence vue dans Langfuse est donc d'environ 0, alors que FR-38 vise justement l'analyse des latences. De plus, `start_time` n'est pas pris de `trace.horodatage`. | certain\n\nNit | low | src/usine/adaptateurs/observabilite/langfuse.py:52 | `cost_details={\"total\": float(trace.cout_estime_eur)}` envoie un coût en euros alors que Langfuse l'affiche en USD. Les coûts Langfuse sont donc mal libellés, sauf à documenter la convention. | certain\n\nNit | low | src/usine/composition.py:953 | Le client `langfuse.Langfuse` créé n'est jamais fermé (`shutdown`) : il n'est pas rattaché à `fermeture` du `Rapport`. Ses threads d'export restent actifs jusqu'à la fin du processus. Il n'y a pas de perte de données, puisque `flush` est appelé à chaque trace. | probable\n\nNit | low | tests/unit/adaptateurs/observabilite/test_langfuse.py:112 | `Secrets().usine_langfuse is False` lit le `.env` et l'environnement du poste. Le test échoue chez un développeur qui a mis `USINE_LANGFUSE=true`. Il faut `Secrets(_env_file=None)` et un `monkeypatch.delenv`. | certain",
+ "ttft_ms": 11522,
+ "type": "result",
+ "duration_ms": 65999,
+ "uuid": "b74d18ad-3a5c-4f01-99b8-9fc4f03812d8",
+ "ttft_stream_ms": 10383,
+ "time_to_request_ms": 1346,
+ "first_content_frame_ms": 10384,
+ "queued_turn_count": 0,
+ "result_index": 0,
+ "_duree_s": 66.8
+}

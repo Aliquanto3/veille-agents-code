@@ -1,0 +1,179 @@
+{
+ "story": "us613",
+ "test_command": "T:/v/usine-migration-jira-demo/.venv/Scripts/python.exe -m pytest -q -x --tb=no -p no:cacheprovider tests/depot/test_import_linter.py tests/unit/adaptateurs/observabilite/test_langfuse.py",
+ "tests_seconds": 7.3,
+ "tests_rc": 0,
+ "modules": [
+  {
+   "module": "src/usine/adaptateurs/observabilite/__init__.py",
+   "generes": 0,
+   "effectifs": 0,
+   "echantillon": 0
+  },
+  {
+   "module": "src/usine/adaptateurs/observabilite/langfuse.py",
+   "generes": 48,
+   "effectifs": 15,
+   "echantillon": 15,
+   "executes": 15,
+   "tues": 8
+  },
+  {
+   "module": "src/usine/composition.py",
+   "generes": 1385,
+   "effectifs": 4,
+   "echantillon": 4,
+   "executes": 4,
+   "tues": 4
+  },
+  {
+   "module": "src/usine/config/secrets.py",
+   "generes": 23,
+   "effectifs": 1,
+   "echantillon": 1,
+   "executes": 1,
+   "tues": 1
+  },
+  {
+   "module": "src/usine/ia/passerelle.py",
+   "generes": 345,
+   "effectifs": 9,
+   "echantillon": 9,
+   "executes": 9,
+   "tues": 3
+  }
+ ],
+ "survivants": [
+  {
+   "module": "src/usine/adaptateurs/observabilite/langfuse.py",
+   "ligne": 41,
+   "colonne": 28,
+   "operateur": "core/ReplaceComparisonOperator_IsNot_Gt",
+   "occurrence": 0,
+   "fonction": "__call__",
+   "job_id": "f44f1e13ec9947959fa2e193c3f4ea4e",
+   "diff": "--- mutation diff ---\n--- a/src\\usine\\adaptateurs\\observabilite\\langfuse.py\n+++ b/src\\usine\\adaptateurs\\observabilite\\langfuse.py\n@@ -38,7 +38,7 @@\n \n     def __call__(self, trace: EntreeTrace) -> None:\n         \"\"\"Envoie la trace LLM ; les traces de Prévision et toute erreur sont ignorées.\"\"\"\n-        if trace.type_trace is not TypeTrace.llm:\n+        if trace.type_trace > TypeTrace.llm:\n             return\n         try:\n             observation = self._client.start_observation("
+  },
+  {
+   "module": "src/usine/adaptateurs/observabilite/langfuse.py",
+   "ligne": 60,
+   "colonne": 23,
+   "operateur": "core/AddNot",
+   "occurrence": 2,
+   "fonction": "__call__",
+   "job_id": "48d631a8ec9a4b7596dde2bd70e5e059",
+   "diff": "--- mutation diff ---\n--- a/src\\usine\\adaptateurs\\observabilite\\langfuse.py\n+++ b/src\\usine\\adaptateurs\\observabilite\\langfuse.py\n@@ -57,7 +57,7 @@\n                     \"version_grille\": trace.version_grille,\n                     \"version_donnees\": trace.version_donnees,\n                     \"statut_controle\": trace.statut_controle.value\n-                    if trace.statut_controle\n+                    if not trace.statut_controle\n                     else None,\n                     \"depuis_cache\": trace.depuis_cache,\n                     \"en_echec\": trace.en_echec,"
+  },
+  {
+   "module": "src/usine/adaptateurs/observabilite/langfuse.py",
+   "ligne": 69,
+   "colonne": 15,
+   "operateur": "core/ExceptionReplacer",
+   "occurrence": 0,
+   "fonction": "__call__",
+   "job_id": "4fc6398d79df436d8a7413282dd35b6c",
+   "diff": "--- mutation diff ---\n--- a/src\\usine\\adaptateurs\\observabilite\\langfuse.py\n+++ b/src\\usine\\adaptateurs\\observabilite\\langfuse.py\n@@ -66,7 +66,7 @@\n             )\n             observation.end()\n             self._client.flush()\n-        except Exception as exc:\n+        except CosmicRayTestingException as exc:\n             journal.warning(\"Langfuse : trace non envoyée (%s)\", type(exc).__name__)\n \n "
+  },
+  {
+   "module": "src/usine/adaptateurs/observabilite/langfuse.py",
+   "ligne": 41,
+   "colonne": 28,
+   "operateur": "core/ReplaceComparisonOperator_IsNot_NotEq",
+   "occurrence": 0,
+   "fonction": "__call__",
+   "job_id": "5ec8411eb685467ebf7ac6fcdad97574",
+   "diff": "--- mutation diff ---\n--- a/src\\usine\\adaptateurs\\observabilite\\langfuse.py\n+++ b/src\\usine\\adaptateurs\\observabilite\\langfuse.py\n@@ -38,7 +38,7 @@\n \n     def __call__(self, trace: EntreeTrace) -> None:\n         \"\"\"Envoie la trace LLM ; les traces de Prévision et toute erreur sont ignorées.\"\"\"\n-        if trace.type_trace is not TypeTrace.llm:\n+        if trace.type_trace != TypeTrace.llm:\n             return\n         try:\n             observation = self._client.start_observation("
+  },
+  {
+   "module": "src/usine/adaptateurs/observabilite/langfuse.py",
+   "ligne": 45,
+   "colonne": 82,
+   "operateur": "core/ReplaceOrWithAnd",
+   "occurrence": 0,
+   "fonction": "__call__",
+   "job_id": "ecd5cbd0a6854db4ad0944a4a2de23fe",
+   "diff": "--- mutation diff ---\n--- a/src\\usine\\adaptateurs\\observabilite\\langfuse.py\n+++ b/src\\usine\\adaptateurs\\observabilite\\langfuse.py\n@@ -42,7 +42,7 @@\n             return\n         try:\n             observation = self._client.start_observation(\n-                name=f\"{trace.tache.value if trace.tache else 'llm'}:{trace.cible or '-'}\",\n+                name=f\"{trace.tache.value if trace.tache else 'llm'}:{trace.cible and '-'}\",\n                 as_type=\"generation\",\n                 input=trace.entree_pseudonymisee,\n                 output=trace.sortie,"
+  },
+  {
+   "module": "src/usine/adaptateurs/observabilite/langfuse.py",
+   "ligne": 45,
+   "colonne": 45,
+   "operateur": "core/AddNot",
+   "occurrence": 1,
+   "fonction": "__call__",
+   "job_id": "6eaf91fa5f0b4bce90390bb61e863c7c",
+   "diff": "--- mutation diff ---\n--- a/src\\usine\\adaptateurs\\observabilite\\langfuse.py\n+++ b/src\\usine\\adaptateurs\\observabilite\\langfuse.py\n@@ -42,7 +42,7 @@\n             return\n         try:\n             observation = self._client.start_observation(\n-                name=f\"{trace.tache.value if trace.tache else 'llm'}:{trace.cible or '-'}\",\n+                name=f\"{trace.tache.value if not trace.tache else 'llm'}:{trace.cible or '-'}\",\n                 as_type=\"generation\",\n                 input=trace.entree_pseudonymisee,\n                 output=trace.sortie,"
+  },
+  {
+   "module": "src/usine/adaptateurs/observabilite/langfuse.py",
+   "ligne": 41,
+   "colonne": 28,
+   "operateur": "core/ReplaceComparisonOperator_IsNot_Lt",
+   "occurrence": 0,
+   "fonction": "__call__",
+   "job_id": "6dada9aa53334ae29f58bb59400e72af",
+   "diff": "--- mutation diff ---\n--- a/src\\usine\\adaptateurs\\observabilite\\langfuse.py\n+++ b/src\\usine\\adaptateurs\\observabilite\\langfuse.py\n@@ -38,7 +38,7 @@\n \n     def __call__(self, trace: EntreeTrace) -> None:\n         \"\"\"Envoie la trace LLM ; les traces de Prévision et toute erreur sont ignorées.\"\"\"\n-        if trace.type_trace is not TypeTrace.llm:\n+        if trace.type_trace < TypeTrace.llm:\n             return\n         try:\n             observation = self._client.start_observation("
+  },
+  {
+   "module": "src/usine/ia/passerelle.py",
+   "ligne": 518,
+   "colonne": 46,
+   "operateur": "core/NumberReplacer",
+   "occurrence": 37,
+   "fonction": "executer",
+   "job_id": "06188a9dabb64398a8fa9f9921e10ba5",
+   "diff": "--- mutation diff ---\n--- a/src\\usine\\ia\\passerelle.py\n+++ b/src\\usine\\ia\\passerelle.py\n@@ -515,7 +515,7 @@\n                         statut_controle=StatutControle.non_controle,\n                     )\n                 )\n-                self._observer(traces_outils[-1])\n+                self._observer(traces_outils[- 0])\n                 if sur_trace is not None:\n                     sur_trace(traces_outils[-1])\n                 return resultat"
+  },
+  {
+   "module": "src/usine/ia/passerelle.py",
+   "ligne": 518,
+   "colonne": 45,
+   "operateur": "core/ReplaceUnaryOperator_USub_UAdd",
+   "occurrence": 1,
+   "fonction": "executer",
+   "job_id": "171dc332487549178351106a8d9b43fa",
+   "diff": "--- mutation diff ---\n--- a/src\\usine\\ia\\passerelle.py\n+++ b/src\\usine\\ia\\passerelle.py\n@@ -515,7 +515,7 @@\n                         statut_controle=StatutControle.non_controle,\n                     )\n                 )\n-                self._observer(traces_outils[-1])\n+                self._observer(traces_outils[+1])\n                 if sur_trace is not None:\n                     sur_trace(traces_outils[-1])\n                 return resultat"
+  },
+  {
+   "module": "src/usine/ia/passerelle.py",
+   "ligne": 518,
+   "colonne": 45,
+   "operateur": "core/ReplaceUnaryOperator_USub_Invert",
+   "occurrence": 1,
+   "fonction": "executer",
+   "job_id": "e5929902ed4e4e599bd0e7ff9a989a17",
+   "diff": "--- mutation diff ---\n--- a/src\\usine\\ia\\passerelle.py\n+++ b/src\\usine\\ia\\passerelle.py\n@@ -515,7 +515,7 @@\n                         statut_controle=StatutControle.non_controle,\n                     )\n                 )\n-                self._observer(traces_outils[-1])\n+                self._observer(traces_outils[~1])\n                 if sur_trace is not None:\n                     sur_trace(traces_outils[-1])\n                 return resultat"
+  },
+  {
+   "module": "src/usine/ia/passerelle.py",
+   "ligne": 518,
+   "colonne": 45,
+   "operateur": "core/ReplaceUnaryOperator_Delete_USub",
+   "occurrence": 1,
+   "fonction": "executer",
+   "job_id": "e925edc67a4444fea9aecac4f7b327c5",
+   "diff": "--- mutation diff ---\n--- a/src\\usine\\ia\\passerelle.py\n+++ b/src\\usine\\ia\\passerelle.py\n@@ -515,7 +515,7 @@\n                         statut_controle=StatutControle.non_controle,\n                     )\n                 )\n-                self._observer(traces_outils[-1])\n+                self._observer(traces_outils[1])\n                 if sur_trace is not None:\n                     sur_trace(traces_outils[-1])\n                 return resultat"
+  },
+  {
+   "module": "src/usine/ia/passerelle.py",
+   "ligne": 518,
+   "colonne": 45,
+   "operateur": "core/ReplaceUnaryOperator_USub_Not",
+   "occurrence": 1,
+   "fonction": "executer",
+   "job_id": "5e58abe064cd41798cc7bef05c173206",
+   "diff": "--- mutation diff ---\n--- a/src\\usine\\ia\\passerelle.py\n+++ b/src\\usine\\ia\\passerelle.py\n@@ -515,7 +515,7 @@\n                         statut_controle=StatutControle.non_controle,\n                     )\n                 )\n-                self._observer(traces_outils[-1])\n+                self._observer(traces_outils[not 1])\n                 if sur_trace is not None:\n                     sur_trace(traces_outils[-1])\n                 return resultat"
+  },
+  {
+   "module": "src/usine/ia/passerelle.py",
+   "ligne": 518,
+   "colonne": 46,
+   "operateur": "core/NumberReplacer",
+   "occurrence": 36,
+   "fonction": "executer",
+   "job_id": "1144c672527e4694a98f241ff7ce0379",
+   "diff": "--- mutation diff ---\n--- a/src\\usine\\ia\\passerelle.py\n+++ b/src\\usine\\ia\\passerelle.py\n@@ -515,7 +515,7 @@\n                         statut_controle=StatutControle.non_controle,\n                     )\n                 )\n-                self._observer(traces_outils[-1])\n+                self._observer(traces_outils[- 2])\n                 if sur_trace is not None:\n                     sur_trace(traces_outils[-1])\n                 return resultat"
+  }
+ ],
+ "total_seconds": 203.4
+}

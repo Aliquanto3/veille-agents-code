@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "ws-minicpm",
+ "latence_s": 32.0,
+ "usage": {
+  "prompt_tokens": 10712,
+  "completion_tokens": 2332,
+  "total_tokens": 13044,
+  "cost": 0.00127339,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 10709,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00127339,
+   "upstream_inference_prompt_cost": 0.00010739,
+   "upstream_inference_completions_cost": 0.001166
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 2191,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.00127339,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 2332,
+   "cout_usd": 0.00127339,
+   "latence_s": 32.0
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavestack/tools/parser.py\",\"ligne\":124,\"severite\":\"Nit\",\"description\":\"`return -0` vaut `0`, pas une position négative. Si une valeur CDATA n’est jamais fermée, `_parse_minicpm5` traite donc l’appel comme un bloc vide et renvoie un fragment vide avec le message « balise function absente », au lieu d’un diagnostic pertinent sur l’appel mal formé. Retourner `-1` permettrait au chemin « jamais fermée » de le signaler correctement.\",\"test_pytest\":null}]}"
+}

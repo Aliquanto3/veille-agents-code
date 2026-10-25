@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "ws-granite",
+ "latence_s": 30.0,
+ "usage": {
+  "prompt_tokens": 6997,
+  "completion_tokens": 2551,
+  "total_tokens": 9548,
+  "cost": 0.00215005,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 6994,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00215005,
+   "upstream_inference_prompt_cost": 0.00087455,
+   "upstream_inference_completions_cost": 0.0012755
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 2261,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.00215005,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 2551,
+   "cout_usd": 0.00215005,
+   "latence_s": 30.0
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavestack/models/capabilities.py\",\"ligne\":106,\"severite\":\"Important\",\"description\":\"Le test `at < -1` ne détecte jamais l’absence de la question-sonde (`rfind` renvoie `-1`). Dans ce cas, l’analyse commence au début du rendu et peut accepter un gabarit qui sérialise l’appel passé sans rendre la question. Cela contredit la règle selon laquelle seul le rendu après la question-sonde compte et peut attribuer à tort le lecteur Hermes à un gabarit qui échoue à la sonde.\",\"test_pytest\":\"from wavestack.models.capabilities import hermes_round_trip\\n\\n\\ndef test_round_trip_rejects_template_that_does_not_render_probe_question():\\n    template = (\\n        '{% for m in messages if m.role == \\\"assistant\\\" %}'\\n        '{% for c in m.tool_calls or [] %}'\\n        '<tool_call>\\\\\\\\n{\\\"name\\\": \\\"{{ c.function.name }}\\\", '\\n        '\\\"arguments\\\": {{ c.function.arguments | tojson }}}\\\\\\\\n</tool_call>'\\n        '{% endfor %}{% endfor %}'\\n    )\\n\\n    assert hermes_round_trip(template) is False\\n\"}]}"
+}

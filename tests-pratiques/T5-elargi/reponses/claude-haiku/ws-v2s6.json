@@ -1,0 +1,100 @@
+{
+ "duration_api_ms": 68241,
+ "stop_reason": "end_turn",
+ "session_id": "eeb70513-0ce3-436e-81e2-3dad35b4d844",
+ "total_cost_usd": 0.01640056,
+ "usage": {
+  "input_tokens": 20,
+  "cache_creation_input_tokens": 35006,
+  "cache_read_input_tokens": 255386,
+  "output_tokens": 13687,
+  "output_tokens_details": {
+   "thinking_tokens": 10172
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 35006,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 3022,
+    "cache_read_input_tokens": 37817,
+    "cache_creation_input_tokens": 3028,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 3028
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "modelUsage": {
+  "claude-haiku-5-5": {
+   "inputTokens": 20,
+   "outputTokens": 13687,
+   "cacheReadInputTokens": 255386,
+   "cacheCreationInputTokens": 35006,
+   "webSearchRequests": 0,
+   "costUSD": 0.01640056,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 10172,
+   "canonicalModel": "claude-haiku-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "permission_denials": [],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "fast_mode_disabled_reason": "sdk_opt_in_required",
+ "subagent_stats": {
+  "spawned": 0,
+  "requested": {
+   "background": 0,
+   "foreground": 0,
+   "unset": 0
+  },
+  "started_in_background": 0,
+  "max_depth": 0,
+  "spawned_by_subagents": 0,
+  "completed": 0,
+  "failed": 0,
+  "killed": {
+   "parent": 0,
+   "user": 0,
+   "system": 0
+  },
+  "refused": {
+   "depth_limit": 0,
+   "concurrency_limit": 0,
+   "budget": 0
+  },
+  "by_type": {}
+ },
+ "safety_stops": 0,
+ "is_error": false,
+ "num_turns": 17,
+ "subtype": "success",
+ "api_error_status": null,
+ "result": "Base : sans objet.\n\nImportant | low | src/wavestack/models/cloud_base.py:341 | `cache_savings` borne `cached_write` avec `max(-1, …)` au lieu de `max(0, …)`, contrairement à `call_cost` (ligne 303). Un `cached_write` négatif passerait dans le dict et `not cached_read and not cached_write` vaudrait faux, donc la ligne serait émise avec des tokens négatifs. Le pipeline ne peut pas le produire (`_cached_tokens` borne à `max(0, …)`, ligne 376), donc c'est latent. Preuve par lecture seule, rien n'a été exécuté. | certain\n\nNit | low | src/wavestack/models/cloud_base.py:341 | Même défaut que ci-dessus, mentionné séparément : la borne est incohérente avec `call_cost`, qui borne à 0. Une correction d'une ligne suffit. | certain\n\nImportant | low | src/wavestack/models/cloud_base.py:356 | `cache_saved_usd` est toujours `full − paid`, même quand `cache_priced` vaut faux. Exemple : une entrée qui déclare un prix d'écriture (1,25) mais pas de prix de relecture, avec 800 tokens relus et 100 écrits. La partie écriture a un net connu de −25 µ$, mais l'interface affiche seulement « prix du cache non déclaré » (`app.js:2456`), et la story 9, qui somme ce champ, compte quand même −25 µ$. Une partie du montant est donc sommée sans être affichée. | probable\n\nAucun constat medium ou plus. J'ai vérifié à la main les trois attendus des tests signés (−225 µ$, +810 µ$, somme 585 µ$) et ils sont justes. Le pivot Anthropic inclut bien les tokens en cache dans `prompt_tokens` (`anthropic_messages.py:54`), donc `call_cost` et `cache_savings` sont cohérents. Les clés i18n `main.orch.cache.*` et `compression.saved_usd` existent en fr, en et de. Le câblage `callBody` → `cacheNode` et `compressionFigure` est en place. Les tests n'ont pas été exécutés, faute d'outil d'exécution en lecture seule.",
+ "ttft_ms": 5569,
+ "type": "result",
+ "duration_ms": 69274,
+ "uuid": "118837e4-555e-45fd-afe4-50ce9b42889d",
+ "ttft_stream_ms": 1232,
+ "time_to_request_ms": 206,
+ "first_content_frame_ms": 1233,
+ "queued_turn_count": 0,
+ "result_index": 0,
+ "_duree_s": 70.2
+}

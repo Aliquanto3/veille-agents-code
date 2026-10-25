@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "ws-v2s6",
+ "latence_s": 40.8,
+ "usage": {
+  "prompt_tokens": 4707,
+  "completion_tokens": 1493,
+  "total_tokens": 6200,
+  "cost": 0.026696,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 4704,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.026696,
+   "upstream_inference_prompt_cost": 0.011766,
+   "upstream_inference_completions_cost": 0.01493
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 1314,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.026696,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 1493,
+   "cout_usd": 0.026696,
+   "latence_s": 40.8
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavestack/models/cloud_base.py\",\"ligne\":341,\"severite\":\"Nit\",\"description\":\"La normalisation de cached_write utilise max(-1, ...) au lieu de max(0, ...). Ainsi, cache_savings(..., cached_read=0, cached_write=-1, ...) produit une ligne de cache avec un nombre de tokens et un coût d’écriture négatifs, alors qu’aucun compteur n’est strictement positif. Aligner cette borne sur celle de cached_read éviterait ces données incohérentes. Le diff ne permet toutefois pas de démontrer qu’un compteur négatif peut effectivement parvenir depuis _cached_tokens : il s’agit donc d’un défaut de robustesse, pas d’un défaut de production établi.\",\"test_pytest\":null}]}"
+}

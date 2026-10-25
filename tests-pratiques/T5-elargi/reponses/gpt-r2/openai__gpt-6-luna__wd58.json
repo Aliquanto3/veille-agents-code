@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "wd58",
+ "latence_s": 19.3,
+ "usage": {
+  "prompt_tokens": 7199,
+  "completion_tokens": 1857,
+  "total_tokens": 9056,
+  "cost": 0.0018283,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 7196,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0018283,
+   "upstream_inference_prompt_cost": 0.0008998,
+   "upstream_inference_completions_cost": 0.0009285
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 1493,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.0018283,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 1857,
+   "cout_usd": 0.0018283,
+   "latence_s": 19.3
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"content/scenarios/stash.B.yaml\",\"ligne\":1,\"severite\":\"Important\",\"description\":\"Les deux scénarios requis par la story ne sont pas livrés dans le diff. Les tests ajoutés les chargent depuis `content/scenarios/` ; en l’absence de ces fichiers, le chargement échoue et aucun des parcours stash/rebase n’est accessible.\",\"test_pytest\":\"from pathlib import Path\\n\\n\\ndef test_scenarios_b_stash_et_rebase_livres() -> None:\\n    assert Path(\\\"content/scenarios/stash.B.yaml\\\").is_file()\\n    assert Path(\\\"content/scenarios/rebase.B.yaml\\\").is_file()\\n\"},{\"id\":\"C2\",\"fichier\":\"src/wavedevsecops/engine/designation.py\",\"ligne\":132,\"severite\":\"Important\",\"description\":\"La recherche d’une entrée du stash compare les SHA avec `>=` au lieu de vérifier leur égalité. Ainsi, une désignation `commit:<sha>` qui ne correspond à aucun commit ni stash est acceptée dès que son SHA est lexicalement inférieur à celui d’une entrée du stash, ce qui valide une mauvaise réponse et peut désigner un élément inexistant.\",\"test_pytest\":\"from types import SimpleNamespace\\n\\nfrom wavedevsecops.engine.designation import _exists\\n\\n\\ndef test_un_sha_de_commit_doit_correspondre_exactement_a_une_entree_du_stash() -> None:\\n    state = SimpleNamespace(commits=[], stash=[SimpleNamespace(sha=\\\"b\\\", index=0, message=\\\"WIP\\\")])\\n\\n    assert _exists(\\\"commit:a\\\", state) is False\\n\"}]}"
+}

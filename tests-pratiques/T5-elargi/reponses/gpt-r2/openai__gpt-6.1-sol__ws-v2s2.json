@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "ws-v2s2",
+ "latence_s": 35.4,
+ "usage": {
+  "prompt_tokens": 7939,
+  "completion_tokens": 1337,
+  "total_tokens": 9276,
+  "cost": 0.033216,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 7936,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.033216,
+   "upstream_inference_prompt_cost": 0.019846,
+   "upstream_inference_completions_cost": 0.01337
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 900,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.033216,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 1337,
+   "cout_usd": 0.033216,
+   "latence_s": 35.4
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavestack/mcp/sandbox.py\",\"ligne\":27,\"severite\":\"Important\",\"description\":\"La liste des périphériques réservés omet LPT9 : range(1, 9) s'arrête à LPT8. Ainsi resolve(\\\"LPT9.txt\\\") accepte un périphérique Windows réservé, contrairement au contrat de refus quelle que soit l'extension. Sur le poste Windows ciblé, create_path peut donc tenter une ouverture de périphérique au lieu de refuser le chemin avant toute opération disque.\",\"test_pytest\":\"import pytest\\n\\nfrom wavestack.mcp import sandbox\\n\\n\\n@pytest.mark.parametrize(\\\"name\\\", [\\\"LPT9\\\", \\\"lpt9.txt\\\", \\\"notes/LPT9.log\\\"])\\ndef test_lpt9_est_refuse(tmp_path, monkeypatch, name):\\n    monkeypatch.setattr(sandbox.config, \\\"data_dir\\\", lambda: tmp_path)\\n\\n    with pytest.raises(sandbox.SandboxError):\\n        sandbox.resolve(name)\\n\"},{\"id\":\"C2\",\"fichier\":\"src/wavestack/mcp/sandbox.py\",\"ligne\":63,\"severite\":\"Important\",\"description\":\"Un chemin absolu situé à l'intérieur du bac à sable est accepté : la validation vérifie seulement la destination résolue. Le critère d'acceptation exige pourtant le refus des chemins absolus, sans exception pour ceux pointant dans le bac à sable. Il faut vérifier cette propriété de l'entrée avant de la joindre à base.\",\"test_pytest\":\"import pytest\\n\\nfrom wavestack.mcp import sandbox\\n\\n\\ndef test_chemin_absolu_refuse_meme_dans_le_bac_a_sable(tmp_path, monkeypatch):\\n    monkeypatch.setattr(sandbox.config, \\\"data_dir\\\", lambda: tmp_path)\\n    absolute_name = str(sandbox.sandbox_dir() / \\\"notes.txt\\\")\\n\\n    with pytest.raises(sandbox.SandboxError):\\n        sandbox.resolve(absolute_name)\\n\"}]}"
+}

@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "us612",
+ "latence_s": 18.5,
+ "usage": {
+  "prompt_tokens": 4483,
+  "completion_tokens": 881,
+  "total_tokens": 5364,
+  "cost": 0.020016,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 4480,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.020016,
+   "upstream_inference_prompt_cost": 0.011206,
+   "upstream_inference_completions_cost": 0.00881
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 377,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.020016,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 881,
+   "cout_usd": 0.020016,
+   "latence_s": 18.5
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/usine/adaptateurs/llm/fournisseur.py\",\"ligne\":407,\"severite\":\"Important\",\"description\":\"La condition `config.fournisseur >= \\\"local\\\"` sélectionne aussi `mistral` (comparaison lexicographique). Toute configuration Mistral passe donc dans la branche locale : sa clé est remplacée par `sans-cle` et ses requêtes partent vers localhost ou USINE_LLM_LOCAL_URL, au lieu du fournisseur Mistral. La branche Mistral existante devient inaccessible. Il faut tester l'égalité avec `local`.\",\"test_pytest\":\"import asyncio\\nfrom decimal import Decimal\\n\\nimport httpx\\n\\nimport usine.adaptateurs.llm.fournisseur as fournisseur\\nfrom usine.contrats.config import ConfigLLM\\n\\n\\ndef test_mistral_conserve_sa_cle_et_ne_bascule_pas_en_local(monkeypatch):\\n    monkeypatch.setenv(\\\"USINE_LLM_LOCAL_URL\\\", \\\"http://127.0.0.1:9999\\\")\\n    appels = []\\n    constructeur_original = fournisseur.Mistral\\n\\n    def espion_mistral(*args, **kwargs):\\n        appels.append(kwargs.copy())\\n        return constructeur_original(*args, **kwargs)\\n\\n    def refuser_reseau(request):\\n        raise AssertionError(\\\"Aucune requête ne doit être nécessaire à la construction\\\")\\n\\n    monkeypatch.setattr(fournisseur, \\\"Mistral\\\", espion_mistral)\\n    client = httpx.AsyncClient(transport=httpx.MockTransport(refuser_reseau))\\n    try:\\n        config = ConfigLLM(\\n            fournisseur=\\\"mistral\\\",\\n            modele=\\\"mistral-large-latest\\\",\\n            plafond_cout_passage_eur=Decimal(1),\\n        )\\n        fournisseur.construire_fournisseur_llm(config, \\\"cle-factice-mistral\\\", client)\\n        assert len(appels) == 1\\n        assert appels[0][\\\"api_key\\\"] == \\\"cle-factice-mistral\\\"\\n        assert appels[0].get(\\\"server_url\\\") != \\\"http://127.0.0.1:9999\\\"\\n    finally:\\n        asyncio.run(client.aclose())\\n\"}]}"
+}

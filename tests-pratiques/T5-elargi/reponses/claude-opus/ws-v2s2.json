@@ -1,0 +1,100 @@
+{
+ "duration_api_ms": 117202,
+ "stop_reason": "end_turn",
+ "session_id": "5fd56401-f1f5-4b83-8177-0d9c5f6e7f03",
+ "total_cost_usd": 0.6602604000000001,
+ "usage": {
+  "input_tokens": 30,
+  "cache_creation_input_tokens": 43514,
+  "cache_read_input_tokens": 521542,
+  "output_tokens": 10386,
+  "output_tokens_details": {
+   "thinking_tokens": 5812
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 43514,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 2195,
+    "cache_read_input_tokens": 45863,
+    "cache_creation_input_tokens": 4159,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 4159
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "modelUsage": {
+  "claude-opus-5-5": {
+   "inputTokens": 30,
+   "outputTokens": 10386,
+   "cacheReadInputTokens": 521542,
+   "cacheCreationInputTokens": 43514,
+   "webSearchRequests": 0,
+   "costUSD": 0.6602604000000001,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 5812,
+   "canonicalModel": "claude-opus-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "permission_denials": [],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "fast_mode_disabled_reason": "sdk_opt_in_required",
+ "subagent_stats": {
+  "spawned": 0,
+  "requested": {
+   "background": 0,
+   "foreground": 0,
+   "unset": 0
+  },
+  "started_in_background": 0,
+  "max_depth": 0,
+  "spawned_by_subagents": 0,
+  "completed": 0,
+  "failed": 0,
+  "killed": {
+   "parent": 0,
+   "user": 0,
+   "system": 0
+  },
+  "refused": {
+   "depth_limit": 0,
+   "concurrency_limit": 0,
+   "budget": 0
+  },
+  "by_type": {}
+ },
+ "safety_stops": 0,
+ "is_error": false,
+ "num_turns": 22,
+ "subtype": "success",
+ "api_error_status": null,
+ "result": "Revue terminée. Base : sans objet. J'ai trouvé deux constats Important, de sévérité medium : le bac à sable n'est pas au bon endroit dès que le dossier de données est personnalisé, et un chemin réseau peut faire contacter un poste extérieur avant d'être refusé. Rien n'a été exécuté ni corrigé, car le banc est en lecture seule.\n\nImportant | medium | src/wavestack/mcp/sandbox.py:45 | `sandbox_dir()` part de `config.data_dir()`, lui-même calculé à partir de `WAVESTACK_DATA_DIR` (`config.py:46`). Or le serveur local est lancé sans environnement explicite (`connection.py:105-106`, `lab.py:639-642` : `StdioServerParameters` sans `env`), et le SDK MCP ne transmet alors qu'un environnement réduit, sans cette variable ; le commentaire de `local_server.py:40-41` le dit lui-même (« default environment, without the data dir »). Dès que `WAVESTACK_DATA_DIR` est posée, le serveur écrit donc dans `%LOCALAPPDATA%\\WaveStack\\mcp_sandbox` et non dans le dossier de données de l'application. C'est le cas avec `install.ps1:122` (`-DataDir`), avec la démo (`tools/demo/README.md:34`), avec l'E2E (`tools/e2e/stack.py:306`) et avec les tests (`conftest.py:34`) : un test ou un E2E qui passe par le vrai sous-processus écrit dans le vrai profil. La contrainte « sous `config.data_dir()` » et le critère « fichier sous `sandbox_dir()` » ne tiennent plus. Correctif : transmettre `WAVESTACK_DATA_DIR` (ou le chemin du bac à sable) dans `env` ou en argument du sous-processus. | certain\n\nImportant | medium | src/wavestack/mcp/sandbox.py:63 | Un chemin UNC comme `\\\\hote\\partage\\x` ou `//hote/partage/x` passe les deux premiers filtres : il ne contient pas de `:` et ne nomme aucun périphérique réservé. Il arrive à `(base / name).resolve()`, et comme un chemin absolu remplace la base, `resolve()` ouvre le chemin distant sous Windows (`realpath`, puis `GetFinalPathNameByHandle`). Cette ouverture déclenche une connexion SMB vers un hôte choisi par le modèle, et donc l'envoi du hash NTLM de l'utilisateur, avant même le refus « outside ». La garde réseau (AD-15) ne couvre que les sockets Python. La règle « demander » ne protège pas : la description de l'outil promet « jamais ailleurs sur le poste ». Correctif : refuser lexicalement, avant `resolve()`, tout nom absolu ou ancré (`PureWindowsPath(name).drive or .root`), et ajouter le cas UNC au test. | probable\n\nNit | low | src/wavestack/mcp/local_server.py:143 | La purge trie par nom tous les `*.png` de `screenshots/`, y compris ceux que le modèle peut y créer avec `create_path`. Un fichier nommé `screenshots/z.png` se range après les noms horodatés : s'il y a 20 fichiers de ce genre ou plus, la capture qu'on vient de prendre est supprimée, puis `target.stat()` (ligne 149) lève `FileNotFoundError`. La purge efface aussi des fichiers créés par l'utilisateur. Il faudrait filtrer sur les noms entièrement numériques. | probable\n\nNit | low | src/wavestack/mcp/local_server.py:139 | Si `mss` échoue (session verrouillée, RDP, pas d'écran), l'exception n'est pas interceptée. C'est le SDK qui renvoie l'erreur MCP, avec un texte en anglais et non localisé, contrairement à `create_path`. | probable\n\nNit | low | src/wavestack/mcp/sandbox.py:59 | `_RESERVED` ne contient pas `COM¹`, `COM²`, `COM³` ni `LPT¹`, `LPT²`, `LPT³`, que Windows traite aussi comme des périphériques réservés. | probable\n\nNit | low | src/wavestack/mcp/local_server.py:120 | `create_path(\".\", kind=\"folder\")` répond « Dossier créé dans le bac à sable : . » alors que rien n'est créé : `resolve` accepte la base elle-même. | certain\n\nNit | low | tests/test_mcp_sandbox.py:95 | L'assertion `create_path(\"a.txt.\") is_error` suppose le comportement de Windows, qui retire le point final. Hors Windows, `a.txt.` est un autre fichier et le test échoue, alors qu'il n'est pas marqué `skipif`. Il n'y a pas de CI dans le dépôt, donc l'impact est faible. | certain\n\nComplexité : 0 constat. La purge des captures ne parcourt qu'environ `MAX_SCREENSHOTS + 1` fichiers dans l'usage normal.\n\nPoints vérifiés sans défaut :\n- Les défauts de `policy._DEFAULTS` sont conformes à `mcp-tools.md` : `system_info` faible/autoriser, `create_path` moyen/demander, `take_screenshot` élevé/demander.\n- Les textes existent en fr, en et de, dans `tools.yaml` comme dans `messages.yaml`.\n- `mss` figure dans les dépendances principales de `pyproject.toml`.\n- Le paramètre `kind` (Literal, type `string`) s'affiche bien dans le formulaire existant de `mcp.js`.\n- Les tests utilisent un faux capteur et ne mockent aucun module interne du projet.",
+ "ttft_ms": 2958,
+ "type": "result",
+ "duration_ms": 117796,
+ "uuid": "3f1bef80-53f7-40b0-a97a-554313962472",
+ "ttft_stream_ms": 1928,
+ "time_to_request_ms": 193,
+ "first_content_frame_ms": 1928,
+ "queued_turn_count": 0,
+ "result_index": 0,
+ "_duree_s": 118.7
+}

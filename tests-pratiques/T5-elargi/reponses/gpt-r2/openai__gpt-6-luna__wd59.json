@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "wd59",
+ "latence_s": 40.9,
+ "usage": {
+  "prompt_tokens": 8538,
+  "completion_tokens": 3776,
+  "total_tokens": 12314,
+  "cost": 0.002955175,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 8535,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.002955175,
+   "upstream_inference_prompt_cost": 0.001067175,
+   "upstream_inference_completions_cost": 0.001888
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 3671,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.002955175,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 3776,
+   "cout_usd": 0.002955175,
+   "latence_s": 40.9
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavedevsecops/web/blockers.py\",\"ligne\":73,\"severite\":\"Nit\",\"description\":\"Quand la station n’a pas de jalon, le texte de repli vient de `chain.map.soon_text`, alors que la spec prévoit « Bientôt » à défaut. Si ce texte global est personnalisé, l’encart affiche une autre valeur.\" ,\"test_pytest\":null}]}"
+}

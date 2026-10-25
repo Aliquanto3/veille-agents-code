@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "ws-minicpm",
+ "latence_s": 29.7,
+ "usage": {
+  "prompt_tokens": 10712,
+  "completion_tokens": 1410,
+  "total_tokens": 12122,
+  "cost": 0.0151769,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 10709,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0151769,
+   "upstream_inference_prompt_cost": 0.0010769,
+   "upstream_inference_completions_cost": 0.0141
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 766,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.0151769,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 1410,
+   "cout_usd": 0.0151769,
+   "latence_s": 29.7
+  }
+ ],
+ "contenu": "{\n  \"constats\": [\n    {\n      \"id\": \"C1\",\n      \"fichier\": \"src/wavestack/tools/parser.py\",\n      \"ligne\": 153,\n      \"severite\": \"Important\",\n      \"description\": \"Un paramètre non fermé est accepté si un autre paramètre possède une fermeture : la recherche du prochain </param> absorbe la seconde balise dans la valeur du premier paramètre. Par exemple, <param name=\\\"a\\\">1<param name=\\\"b\\\">2</param> devient un argument a contenant du balisage et peut être exécuté, au lieu de produire le Malformed « <param> non fermée » exigé.\",\n      \"test_pytest\": \"from wavestack.tools.parser import parse_tool_calls\\n\\n\\ndef test_unclosed_parameter_before_another_parameter_is_malformed():\\n    raw = '<function name=\\\"x\\\"><param name=\\\"a\\\">1<param name=\\\"b\\\">2</param></function>'\\n    calls, malformed = parse_tool_calls(raw, 'minicpm5', {})\\n    assert calls == [], 'Un appel avec un paramètre non fermé ne doit pas être exécuté'\\n    assert malformed is not None\\n\"\n    },\n    {\n      \"id\": \"C2\",\n      \"fichier\": \"src/wavestack/tools/parser.py\",\n      \"ligne\": 179,\n      \"severite\": \"Important\",\n      \"description\": \"La recherche des appels exige déjà le préfixe complet <function name=\\\". Une balise sans attribut name, ou tronquée avant le guillemet, est donc ignorée comme du texte ordinaire : le lecteur retourne ([], None), sans le Malformed imposé pour une balise ouvrante absente ou mal fermée. Le test existant ne couvre qu'une troncature située après ce préfixe.\",\n      \"test_pytest\": \"import pytest\\n\\nfrom wavestack.tools.parser import parse_tool_calls\\n\\n\\n@pytest.mark.parametrize('raw', ['<function></function>', '<function name='])\\ndef test_missing_name_or_early_truncation_is_malformed(raw):\\n    calls, malformed = parse_tool_calls(raw, 'minicpm5', {})\\n    assert calls == []\\n    assert malformed is not None, 'Une balise function mal formée doit produire un Malformed'\\n\"\n    },\n    {\n      \"id\": \"C3\",\n      \"fichier\": \"src/wavestack/tools/parser.py\",\n      \"ligne\": 131,\n      \"severite\": \"Nit\",\n      \"description\": \"Le chemin CDATA non terminée retourne -0, donc 0, alors que le contrat de _minicpm5_end prévoit -1. Avec une CDATA ouverte contenant </function>, le lecteur découpe alors un bloc vide et signale une balise function absente, avec un fragment vide, plutôt que de conserver l'appel incomplet et son diagnostic de fermeture.\",\n      \"test_pytest\": null\n    }\n  ]\n}"
+}

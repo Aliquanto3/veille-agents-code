@@ -1,0 +1,98 @@
+{
+ "story": "wd58",
+ "test_command": "T:/v/wavedevsecops/.venv/Scripts/python.exe -m pytest -q -x --tb=no -p no:cacheprovider tests/test_scenario_b_stash_rebase.py",
+ "tests_seconds": 79.1,
+ "tests_rc": 0,
+ "modules": [
+  {
+   "module": "src/wavedevsecops/contracts/views.py",
+   "generes": 19,
+   "effectifs": 0,
+   "echantillon": 0
+  },
+  {
+   "module": "src/wavedevsecops/engine/designation.py",
+   "generes": 499,
+   "effectifs": 39,
+   "echantillon": 39,
+   "executes": 11,
+   "tues": 5
+  },
+  {
+   "module": "src/wavedevsecops/projections/links.py",
+   "generes": 28,
+   "effectifs": 3,
+   "echantillon": 3
+  },
+  {
+   "module": "src/wavedevsecops/projections/views.py",
+   "generes": 580,
+   "effectifs": 0,
+   "echantillon": 0
+  }
+ ],
+ "budget_atteint": true,
+ "survivants": [
+  {
+   "module": "src/wavedevsecops/engine/designation.py",
+   "ligne": 131,
+   "colonne": 18,
+   "operateur": "core/ReplaceComparisonOperator_Eq_IsNot",
+   "occurrence": 10,
+   "fonction": "_exists",
+   "job_id": "6c3d1692fef44dab96bbb30568a47fbb",
+   "diff": "--- mutation diff ---\n--- a/src\\wavedevsecops\\engine\\designation.py\n+++ b/src\\wavedevsecops\\engine\\designation.py\n@@ -128,7 +128,7 @@\n     kind, segments = parse_element_id(element)\n     if kind == \"commit\":\n         return any(c.sha == segments[0] for c in state.commits) or any(\n-            s.sha == segments[0] for s in state.stash\n+            s.sha is not segments[0] for s in state.stash\n         )\n     if kind == \"ref\":\n         return segments[0] == \"HEAD\" or any(r.name == segments[0] for r in state.refs)"
+  },
+  {
+   "module": "src/wavedevsecops/engine/designation.py",
+   "ligne": 109,
+   "colonne": 31,
+   "operateur": "core/NumberReplacer",
+   "occurrence": 9,
+   "fonction": "describe",
+   "job_id": "fbde3aaa930c440d90580cf6294c117c",
+   "diff": "--- mutation diff ---\n--- a/src\\wavedevsecops\\engine\\designation.py\n+++ b/src\\wavedevsecops\\engine\\designation.py\n@@ -106,7 +106,7 @@\n     if kind == \"commit\":\n         commit = next((c for c in state.commits if c.sha == segments[0]), None) if state else None\n         if commit:\n-            return f\"{segments[0][:7]} « {commit.subject} »\"\n+            return f\"{segments[ -1][:7]} « {commit.subject} »\"\n         # Story 5.8 : une entrée du stash n'est pas dans l'historique, on la nomme par sa place.\n         entry = next((s for s in state.stash if s.sha == segments[0]), None) if state else None\n         return f\"stash@{{{entry.index}}} « {entry.message} »\" if entry else segments[0][:7]"
+  },
+  {
+   "module": "src/wavedevsecops/engine/designation.py",
+   "ligne": 112,
+   "colonne": 89,
+   "operateur": "core/NumberReplacer",
+   "occurrence": 16,
+   "fonction": "describe",
+   "job_id": "1f9c23d2adf746939ad48380e4493606",
+   "diff": "--- mutation diff ---\n--- a/src\\wavedevsecops\\engine\\designation.py\n+++ b/src\\wavedevsecops\\engine\\designation.py\n@@ -109,7 +109,7 @@\n             return f\"{segments[0][:7]} « {commit.subject} »\"\n         # Story 5.8 : une entrée du stash n'est pas dans l'historique, on la nomme par sa place.\n         entry = next((s for s in state.stash if s.sha == segments[0]), None) if state else None\n-        return f\"stash@{{{entry.index}}} « {entry.message} »\" if entry else segments[0][:7]\n+        return f\"stash@{{{entry.index}}} « {entry.message} »\" if entry else segments[0][: 8]\n     if kind == \"ref\":\n         ref = next((r for r in state.refs if r.name == segments[0]), None) if state else None\n         return f\"la référence {ref.short_name if ref else segments[0]}\""
+  },
+  {
+   "module": "src/wavedevsecops/engine/designation.py",
+   "ligne": 111,
+   "colonne": 54,
+   "operateur": "core/ReplaceComparisonOperator_Eq_IsNot",
+   "occurrence": 3,
+   "fonction": "describe",
+   "job_id": "507d4d1e704c4eceadb98c1f76034147",
+   "diff": "--- mutation diff ---\n--- a/src\\wavedevsecops\\engine\\designation.py\n+++ b/src\\wavedevsecops\\engine\\designation.py\n@@ -108,7 +108,7 @@\n         if commit:\n             return f\"{segments[0][:7]} « {commit.subject} »\"\n         # Story 5.8 : une entrée du stash n'est pas dans l'historique, on la nomme par sa place.\n-        entry = next((s for s in state.stash if s.sha == segments[0]), None) if state else None\n+        entry = next((s for s in state.stash if s.sha is not segments[0]), None) if state else None\n         return f\"stash@{{{entry.index}}} « {entry.message} »\" if entry else segments[0][:7]\n     if kind == \"ref\":\n         ref = next((r for r in state.refs if r.name == segments[0]), None) if state else None"
+  },
+  {
+   "module": "src/wavedevsecops/engine/designation.py",
+   "ligne": 130,
+   "colonne": 25,
+   "operateur": "core/ReplaceComparisonOperator_Eq_LtE",
+   "occurrence": 9,
+   "fonction": "_exists",
+   "job_id": "6365fd2773e045d4b2649e8dea7b583c",
+   "diff": "--- mutation diff ---\n--- a/src\\wavedevsecops\\engine\\designation.py\n+++ b/src\\wavedevsecops\\engine\\designation.py\n@@ -127,7 +127,7 @@\n         return True\n     kind, segments = parse_element_id(element)\n     if kind == \"commit\":\n-        return any(c.sha == segments[0] for c in state.commits) or any(\n+        return any(c.sha <= segments[0] for c in state.commits) or any(\n             s.sha == segments[0] for s in state.stash\n         )\n     if kind == \"ref\":"
+  },
+  {
+   "module": "src/wavedevsecops/engine/designation.py",
+   "ligne": 131,
+   "colonne": 18,
+   "operateur": "core/ReplaceComparisonOperator_Eq_GtE",
+   "occurrence": 10,
+   "fonction": "_exists",
+   "job_id": "cc4b3e19b6ed49819fa326e07bb201a9",
+   "diff": "--- mutation diff ---\n--- a/src\\wavedevsecops\\engine\\designation.py\n+++ b/src\\wavedevsecops\\engine\\designation.py\n@@ -128,7 +128,7 @@\n     kind, segments = parse_element_id(element)\n     if kind == \"commit\":\n         return any(c.sha == segments[0] for c in state.commits) or any(\n-            s.sha == segments[0] for s in state.stash\n+            s.sha >= segments[0] for s in state.stash\n         )\n     if kind == \"ref\":\n         return segments[0] == \"HEAD\" or any(r.name == segments[0] for r in state.refs)"
+  }
+ ],
+ "total_seconds": 480.1
+}

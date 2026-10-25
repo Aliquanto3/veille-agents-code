@@ -1,0 +1,157 @@
+{
+ "story": "wd96",
+ "test_command": "T:/v/wavedevsecops/.venv/Scripts/python.exe -m pytest -q -x --tb=no -p no:cacheprovider tests/test_glossary.py tests/test_pipeline_explain.py tests/test_pipeline_tabs_dom.py tests/test_workspace_dom.py",
+ "tests_seconds": 27.1,
+ "tests_rc": 0,
+ "modules": [
+  {
+   "module": "src/wavedevsecops/projections/links.py",
+   "generes": 38,
+   "effectifs": 9,
+   "echantillon": 9,
+   "executes": 9,
+   "tues": 2
+  },
+  {
+   "module": "src/wavedevsecops/projections/views.py",
+   "generes": 581,
+   "effectifs": 1,
+   "echantillon": 1,
+   "executes": 1,
+   "tues": 1
+  },
+  {
+   "module": "src/wavedevsecops/web/app.py",
+   "generes": 198,
+   "effectifs": 0,
+   "echantillon": 0
+  },
+  {
+   "module": "src/wavedevsecops/web/code.py",
+   "generes": 118,
+   "effectifs": 0,
+   "echantillon": 0
+  },
+  {
+   "module": "src/wavedevsecops/web/glossary.py",
+   "generes": 176,
+   "effectifs": 33,
+   "echantillon": 33,
+   "executes": 33,
+   "tues": 29
+  }
+ ],
+ "survivants": [
+  {
+   "module": "src/wavedevsecops/web/glossary.py",
+   "ligne": 133,
+   "colonne": 92,
+   "operateur": "core/ReplaceComparisonOperator_Eq_Is",
+   "occurrence": 1,
+   "fonction": "open_station_workspace",
+   "job_id": "10f12f09365d40298f44420fe0e7b60c",
+   "diff": "--- mutation diff ---\n--- a/src\\wavedevsecops\\web\\glossary.py\n+++ b/src\\wavedevsecops\\web\\glossary.py\n@@ -130,7 +130,7 @@\n         track, scenario_id, mode = last\n         for loaded in load_catalogue(settings):\n             scenario = loaded.scenario\n-            if scenario.catalogue and scenario.scenario_id == scenario_id and scenario.mode == mode:\n+            if scenario.catalogue and scenario.scenario_id == scenario_id and scenario.mode is mode:\n                 if not (scenario.station and scenario.pipeline):\n                     return None\n                 workspace_id = workspace_id_for(track, scenario.key)"
+  },
+  {
+   "module": "src/wavedevsecops/web/glossary.py",
+   "ligne": 133,
+   "colonne": 92,
+   "operateur": "core/ReplaceComparisonOperator_Eq_GtE",
+   "occurrence": 1,
+   "fonction": "open_station_workspace",
+   "job_id": "4cd6efb1d6844187bf3ea42955e2adf7",
+   "diff": "--- mutation diff ---\n--- a/src\\wavedevsecops\\web\\glossary.py\n+++ b/src\\wavedevsecops\\web\\glossary.py\n@@ -130,7 +130,7 @@\n         track, scenario_id, mode = last\n         for loaded in load_catalogue(settings):\n             scenario = loaded.scenario\n-            if scenario.catalogue and scenario.scenario_id == scenario_id and scenario.mode == mode:\n+            if scenario.catalogue and scenario.scenario_id == scenario_id and scenario.mode >= mode:\n                 if not (scenario.station and scenario.pipeline):\n                     return None\n                 workspace_id = workspace_id_for(track, scenario.key)"
+  },
+  {
+   "module": "src/wavedevsecops/web/glossary.py",
+   "ligne": 133,
+   "colonne": 59,
+   "operateur": "core/ReplaceComparisonOperator_Eq_GtE",
+   "occurrence": 0,
+   "fonction": "open_station_workspace",
+   "job_id": "4429c2e0aba04cf78412618843cceb67",
+   "diff": "--- mutation diff ---\n--- a/src\\wavedevsecops\\web\\glossary.py\n+++ b/src\\wavedevsecops\\web\\glossary.py\n@@ -130,7 +130,7 @@\n         track, scenario_id, mode = last\n         for loaded in load_catalogue(settings):\n             scenario = loaded.scenario\n-            if scenario.catalogue and scenario.scenario_id == scenario_id and scenario.mode == mode:\n+            if scenario.catalogue and scenario.scenario_id >= scenario_id and scenario.mode == mode:\n                 if not (scenario.station and scenario.pipeline):\n                     return None\n                 workspace_id = workspace_id_for(track, scenario.key)"
+  },
+  {
+   "module": "src/wavedevsecops/web/glossary.py",
+   "ligne": 133,
+   "colonne": 92,
+   "operateur": "core/ReplaceComparisonOperator_Eq_LtE",
+   "occurrence": 1,
+   "fonction": "open_station_workspace",
+   "job_id": "c48b31768d794a4d96cb0710944b8c7a",
+   "diff": "--- mutation diff ---\n--- a/src\\wavedevsecops\\web\\glossary.py\n+++ b/src\\wavedevsecops\\web\\glossary.py\n@@ -130,7 +130,7 @@\n         track, scenario_id, mode = last\n         for loaded in load_catalogue(settings):\n             scenario = loaded.scenario\n-            if scenario.catalogue and scenario.scenario_id == scenario_id and scenario.mode == mode:\n+            if scenario.catalogue and scenario.scenario_id == scenario_id and scenario.mode <= mode:\n                 if not (scenario.station and scenario.pipeline):\n                     return None\n                 workspace_id = workspace_id_for(track, scenario.key)"
+  },
+  {
+   "module": "src/wavedevsecops/projections/links.py",
+   "ligne": 113,
+   "colonne": 47,
+   "operateur": "core/ReplaceComparisonOperator_NotEq_IsNot",
+   "occurrence": 1,
+   "fonction": "annotate",
+   "job_id": "856b75e01ba74181b7586343010dabf0",
+   "diff": "--- mutation diff ---\n--- a/src\\wavedevsecops\\projections\\links.py\n+++ b/src\\wavedevsecops\\projections\\links.py\n@@ -110,7 +110,7 @@\n             names[check.element_id] = f\"check {check.job_id} ({label})\"\n             ref = pipeline_explain_ref(check.job_id, EXPLAIN_CHECK)\n             explain[check.element_id] = ref\n-            if check.output_element_id and ref != EXPLAIN_CHECK:\n+            if check.output_element_id and ref is not EXPLAIN_CHECK:\n                 names[check.output_element_id] = f\"sortie {check.job_id} ({label})\"\n                 explain[check.output_element_id] = ref\n             edges.add(check.element_id, *check.links)"
+  },
+  {
+   "module": "src/wavedevsecops/projections/links.py",
+   "ligne": 113,
+   "colonne": 47,
+   "operateur": "core/ReplaceComparisonOperator_NotEq_LtE",
+   "occurrence": 1,
+   "fonction": "annotate",
+   "job_id": "d846f6f683a148ce9f9f149a489c617b",
+   "diff": "--- mutation diff ---\n--- a/src\\wavedevsecops\\projections\\links.py\n+++ b/src\\wavedevsecops\\projections\\links.py\n@@ -110,7 +110,7 @@\n             names[check.element_id] = f\"check {check.job_id} ({label})\"\n             ref = pipeline_explain_ref(check.job_id, EXPLAIN_CHECK)\n             explain[check.element_id] = ref\n-            if check.output_element_id and ref != EXPLAIN_CHECK:\n+            if check.output_element_id and ref <= EXPLAIN_CHECK:\n                 names[check.output_element_id] = f\"sortie {check.job_id} ({label})\"\n                 explain[check.output_element_id] = ref\n             edges.add(check.element_id, *check.links)"
+  },
+  {
+   "module": "src/wavedevsecops/projections/links.py",
+   "ligne": 113,
+   "colonne": 47,
+   "operateur": "core/ReplaceComparisonOperator_NotEq_Is",
+   "occurrence": 1,
+   "fonction": "annotate",
+   "job_id": "a9af2d44b4c74cd28be9420ced3f7ebf",
+   "diff": "--- mutation diff ---\n--- a/src\\wavedevsecops\\projections\\links.py\n+++ b/src\\wavedevsecops\\projections\\links.py\n@@ -110,7 +110,7 @@\n             names[check.element_id] = f\"check {check.job_id} ({label})\"\n             ref = pipeline_explain_ref(check.job_id, EXPLAIN_CHECK)\n             explain[check.element_id] = ref\n-            if check.output_element_id and ref != EXPLAIN_CHECK:\n+            if check.output_element_id and ref is EXPLAIN_CHECK:\n                 names[check.output_element_id] = f\"sortie {check.job_id} ({label})\"\n                 explain[check.output_element_id] = ref\n             edges.add(check.element_id, *check.links)"
+  },
+  {
+   "module": "src/wavedevsecops/projections/links.py",
+   "ligne": 113,
+   "colonne": 47,
+   "operateur": "core/ReplaceComparisonOperator_NotEq_GtE",
+   "occurrence": 1,
+   "fonction": "annotate",
+   "job_id": "5259db37238a49b4a98fd282ef580da0",
+   "diff": "--- mutation diff ---\n--- a/src\\wavedevsecops\\projections\\links.py\n+++ b/src\\wavedevsecops\\projections\\links.py\n@@ -110,7 +110,7 @@\n             names[check.element_id] = f\"check {check.job_id} ({label})\"\n             ref = pipeline_explain_ref(check.job_id, EXPLAIN_CHECK)\n             explain[check.element_id] = ref\n-            if check.output_element_id and ref != EXPLAIN_CHECK:\n+            if check.output_element_id and ref >= EXPLAIN_CHECK:\n                 names[check.output_element_id] = f\"sortie {check.job_id} ({label})\"\n                 explain[check.output_element_id] = ref\n             edges.add(check.element_id, *check.links)"
+  },
+  {
+   "module": "src/wavedevsecops/projections/links.py",
+   "ligne": 113,
+   "colonne": 39,
+   "operateur": "core/ReplaceAndWithOr",
+   "occurrence": 1,
+   "fonction": "annotate",
+   "job_id": "41a3607d17ba4a7e8f6750ee10c4b63c",
+   "diff": "--- mutation diff ---\n--- a/src\\wavedevsecops\\projections\\links.py\n+++ b/src\\wavedevsecops\\projections\\links.py\n@@ -110,7 +110,7 @@\n             names[check.element_id] = f\"check {check.job_id} ({label})\"\n             ref = pipeline_explain_ref(check.job_id, EXPLAIN_CHECK)\n             explain[check.element_id] = ref\n-            if check.output_element_id and ref != EXPLAIN_CHECK:\n+            if check.output_element_id or ref != EXPLAIN_CHECK:\n                 names[check.output_element_id] = f\"sortie {check.job_id} ({label})\"\n                 explain[check.output_element_id] = ref\n             edges.add(check.element_id, *check.links)"
+  },
+  {
+   "module": "src/wavedevsecops/projections/links.py",
+   "ligne": 113,
+   "colonne": 47,
+   "operateur": "core/ReplaceComparisonOperator_NotEq_Eq",
+   "occurrence": 1,
+   "fonction": "annotate",
+   "job_id": "0ffb102581864721bdbfeb9b81d3b4a7",
+   "diff": "--- mutation diff ---\n--- a/src\\wavedevsecops\\projections\\links.py\n+++ b/src\\wavedevsecops\\projections\\links.py\n@@ -110,7 +110,7 @@\n             names[check.element_id] = f\"check {check.job_id} ({label})\"\n             ref = pipeline_explain_ref(check.job_id, EXPLAIN_CHECK)\n             explain[check.element_id] = ref\n-            if check.output_element_id and ref != EXPLAIN_CHECK:\n+            if check.output_element_id and ref == EXPLAIN_CHECK:\n                 names[check.output_element_id] = f\"sortie {check.job_id} ({label})\"\n                 explain[check.output_element_id] = ref\n             edges.add(check.element_id, *check.links)"
+  },
+  {
+   "module": "src/wavedevsecops/projections/links.py",
+   "ligne": 113,
+   "colonne": 47,
+   "operateur": "core/ReplaceComparisonOperator_NotEq_Lt",
+   "occurrence": 1,
+   "fonction": "annotate",
+   "job_id": "c9c082ebba5f4688a65eb4eaa98dac99",
+   "diff": "--- mutation diff ---\n--- a/src\\wavedevsecops\\projections\\links.py\n+++ b/src\\wavedevsecops\\projections\\links.py\n@@ -110,7 +110,7 @@\n             names[check.element_id] = f\"check {check.job_id} ({label})\"\n             ref = pipeline_explain_ref(check.job_id, EXPLAIN_CHECK)\n             explain[check.element_id] = ref\n-            if check.output_element_id and ref != EXPLAIN_CHECK:\n+            if check.output_element_id and ref < EXPLAIN_CHECK:\n                 names[check.output_element_id] = f\"sortie {check.job_id} ({label})\"\n                 explain[check.output_element_id] = ref\n             edges.add(check.element_id, *check.links)"
+  }
+ ],
+ "total_seconds": 479.8
+}

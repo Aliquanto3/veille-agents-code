@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "wl91",
+ "latence_s": 40.0,
+ "usage": {
+  "prompt_tokens": 5165,
+  "completion_tokens": 1606,
+  "total_tokens": 6771,
+  "cost": 0.028971,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 5162,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.028971,
+   "upstream_inference_prompt_cost": 0.012911,
+   "upstream_inference_completions_cost": 0.01606
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 1034,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.028971,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 1606,
+   "cout_usd": 0.028971,
+   "latence_s": 40.0
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavelocalai/__main__.py\",\"ligne\":158,\"severite\":\"Important\",\"description\":\"Le guetteur est créé avec daemon=False, contrairement à la variante explicitement prévue dans la spec. Si webbrowser.open reste bloqué (par exemple avec un contrôleur de navigateur qui attend la fermeture de son processus), stop_browser.set() ne peut pas l'interrompre : après l'arrêt du serveur, ce fil empêche alors le processus Python de se terminer. La borne de 30 secondes ne protège que la sonde TCP, pas l'appel au navigateur. Créer ce fil avec daemon=True évite cette régression d'arrêt.\",\"test_pytest\":\"import ast\\nimport inspect\\nimport threading\\nfrom types import SimpleNamespace\\n\\nimport wavelocalai.__main__ as launcher\\n\\n\\ndef test_le_guetteur_ne_doit_pas_empecher_la_fin_du_processus():\\n    # Instancie exactement le constructeur utilisé par main, sans démarrer\\n    # de serveur, de connexion réseau ni de navigateur.\\n    tree = ast.parse(inspect.getsource(launcher.main))\\n    constructors = [\\n        node for node in ast.walk(tree)\\n        if isinstance(node, ast.Call)\\n        and isinstance(node.func, ast.Attribute)\\n        and isinstance(node.func.value, ast.Name)\\n        and node.func.value.id == 'threading'\\n        and node.func.attr == 'Thread'\\n    ]\\n    assert len(constructors) == 1\\n    namespace = {\\n        'threading': threading,\\n        '_open_browser_when_ready': launcher._open_browser_when_ready,\\n        'url': 'http://127.0.0.1:8765/',\\n        'settings': SimpleNamespace(server=SimpleNamespace(port=8765)),\\n        'stop_browser': threading.Event(),\\n    }\\n    expression = ast.Expression(body=constructors[0])\\n    thread = eval(compile(expression, '<constructeur du guetteur>', 'eval'), namespace)\\n    assert thread.daemon, 'Le guetteur ne doit pas retenir le processus après serve()'\\n\"},{\"id\":\"C2\",\"fichier\":\"src/wavelocalai/config.py\",\"ligne\":63,\"severite\":\"Nit\",\"description\":\"Le contrat partagé demande de documenter open_browser dans wavelocalai.toml, à côté de port, et dans la section de lancement du README, avec --no-browser. Aucun de ces deux fichiers n'est modifié dans le diff : le nouveau comportement par défaut et ses moyens de désactivation restent non documentés.\",\"test_pytest\":null}]}"
+}

@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "wl91",
+ "latence_s": 17.4,
+ "usage": {
+  "prompt_tokens": 5165,
+  "completion_tokens": 621,
+  "total_tokens": 5786,
+  "cost": 0.019121,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 5162,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.019121,
+   "upstream_inference_prompt_cost": 0.012911,
+   "upstream_inference_completions_cost": 0.00621
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 398,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.019121,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 621,
+   "cout_usd": 0.019121,
+   "latence_s": 17.4
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavelocalai/__main__.py\",\"ligne\":158,\"severite\":\"Nit\",\"description\":\"Le guetteur est créé avec daemon=False, contrairement à la variante documentée dans la spec. Si webbrowser.open reste bloqué (certains contrôleurs attendent la fermeture du navigateur), stop_browser.set() ne l'interrompt pas et le fil peut empêcher la terminaison du processus après l'arrêt du serveur. Conserver daemon=True éviterait que l'ouverture du navigateur retienne le processus.\",\"test_pytest\":null},{\"id\":\"C2\",\"fichier\":\"README.md\",\"ligne\":1,\"severite\":\"Nit\",\"description\":\"Le diff ne contient aucune des modifications documentaires exigées par le contrat partagé : ni la présentation de --no-browser et du réglage open_browser dans le README, ni le commentaire de configuration à côté de port dans wavelocalai.toml. Le comportement par défaut change pourtant pour les utilisateurs du lanceur.\",\"test_pytest\":null}]}"
+}

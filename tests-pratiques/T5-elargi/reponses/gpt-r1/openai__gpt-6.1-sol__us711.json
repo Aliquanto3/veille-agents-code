@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "us711",
+ "latence_s": 16.4,
+ "usage": {
+  "prompt_tokens": 8892,
+  "completion_tokens": 723,
+  "total_tokens": 9615,
+  "cost": 0.0294585,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 8889,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0294585,
+   "upstream_inference_prompt_cost": 0.0222285,
+   "upstream_inference_completions_cost": 0.00723
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 360,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.0294585,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 723,
+   "cout_usd": 0.0294585,
+   "latence_s": 16.4
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"demo/repli/agent/01.json\",\"ligne\":1,\"severite\":\"Important\",\"description\":\"Les cinq réponses versionnées `01.json`…`05.json` ne sont pas livrées dans le diff. Elles constituent pourtant les données nécessaires au rejeu hors réseau : sans elles, l'écran Agent refuse de proposer les questions et demande un enregistrement réel, précisément impossible pendant la démonstration hors ligne. Il faut ajouter les fichiers produits avec le fournisseur rejouant les tours de la suite 7.10, comme prévu dans la story.\",\"test_pytest\":\"import json\\nfrom pathlib import Path\\n\\nfrom usine.ia.agent import repli\\n\\n\\ndef test_reponses_de_demo_livrees_et_rejouables():\\n    racine = Path(repli.__file__).resolve().parents[4]\\n    repertoire = racine / repli.REPERTOIRE_REPONSES\\n    attendus = [f'{rang:02d}.json' for rang in range(1, 6)]\\n    assert sorted(p.name for p in repertoire.glob('*.json')) == attendus, (\\n        'Les cinq réponses doivent être versionnées pour permettre la démo sans LLM'\\n    )\\n    manifeste = json.loads(\\n        (racine / 'demo/repli/passage/manifeste.json').read_text(encoding='utf-8')\\n    )\\n    reponses = repli.charger_reponses(repertoire, manifeste['passage_id'])\\n    assert [r.reponse.question for r in reponses] == list(repli.QUESTIONS_DEMO)\\n\"}]}"
+}

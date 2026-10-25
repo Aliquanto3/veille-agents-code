@@ -1,0 +1,100 @@
+{
+ "duration_api_ms": 62800,
+ "stop_reason": "end_turn",
+ "session_id": "047fd70e-49e0-4fbd-a4cb-cb0bcec45f25",
+ "total_cost_usd": 0.0183097,
+ "usage": {
+  "input_tokens": 16,
+  "cache_creation_input_tokens": 43749,
+  "cache_read_input_tokens": 275580,
+  "output_tokens": 13605,
+  "output_tokens_details": {
+   "thinking_tokens": 10439
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 43749,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 2457,
+    "cache_read_input_tokens": 49059,
+    "cache_creation_input_tokens": 529,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 529
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "modelUsage": {
+  "claude-haiku-5-5": {
+   "inputTokens": 16,
+   "outputTokens": 13605,
+   "cacheReadInputTokens": 275580,
+   "cacheCreationInputTokens": 43749,
+   "webSearchRequests": 0,
+   "costUSD": 0.0183097,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 10439,
+   "canonicalModel": "claude-haiku-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "permission_denials": [],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "fast_mode_disabled_reason": "sdk_opt_in_required",
+ "subagent_stats": {
+  "spawned": 0,
+  "requested": {
+   "background": 0,
+   "foreground": 0,
+   "unset": 0
+  },
+  "started_in_background": 0,
+  "max_depth": 0,
+  "spawned_by_subagents": 0,
+  "completed": 0,
+  "failed": 0,
+  "killed": {
+   "parent": 0,
+   "user": 0,
+   "system": 0
+  },
+  "refused": {
+   "depth_limit": 0,
+   "concurrency_limit": 0,
+   "budget": 0
+  },
+  "by_type": {}
+ },
+ "safety_stops": 0,
+ "is_error": false,
+ "num_turns": 15,
+ "subtype": "success",
+ "api_error_status": null,
+ "result": "base : sans objet (lecture seule, pas de git ni de commandes).\n\nImportant | high | src/usine/ui/statique/cadre.css:6 | `cadre.css` déclare cinq `@font-face` (lignes 6, 12, 18, 24, 30) pointant vers `polices/*.woff2`, mais le dossier ne contient que les trois `OFL-*.txt`. Aucun `.woff2` dans le dépôt (Glob `**/*.woff2` vide, `**/polices/*` ne liste que les licences). `/statique/polices/...` répond 404, donc le critère « polices servies en local » n'est pas tenu et `test_feuille_et_script_sans_requete_externe` (`status_code == 200` et `content[:4] == b\"wOF2\"`) échoue. | certain\n\nImportant | medium | src/usine/ui/cli.py:202 | `--port` n'est pas borné. Un port hors 0-65535 (ex. 70000) fait lever `OverflowError` dans le bind de uvicorn ; le `except` ne rattrape que `KeyboardInterrupt`, `OSError` et `SystemExit`, donc traceback brut au lieu du message et du code 1. Non exécuté (pas d'outil d'exécution). | probable\n\nImportant | low | src/usine/ui/cli.py:208 | Tout `SystemExit` de uvicorn est traduit en « port occupé ? », y compris une sortie pour une autre cause (échec de lifespan, par exemple). Le diagnostic est faux dans ces cas. | probable\n\nNit | low | src/usine/ui/cli.py:208 | Le commentaire et la spec disent « code 3 » pour l'échec de bind ; uvicorn sort avec `sys.exit(1)` et le code n'est pas testé. Le commentaire est inexact. | probable\n\nImportant | low | src/usine/ui/serveur.py:1 | Aucune validation de l'en-tête `Host` : une page distante peut, par DNS rebinding, lire `/api/cadre` sur 127.0.0.1:8000 et récupérer le texte d'erreur (chemins locaux inclus). Exposition faible pour un outil de démo, mais l'hôte n'est pas verrouillé. | probable\n\nNit | low | src/usine/ui/statique/cadre.js:44 | Une réponse HTTP non OK (ex. 500 de `/api/cadre`) affiche « L'interface ne joint plus le serveur », alors que le serveur répond. Message trompeur, pas de blocage. | probable\n\nRien de medium ou plus hors les points ci-dessus : la gestion des erreurs de manifeste (`ConsultationPassage` rattrape `json`, `ValidationError` et `OSError` en `UsineErreur`), le type `Horodatage` (AwareDatetime, `astimezone` sûr), la règle `[hidden]` (`!important`, pastilles bien masquées), et le bandeau unique côté script sont corrects par lecture.",
+ "ttft_ms": 8089,
+ "type": "result",
+ "duration_ms": 63222,
+ "uuid": "970ee925-b410-4716-b3cb-bbf7a5a2a4e8",
+ "ttft_stream_ms": 802,
+ "time_to_request_ms": 80,
+ "first_content_frame_ms": 802,
+ "queued_turn_count": 0,
+ "result_index": 0,
+ "_duree_s": 64.1
+}

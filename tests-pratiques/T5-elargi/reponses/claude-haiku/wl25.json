@@ -1,0 +1,100 @@
+{
+ "duration_api_ms": 110070,
+ "stop_reason": "end_turn",
+ "session_id": "924b67bd-6378-42d1-ac71-4c270a189574",
+ "total_cost_usd": 0.02286029,
+ "usage": {
+  "input_tokens": 18,
+  "cache_creation_input_tokens": 59622,
+  "cache_read_input_tokens": 413109,
+  "output_tokens": 13606,
+  "output_tokens_details": {
+   "thinking_tokens": 9714
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 59622,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1689,
+    "cache_read_input_tokens": 61408,
+    "cache_creation_input_tokens": 1446,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 1446
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "modelUsage": {
+  "claude-haiku-5-5": {
+   "inputTokens": 18,
+   "outputTokens": 13606,
+   "cacheReadInputTokens": 413109,
+   "cacheCreationInputTokens": 59622,
+   "webSearchRequests": 0,
+   "costUSD": 0.02286029,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 9714,
+   "canonicalModel": "claude-haiku-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "permission_denials": [],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "fast_mode_disabled_reason": "sdk_opt_in_required",
+ "subagent_stats": {
+  "spawned": 0,
+  "requested": {
+   "background": 0,
+   "foreground": 0,
+   "unset": 0
+  },
+  "started_in_background": 0,
+  "max_depth": 0,
+  "spawned_by_subagents": 0,
+  "completed": 0,
+  "failed": 0,
+  "killed": {
+   "parent": 0,
+   "user": 0,
+   "system": 0
+  },
+  "refused": {
+   "depth_limit": 0,
+   "concurrency_limit": 0,
+   "budget": 0
+  },
+  "by_type": {}
+ },
+ "safety_stops": 0,
+ "is_error": false,
+ "num_turns": 17,
+ "subtype": "success",
+ "api_error_status": null,
+ "result": "base : sans objet (lecture seule, pas de git).\n\nImportant | low | src/wavelocalai/greenops/cloud_estimate.py:30 | `KG_TO_MG = 999999.0` au lieu de 1 000 000 ; le dépôt a déjà la bonne constante `MG_PER_KG = 1_000_000.0` (src/wavelocalai/greenops/local_meter.py:38). Chaque borne `range_mg` et donc `mg` est fausse d'un facteur 0,999999. Le test `test_units_are_milligrams_from_kilograms_of_co2_equivalent` (tests/v2/unit/test_cloud_estimate.py:155) ne le détecte que par la tolérance de `pytest.approx` (rel 1e-6), qui laisse passer l'écart à la limite | certain\nNit | low | tests/v2/unit/test_cloud_estimate.py:103 | le contrôle « `EcoLogits.init` jamais appelé » ne cherche que l'attribut `init` sur le nom littéral `EcoLogits` ; `from ecologits import EcoLogits as E; E.init()` passe inaperçu, et le monkeypatch (ligne 92) ne couvre que ce test | probable\n\nPas d'autre constat Important ou medium. Vérifié par lecture :\n- `_play` (src/wavelocalai/inference/streaming.py:243-251) : l'estimation n'est appelée que si `combine([])` rend `None` (local_meter.py:101), donc pour une réponse cloud réussie seulement ; erreur et annulation n'y passent pas.\n- `provider_of`/`model_of` coupent au premier `/`, ce qui donne bien `openai/gpt-oss-120b` pour `groq/openai/gpt-oss-120b`.\n- `ecologits` est en dépendance principale (pyproject.toml:81), donc installé par `uv sync` ; `ECOLOGITS_DIRECT` (registry.py:48) concorde avec `DIRECT_PROVIDERS`.\n- Persistance de la plage et `co2_estimated` (runs/repo.py:140-151), requête de session (greenops/session.py:25-38) et `by_origin.unmeasurable_runs` : cohérents.\n- `topbar.js` (« (estimé) » / « non mesurable »), `fr.json` et la table Groq de `wavelocalai.toml:40-48` sont dans le dépôt mais absents du diff fourni ; je ne peux pas dire s'ils viennent de cette story.\n\nNon vérifié : l'API d'ecologits 0.11.3 (`llm_impacts`, `ImpactsOutput`, `models.find_model`, codes d'erreur et d'avertissement). Aucun paquet ecologits installé n'est présent dans le dépôt et je n'ai pas pu l'exécuter ; les tests de contrat sont la seule preuve de ces signatures.",
+ "ttft_ms": 20647,
+ "type": "result",
+ "duration_ms": 111360,
+ "uuid": "a74f5321-cd2e-4b6a-9764-f9cd57d38ba6",
+ "ttft_stream_ms": 1806,
+ "time_to_request_ms": 326,
+ "first_content_frame_ms": 1806,
+ "queued_turn_count": 0,
+ "result_index": 0,
+ "_duree_s": 112.3
+}

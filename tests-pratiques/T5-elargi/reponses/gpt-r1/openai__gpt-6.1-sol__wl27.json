@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "wl27",
+ "latence_s": 11.1,
+ "usage": {
+  "prompt_tokens": 13885,
+  "completion_tokens": 450,
+  "total_tokens": 14335,
+  "cost": 0.039211,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 13882,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.039211,
+   "upstream_inference_prompt_cost": 0.034711,
+   "upstream_inference_completions_cost": 0.0045
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 267,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.039211,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 450,
+   "cout_usd": 0.039211,
+   "latence_s": 11.1
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavelocalai/models/catalog.py\",\"ligne\":66,\"severite\":\"Important\",\"description\":\"La validation du catalogue exclut 2 avec `value < MAX_TEMPERATURE`, alors que la plage autorisée est [0, 2], bornes incluses. Sans température publiée par Ollama, une entrée de catalogue à `default_temperature: 2` est donc ignorée : l’API renvoie null et le curseur se replie à 0,2 au lieu de 2. Utiliser une comparaison inclusive, comme dans `parse_temperature`.\",\"test_pytest\":\"from wavelocalai.models.catalog import _temperature\\n\\n\\ndef test_catalog_accepts_the_slider_upper_bound():\\n    assert _temperature(2) == 2.0\\n\"}]}"
+}

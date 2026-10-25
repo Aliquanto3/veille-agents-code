@@ -1,0 +1,100 @@
+{
+ "duration_api_ms": 175676,
+ "stop_reason": "end_turn",
+ "session_id": "bfd6a5fb-1145-4c12-b05c-75666db12f76",
+ "total_cost_usd": 1.0452884,
+ "usage": {
+  "input_tokens": 46,
+  "cache_creation_input_tokens": 63764,
+  "cache_read_input_tokens": 1092562,
+  "output_tokens": 15824,
+  "output_tokens_details": {
+   "thinking_tokens": 11229
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 63764,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1347,
+    "cache_read_input_tokens": 69544,
+    "cache_creation_input_tokens": 728,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 728
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "modelUsage": {
+  "claude-opus-5-5": {
+   "inputTokens": 46,
+   "outputTokens": 15824,
+   "cacheReadInputTokens": 1092562,
+   "cacheCreationInputTokens": 63764,
+   "webSearchRequests": 0,
+   "costUSD": 1.0452884,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 11229,
+   "canonicalModel": "claude-opus-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "permission_denials": [],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "fast_mode_disabled_reason": "sdk_opt_in_required",
+ "subagent_stats": {
+  "spawned": 0,
+  "requested": {
+   "background": 0,
+   "foreground": 0,
+   "unset": 0
+  },
+  "started_in_background": 0,
+  "max_depth": 0,
+  "spawned_by_subagents": 0,
+  "completed": 0,
+  "failed": 0,
+  "killed": {
+   "parent": 0,
+   "user": 0,
+   "system": 0
+  },
+  "refused": {
+   "depth_limit": 0,
+   "concurrency_limit": 0,
+   "budget": 0
+  },
+  "by_type": {}
+ },
+ "safety_stops": 0,
+ "is_error": false,
+ "num_turns": 26,
+ "subtype": "success",
+ "api_error_status": null,
+ "result": "Revue passe 1 de la story 9.3. Base : sans objet. J'ai tout vérifié par lecture : le serveur, `_PhasedModel`, le bandeau, la colonne, le câblage dans `arena.js`, le CSS `[hidden]` et les tests.\n\nJe n'ai trouvé aucun constat Important. Le code est bien branché :\n- `ArenaService._judge_lane` passe `progress` à `LaneJudge.score`, et `Judge.score` le transmet à `ask`, qui enveloppe le juge dans `_PhasedModel`.\n- `arena.js` relaie `judge`, `judge_progress` et `judge_score` vers le bandeau et vers `setJudgeProgress` de la colonne.\n- La seule autre implémentation de `score` est celle de `evaluation.judge.Judge`. L'appel avec 6 arguments positionnels ne casse donc rien.\n- `ask` reste inchangé quand `on_phase` vaut `None`. L'évaluation de la story 7.1 n'est pas touchée.\n\nComplexité : 0 constat. `_judge_total` parcourt O(lanes) à chaque événement, avec au plus `MAX_MODELS` colonnes.\n\nNit | low | src/wavelocalai/evaluation/judge.py:94 | `LOAD_GRACE_S = 0.25` est inférieur à `PS_TIMEOUT_S = 1.0` (`models/ollama.py:50`). Si `/api/ps` met plus de 0,25 s à répondre, par exemple quand Ollama libère tout juste la place d'une génération, `scoring` est dit avant `loading` (`judge.py:138`). Le bandeau, qui accepte `loading` après `scoring` (`arena-judge-banner.js:116-118`), repasse alors de « Notation n sur N » à « Juge : X · chargement ». C'est écrit dans la docstring, mais ce n'est pas borné. | certain\nNit | low | src/wavelocalai/inference/arena.py:619 | Pendant `_cancel_unfinished` (`arena.py:621-624`), chaque colonne passée en `cancelled` déclenche `_refresh_judge_total`. Une colonne encore `judging`, pas encore annulée dans la boucle, republie alors un `judge_progress` avec un total plus bas, juste avant `run_ended`. C'est un événement parasite, sans effet durable puisque `progress.end()` suit. | certain\nNit | low | src/wavelocalai/web/static/screens/arena-judge-banner.js:132 | `state.down` repasse à vrai sur n'importe quel `judge_score` « juge indisponible », même après une note réussie. Le critère 4 de la spec dit « avant toute note réussie ». Un seul délai dépassé sur la dernière colonne finit donc sur « Juge indisponible… » alors que d'autres colonnes ont été notées. | certain\nNit | low | src/wavelocalai/evaluation/judge.py:99 | La spec n'est pas réalignée sur l'implémentation sur trois points :\n- Le critère 1 décrit `_scoring_phase` et un correctif de `streaming._consume`. Ni l'un ni l'autre n'existe : `_consume` est inchangé et c'est `_PhasedModel` qui les remplace.\n- Le critère 1 dit que `total` est fixé au départ. Il est en fait dynamique et peut baisser.\n- Le critère 2 annonce « chargement dès l'événement `judge` ». On voit en fait « en attente des réponses », et « chargement » seulement sur la phase `loading`. Le test E2E suit ce nouveau comportement.\n\nC'est un écart de documentation seulement. | certain\n\nJe n'ai pas pu vérifier le critère 5 (`contrat-api.md`, `EXPERIENCE.md`) : ces fichiers ne sont pas dans le répertoire courant.",
+ "ttft_ms": 2377,
+ "type": "result",
+ "duration_ms": 176947,
+ "uuid": "2b3d99a2-b34f-4a58-bb6e-9a0361f6d759",
+ "ttft_stream_ms": 1468,
+ "time_to_request_ms": 218,
+ "first_content_frame_ms": 1469,
+ "queued_turn_count": 0,
+ "result_index": 0,
+ "_duree_s": 177.9
+}

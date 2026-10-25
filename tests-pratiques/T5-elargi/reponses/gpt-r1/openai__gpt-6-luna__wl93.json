@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "wl93",
+ "latence_s": 64.2,
+ "usage": {
+  "prompt_tokens": 10098,
+  "completion_tokens": 5936,
+  "total_tokens": 16034,
+  "cost": 0.004230175,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 10095,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.004230175,
+   "upstream_inference_prompt_cost": 0.001262175,
+   "upstream_inference_completions_cost": 0.002968
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 5275,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.004230175,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 5936,
+   "cout_usd": 0.004230175,
+   "latence_s": 64.2
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavelocalai/evaluation/judge.py\",\"ligne\":122,\"severite\":\"Important\",\"description\":\"Pour un juge local chaud qui n’émet pas de `LoadState`, `scoring` n’est publié qu’après le délai de grâce de 0,25 s. Le contrat demande de le publier dès la prise de la place ; pendant ce délai, l’interface continue donc d’afficher l’attente alors que le juge travaille déjà.\",\"test_pytest\":\"import asyncio\\n\\nfrom wavelocalai.evaluation.judge import _PhasedModel\\nfrom wavelocalai.models.fake import FakeChatModel, Sleep\\nfrom wavelocalai.models.port import ChatMessage, ChatRequest, ModelRef, TextDelta\\n\\n\\ndef test_un_chargement_deja_en_memoire_est_annonce_en_scoring_sans_delai():\\n    async def scenario():\\n        phases = []\\n        announced = asyncio.Event()\\n        model = FakeChatModel(\\n            [Sleep(1), TextDelta(\\\"{}\\\")],\\n            ModelRef(\\\"fake:j\\\", \\\"fake\\\", \\\"local\\\", \\\"chat\\\"),\\n        )\\n        stream = _PhasedModel(model, lambda phase: (phases.append(phase), announced.set()))\\n\\n        async def consume():\\n            async for _ in stream.stream(ChatRequest([ChatMessage(\\\"user\\\", \\\"Note.\\\")])):\\n                pass\\n\\n        task = asyncio.create_task(consume())\\n        try:\\n            await asyncio.wait_for(announced.wait(), timeout=0.1)\\n            assert phases == [\\\"scoring\\\"]\\n        finally:\\n            task.cancel()\\n            try:\\n                await task\\n            except asyncio.CancelledError:\\n                pass\\n\\n    asyncio.run(scenario())\"},{\"id\":\"C2\",\"fichier\":\"src/wavelocalai/inference/arena.py\",\"ligne\":578,\"severite\":\"Important\",\"description\":\"`_judge_total` recalcule le dénominateur à partir des colonnes déjà envoyées au juge et encore en génération. Il baisse donc lorsqu’une colonne échoue ou n’a pas de réponse, et `judge_progress` peut passer de « 1 sur 3 » à « 1 sur 2 ». La spec demande au contraire un `judge_total` fixé au départ, égal au nombre de colonnes de la comparaison ; le test ajouté qui valide cette baisse contredit ce contrat.\",\"test_pytest\":\"from types import SimpleNamespace\\n\\nfrom wavelocalai.inference.arena import ArenaService\\n\\n\\ndef test_le_total_du_jugement_reste_le_nombre_initial_de_colonnes():\\n    arena = SimpleNamespace(\\n        judge_done=1,\\n        judge_total=3,\\n        lanes=[\\n            SimpleNamespace(status=\\\"judging\\\"),\\n            SimpleNamespace(status=\\\"failed\\\"),\\n            SimpleNamespace(status=\\\"generating\\\"),\\n        ],\\n    )\\n\\n    assert ArenaService._judge_total(arena) == 3\"}]}"
+}

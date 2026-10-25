@@ -1,0 +1,97 @@
+{
+ "story": "us713",
+ "test_command": "T:/v/usine-migration-jira-demo/.venv/Scripts/python.exe -m pytest -q -x --tb=no -p no:cacheprovider --deselect=tests/depot/test_environnement.py::test_version_installee[pandas-3.0.6] --deselect=tests/depot/test_environnement.py::test_version_installee[streamlit-1.65.0] --deselect=tests/depot/test_environnement.py::test_chemins_ignores[.env] --deselect=tests/depot/test_environnement.py::test_chemins_ignores[donnees/entrepot.duckdb] --deselect=tests/depot/test_environnement.py::test_chemins_ignores[donnees/injection/manifeste.json] --deselect=tests/depot/test_environnement.py::test_chemins_ignores[sorties/x] --deselect=tests/unit/ui/test_serveur.py::test_feuille_et_script_sans_requete_externe --deselect=tests/unit/ui/test_serveur.py::test_lecture_dernier_passage --deselect=tests/unit/ui/test_serveur.py::test_lecture_repli tests/depot/test_environnement.py tests/depot/test_import_linter.py tests/unit/ui/test_cli.py tests/unit/ui/test_serveur.py",
+ "tests_seconds": 7.6,
+ "tests_rc": 0,
+ "modules": [
+  {
+   "module": "src/usine/ui/app.py",
+   "generes": 387,
+   "effectifs": 0,
+   "echantillon": 0
+  },
+  {
+   "module": "src/usine/ui/cli.py",
+   "generes": 220,
+   "effectifs": 54,
+   "echantillon": 33,
+   "executes": 33,
+   "tues": 31
+  },
+  {
+   "module": "src/usine/ui/serveur.py",
+   "generes": 37,
+   "effectifs": 37,
+   "echantillon": 25,
+   "executes": 25,
+   "tues": 24
+  },
+  {
+   "module": "src/usine/ui/textes.py",
+   "generes": 0,
+   "effectifs": 0,
+   "echantillon": 0
+  },
+  {
+   "module": "src/usine/ui/vues.py",
+   "generes": 40,
+   "effectifs": 18,
+   "echantillon": 12,
+   "executes": 12,
+   "tues": 10
+  }
+ ],
+ "survivants": [
+  {
+   "module": "src/usine/ui/cli.py",
+   "ligne": 209,
+   "colonne": 24,
+   "operateur": "core/NumberReplacer",
+   "occurrence": 11,
+   "fonction": "ui",
+   "job_id": "daed813780ee4f1daba25318c8fecb50",
+   "diff": "--- mutation diff ---\n--- a/src\\usine\\ui\\cli.py\n+++ b/src\\usine\\ui\\cli.py\n@@ -206,7 +206,7 @@\n         typer.echo(f\"Erreur : démarrage du serveur impossible ({exc})\", err=True)\n         raise typer.Exit(1) from exc\n     except SystemExit as exc:  # uvicorn journalise l'échec du bind puis sort (code 3)\n-        if exc.code in (0, None):\n+        if exc.code in ( -1, None):\n             return\n         typer.echo(\n             f\"Erreur : démarrage du serveur impossible sur {HOTE}:{port} (port occupé ?)\","
+  },
+  {
+   "module": "src/usine/ui/cli.py",
+   "ligne": 176,
+   "colonne": 58,
+   "operateur": "core/ReplaceFalseWithTrue",
+   "occurrence": 0,
+   "fonction": "_lancer_streamlit",
+   "job_id": "c7e2e4c816a8484ab32661e3a561cd66",
+   "diff": "--- mutation diff ---\n--- a/src\\usine\\ui\\cli.py\n+++ b/src\\usine\\ui\\cli.py\n@@ -173,7 +173,7 @@\n \n def _lancer_streamlit() -> int:\n     try:\n-        return subprocess.run(commande_streamlit(), check=False).returncode\n+        return subprocess.run(commande_streamlit(), check=True).returncode\n     except KeyboardInterrupt:\n         return 0\n     except OSError as exc:"
+  },
+  {
+   "module": "src/usine/ui/serveur.py",
+   "ligne": 66,
+   "colonne": 75,
+   "operateur": "core/ReplaceFalseWithTrue",
+   "occurrence": 0,
+   "fonction": "creer_application",
+   "job_id": "0c7812a575a9447c99cd20f42577e313",
+   "diff": "--- mutation diff ---\n--- a/src\\usine\\ui\\serveur.py\n+++ b/src\\usine\\ui\\serveur.py\n@@ -63,7 +63,7 @@\n \n     for route, fichier in PAGES.items():\n         application.add_api_route(\n-            route, _page(REPERTOIRE_STATIQUE / fichier), include_in_schema=False\n+            route, _page(REPERTOIRE_STATIQUE / fichier), include_in_schema=True\n         )\n     return application\n "
+  },
+  {
+   "module": "src/usine/ui/vues.py",
+   "ligne": 21,
+   "colonne": 46,
+   "operateur": "core/ReplaceFalseWithTrue",
+   "occurrence": 0,
+   "fonction": null,
+   "job_id": "fb2166643c08445e9b83f9a774bf844b",
+   "diff": "--- mutation diff ---\n--- a/src\\usine\\ui\\vues.py\n+++ b/src\\usine\\ui\\vues.py\n@@ -18,7 +18,7 @@\n LIBELLE_MODE_REEL = \"Mode réel\"\n LIBELLE_MODE_REPLI = \"Mode repli\"\n \n-_MARKDOWN = MarkdownIt(\"commonmark\", {\"html\": False})  # aucun HTML brut ne traverse\n+_MARKDOWN = MarkdownIt(\"commonmark\", {\"html\": True})  # aucun HTML brut ne traverse\n \n \n class VueCadre(BaseModel):"
+  },
+  {
+   "module": "src/usine/ui/vues.py",
+   "ligne": 27,
+   "colonne": 37,
+   "operateur": "core/ReplaceTrueWithFalse",
+   "occurrence": 0,
+   "fonction": "VueCadre",
+   "job_id": "ab11844b0d5f402e84b7827a06951970",
+   "diff": "--- mutation diff ---\n--- a/src\\usine\\ui\\vues.py\n+++ b/src\\usine\\ui\\vues.py\n@@ -24,7 +24,7 @@\n class VueCadre(BaseModel):\n     \"\"\"Ce que l'en-tête, la pastille de mode et les bandeaux du cadre affichent.\"\"\"\n \n-    model_config = ConfigDict(frozen=True)\n+    model_config = ConfigDict(frozen=False)\n \n     mode: Literal[\"reel\", \"repli\"]\n     libelle_mode: str"
+  }
+ ],
+ "total_seconds": 361.5
+}

@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "wd59",
+ "latence_s": 29.9,
+ "usage": {
+  "prompt_tokens": 8538,
+  "completion_tokens": 1437,
+  "total_tokens": 9975,
+  "cost": 0.0357135,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 8535,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0357135,
+   "upstream_inference_prompt_cost": 0.0213435,
+   "upstream_inference_completions_cost": 0.01437
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 726,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.0357135,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 1437,
+   "cout_usd": 0.0357135,
+   "latence_s": 29.9
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavedevsecops/web/blockers.py\",\"ligne\":75,\"severite\":\"Important\",\"description\":\"Pour une station non livrée sans milestone, le repli utilise chain.map.soon_text plutôt que « Bientôt ». Ce texte appartient à la carte et peut être différent : l'encart affiche alors ce texte à la place du repli explicitement imposé par la story.\",\"test_pytest\":\"import importlib\\nfrom types import SimpleNamespace\\n\\n\\ndef test_station_sans_jalon_affiche_bientot(monkeypatch):\\n    try:\\n        module = importlib.import_module('usine.web.blockers')\\n    except ModuleNotFoundError as error:\\n        if error.name not in {'usine', 'usine.web', 'usine.web.blockers'}:\\n            raise\\n        module = importlib.import_module('wavedevsecops.web.blockers')\\n\\n    station = SimpleNamespace(\\n        number=2, name='PR et CI', delivered=False, milestone='',\\n        barriers=[SimpleNamespace(id='protection', label='Protection de main')],\\n    )\\n    chain = SimpleNamespace(\\n        stations=[station],\\n        map=SimpleNamespace(soon_text='Prochainement sur la carte'),\\n    )\\n    scenario = SimpleNamespace(\\n        key='push-pull.B',\\n        blocked_by=[SimpleNamespace(\\n            barrier_id='protection', station=2,\\n            scenario_id='push-direct-main', reason_text='main est protégée.',\\n        )],\\n    )\\n    monkeypatch.setattr(module, 'load_chain_texts', lambda settings: chain)\\n    monkeypatch.setattr(module, 'catalogue_scenario_titles', lambda settings: {})\\n\\n    body = module.blockers_body(scenario, SimpleNamespace())\\n\\n    assert body['items'][0]['soon_text'] == 'Bientôt'\\n    assert body['items'][0]['scenario'] is None\\n\"},{\"id\":\"C2\",\"fichier\":\"src/wavedevsecops/web/app.py\",\"ligne\":232,\"severite\":\"Nit\",\"description\":\"Le diff fourni branche la projection serveur, mais ne contient aucune modification de scenario.js ou workspace.css. Le test Node injecte directement blockers dans le panneau et ne démontre donc pas que les fichiers livrés rendent effectivement ce nouveau champ. Vérifier la présence du rendu blockersBlock, son emplacement après la correction et avant « Recommencer », ainsi que le filet discipline-harness ; ces éléments front exigés par la story ne sont pas vérifiables dans ce diff.\",\"test_pytest\":null},{\"id\":\"C3\",\"fichier\":\"tests/test_blockers.py\",\"ligne\":97,\"severite\":\"Nit\",\"description\":\"Aucune modification des fichiers de contenu n'apparaît dans le diff fourni, alors que la story demande les déclarations dans add-commit.B et push-pull.B, ainsi que les commentaires explicatifs dans stash.B et rebase.B. Le test des déclarations vérifie correctement une partie de ce contrat, mais sa présence ne prouve pas que les données correspondantes ont été livrées ; les commentaires ne sont pas vérifiés. Confirmer ces fichiers avant de considérer la story complète.\",\"test_pytest\":null}]}"
+}

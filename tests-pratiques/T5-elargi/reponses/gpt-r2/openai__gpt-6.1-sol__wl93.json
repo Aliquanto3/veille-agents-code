@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "wl93",
+ "latence_s": 38.8,
+ "usage": {
+  "prompt_tokens": 10098,
+  "completion_tokens": 1532,
+  "total_tokens": 11630,
+  "cost": 0.0405635,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 10095,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0405635,
+   "upstream_inference_prompt_cost": 0.0252435,
+   "upstream_inference_completions_cost": 0.01532
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 896,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.0405635,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 1532,
+   "cout_usd": 0.0405635,
+   "latence_s": 38.8
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavelocalai/inference/arena.py\",\"ligne\":580,\"severite\":\"Important\",\"description\":\"Le total est recalculé en excluant les colonnes terminées sans notation, alors que le contrat impose le nombre de colonnes de la comparaison, fixé au départ. Pour une comparaison de trois colonnes dont deux échouent ou répondent vide, les événements finissent donc par annoncer « 1 sur 1 » au lieu de « 1 sur 3 ». Les nouveaux tests consacrent ce changement de contrat au lieu de vérifier le total fixe demandé.\",\"test_pytest\":\"from types import SimpleNamespace\\n\\nfrom wavelocalai.inference.arena import ArenaService\\n\\n\\ndef test_judge_total_remains_the_number_of_comparison_columns():\\n    arena = SimpleNamespace(\\n        judge_total=3,\\n        judge_done=1,\\n        lanes=[\\n            SimpleNamespace(status=\\\"judging\\\"),\\n            SimpleNamespace(status=\\\"failed\\\"),\\n            SimpleNamespace(status=\\\"done\\\"),\\n        ],\\n    )\\n    assert ArenaService._judge_total(arena) == 3\\n\"},{\"id\":\"C2\",\"fichier\":\"src/wavelocalai/evaluation/judge.py\",\"ligne\":127,\"severite\":\"Important\",\"description\":\"La phase scoring n'est plus publiée dès la prise de place comme l'exige le contrat : pour un juge local, _PhasedModel attend le premier fragment ou 250 ms et publie même loading avant tout scoring lorsque le juge est froid. Judge.ask branche cette enveloppe sans relayer on_phase à stream_into_run. Une colonne ayant déjà obtenu la place reste ainsi annoncée « En file pour la notation » pendant tout le chargement. Le test ajouté qui attend loading puis scoring valide précisément l'ordre contraire à la spec.\",\"test_pytest\":\"import asyncio\\nfrom types import SimpleNamespace\\n\\nfrom wavelocalai.evaluation.judge import _PhasedModel\\nfrom wavelocalai.models.port import ChatMessage, ChatRequest, LoadState, TextDelta\\n\\n\\ndef test_scoring_is_announced_when_the_slot_is_taken_before_loading():\\n    class ColdJudge:\\n        ref = SimpleNamespace(origin=\\\"local\\\")\\n\\n        async def stream(self, request):\\n            yield LoadState(\\\"loading\\\")\\n            yield TextDelta(\\\"{}\\\")\\n\\n    async def exercise():\\n        phases = []\\n        # L'enveloppe est consommée après la prise de place locale,\\n        # comme indiqué par son contrat et son branchement dans Judge.ask.\\n        model = _PhasedModel(ColdJudge(), phases.append)\\n        request = ChatRequest([ChatMessage(\\\"user\\\", \\\"Note.\\\")])\\n        async for _ in model.stream(request):\\n            pass\\n        assert phases == [\\\"scoring\\\", \\\"loading\\\", \\\"scoring\\\"]\\n\\n    asyncio.run(exercise())\\n\"}]}"
+}

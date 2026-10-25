@@ -1,0 +1,145 @@
+{
+ "story": "us611",
+ "test_command": "T:/v/usine-migration-jira-demo/.venv/Scripts/python.exe -m pytest -q -x --tb=no -p no:cacheprovider --deselect=tests/unit/consultation/test_passage.py::test_manifeste_et_dates --deselect=tests/unit/consultation/test_passage.py::test_meteo_et_evolution --deselect=tests/unit/consultation/test_passage.py::test_evolution_hors_historique --deselect=tests/unit/consultation/test_passage.py::test_tables_filtrees --deselect=tests/unit/consultation/test_passage.py::test_palier_1_kpi_et_textes_presents_autres_fichiers_absents --deselect=tests/unit/consultation/test_passage.py::test_anomalies --deselect=tests/unit/consultation/test_passage.py::test_dernier_passage --deselect=tests/unit/consultation/test_passage.py::test_dernier_passage_ignore_un_manifeste_illisible --deselect=tests/unit/consultation/test_passage.py::test_date_du_passage_en_construction --deselect=tests/unit/consultation/test_passage.py::test_traces --deselect=tests/unit/consultation/test_passage.py::test_sorties_llm_selon_palier --deselect=tests/unit/consultation/test_passage.py::test_anomalies_limite_negative --deselect=tests/unit/consultation/test_passage.py::test_dernier_passage_ignore_un_rangement_incoherent --deselect=tests/unit/consultation/test_passage.py::test_version_etrangere_meteo --deselect=tests/unit/consultation/test_passage.py::test_version_etrangere_manifeste --deselect=tests/unit/consultation/test_passage.py::test_dernier_passage_sans_classification_initiale --deselect=tests/unit/consultation/test_passage.py::test_anomalies_cause_proposee_selon_palier --deselect=tests/unit/consultation/test_passage.py::test_previsions_presentes --deselect=tests/unit/consultation/test_passage.py::test_previsions_passage_reel --deselect=tests/unit/consultation/test_passage.py::test_manifeste_majeur_etranger_refuse_chaque_lecture[kpi] --deselect=tests/unit/consultation/test_passage.py::test_manifeste_majeur_etranger_refuse_chaque_lecture[traces] --deselect=tests/unit/consultation/test_passage.py::test_manifeste_majeur_etranger_refuse_chaque_lecture[previsions] --deselect=tests/unit/consultation/test_passage.py::test_manifeste_majeur_etranger_refuse_chaque_lecture[meteo] --deselect=tests/unit/consultation/test_passage.py::test_manifeste_majeur_etranger_refuse_chaque_lecture[tickets_etats] --deselect=tests/unit/consultation/test_passage.py::test_manifeste_majeur_etranger_refuse_chaque_lecture[explications_palier_1] --deselect=tests/unit/consultation/test_passage.py::test_manifeste_majeur_etranger_refuse_chaque_lecture[repartition_causes_palier_1] --deselect=tests/unit/consultation/test_passage.py::test_previsions_majeur_etranger --deselect=tests/unit/consultation/test_passage.py::test_palier_1_par_entite --deselect=tests/unit/consultation/test_passage.py::test_url_ticket_par_la_composition --deselect=tests/unit/consultation/test_passage.py::test_livrable[rapport_xlsx] --deselect=tests/unit/consultation/test_passage.py::test_livrable[rapport_pptx] --deselect=tests/unit/consultation/test_passage.py::test_livrable_illisible tests/unit/adaptateurs/journal/test_source_journal.py tests/unit/consultation/test_passage.py tests/unit/contrats/test_evenements.py tests/unit/contrats/test_inventaire.py tests/unit/contrats/test_llm.py tests/unit/contrats/test_passage.py tests/unit/contrats/test_versions.py tests/unit/ia/test_doublons.py",
+ "tests_seconds": 6.8,
+ "tests_rc": 0,
+ "modules": [
+  {
+   "module": "src/usine/composition.py",
+   "generes": 1385,
+   "effectifs": 0,
+   "echantillon": 0
+  },
+  {
+   "module": "src/usine/contrats/llm.py",
+   "generes": 96,
+   "effectifs": 21,
+   "echantillon": 13,
+   "executes": 13,
+   "tues": 8
+  },
+  {
+   "module": "src/usine/contrats/versions.py",
+   "generes": 63,
+   "effectifs": 0,
+   "echantillon": 0
+  },
+  {
+   "module": "src/usine/ia/cli.py",
+   "generes": 10,
+   "effectifs": 3,
+   "echantillon": 0
+  },
+  {
+   "module": "src/usine/ia/doublons.py",
+   "generes": 133,
+   "effectifs": 133,
+   "echantillon": 57,
+   "executes": 57,
+   "tues": 52
+  }
+ ],
+ "survivants": [
+  {
+   "module": "src/usine/ia/doublons.py",
+   "ligne": 31,
+   "colonne": 21,
+   "operateur": "core/NumberReplacer",
+   "occurrence": 4,
+   "fonction": null,
+   "job_id": "f2feae61530448cc8621038820e7108f",
+   "diff": "--- mutation diff ---\n--- a/src\\usine\\ia\\doublons.py\n+++ b/src\\usine\\ia\\doublons.py\n@@ -28,7 +28,7 @@\n LIMITE_DEFAUT = 50\n \"\"\"Nombre maximal de paires rendues.\"\"\"\n \n-LONGUEUR_MIN_JETON = 3\n+LONGUEUR_MIN_JETON = 4\n \"\"\"Les mots plus courts (articles, prépositions) ne comptent pas dans la similarité.\"\"\"\n \n _MOT = re.compile(r\"[a-z0-9_]+\")"
+  },
+  {
+   "module": "src/usine/ia/doublons.py",
+   "ligne": 86,
+   "colonne": 30,
+   "operateur": "core/ReplaceUnaryOperator_USub_Not",
+   "occurrence": 0,
+   "fonction": "detecter_doublons",
+   "job_id": "9e7a1e827a84451a9bdd8222877e84d0",
+   "diff": "--- mutation diff ---\n--- a/src\\usine\\ia\\doublons.py\n+++ b/src\\usine\\ia\\doublons.py\n@@ -83,7 +83,7 @@\n         for a, b in combinations(cles, 2)\n         if (score := score_similarite(jetons[a], jetons[b])) >= seuil and score > 0\n     ]\n-    paires.sort(key=lambda p: -p.score)\n+    paires.sort(key=lambda p: not p.score)\n     return SortieDoublons(\n         date_arrete=date_arrete,\n         seuil=seuil,"
+  },
+  {
+   "module": "src/usine/ia/doublons.py",
+   "ligne": 40,
+   "colonne": 72,
+   "operateur": "core/ReplaceComparisonOperator_GtE_Gt",
+   "occurrence": 0,
+   "fonction": "_jetons",
+   "job_id": "97b53bb75e3e41b2bbffd87a7d558ab8",
+   "diff": "--- mutation diff ---\n--- a/src\\usine\\ia\\doublons.py\n+++ b/src\\usine\\ia\\doublons.py\n@@ -37,7 +37,7 @@\n def _jetons(texte: str) -> frozenset[str]:\n     sans_accents = unicodedata.normalize(\"NFKD\", texte.lower()).encode(\"ascii\", \"ignore\")\n     return frozenset(\n-        m for m in _MOT.findall(sans_accents.decode(\"ascii\")) if len(m) >= LONGUEUR_MIN_JETON\n+        m for m in _MOT.findall(sans_accents.decode(\"ascii\")) if len(m) > LONGUEUR_MIN_JETON\n     )\n \n "
+  },
+  {
+   "module": "src/usine/ia/doublons.py",
+   "ligne": 82,
+   "colonne": 58,
+   "operateur": "core/NumberReplacer",
+   "occurrence": 15,
+   "fonction": "detecter_doublons",
+   "job_id": "c778e4dc6c6a431eb7f00c73876aa034",
+   "diff": "--- mutation diff ---\n--- a/src\\usine\\ia\\doublons.py\n+++ b/src\\usine\\ia\\doublons.py\n@@ -79,7 +79,7 @@\n     }\n     cles = sorted(jetons, key=rang_cle)\n     paires = [\n-        PaireDoublon(cle_a=a, cle_b=b, score=round(score, 4))\n+        PaireDoublon(cle_a=a, cle_b=b, score=round(score, 3))\n         for a, b in combinations(cles, 2)\n         if (score := score_similarite(jetons[a], jetons[b])) >= seuil and score > 0\n     ]"
+  },
+  {
+   "module": "src/usine/ia/doublons.py",
+   "ligne": 71,
+   "colonne": 31,
+   "operateur": "core/ReplaceComparisonOperator_Eq_LtE",
+   "occurrence": 0,
+   "fonction": "detecter_doublons",
+   "job_id": "5b1d9fb0e33c436c8477807c2112c7c3",
+   "diff": "--- mutation diff ---\n--- a/src\\usine\\ia\\doublons.py\n+++ b/src\\usine\\ia\\doublons.py\n@@ -68,7 +68,7 @@\n     if limite <= 0:\n         raise UsineErreur(f\"limite de doublons non positive : {limite}\")\n     lignes = textes.filter(\n-        (pl.col(\"type_ticket\") == TypeTicket.anomalie.value)\n+        (pl.col(\"type_ticket\") <= TypeTicket.anomalie.value)\n         & pl.col(\"cle_ticket\").is_in(list(ouvertes))\n     )\n     jetons = {"
+  },
+  {
+   "module": "src/usine/contrats/llm.py",
+   "ligne": 240,
+   "colonne": 34,
+   "operateur": "core/NumberReplacer",
+   "occurrence": 43,
+   "fonction": "PaireDoublon",
+   "job_id": "76b80a3d2592449a9141fc20a3aa0ca2",
+   "diff": "--- mutation diff ---\n--- a/src\\usine\\contrats\\llm.py\n+++ b/src\\usine\\contrats\\llm.py\n@@ -237,7 +237,7 @@\n class PaireDoublon(Enregistrement):\n     \"\"\"Deux Anomalies probablement en doublon (FR-36) ; `cle_a` précède `cle_b` par rang.\"\"\"\n \n-    cle_a: str = Field(min_length=1)\n+    cle_a: str = Field(min_length= 0)\n     cle_b: str = Field(min_length=1)\n     score: float = Field(ge=0, le=1)\n     \"\"\"Similarité des textes pseudonymisés, de 0 à 1 ; à revoir par le Pilote.\"\"\""
+  },
+  {
+   "module": "src/usine/contrats/llm.py",
+   "ligne": 241,
+   "colonne": 34,
+   "operateur": "core/NumberReplacer",
+   "occurrence": 44,
+   "fonction": "PaireDoublon",
+   "job_id": "b7489bdff23a4523956cb9e94b23425b",
+   "diff": "--- mutation diff ---\n--- a/src\\usine\\contrats\\llm.py\n+++ b/src\\usine\\contrats\\llm.py\n@@ -238,7 +238,7 @@\n     \"\"\"Deux Anomalies probablement en doublon (FR-36) ; `cle_a` précède `cle_b` par rang.\"\"\"\n \n     cle_a: str = Field(min_length=1)\n-    cle_b: str = Field(min_length=1)\n+    cle_b: str = Field(min_length= 2)\n     score: float = Field(ge=0, le=1)\n     \"\"\"Similarité des textes pseudonymisés, de 0 à 1 ; à revoir par le Pilote.\"\"\"\n "
+  },
+  {
+   "module": "src/usine/contrats/llm.py",
+   "ligne": 259,
+   "colonne": 28,
+   "operateur": "core/NumberReplacer",
+   "occurrence": 51,
+   "fonction": "SortieDoublons",
+   "job_id": "eb01e725dc4b4149931d82952a940a85",
+   "diff": "--- mutation diff ---\n--- a/src\\usine\\contrats\\llm.py\n+++ b/src\\usine\\contrats\\llm.py\n@@ -256,7 +256,7 @@\n     \"\"\"\n \n     date_arrete: date\n-    seuil: float = Field(ge=0, le=1)\n+    seuil: float = Field(ge= -1, le=1)\n     paires: tuple[PaireDoublon, ...] = ()\n     statut_controle: StatutControle = StatutControle.non_controle\n "
+  },
+  {
+   "module": "src/usine/contrats/llm.py",
+   "ligne": 247,
+   "colonne": 22,
+   "operateur": "core/ReplaceComparisonOperator_Eq_Is",
+   "occurrence": 1,
+   "fonction": "_distinctes",
+   "job_id": "605e9a34b7ee46309e48b2d4d93dea92",
+   "diff": "--- mutation diff ---\n--- a/src\\usine\\contrats\\llm.py\n+++ b/src\\usine\\contrats\\llm.py\n@@ -244,7 +244,7 @@\n \n     @model_validator(mode=\"after\")\n     def _distinctes(self) -> Self:\n-        if self.cle_a == self.cle_b:\n+        if self.cle_a is self.cle_b:\n             raise ValueError(f\"{self.cle_a} : une paire de doublons porte deux clés distinctes\")\n         return self\n "
+  },
+  {
+   "module": "src/usine/contrats/llm.py",
+   "ligne": 241,
+   "colonne": 34,
+   "operateur": "core/NumberReplacer",
+   "occurrence": 45,
+   "fonction": "PaireDoublon",
+   "job_id": "5621c802c89a4918ac26006883d916d0",
+   "diff": "--- mutation diff ---\n--- a/src\\usine\\contrats\\llm.py\n+++ b/src\\usine\\contrats\\llm.py\n@@ -238,7 +238,7 @@\n     \"\"\"Deux Anomalies probablement en doublon (FR-36) ; `cle_a` précède `cle_b` par rang.\"\"\"\n \n     cle_a: str = Field(min_length=1)\n-    cle_b: str = Field(min_length=1)\n+    cle_b: str = Field(min_length= 0)\n     score: float = Field(ge=0, le=1)\n     \"\"\"Similarité des textes pseudonymisés, de 0 à 1 ; à revoir par le Pilote.\"\"\"\n "
+  }
+ ],
+ "total_seconds": 358.5
+}

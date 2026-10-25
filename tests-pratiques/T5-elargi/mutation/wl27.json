@@ -1,0 +1,52 @@
+{
+ "story": "wl27",
+ "test_command": "T:/v/wavelocalai/.venv/Scripts/python.exe -m pytest -q -x --tb=no -p no:cacheprovider tests/v2/e2e/test_chat_creativity_export.py tests/v2/integration/test_models_ollama.py tests/v2/unit/test_default_temperature.py tests/v2/unit/test_model_helpers.py tests/v2/web/test_models.py",
+ "tests_seconds": 10.0,
+ "tests_rc": 0,
+ "modules": [
+  {
+   "module": "src/wavelocalai/models/catalog.py",
+   "generes": 163,
+   "effectifs": 20,
+   "echantillon": 20,
+   "executes": 17,
+   "tues": 16
+  },
+  {
+   "module": "src/wavelocalai/models/facts.py",
+   "generes": 185,
+   "effectifs": 30,
+   "echantillon": 30,
+   "executes": 30,
+   "tues": 30
+  },
+  {
+   "module": "src/wavelocalai/models/facts_store.py",
+   "generes": 52,
+   "effectifs": 0,
+   "echantillon": 0
+  },
+  {
+   "module": "src/wavelocalai/models/registry.py",
+   "generes": 502,
+   "effectifs": 10,
+   "echantillon": 10,
+   "executes": 10,
+   "tues": 10
+  }
+ ],
+ "budget_atteint": true,
+ "survivants": [
+  {
+   "module": "src/wavelocalai/models/catalog.py",
+   "ligne": 66,
+   "colonne": 38,
+   "operateur": "core/ReplaceComparisonOperator_LtE_Lt",
+   "occurrence": 1,
+   "fonction": "_temperature",
+   "job_id": "54d06613ea2b4cc9b9b5ad602d6dc5c6",
+   "diff": "--- mutation diff ---\n--- a/src\\wavelocalai\\models\\catalog.py\n+++ b/src\\wavelocalai\\models\\catalog.py\n@@ -63,7 +63,7 @@\n     \"\"\"Créativité par défaut du catalogue (champ facultatif) : de 0 à 2, sinon ignorée.\"\"\"\n     if isinstance(value, bool) or not isinstance(value, (int, float)):\n         return None\n-    return float(value) if 0 <= value <= MAX_TEMPERATURE else None\n+    return float(value) if 0 <= value < MAX_TEMPERATURE else None\n \n \n def _entry(name: str, raw: dict[str, Any]) -> CatalogEntry | None:"
+  }
+ ],
+ "total_seconds": 480.1
+}

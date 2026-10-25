@@ -1,0 +1,100 @@
+{
+ "duration_api_ms": 72685,
+ "stop_reason": "end_turn",
+ "session_id": "86e9cdff-311a-441d-a7f9-a0941ed64354",
+ "total_cost_usd": 0.02055429,
+ "usage": {
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 53854,
+  "cache_read_input_tokens": 192579,
+  "output_tokens": 15713,
+  "output_tokens_details": {
+   "thinking_tokens": 13283
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 53854,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1228,
+    "cache_read_input_tokens": 54138,
+    "cache_creation_input_tokens": 5555,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 5555
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "modelUsage": {
+  "claude-haiku-5-5": {
+   "inputTokens": 12,
+   "outputTokens": 15713,
+   "cacheReadInputTokens": 192579,
+   "cacheCreationInputTokens": 53854,
+   "webSearchRequests": 0,
+   "costUSD": 0.02055429,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 13283,
+   "canonicalModel": "claude-haiku-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "permission_denials": [],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "fast_mode_disabled_reason": "sdk_opt_in_required",
+ "subagent_stats": {
+  "spawned": 0,
+  "requested": {
+   "background": 0,
+   "foreground": 0,
+   "unset": 0
+  },
+  "started_in_background": 0,
+  "max_depth": 0,
+  "spawned_by_subagents": 0,
+  "completed": 0,
+  "failed": 0,
+  "killed": {
+   "parent": 0,
+   "user": 0,
+   "system": 0
+  },
+  "refused": {
+   "depth_limit": 0,
+   "concurrency_limit": 0,
+   "budget": 0
+  },
+  "by_type": {}
+ },
+ "safety_stops": 0,
+ "is_error": false,
+ "num_turns": 13,
+ "subtype": "success",
+ "api_error_status": null,
+ "result": "base : sans objet (lecture seule, pas de git ni d'exécution).\n\nImportant | medium | src/wavedevsecops/ci/__init__.py:412 | Quand l'exécution machine `when: always` de bandit n'aboutit pas (délai, `returncode None`, lancement KO, ou lecteur qui lève `ValueError`), `_machine_findings` rend `None` (l.351-357). L.412 ne rend le constat « détail indisponible » que si `state == \"failure\"` ; sur un succès, le check reste vert et le garde `unscanned_file` (l.425) n'a rien à lire. Le commentaire du job (content/pipeline.yaml:31-32, « un vert ne prouve rien ») n'est donc pas tenu dans ce cas. Preuve par lecture seule. | certain\n\nImportant | low | src/wavedevsecops/ci/findings.py:123 | `json.loads(text or \"{}\")` : une sortie machine vide devient zéro résultat. `_machine_findings` ne contrôle pas le code retour de bandit (contrairement à ruff et gitleaks dans src/wavedevsecops/toolrun/findings.py:153 et :164). Si `bandit -f json` plante avec code 2 et stdout vide, le check reste vert. Il faut que l'humaine réussisse et que la machine plante. | probable\n\nImportant | low | src/wavedevsecops/ci/findings.py:142 | `data.get(\"errors\") or []` : si `errors` n'est pas une liste (par exemple un entier), `for item in ...` lève `TypeError`. `_machine_findings` ne rattrape que `OSError, UnicodeDecodeError, ValueError` (src/wavedevsecops/ci/__init__.py:356), donc l'exception sort de `run_job` au lieu de la `ValueError` annoncée par la spec. Déclencheur : sortie bandit malformée, peu réaliste. | certain\n\nNit | low | tests/test_pipeline.py:351 | `behaviour.get(tool_id, (\"\", 0, \"\", 0))` : un outil sans comportement déclaré passe en succès silencieux au lieu de faire échouer le test. Une régression de configuration (outil oublié) serait masquée. | certain\n\nNit | low | tests/test_code_vulnerable.py:152-158 | Mock d'un module interne : `toolrun.spawn_tool` est remplacé par `sys.executable -m bandit`, ce qui contourne la résolution du registre et le venv. Le test prouve la logique de `run_job`, pas le chemin de lancement réel de bandit. | certain\n\nRemarques hors constat :\n- Le job bandit (content/pipeline.yaml:85-100), le scénario et son empreinte ne figurent pas dans le diff fourni ; je les ai lus dans l'état fusionné du dépôt.\n- L'argv humain est `-r src -q --ignore-nosec`, et non `-r src -q` comme dans la spec. Le `--ignore-nosec` est cohérent avec la correction de revue (test `nosec`).\n- Je n'ai pas pu exécuter les tests (outils en lecture seule). Le comportement de bandit sur les fichiers en erreur de syntaxe (clé `errors` du JSON, code 0) est pris pour acquis par les tests, non vérifié ici.",
+ "ttft_ms": 1370,
+ "type": "result",
+ "duration_ms": 73680,
+ "uuid": "da628a0f-83ee-4160-a515-8b0d0cf5f197",
+ "ttft_stream_ms": 974,
+ "time_to_request_ms": 212,
+ "first_content_frame_ms": 974,
+ "queued_turn_count": 0,
+ "result_index": 0,
+ "_duree_s": 74.6
+}

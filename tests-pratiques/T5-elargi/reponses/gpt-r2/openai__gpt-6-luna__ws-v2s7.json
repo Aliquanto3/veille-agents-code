@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "ws-v2s7",
+ "latence_s": 27.1,
+ "usage": {
+  "prompt_tokens": 7861,
+  "completion_tokens": 2113,
+  "total_tokens": 9974,
+  "cost": 0.00203905,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 7858,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00203905,
+   "upstream_inference_prompt_cost": 0.00098255,
+   "upstream_inference_completions_cost": 0.0010565
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 1926,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.00203905,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 2113,
+   "cout_usd": 0.00203905,
+   "latence_s": 27.1
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"web/static/app.js\",\"ligne\":1,\"severite\":\"Important\",\"description\":\"La story demande explicitement les lignes dépliables de coût du sous-agent et de mémoire KV-cache, ainsi que leurs traductions, mais le diff ne modifie ni l’interface ni l’i18n. Les nouveaux champs d’événement ne sont donc pas présentés à l’utilisateur. Le test ci-dessous vérifie l’intégration des deux nœuds nommés dans la spec.\",\"test_pytest\":\"from pathlib import Path\\n\\n\\ndef test_finops_lines_are_integrated_in_the_interface():\\n    source = Path(\\\"web/static/app.js\\\").read_text(encoding=\\\"utf-8\\\")\\n    assert \\\"subCostNode\\\" in source\\n    assert \\\"kvCacheNode\\\" in source\"}]}"
+}

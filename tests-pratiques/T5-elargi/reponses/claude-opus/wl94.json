@@ -1,0 +1,100 @@
+{
+ "duration_api_ms": 133496,
+ "stop_reason": "end_turn",
+ "session_id": "783da77e-d347-4569-b657-f95bdb89a0c4",
+ "total_cost_usd": 0.9300212,
+ "usage": {
+  "input_tokens": 64,
+  "cache_creation_input_tokens": 54989,
+  "cache_read_input_tokens": 1264566,
+  "output_tokens": 11847,
+  "output_tokens_details": {
+   "thinking_tokens": 5870
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 54989,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 2184,
+    "cache_read_input_tokens": 60956,
+    "cache_creation_input_tokens": 541,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 541
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "modelUsage": {
+  "claude-opus-5-5": {
+   "inputTokens": 64,
+   "outputTokens": 11847,
+   "cacheReadInputTokens": 1264566,
+   "cacheCreationInputTokens": 54989,
+   "webSearchRequests": 0,
+   "costUSD": 0.9300212,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 5870,
+   "canonicalModel": "claude-opus-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "permission_denials": [],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "fast_mode_disabled_reason": "sdk_opt_in_required",
+ "subagent_stats": {
+  "spawned": 0,
+  "requested": {
+   "background": 0,
+   "foreground": 0,
+   "unset": 0
+  },
+  "started_in_background": 0,
+  "max_depth": 0,
+  "spawned_by_subagents": 0,
+  "completed": 0,
+  "failed": 0,
+  "killed": {
+   "parent": 0,
+   "user": 0,
+   "system": 0
+  },
+  "refused": {
+   "depth_limit": 0,
+   "concurrency_limit": 0,
+   "budget": 0
+  },
+  "by_type": {}
+ },
+ "safety_stops": 0,
+ "is_error": false,
+ "num_turns": 39,
+ "subtype": "success",
+ "api_error_status": null,
+ "result": "Revue terminée (lecture seule). Base : sans objet.\n\nIl y a deux constats **Important**, aucun de sévérité high, et quatre **Nit**. Complexité : 0 constat. Rien n'a été corrigé, aucun test n'a été lancé et je n'ai écrit aucune section `## Revue`.\n\nImportant | medium | src/wavelocalai/web/static/screens/documents-embedding-alert.js:37 | Après n'importe quelle installation réussie, l'encart peut réécrire le modèle de représentation choisi. Le `createPull` de l'encart rejoint tout run `pull` actif, via `store.select` sur `runsActive` (kind `pull`), dans `models-pull.js:161-165`. Il le fait même quand l'encart est masqué, puisque l'écran reste monté. Or `onEnded` ne regarde que `status === \"ok\"`, jamais `tag === TAG`. Exemple : on installe un modèle de conversation ou le reranker depuis l'écran Modèles, avec `nomic-embed-text` déjà présent et une base vide ou liée à nomic. L'appel `api.saveRagSettings({ embedding_model: \"nomic-embed-text\" })` remplace alors en silence l'embedding choisi par la personne. En plus, « X installé. » s'affiche dans `.docs-notice` de la Base documentaire. Correctif : ignorer `onEnded` si le tag n'est pas `TAG` ou s'il s'agit du reranker, et ne rien enregistrer si l'encart n'était pas visible | probable\n\nImportant | low | src/wavelocalai/config.py:229 | `testing_no_fake_embedder` vaut `True` par défaut, à l'inverse de ce que disent la spec et le commentaire de `config.py:52` (« E2E seulement, jamais en `testing` ordinaire »). Seul `load_settings` (l.311) remet la valeur à `False`. Un `Settings(testing=True)` construit directement, ou un `model_copy(update={\"testing\": True})`, n'aurait donc aucun `fake` embedder (`models/fake.py:142`). Aucun appel de ce type n'existe aujourd'hui (vérifié par grep), donc le défaut est latent. Correctif : passer la valeur par défaut à `False` | certain\n\nNit | low | src/wavelocalai/web/static/screens/documents-embedding-alert.js:97 | L'encart peut rester bloqué en état « installation ». Si la relecture du registre après le `pull` dépasse `REFRESH_WAIT_S` (`inference/pull.py:189-194`), `embedding_models` reste vide alors que `pull.doneTag === TAG`. Dans ce cas, le bouton et l'aide restent masqués, la barre reste à 100 %, et rien ne relance `load()` avant que l'écran soit rechargé | probable\n\nNit | low | src/wavelocalai/web/static/screens/documents-base.js:153 | L'encart est placé après le paragraphe `lead`, alors que le critère 1 demande « juste après le fil d'Ariane » (`screenTabs`). Il précède bien la zone de dépôt | certain\n\nNit | low | tests/v2/e2e/test_documents_embedding.py:132 | La spec et le test se contredisent. Le critère 2 dit que le modèle est pris « par défaut » via `_pick_model`, sans réglage explicite. Le code (`documents-embedding-alert.js:43`) et le test, eux, enregistrent une préférence (`embedding_model == TAG`). La spec est à réaligner | certain\n\nNit | low | tests/v2/unit/test_rag_manage_settings_view.py:20 | Aucun test ne vérifie que `fallback_model` est ignoré quand le registre liste déjà un vrai embedding (`rag/manage.py:274`). Les deux tests présents passent `registry=None` | certain",
+ "ttft_ms": 3580,
+ "type": "result",
+ "duration_ms": 134893,
+ "uuid": "9e92d998-3df3-431d-82fb-5b1e4e1ecf41",
+ "ttft_stream_ms": 1161,
+ "time_to_request_ms": 135,
+ "first_content_frame_ms": 1162,
+ "queued_turn_count": 0,
+ "result_index": 0,
+ "_duree_s": 135.7
+}

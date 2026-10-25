@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "us612",
+ "latence_s": 20.3,
+ "usage": {
+  "prompt_tokens": 4483,
+  "completion_tokens": 1920,
+  "total_tokens": 6403,
+  "cost": 0.0015203,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 4480,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0015203,
+   "upstream_inference_prompt_cost": 0.0005603,
+   "upstream_inference_completions_cost": 0.00096
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 1552,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.0015203,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 1920,
+   "cout_usd": 0.0015203,
+   "latence_s": 20.3
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/usine/adaptateurs/llm/fournisseur.py\",\"ligne\":409,\"severite\":\"Important\",\"description\":\"La comparaison lexicographique `config.fournisseur >= \\\"local\\\"` est vraie aussi pour `\\\"mistral\\\"`. Ainsi, une configuration Mistral prend la branche locale, ignore sa clé et envoie les requêtes à `llama-server` au lieu de l’API Mistral. Il faut tester explicitement `config.fournisseur == \\\"local\\\"`.\",\"test_pytest\":\"from decimal import Decimal\\n\\nfrom usine.adaptateurs.llm.fournisseur import construire_fournisseur_llm\\nfrom usine.contrats.config import ConfigLLM\\nfrom tests.unit.adaptateurs.llm.test_fournisseur import (\\n    MODELES,\\n    STRUCTURE,\\n    Sortie,\\n    TransportScripte,\\n    _sortie,\\n)\\n\\n\\ndef test_mistral_n_est_pas_route_vers_le_serveur_local() -> None:\\n    transport = TransportScripte([_sortie(\\\"mistral\\\")])\\n    config = ConfigLLM(\\n        fournisseur=\\\"mistral\\\",\\n        modele=MODELES[\\\"mistral\\\"],\\n        plafond_cout_passage_eur=Decimal(1),\\n    )\\n    adaptateur = construire_fournisseur_llm(config, \\\"cle-mistral\\\", transport.client())\\n\\n    adaptateur.generer_structure(\\\"p\\\", Sortie, STRUCTURE)\\n\\n    assert transport.urls == [\\\"https://api.mistral.ai/v1/chat/completions\\\"]\\n\"}]}"
+}

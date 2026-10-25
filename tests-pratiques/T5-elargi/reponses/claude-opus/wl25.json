@@ -1,0 +1,100 @@
+{
+ "duration_api_ms": 82661,
+ "stop_reason": "end_turn",
+ "session_id": "787fe71c-4a1f-4c1e-8e7c-113336ce2ecb",
+ "total_cost_usd": 0.5125538,
+ "usage": {
+  "input_tokens": 14,
+  "cache_creation_input_tokens": 48404,
+  "cache_read_input_tokens": 266129,
+  "output_tokens": 3602,
+  "output_tokens_details": {
+   "thinking_tokens": 1147
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 48404,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1280,
+    "cache_read_input_tokens": 52897,
+    "cache_creation_input_tokens": 2015,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 2015
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "modelUsage": {
+  "claude-opus-5-5": {
+   "inputTokens": 14,
+   "outputTokens": 3602,
+   "cacheReadInputTokens": 266129,
+   "cacheCreationInputTokens": 48404,
+   "webSearchRequests": 0,
+   "costUSD": 0.5125538,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 1147,
+   "canonicalModel": "claude-opus-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "permission_denials": [],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "fast_mode_disabled_reason": "sdk_opt_in_required",
+ "subagent_stats": {
+  "spawned": 0,
+  "requested": {
+   "background": 0,
+   "foreground": 0,
+   "unset": 0
+  },
+  "started_in_background": 0,
+  "max_depth": 0,
+  "spawned_by_subagents": 0,
+  "completed": 0,
+  "failed": 0,
+  "killed": {
+   "parent": 0,
+   "user": 0,
+   "system": 0
+  },
+  "refused": {
+   "depth_limit": 0,
+   "concurrency_limit": 0,
+   "budget": 0
+  },
+  "by_type": {}
+ },
+ "safety_stops": 0,
+ "is_error": false,
+ "num_turns": 13,
+ "subtype": "success",
+ "api_error_status": null,
+ "result": "**Revue de la story 2.5, passe 1** (lecture seule ; base : sans objet)\n\nImportant | medium | src/wavelocalai/greenops/cloud_estimate.py:30 | `KG_TO_MG = 999999.0` au lieu de `1_000_000`. Chaque estimation cloud (`mg` et `range_mg.low/high`), donc la valeur écrite dans `runs` et la somme de session, est sous-estimée d'un facteur 1e-6. Le critère 1 (« kgCO2eq converti en mg ») n'est pas respecté. Le test `tests/v2/unit/test_cloud_estimate.py::test_units_are_milligrams_from_kilograms_of_co2_equivalent` ne voit pas l'erreur : il compare avec `pytest.approx(x * 1_000_000)`, dont la tolérance relative par défaut est exactement 1e-6, si bien que 999999 passe pile à la limite. Correctif : `KG_TO_MG = 1_000_000.0`, et `rel=1e-12` dans ce test. | certain\n\nNit | low | src/wavelocalai/inference/streaming.py:251 | Le message de repli `\"l'estimation a échoué\"` est minuscule et sans contexte, alors que les autres raisons affichées sont des phrases complètes. Ce chemin ne sert presque jamais, puisque `estimate_cloud_co2` ne lève pas. Le défaut n'est pas bloquant. | certain\n\nPoints vérifiés par lecture, sans défaut relevé :\n- **Branchement** : le bus est passé au service dans `web/app.py:109`. `_cloud_estimator` ne s'active que pour un modèle d'origine `cloud`, avec `provider_of`/`model_of` sur des tags `groq/openai/...`.\n- **Durée** : `total_s` est bien la durée murale (`models/cloud.py:204`).\n- **Session carbone** : `unmeasurable_runs` par origine vient de la colonne SQL `unmeasurable` (`session.py:30`).\n- **Persistance** : la plage `range_mg` est écrite dans `runs` (`runs/repo.py:141`) et relue dans l'instantané (`runs/snapshot.py:32`).\n- **Panneau CO2 de session** : l'affichage « non mesurable » / « (estimé) » est correct (`topbar.js:118-124`).\n- **Configuration** : la table Groq de `wavelocalai.toml` correspond à `registry._cloud_co2_method`, et `ecologits>=0.11.3,<0.12` est bien dans les dépendances principales de `pyproject.toml`.\n\nLe seul constat Important est la conversion kg vers mg : 1 Important medium, 1 Nit low, 0 Pre-existing ; Complexité : 0 constat.",
+ "ttft_ms": 6755,
+ "type": "result",
+ "duration_ms": 83251,
+ "uuid": "dc724781-6aea-4a7e-a66e-43cea822201e",
+ "ttft_stream_ms": 1916,
+ "time_to_request_ms": 321,
+ "first_content_frame_ms": 1916,
+ "queued_turn_count": 0,
+ "result_index": 0,
+ "_duree_s": 84.2
+}

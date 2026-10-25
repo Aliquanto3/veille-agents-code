@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "wd96",
+ "latence_s": 34.1,
+ "usage": {
+  "prompt_tokens": 6911,
+  "completion_tokens": 1230,
+  "total_tokens": 8141,
+  "cost": 0.029576,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 6908,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.029576,
+   "upstream_inference_prompt_cost": 0.017276,
+   "upstream_inference_completions_cost": 0.0123
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 962,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.029576,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 1230,
+   "cout_usd": 0.029576,
+   "latence_s": 34.1
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavedevsecops/projections/links.py\",\"ligne\":113,\"severite\":\"Nit\",\"description\":\"La comparaison `ref <= EXPLAIN_CHECK` inclut également les checks hors pipeline : leur référence vaut précisément `EXPLAIN_CHECK`. Leur sortie reçoit donc elle aussi `remote.check`, alors que l'ajout décrit vise les sorties des jobs du pipeline. Cette comparaison lexicographique ne distingue pas ces deux cas ; utiliser une condition explicite et couvrir le cas d'un job inconnu possédant une sortie.\",\"test_pytest\":null},{\"id\":\"C2\",\"fichier\":\"tests/test_workspace_dom.py\",\"ligne\":268,\"severite\":\"Nit\",\"description\":\"Le nouveau test fournit directement `initialPane: \\\"remote\\\"` à `mountWorkspace` : il ne couvre pas la lecture de `?vue=remote` par `main.js`, pourtant indispensable au lien de traçabilité. Aucun changement de ce point d'entrée n'apparaît dans le diff. Ajouter une couverture du passage de l'URL à `mountWorkspace` permettrait de vérifier le branchement réel, plutôt que seulement le comportement du composant une fois le paramètre fourni.\",\"test_pytest\":null}]}"
+}

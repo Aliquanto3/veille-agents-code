@@ -1,0 +1,803 @@
+{
+ "semees": [
+  "us611",
+  "us612",
+  "us613",
+  "us713",
+  "wd58",
+  "wd59",
+  "wd81",
+  "wd96",
+  "wl25",
+  "wl27",
+  "wl91",
+  "wl94",
+  "ws-granite",
+  "ws-minicpm",
+  "ws-v2s2",
+  "ws-v2s6"
+ ],
+ "temoins": [
+  "us711",
+  "wd56",
+  "wl93",
+  "ws-v2s7"
+ ],
+ "relecteurs": {
+  "haiku": {
+   "rappel": [
+    11,
+    16,
+    [
+     0.4440393186673406,
+     0.8583556494803894
+    ]
+   ],
+   "rappel_important": [
+    6,
+    16,
+    [
+     0.18480982554752803,
+     0.6135935290206519
+    ]
+   ],
+   "important_hors_semis": 8,
+   "important_temoins": 4,
+   "classes_temoins": {
+    "demontre": 0,
+    "discutable": 4,
+    "faux": 0,
+    "artefact": 0,
+    "non_classe": 0
+   },
+   "important_total": 19,
+   "constats_total": 74,
+   "important_par_story_moy": 0.95
+  },
+  "opus": {
+   "rappel": [
+    11,
+    16,
+    [
+     0.4440393186673406,
+     0.8583556494803894
+    ]
+   ],
+   "rappel_important": [
+    9,
+    16,
+    [
+     0.3317819560677652,
+     0.7690163666481449
+    ]
+   ],
+   "important_hors_semis": 7,
+   "important_temoins": 3,
+   "classes_temoins": {
+    "demontre": 0,
+    "discutable": 3,
+    "faux": 0,
+    "artefact": 0,
+    "non_classe": 0
+   },
+   "important_total": 19,
+   "constats_total": 76,
+   "important_par_story_moy": 0.95
+  },
+  "openai/gpt-6-luna": {
+   "rappel": [
+    8,
+    16,
+    [
+     0.2799923761135083,
+     0.7200076238864918
+    ]
+   ],
+   "rappel_important": [
+    4,
+    16,
+    [
+     0.10181901984237347,
+     0.4949876892939865
+    ]
+   ],
+   "important_hors_semis": 8,
+   "important_temoins": 5,
+   "classes_temoins": {
+    "demontre": 0,
+    "discutable": 2,
+    "faux": 1,
+    "artefact": 2,
+    "non_classe": 0
+   },
+   "important_total": 17,
+   "constats_total": 25,
+   "important_par_story_moy": 0.85
+  },
+  "openai/gpt-6.1-sol": {
+   "rappel": [
+    11,
+    16,
+    [
+     0.4440393186673406,
+     0.8583556494803894
+    ]
+   ],
+   "rappel_important": [
+    8,
+    16,
+    [
+     0.2799923761135083,
+     0.7200076238864918
+    ]
+   ],
+   "important_hors_semis": 7,
+   "important_temoins": 5,
+   "classes_temoins": {
+    "demontre": 1,
+    "discutable": 3,
+    "faux": 0,
+    "artefact": 1,
+    "non_classe": 0
+   },
+   "important_total": 20,
+   "constats_total": 30,
+   "important_par_story_moy": 1.0
+  }
+ },
+ "combinaisons": {
+  "Haiku seul": {
+   "rappel": [
+    11,
+    16,
+    [
+     0.4440393186673406,
+     0.8583556494803894
+    ]
+   ],
+   "rappel_important": [
+    6,
+    16,
+    [
+     0.18480982554752803,
+     0.6135935290206519
+    ]
+   ],
+   "bruit_important": 12,
+   "important_temoins": 4,
+   "classes_temoins": {
+    "demontre": 0,
+    "discutable": 4,
+    "faux": 0,
+    "artefact": 0,
+    "non_classe": 0
+   }
+  },
+  "Opus seul": {
+   "rappel": [
+    11,
+    16,
+    [
+     0.4440393186673406,
+     0.8583556494803894
+    ]
+   ],
+   "rappel_important": [
+    9,
+    16,
+    [
+     0.3317819560677652,
+     0.7690163666481449
+    ]
+   ],
+   "bruit_important": 10,
+   "important_temoins": 3,
+   "classes_temoins": {
+    "demontre": 0,
+    "discutable": 3,
+    "faux": 0,
+    "artefact": 0,
+    "non_classe": 0
+   }
+  },
+  "chaine (Haiku + Opus)": {
+   "rappel": [
+    11,
+    16,
+    [
+     0.4440393186673406,
+     0.8583556494803894
+    ]
+   ],
+   "rappel_important": [
+    9,
+    16,
+    [
+     0.3317819560677652,
+     0.7690163666481449
+    ]
+   ],
+   "bruit_important": 22,
+   "important_temoins": 7,
+   "classes_temoins": {
+    "demontre": 0,
+    "discutable": 7,
+    "faux": 0,
+    "artefact": 0,
+    "non_classe": 0
+   }
+  },
+  "chaine + luna": {
+   "rappel": [
+    12,
+    16,
+    [
+     0.5050123107060135,
+     0.8981809801576265
+    ]
+   ],
+   "rappel_important": [
+    10,
+    16,
+    [
+     0.38640647097934805,
+     0.8151901744524719
+    ]
+   ],
+   "bruit_important": 35,
+   "important_temoins": 12,
+   "classes_temoins": {
+    "demontre": 0,
+    "discutable": 9,
+    "faux": 1,
+    "artefact": 2,
+    "non_classe": 0
+   }
+  },
+  "chaine + sol": {
+   "rappel": [
+    12,
+    16,
+    [
+     0.5050123107060135,
+     0.8981809801576265
+    ]
+   ],
+   "rappel_important": [
+    10,
+    16,
+    [
+     0.38640647097934805,
+     0.8151901744524719
+    ]
+   ],
+   "bruit_important": 34,
+   "important_temoins": 12,
+   "classes_temoins": {
+    "demontre": 1,
+    "discutable": 10,
+    "faux": 0,
+    "artefact": 1,
+    "non_classe": 0
+   }
+  },
+  "chaine + luna + sol": {
+   "rappel": [
+    12,
+    16,
+    [
+     0.5050123107060135,
+     0.8981809801576265
+    ]
+   ],
+   "rappel_important": [
+    10,
+    16,
+    [
+     0.38640647097934805,
+     0.8151901744524719
+    ]
+   ],
+   "bruit_important": 47,
+   "important_temoins": 17,
+   "classes_temoins": {
+    "demontre": 1,
+    "discutable": 12,
+    "faux": 1,
+    "artefact": 3,
+    "non_classe": 0
+   }
+  },
+  "luna + sol": {
+   "rappel": [
+    11,
+    16,
+    [
+     0.4440393186673406,
+     0.8583556494803894
+    ]
+   ],
+   "rappel_important": [
+    8,
+    16,
+    [
+     0.2799923761135083,
+     0.7200076238864918
+    ]
+   ],
+   "bruit_important": 25,
+   "important_temoins": 10,
+   "classes_temoins": {
+    "demontre": 1,
+    "discutable": 5,
+    "faux": 1,
+    "artefact": 3,
+    "non_classe": 0
+   }
+  }
+ },
+ "gains_sur_chaine": {
+  "openai/gpt-6-luna": {
+   "toutes_severites": [
+    "ws-v2s2"
+   ],
+   "important": [
+    "ws-v2s2"
+   ]
+  },
+  "openai/gpt-6.1-sol": {
+   "toutes_severites": [
+    "ws-v2s2"
+   ],
+   "important": [
+    "ws-v2s2"
+   ]
+  }
+ },
+ "strates": {
+  "origine:survivant cosmic-ray": {
+   "haiku": [
+    10,
+    13
+   ],
+   "opus": [
+    10,
+    13
+   ],
+   "openai/gpt-6-luna": [
+    6,
+    13
+   ],
+   "openai/gpt-6.1-sol": [
+    9,
+    13
+   ],
+   "chaine": [
+    10,
+    13
+   ]
+  },
+  "depot:us": {
+   "haiku": [
+    2,
+    4
+   ],
+   "opus": [
+    2,
+    4
+   ],
+   "openai/gpt-6-luna": [
+    2,
+    4
+   ],
+   "openai/gpt-6.1-sol": [
+    2,
+    4
+   ],
+   "chaine": [
+    2,
+    4
+   ]
+  },
+  "depot:wd": {
+   "haiku": [
+    2,
+    4
+   ],
+   "opus": [
+    2,
+    4
+   ],
+   "openai/gpt-6-luna": [
+    1,
+    4
+   ],
+   "openai/gpt-6.1-sol": [
+    1,
+    4
+   ],
+   "chaine": [
+    2,
+    4
+   ]
+  },
+  "origine:mutant manuel": {
+   "haiku": [
+    1,
+    3
+   ],
+   "opus": [
+    1,
+    3
+   ],
+   "openai/gpt-6-luna": [
+    2,
+    3
+   ],
+   "openai/gpt-6.1-sol": [
+    2,
+    3
+   ],
+   "chaine": [
+    1,
+    3
+   ]
+  },
+  "depot:wl": {
+   "haiku": [
+    4,
+    4
+   ],
+   "opus": [
+    4,
+    4
+   ],
+   "openai/gpt-6-luna": [
+    3,
+    4
+   ],
+   "openai/gpt-6.1-sol": [
+    4,
+    4
+   ],
+   "chaine": [
+    4,
+    4
+   ]
+  },
+  "depot:ws": {
+   "haiku": [
+    3,
+    4
+   ],
+   "opus": [
+    3,
+    4
+   ],
+   "openai/gpt-6-luna": [
+    2,
+    4
+   ],
+   "openai/gpt-6.1-sol": [
+    4,
+    4
+   ],
+   "chaine": [
+    3,
+    4
+   ]
+  }
+ },
+ "matrice": {
+  "us611": {
+   "haiku": [
+    false,
+    false
+   ],
+   "opus": [
+    false,
+    false
+   ],
+   "openai/gpt-6-luna": [
+    false,
+    false
+   ],
+   "openai/gpt-6.1-sol": [
+    false,
+    false
+   ]
+  },
+  "us612": {
+   "haiku": [
+    true,
+    true
+   ],
+   "opus": [
+    true,
+    true
+   ],
+   "openai/gpt-6-luna": [
+    true,
+    true
+   ],
+   "openai/gpt-6.1-sol": [
+    true,
+    true
+   ]
+  },
+  "us613": {
+   "haiku": [
+    true,
+    true
+   ],
+   "opus": [
+    true,
+    true
+   ],
+   "openai/gpt-6-luna": [
+    true,
+    false
+   ],
+   "openai/gpt-6.1-sol": [
+    true,
+    true
+   ]
+  },
+  "us713": {
+   "haiku": [
+    false,
+    false
+   ],
+   "opus": [
+    false,
+    false
+   ],
+   "openai/gpt-6-luna": [
+    false,
+    false
+   ],
+   "openai/gpt-6.1-sol": [
+    false,
+    false
+   ]
+  },
+  "wd58": {
+   "haiku": [
+    true,
+    true
+   ],
+   "opus": [
+    true,
+    true
+   ],
+   "openai/gpt-6-luna": [
+    true,
+    true
+   ],
+   "openai/gpt-6.1-sol": [
+    true,
+    true
+   ]
+  },
+  "wd59": {
+   "haiku": [
+    false,
+    false
+   ],
+   "opus": [
+    false,
+    false
+   ],
+   "openai/gpt-6-luna": [
+    false,
+    false
+   ],
+   "openai/gpt-6.1-sol": [
+    false,
+    false
+   ]
+  },
+  "wd81": {
+   "haiku": [
+    false,
+    false
+   ],
+   "opus": [
+    false,
+    false
+   ],
+   "openai/gpt-6-luna": [
+    false,
+    false
+   ],
+   "openai/gpt-6.1-sol": [
+    false,
+    false
+   ]
+  },
+  "wd96": {
+   "haiku": [
+    true,
+    false
+   ],
+   "opus": [
+    true,
+    false
+   ],
+   "openai/gpt-6-luna": [
+    false,
+    false
+   ],
+   "openai/gpt-6.1-sol": [
+    false,
+    false
+   ]
+  },
+  "wl25": {
+   "haiku": [
+    true,
+    false
+   ],
+   "opus": [
+    true,
+    true
+   ],
+   "openai/gpt-6-luna": [
+    true,
+    false
+   ],
+   "openai/gpt-6.1-sol": [
+    true,
+    true
+   ]
+  },
+  "wl27": {
+   "haiku": [
+    true,
+    false
+   ],
+   "opus": [
+    true,
+    true
+   ],
+   "openai/gpt-6-luna": [
+    true,
+    true
+   ],
+   "openai/gpt-6.1-sol": [
+    true,
+    true
+   ]
+  },
+  "wl91": {
+   "haiku": [
+    true,
+    true
+   ],
+   "opus": [
+    true,
+    true
+   ],
+   "openai/gpt-6-luna": [
+    false,
+    false
+   ],
+   "openai/gpt-6.1-sol": [
+    true,
+    false
+   ]
+  },
+  "wl94": {
+   "haiku": [
+    true,
+    false
+   ],
+   "opus": [
+    true,
+    true
+   ],
+   "openai/gpt-6-luna": [
+    true,
+    false
+   ],
+   "openai/gpt-6.1-sol": [
+    true,
+    true
+   ]
+  },
+  "ws-granite": {
+   "haiku": [
+    true,
+    true
+   ],
+   "opus": [
+    true,
+    true
+   ],
+   "openai/gpt-6-luna": [
+    false,
+    false
+   ],
+   "openai/gpt-6.1-sol": [
+    true,
+    true
+   ]
+  },
+  "ws-minicpm": {
+   "haiku": [
+    true,
+    true
+   ],
+   "opus": [
+    true,
+    true
+   ],
+   "openai/gpt-6-luna": [
+    true,
+    false
+   ],
+   "openai/gpt-6.1-sol": [
+    true,
+    false
+   ]
+  },
+  "ws-v2s2": {
+   "haiku": [
+    false,
+    false
+   ],
+   "opus": [
+    false,
+    false
+   ],
+   "openai/gpt-6-luna": [
+    true,
+    true
+   ],
+   "openai/gpt-6.1-sol": [
+    true,
+    true
+   ]
+  },
+  "ws-v2s6": {
+   "haiku": [
+    true,
+    false
+   ],
+   "opus": [
+    true,
+    false
+   ],
+   "openai/gpt-6-luna": [
+    false,
+    false
+   ],
+   "openai/gpt-6.1-sol": [
+    true,
+    false
+   ]
+  }
+ },
+ "cout_latence": {
+  "haiku": {
+   "cout": 0.44807012,
+   "lat": 1750.3,
+   "n": 20
+  },
+  "opus": {
+   "cout": 10.656472999999998,
+   "lat": 1580.6000000000001,
+   "n": 20
+  },
+  "openai/gpt-6-luna": {
+   "cout": 0.048961715,
+   "lat": 703.6000000000001,
+   "n": 20
+  },
+  "openai/gpt-6.1-sol": {
+   "cout": 0.5985534,
+   "lat": 441.3,
+   "n": 20
+  }
+ }
+}

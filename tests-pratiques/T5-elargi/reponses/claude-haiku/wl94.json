@@ -1,0 +1,100 @@
+{
+ "duration_api_ms": 106895,
+ "stop_reason": "end_turn",
+ "session_id": "09fdd5d9-64d2-453d-9283-92cdc34ab6e6",
+ "total_cost_usd": 0.02792793,
+ "usage": {
+  "input_tokens": 32,
+  "cache_creation_input_tokens": 51812,
+  "cache_read_input_tokens": 677983,
+  "output_tokens": 21565,
+  "output_tokens_details": {
+   "thinking_tokens": 15997
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 51812,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 2868,
+    "cache_read_input_tokens": 63230,
+    "cache_creation_input_tokens": 6879,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 6879
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "modelUsage": {
+  "claude-haiku-5-5": {
+   "inputTokens": 32,
+   "outputTokens": 21565,
+   "cacheReadInputTokens": 677983,
+   "cacheCreationInputTokens": 51812,
+   "webSearchRequests": 0,
+   "costUSD": 0.02792793,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 15997,
+   "canonicalModel": "claude-haiku-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "permission_denials": [],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "fast_mode_disabled_reason": "sdk_opt_in_required",
+ "subagent_stats": {
+  "spawned": 0,
+  "requested": {
+   "background": 0,
+   "foreground": 0,
+   "unset": 0
+  },
+  "started_in_background": 0,
+  "max_depth": 0,
+  "spawned_by_subagents": 0,
+  "completed": 0,
+  "failed": 0,
+  "killed": {
+   "parent": 0,
+   "user": 0,
+   "system": 0
+  },
+  "refused": {
+   "depth_limit": 0,
+   "concurrency_limit": 0,
+   "budget": 0
+  },
+  "by_type": {}
+ },
+ "safety_stops": 0,
+ "is_error": false,
+ "num_turns": 31,
+ "subtype": "success",
+ "api_error_status": null,
+ "result": "Base : sans objet (lecture seule, pas de git). Revue faite par lecture du code uniquement, sans exécution de tests.\n\nImportant | medium | src/wavelocalai/web/static/screens/documents-embedding-alert.js:37 | `onEnded` ne vérifie que `status === \"ok\"`, pas le tag du run. `createPull` suit tout run `pull` présent dans `runsActive` (models-pull.js:161-166), y compris un run lancé depuis l'écran Modèles, et ce suivi continue quand l'écran est masqué. Un succès d'un autre modèle déclenche donc `saveRagSettings({embedding_model: \"nomic-embed-text\"})` (ligne 43), qui écrase le défaut de l'utilisateur si la base est vide, ou échoue en silence sinon. Le `tag` transmis par `onEnded` n'est jamais lu. | probable\nImportant | low | src/wavelocalai/web/static/screens/documents-embedding-alert.js:43 | Écart avec la spec : l'AC2 dit que le défaut est « le premier modèle installé » (repli de `_pick_model`, sans réglage explicite), alors que le code écrit la préférence `embedding_model` et que le test la vérifie (`test_documents_embedding.py:130`). Les sources divergent aussi : le commentaire JS cite « AC epics 9.4 » pour ce comportement. Preuve : lecture du code et de la spec. | certain\nImportant | low | src/wavelocalai/config.py:229 | Le défaut `testing_no_fake_embedder: bool = True` inverse la valeur attendue pour une construction directe de `Settings(testing=True)` : `fake_embedders` renvoie alors `{}`. `load_settings` (ligne 311) écrase la valeur, donc le chemin réel n'est pas touché, et aucun appel direct de ce type n'a été trouvé dans les tests. | probable\nImportant | low | src/wavelocalai/web/static/screens/documents-base.js:240 | Fenêtre de course au premier affichage : l'encart démarre `hidden` (documents-embedding-alert.js:78), donc `blocksImport` vaut faux jusqu'à la fin de `load()`. La zone de dépôt reste activée pendant ce temps. Le backend refuse quand même (`no_embedding_model`), donc l'effet se limite à l'UX. | certain\nNit | low | src/wavelocalai/web/static/screens/documents-base.js:600 | Le fichier fait exactement 600 lignes, soit la limite du budget : aucune marge pour le prochain ajout. Le test passe en l'état (`<= 600`). | certain",
+ "ttft_ms": 6766,
+ "type": "result",
+ "duration_ms": 109107,
+ "uuid": "871a0ab5-282b-4c0b-84c9-a0e378b477ae",
+ "ttft_stream_ms": 951,
+ "time_to_request_ms": 144,
+ "first_content_frame_ms": 951,
+ "queued_turn_count": 0,
+ "result_index": 0,
+ "_duree_s": 110.0
+}

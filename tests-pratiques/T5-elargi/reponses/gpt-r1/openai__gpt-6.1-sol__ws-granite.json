@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "ws-granite",
+ "latence_s": 28.6,
+ "usage": {
+  "prompt_tokens": 6997,
+  "completion_tokens": 1348,
+  "total_tokens": 8345,
+  "cost": 0.030971,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 6994,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.030971,
+   "upstream_inference_prompt_cost": 0.017491,
+   "upstream_inference_completions_cost": 0.01348
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 709,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.030971,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 1348,
+   "cout_usd": 0.030971,
+   "latence_s": 28.6
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavestack/models/capabilities.py\",\"ligne\":90,\"severite\":\"Important\",\"description\":\"La condition `at < -1` ne peut jamais être vraie : lorsque la question est absente du rendu, `rfind` renvoie -1 et la sonde analyse tout le texte. Un gabarit qui ignore les messages mais affiche un exemple statique identique à l'appel de la sonde reçoit donc le lecteur Hermes, contrairement à la règle d'aller-retour. Il faut refuser le rendu lorsque le marqueur de question est absent.\",\"test_pytest\":\"from wavestack.models.capabilities import hermes_round_trip\\n\\n\\ndef test_exemple_statique_sans_appel_passe_refuse():\\n    template = (\\n        '<tool_call>\\\\n'\\n        '{\\\"name\\\": \\\"calculator\\\", \\\"arguments\\\": {\\\"expression\\\": \\\"12*37\\\"}}'\\n        '\\\\n</tool_call><|im_end|>'\\n    )\\n    # Aucun message, donc aucun appel passé, n'est rendu par ce gabarit.\\n    assert hermes_round_trip(template) is False\\n\"},{\"id\":\"C2\",\"fichier\":\"src/wavestack/models/capabilities.py\",\"ligne\":103,\"severite\":\"Important\",\"description\":\"La séquence d'arrêt est choisie d'après la première occurrence dans le source Jinja, même si elle figure uniquement dans un commentaire et n'est jamais émise. Un gabarit ChatML valide précédé d'un commentaire mentionnant `<|end_of_text|>` reçoit ainsi cet arrêt au lieu de `<|im_end|>`. La génération ne sera pas arrêtée sur son véritable marqueur de fin de tour. La sélection doit distinguer les marqueurs effectivement rendus des mentions inertes.\",\"test_pytest\":\"from wavestack.models.capabilities import capabilities_for\\nfrom wavestack.models.engine import EngineMetadata\\n\\n\\ndef test_arret_ignore_les_marqueurs_dans_un_commentaire():\\n    template = (\\n        '{# Contrairement à Granite, ne pas utiliser <|end_of_text|>. #}'\\n        '{% for m in messages %}'\\n        '<|im_start|>{{ m.role }}\\\\n{{ m.content }}'\\n        '{% for c in m.tool_calls or [] %}'\\n        '<tool_call>\\\\n'\\n        '{\\\"name\\\": \\\"{{ c.function.name }}\\\", '\\n        '\\\"arguments\\\": {{ c.function.arguments | tojson }}}'\\n        '\\\\n</tool_call>'\\n        '{% endfor %}<|im_end|>\\\\n{% endfor %}'\\n    )\\n    meta = EngineMetadata('qwen2', template, None, '', '', ())\\n    caps = capabilities_for(meta)\\n    assert caps.tool_call_parser == 'hermes'\\n    assert caps.stop_sequences == ('<|im_end|>',)\\n\"}]}"
+}

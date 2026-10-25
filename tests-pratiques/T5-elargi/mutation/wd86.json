@@ -1,0 +1,22 @@
+{
+ "story": "wd86",
+ "test_command": "T:/v/wavedevsecops/.venv/Scripts/python.exe -m pytest -q -x --tb=no -p no:cacheprovider tests/test_llm_scenarios.py",
+ "tests_seconds": 43.6,
+ "tests_rc": 0,
+ "modules": [
+  {
+   "module": "src/wavedevsecops/projections/views.py",
+   "generes": 581,
+   "effectifs": 0,
+   "echantillon": 0
+  },
+  {
+   "module": "src/wavedevsecops/scenarios/order.py",
+   "generes": 38,
+   "effectifs": 0,
+   "echantillon": 0
+  }
+ ],
+ "survivants": [],
+ "total_seconds": 48.0
+}

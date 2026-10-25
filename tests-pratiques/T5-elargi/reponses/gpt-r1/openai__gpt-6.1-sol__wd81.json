@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6.1-sol",
+ "story": "wd81",
+ "latence_s": 15.7,
+ "usage": {
+  "prompt_tokens": 8120,
+  "completion_tokens": 598,
+  "total_tokens": 8718,
+  "cost": 0.0262785,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 8117,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0262785,
+   "upstream_inference_prompt_cost": 0.0202985,
+   "upstream_inference_completions_cost": 0.00598
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 336,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.0262785,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 598,
+   "cout_usd": 0.0262785,
+   "latence_s": 15.7
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavedevsecops/ci/findings.py\",\"ligne\":123,\"severite\":\"Important\",\"description\":\"Le lecteur accepte silencieusement des sorties invalides : une chaîne vide est remplacée par « {} », un objet sans « results » est traité comme une liste vide, et les résultats non objets sont ignorés. Ces entrées produisent donc zéro constat au lieu du ValueError explicitement exigé pour une sortie illisible ou de forme inattendue. Une sortie machine vide ou malformée ne déclenche ainsi pas le traitement « constats indisponibles ». Le test ajouté entérine même l'acceptation de la chaîne vide, contrairement au contrat.\",\"test_pytest\":\"from pathlib import Path\\n\\nimport pytest\\n\\nfrom wavedevsecops.ci.findings import parse_bandit_json\\n\\n\\n@pytest.mark.parametrize(\\\"text\\\", [\\\"\\\", \\\"{}\\\", '{\\\"results\\\": [null]}'])\\ndef test_bandit_refuse_une_sortie_de_forme_inattendue(tmp_path: Path, text: str) -> None:\\n    with pytest.raises(ValueError):\\n        parse_bandit_json(text, tmp_path)\\n\"}]}"
+}

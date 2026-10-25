@@ -1,0 +1,40 @@
+{
+ "modele": "openai/gpt-6-luna",
+ "story": "wl93",
+ "latence_s": 59.2,
+ "usage": {
+  "prompt_tokens": 10098,
+  "completion_tokens": 5743,
+  "total_tokens": 15841,
+  "cost": 0.004133675,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 10095,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.004133675,
+   "upstream_inference_prompt_cost": 0.001262175,
+   "upstream_inference_completions_cost": 0.0028715
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 5057,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "cout_usd": 0.004133675,
+ "finish_reason": "stop",
+ "tentatives": [
+  {
+   "effort": null,
+   "finish_reason": "stop",
+   "jetons_sortis": 5743,
+   "cout_usd": 0.004133675,
+   "latence_s": 59.2
+  }
+ ],
+ "contenu": "{\"constats\":[{\"id\":\"C1\",\"fichier\":\"src/wavelocalai/evaluation/judge.py\",\"ligne\":117,\"severite\":\"Important\",\"description\":\"Pour un juge local, `scoring` n’est émis qu’après le premier fragment ou après `LOAD_GRACE_S` (250 ms). Or le contrat demande de le publier dès la prise de la place locale, même si le modèle n’a pas encore produit de fragment. Pendant ce délai, une colonne qui a commencé sa notation reste donc affichée comme en file. Un flux local bloqué après sa prise en charge reproduit le défaut.\",\"test_pytest\":\"import asyncio\\n\\nimport pytest\\n\\nfrom wavelocalai.evaluation.judge import _PhasedModel\\nfrom wavelocalai.models.port import ChatMessage, ChatRequest, ModelRef, TextDelta\\n\\n\\n@pytest.mark.asyncio\\nasync def test_un_juge_local_signale_scoring_des_le_debut_de_son_flux():\\n    started = asyncio.Event()\\n    release = asyncio.Event()\\n    phases = []\\n\\n    class BlockingModel:\\n        ref = ModelRef(\\\"fake:j\\\", \\\"fake\\\", \\\"local\\\", \\\"chat\\\")\\n\\n        async def stream(self, request):\\n            started.set()\\n            await release.wait()\\n            yield TextDelta(\\\"{}\\\")\\n\\n    async def consume():\\n        async for _ in _PhasedModel(BlockingModel(), phases.append).stream(\\n            ChatRequest([ChatMessage(\\\"user\\\", \\\"Note.\\\")])\\n        ):\\n            pass\\n\\n    task = asyncio.create_task(consume())\\n    try:\\n        await started.wait()\\n        await asyncio.sleep(0)\\n        assert phases == [\\\"scoring\\\"]\\n    finally:\\n        release.set()\\n        await task\\n\"},{\"id\":\"C2\",\"fichier\":\"src/wavelocalai/web/static/screens/arena.js\",\"ligne\":1,\"severite\":\"Important\",\"description\":\"Le diff ne câble pas le bandeau aux événements `judge`, `judge_progress` et `judge_score` dans `arena.js`, et ne fournit aucun changement du module de bandeau ni du rendu des phases par colonne. Les critères d’acceptation d’interface (chargement, compteur, états de file/notation et cas sans juge/en panne) ne sont donc pas intégrés à l’Arène par ce diff.\",\"test_pytest\":\"from pathlib import Path\\n\\n\\ndef test_arene_cable_le_bandeau_aux_evenements_de_progression_du_juge():\\n    static = Path(__file__).parents[3] / \\\"src\\\" / \\\"wavelocalai\\\" / \\\"web\\\" / \\\"static\\\"\\n    arena = (static / \\\"screens\\\" / \\\"arena.js\\\").read_text(encoding=\\\"utf-8\\\")\\n    banner = static / \\\"screens\\\" / \\\"arena-judge-banner.js\\\"\\n\\n    assert banner.is_file(), \\\"le module du bandeau de juge doit être livré\\\"\\n    assert \\\"judge_progress\\\" in arena, \\\"arena.js doit transmettre la progression au bandeau\\\"\\n    assert \\\"judge_score\\\" in arena, \\\"arena.js doit transmettre le résultat au bandeau\\\"\\n\"}]}"
+}

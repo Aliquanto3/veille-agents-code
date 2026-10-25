@@ -1,0 +1,100 @@
+{
+ "duration_api_ms": 88324,
+ "stop_reason": "end_turn",
+ "session_id": "29013c16-333a-42e1-b142-777bbc482603",
+ "total_cost_usd": 0.539067,
+ "usage": {
+  "input_tokens": 28,
+  "cache_creation_input_tokens": 34319,
+  "cache_read_input_tokens": 558515,
+  "output_tokens": 7635,
+  "output_tokens_details": {
+   "thinking_tokens": 4212
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 34319,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1565,
+    "cache_read_input_tokens": 56227,
+    "cache_creation_input_tokens": 1070,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 1070
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "modelUsage": {
+  "claude-opus-5-5": {
+   "inputTokens": 28,
+   "outputTokens": 7635,
+   "cacheReadInputTokens": 558515,
+   "cacheCreationInputTokens": 34319,
+   "webSearchRequests": 0,
+   "costUSD": 0.539067,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 4212,
+   "canonicalModel": "claude-opus-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "permission_denials": [],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "fast_mode_disabled_reason": "sdk_opt_in_required",
+ "subagent_stats": {
+  "spawned": 0,
+  "requested": {
+   "background": 0,
+   "foreground": 0,
+   "unset": 0
+  },
+  "started_in_background": 0,
+  "max_depth": 0,
+  "spawned_by_subagents": 0,
+  "completed": 0,
+  "failed": 0,
+  "killed": {
+   "parent": 0,
+   "user": 0,
+   "system": 0
+  },
+  "refused": {
+   "depth_limit": 0,
+   "concurrency_limit": 0,
+   "budget": 0
+  },
+  "by_type": {}
+ },
+ "safety_stops": 0,
+ "is_error": false,
+ "num_turns": 20,
+ "subtype": "success",
+ "api_error_status": null,
+ "result": "**Revue, passe 1** (base : sans objet)\n\nImportant | medium | src/wavestack/tools/parser.py:128 | Dans `_minicpm5_end`, le cas « CDATA jamais refermée » renvoie `-0`, c'est-à-dire `0`, au lieu de `-1`. Exemple : `<function name=\"x\"><param name=\"s\"><![CDATA[a</function>`. Le `</function>` se trouve après `<![CDATA[`, et `]]>` n'apparaît jamais. Dans `_parse_minicpm5`, le test `end < 0` ne se déclenche donc pas, et on obtient `block = raw[start:0] == \"\"`. Ensuite `_minicpm5(\"\")` ne trouve pas d'en-tête et rend `Malformed(\"\", \"balise <function name=\\\"…\\\"> absente ou mal fermée\")`. Le fragment est vide et le message est faux : on attendait `minicpm5_never_closed`, comme le prévoit la ligne « Jamais fermé » de la matrice. Le même fragment vide repart ensuite dans la voie « coupée » (`app_session.py:8743`) quand la sortie est tronquée dans une CDATA. Correction : `return -1`. | certain\n\nNit | low | tests/test_tool_parser_minicpm5.py:66 | Aucun test ne couvre une CDATA non refermée suivie de `</function>`. C'est pour cela que le défaut ci-dessus passe inaperçu. Il faudrait un cas qui vérifie le message « jamais fermée » et un fragment non vide. | certain\n\nNit | low | src/wavestack/tools/parser.py:132 | `_minicpm5_params` ignore sans rien signaler le texte placé entre ou après les `<param>`. Par exemple, `<param name=\"a\">1</param>xyz` donne un appel valide et `xyz` disparaît. Ça ne gêne pas tant que le format est respecté, mais ce n'est pas signalé. | certain\n\nComplexité : 0 constat. Les recherches répétées dans `_minicpm5_end` restent bornées par la longueur d'une sortie du modèle, sans impact réel.\n\nCe que j'ai vérifié par lecture et qui tient :\n- **Capacités** : la branche MiniCPM5 passe avant Qwen3. Le gabarit Qwen3.5 utilise `<function=`, pas `<function name=\"`, donc il n'est pas détourné.\n- **Session** : `ChannelSplitter` reçoit les balises du lecteur courant (`app_session.py:8507`).\n- **Messages** : les trois messages existent en fr, en et de.\n- **Installateurs** : l'option est absente par défaut, ils restent idempotents, passent par `.part` puis renommage, et le mode à blanc sort avant tout téléchargement.\n- **Démarrage** : la préférence Qwen se fait par nom de fichier, casse ignorée, sans `_save_choice`. Le blocage `model.several` reste en place quand Qwen n'est pas présent.\n\nJe n'ai lancé aucun test : ce banc d'essai est en lecture seule.",
+ "ttft_ms": 8830,
+ "type": "result",
+ "duration_ms": 88864,
+ "uuid": "af4c630f-58bd-45e6-8758-15bedf3bc4a1",
+ "ttft_stream_ms": 1903,
+ "time_to_request_ms": 144,
+ "first_content_frame_ms": 1903,
+ "queued_turn_count": 0,
+ "result_index": 0,
+ "_duree_s": 89.9
+}

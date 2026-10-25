@@ -1,0 +1,100 @@
+{
+ "duration_api_ms": 94098,
+ "stop_reason": "end_turn",
+ "session_id": "e068f3ed-6374-4533-a721-6b44905d0243",
+ "total_cost_usd": 0.8110122000000001,
+ "usage": {
+  "input_tokens": 38,
+  "cache_creation_input_tokens": 58822,
+  "cache_read_input_tokens": 838921,
+  "output_tokens": 8625,
+  "output_tokens_details": {
+   "thinking_tokens": 4117
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 58822,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1258,
+    "cache_read_input_tokens": 64527,
+    "cache_creation_input_tokens": 803,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 803
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "modelUsage": {
+  "claude-opus-5-5": {
+   "inputTokens": 38,
+   "outputTokens": 8625,
+   "cacheReadInputTokens": 838921,
+   "cacheCreationInputTokens": 58822,
+   "webSearchRequests": 0,
+   "costUSD": 0.8110122000000001,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 4117,
+   "canonicalModel": "claude-opus-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "permission_denials": [],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "fast_mode_disabled_reason": "sdk_opt_in_required",
+ "subagent_stats": {
+  "spawned": 0,
+  "requested": {
+   "background": 0,
+   "foreground": 0,
+   "unset": 0
+  },
+  "started_in_background": 0,
+  "max_depth": 0,
+  "spawned_by_subagents": 0,
+  "completed": 0,
+  "failed": 0,
+  "killed": {
+   "parent": 0,
+   "user": 0,
+   "system": 0
+  },
+  "refused": {
+   "depth_limit": 0,
+   "concurrency_limit": 0,
+   "budget": 0
+  },
+  "by_type": {}
+ },
+ "safety_stops": 0,
+ "is_error": false,
+ "num_turns": 27,
+ "subtype": "success",
+ "api_error_status": null,
+ "result": "Revue de la story 9.6, passe 1 (lecture seule) — base : sans objet.\n\nAucun constat Important. Les critères d'acceptation sont couverts et branchés de bout en bout :\n- **Contenu** : sept entrées `pipeline.*` dans `content/explanations.yaml`, alignées sur `content/pipeline.yaml`. Leurs `barrier_id` existent dans `chain.yaml` et leurs termes `[[…]]` dans `glossary.yaml`.\n- **Projection** : `EXPLAIN_REFS` reprend les sept clés, `annotate` les porte sur le check et sur sa sortie, et `GET …/code/pipeline` ajoute `explain_ref` à chaque tâche.\n- **Front** : `code.js` pose `data-explain-ref`, `explain.js` (`decorateJobs`) pose le « i ». La traçabilité s'affiche dans `glossary.js` en `textContent`. `main.js` lit `?vue=` et le passe à `mountWorkspace` puis à `showById`.\n- **Route** : `app.py` passe le `WorkspaceManager` à la route du glossaire. Un `progress.json` illisible ou un parcours invalide lèvent un `AppError`, qui est rattrapé : la page reste servie et il n'y a jamais de lien mort.\n\nRien n'a été exécuté : je n'avais ni shell ni tests, et je n'ai rien corrigé.\n\nNit | low | src/wavedevsecops/projections/links.py:113 | `ref <= EXPLAIN_CHECK` compare deux chaînes dans l'ordre alphabétique. La condition est toujours vraie, puisque `\"pipeline.*\" < \"remote.check\"` et `\"remote.check\" <= \"remote.check\"`. Elle ne filtre donc rien : un check hors pipeline donne aussi à sa sortie un nom et la clé `remote.check`, alors qu'avant la story cette sortie n'avait ni nom ni « i ». Le test de `test_pipeline_tabs_dom` valide ce comportement, mais l'intention est illisible : écrire simplement `if check.output_element_id:`, ou `ref != EXPLAIN_CHECK` si seules les sorties du pipeline doivent l'avoir | certain\n\nNit | low | tests/test_pipeline_explain.py:57 | Le test `test_sans_dernier_espace_ou_avec_espace_disparu_pas_de_lien` ne vérifie que le cas « rien d'ouvert », avec `workspace_exists=lambda _id: True`. Le cas « espace disparu » (dernier scénario de station avec pipeline, mais `workspace_exists` qui rend False) n'est testé nulle part | certain\n\nNit | low | src/wavedevsecops/web/glossary.py:131 | Chaque `GET /api/glossary` relit le catalogue deux fois : une fois dans `open_station_workspace`, une fois dans `glossary_body` (ligne 170). `load_catalogue` n'a pas de cache. L'impact est faible (taille bornée, hors boucle d'événements). Complexité : 0 constat sur une structure qui grossit | certain\n\nPre-existing | low | src/wavedevsecops/contracts/remote.py:125 | La docstring annonce `output:check:<n>:<job_id>:<sha>`, alors que `projections/remote.py:208-209` produit `output:check-<n>-<job_id>-<sha>`. Le nouveau test DOM découpe d'ailleurs sur `-` | certain",
+ "ttft_ms": 4470,
+ "type": "result",
+ "duration_ms": 94900,
+ "uuid": "0160988f-bde2-4131-9125-96afec251190",
+ "ttft_stream_ms": 1308,
+ "time_to_request_ms": 212,
+ "first_content_frame_ms": 1308,
+ "queued_turn_count": 0,
+ "result_index": 0,
+ "_duree_s": 95.9
+}
