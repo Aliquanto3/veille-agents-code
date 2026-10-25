@@ -1,0 +1,892 @@
+{
+  "date": "2026-10-25",
+  "decisions": {
+    "Déjà en place": "Fait partie de ta configuration ou y a été ajouté pendant la veille.",
+    "Intégrer": "À ajouter à ta configuration.",
+    "S'inspirer": "Ne pas installer, mais reprendre une idée (déjà reprise ou à reprendre).",
+    "Écarter": "Ni à installer ni à reprendre pour ta configuration.",
+    "À trancher": "Les preuves ne suffisent pas ; le test qui trancherait est indiqué.",
+    "Hors périmètre": "Ne répond pas à un problème de ta configuration."
+  },
+  "outils": {
+    "superpowers": {
+      "decision": "S'inspirer",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "Revendique les étapes de BMAD ; seule la discipline anti-rationalisation mérite d'être reprise, et elle l'est déjà par le reviewer du kit (prouver plutôt que supposer)."
+    },
+    "mattpocock-skills": {
+      "decision": "Intégrer",
+      "statut": "ouvert",
+      "preuve": "analyse",
+      "note": "grill-with-docs et diagnosing-bugs en invocation manuelle, sans conflit avec BMAD ; non testé, mais 2,3 k caractères et aucun hook : un essai ne coûte presque rien."
+    },
+    "addy-skills": {
+      "decision": "S'inspirer",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "Méta-routeur concurrent de BMAD ; à citer chez un client multi-outils (Codex, Cursor), pas à installer chez toi."
+    },
+    "ecc": {
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "~131 k caractères de descriptions : dépasse à lui seul le budget de la liste des skills (T1 : le contexte fixe est le premier poste à réduire)."
+    },
+    "karpathy": {
+      "decision": "S'inspirer",
+      "statut": "ouvert",
+      "preuve": "T3",
+      "note": "T3 montre qu'un CLAUDE.md de 2 k tokens ne change ni le coût ni la réussite ; ce qui a eu un effet, ce sont des consignes vérifiables (les commandes de lint : 20 runs propres sur 20 contre 12). Des principes généraux ont peu de chances de peser ; ne les ajouter que sous forme de règle contrôlable."
+    },
+    "liza": {
+      "decision": "S'inspirer",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "Même chaîne dev → second avis → revue que le kit ; ses règles de convergence sont reprises dans le reviewer (kit 0.10.0)."
+    },
+    "deepakkamboj": {
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "Doublon de BMAD, sans usage attesté."
+    },
+    "spotify-portal": {
+      "decision": "Hors périmètre",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "Lié à Backstage."
+    },
+    "skill-creator": {
+      "decision": "Intégrer",
+      "statut": "conclu",
+      "preuve": "T7, banc de rejeu",
+      "note": "Pour écrire tes skills ; la mesure avec et sans skill qu'il propose est celle qu'ont faite T7 et le banc de rejeu, et elle a départagé des choix que l'analyse ne tranchait pas."
+    },
+    "openspec": {
+      "decision": "À trancher",
+      "statut": "ouvert",
+      "preuve": "analyse",
+      "note": "Voie « story légère » possible pour les changements d'un fichier ; à trancher par le banc de rejeu (10 petites stories, BMAD complet contre OpenSpec)."
+    },
+    "feature-dev": {
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "Doublon de BMAD chez toi ; à proposer à un client sans méthode."
+    },
+    "speckit": {
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "Doublon lourd de BMAD."
+    },
+    "medium": {
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "Article inaccessible (HTTP 403, Medium) ; les quatre méthodes qu'il compare sont jugées ici sur leurs dépôts."
+    },
+    "natif-memoire": {
+      "decision": "Déjà en place",
+      "statut": "conclu",
+      "preuve": "T3",
+      "note": "Sur 40 runs, un CLAUDE.md minimal coûte 3,6 % de moins (IC [−8 ; +7]) à réussite égale : à cette taille, le réduire n'économise rien. Il faudrait ~10 k tokens de CLAUDE.md pour qu'en retirer vaille 10 %. Y mettre les commandes de lint et de test améliore la propreté (20/20 contre 12/20)."
+    },
+    "diagram-design": {
+      "decision": "Intégrer",
+      "statut": "ouvert",
+      "preuve": "analyse",
+      "note": "À la demande, pour un livrable client soigné ; Mermaid reste le format de la doc versionnée. Non testé, sans enjeu de coût."
+    },
+    "graphify": {
+      "decision": "Écarter",
+      "statut": "ouvert",
+      "preuve": "analyse",
+      "note": "~140 k tokens par requête contre un LSP déjà installé ; banc de 6 questions seulement. Trancherait : 20 questions de navigation, graphify contre LSP contre Explore."
+    },
+    "archify": {
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "Fidélité non prouvée, appel réseau toutes les 24 h."
+    },
+    "serena": {
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "Mêmes outils LSP que pyright-lsp, mais par un serveur MCP en plus : redondant."
+    },
+    "claude-mem": {
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "Hooks synchrones, quota consommé par un observateur, données hébergées ; aucun gain mesuré."
+    },
+    "leviathan": {
+      "decision": "Hors périmètre",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "Indexe des tickets et des logs, pas du code."
+    },
+    "frontend-design": {
+      "decision": "Déjà en place",
+      "statut": "ouvert",
+      "preuve": "T7",
+      "note": "+1 % de coût, aucune autre skill ne fait mieux sur les défauts mesurables ; reste ta note à l'aveugle (notation.html) pour clore."
+    },
+    "impeccable": {
+      "decision": "S'inspirer",
+      "statut": "ouvert",
+      "preuve": "T7",
+      "note": "La skill coûte +15 % sans réduire les violations (0 axe partout) ; son détecteur `impeccable detect <url>` peut servir en CI, mais il relève surtout la règle « palette crème ». Clos par ta note."
+    },
+    "taste-skill": {
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "Pensé pour des landing pages ; son gain tombe dans le bruit de sa propre mesure."
+    },
+    "hallmark": {
+      "decision": "Écarter",
+      "statut": "ouvert",
+      "preuve": "T7",
+      "note": "+21 % de coût, aucune violation en moins, flux interactif et sous-agent inadaptés aux runs autonomes ; seule ta note pourrait le repêcher."
+    },
+    "ui-ux-pro-max": {
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "Tailwind par défaut, paquet npm cassé."
+    },
+    "design-md": {
+      "decision": "S'inspirer",
+      "statut": "ouvert",
+      "preuve": "analyse",
+      "note": "Ton DESIGN.md BMAD (bmad-ux) joue déjà ce rôle ; le format alpha ne vaut que si tu adoptes un outil qui le lit."
+    },
+    "awesome-design-md": {
+      "decision": "S'inspirer",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "Exemples de DESIGN.md à consulter, pas un outil."
+    },
+    "open-design": {
+      "decision": "Hors périmètre",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "Doublon de Claude Design."
+    },
+    "emil-skills": {
+      "decision": "S'inspirer",
+      "statut": "ouvert",
+      "preuve": "analyse",
+      "note": "Reprendre quelques règles d'animation CSS dans le DESIGN.md d'un projet, pas installer le pack."
+    },
+    "gsap-skills": {
+      "decision": "Hors périmètre",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "Seulement si tu adoptes GSAP."
+    },
+    "react-bits": {
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "React / Next.js."
+    },
+    "canvas-ui": {
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "Effets WebGL via shadcn."
+    },
+    "scroll-world": {
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "Landing page 3D."
+    },
+    "modern-web-guidance": {
+      "decision": "À trancher",
+      "statut": "ouvert",
+      "preuve": "analyse",
+      "note": "Hypothèse (API natives plutôt que JS) non testée ; même protocole que T7, sur un écran avec dialogue et menu."
+    },
+    "claude-design": {
+      "decision": "À trancher",
+      "statut": "ouvert",
+      "preuve": "analyse",
+      "note": "Research preview inclus dans Max, non évalué ; à essayer à la main au prochain cadrage UX."
+    },
+    "claude-in-chrome": {
+      "decision": "Déjà en place",
+      "statut": "conclu",
+      "preuve": "usage",
+      "note": "Vérification à la main pendant une session ; pas pour les runs autonomes."
+    },
+    "playwright-mcp": {
+      "decision": "Intégrer",
+      "statut": "conclu",
+      "preuve": "T7",
+      "note": "Pour le sous-agent qui vérifie les critères d'acceptation d'une story front : 6/6 parcours, aucune commande Bash à autoriser, le moins cher sous liste stricte. Le contrôle navigateur est le seul qui ait relevé un écart en T7, là où pytest passait."
+    },
+    "playwright-cli": {
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "T7",
+      "note": "Réussit aussi (6/6) mais +18 % contre le MCP et charge 15 k de skill à chaque fois : pas besoin de deux outils équivalents."
+    },
+    "agent-browser": {
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "T7",
+      "note": "Aussi bon que le MCP une fois `export` autorisé, pas meilleur ; son atout (diff visuel, audit axe) n'est pas testé."
+    },
+    "deny-tests": {
+      "decision": "À trancher",
+      "statut": "ouvert",
+      "preuve": "T4",
+      "note": "EN ATTENTE banc de rejeu"
+    },
+    "mutation": {
+      "decision": "Intégrer",
+      "statut": "conclu",
+      "preuve": "T4, T10b",
+      "note": "cosmic-ray borné aux lignes de la story trouve un vrai trou de test dans 5 stories sur 5 (T4). Montrer ensuite les survivants à un agent Sonnet lui fait tuer 134 survivants non équivalents sur 134, contre 59 % avec une simple consigne de renforcement, pour 0,22 $ par story, et il reconnaît seul les équivalents (35 sur 35). Étape optionnelle de la revue, 3 à 13 min par story ; trop lente pour une porte de CI."
+    },
+    "hypothesis": {
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "T10",
+      "note": "Sur 75 survivants de mutation de 5 stories, Sonnet avec consigne Hypothesis en tue 45 %, avec une simple consigne « renforce les tests » 53 % (20 exécutions, coût égal, tests 2,2 fois plus lents). Hypothesis aide sur les invariants et les bornes, pas sur les branches ni les messages. La leçon : demander explicitement le renforcement des tests ; l'outil n'ajoute rien."
+    },
+    "playwright-test-agents": {
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "T7",
+      "note": "Génère du TypeScript hors de pytest, et son « healer » peut neutraliser un test ; le sous-agent avec Playwright MCP couvre le besoin."
+    },
+    "diff-cover": {
+      "decision": "Intégrer",
+      "statut": "conclu",
+      "preuve": "T4",
+      "note": "Porte de CI rapide (4 à 22 s) contre les lignes jamais exécutées, déjà en place dans wavedevsecops ; mais les 5 stories passent à 80 % alors que ~72 % des lignes où survit un mutant sont couvertes : elle ne prouve pas la force des tests, la mutation la complète."
+    },
+    "anthropic-review": {
+      "decision": "Déjà en place",
+      "statut": "conclu",
+      "preuve": "kit 0.10.0",
+      "note": "Règles de convergence reprises dans le reviewer : une passe par défaut, trois au plus, Important / Nit / Pre-existing."
+    },
+    "open-code-review": {
+      "decision": "À trancher",
+      "statut": "ouvert",
+      "preuve": "analyse",
+      "note": "Reproduction indépendante à précision basse ; trancherait : le jeu de défauts semés de T5 élargi, contre le second avis Haiku."
+    },
+    "critique-famille": {
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "T5, T5 élargi",
+      "note": "Sur 16 défauts semés dans 20 stories de 4 dépôts, un critique GPT n'ajoute qu'une story à la chaîne (12 sur 16 contre 11, +6 points) pour 1,5 fois plus de constats Important, presque tous discutables ; sur 5 défauts réels manqués (T5), aucun retrouvé. Critère de +10 points non rempli. En appoint ponctuel : gpt-6.1-sol (0,03 $ la story), plus stable que luna."
+    },
+    "porte-empirique": {
+      "decision": "S'inspirer",
+      "statut": "conclu",
+      "preuve": "T5",
+      "note": "23 tests sur 23 échouent bien : la porte prouve qu'un constat est reproductible, pas qu'il compte (48 % déjà tranchés par la chaîne). Garder l'idée « un test qui échoue pour un Important » quand il est facile, pas comme filtre."
+    },
+    "security-audit-skill": {
+      "decision": "À trancher",
+      "statut": "ouvert",
+      "preuve": "analyse",
+      "note": "Méthode solide, validateurs cassés sous Windows natif ; à essayer sous WSL sur un projet exposé."
+    },
+    "security-guidance": {
+      "decision": "À trancher",
+      "statut": "ouvert",
+      "preuve": "analyse",
+      "note": "Revue Opus à chaque tour : coût à mesurer sur un run avant de l'activer."
+    },
+    "semgrep-llm": {
+      "decision": "À trancher",
+      "statut": "ouvert",
+      "preuve": "analyse",
+      "note": "Préprint sur banc Java synthétique ; utile surtout chez un client avec Semgrep déjà en place."
+    },
+    "lire-avant": {
+      "decision": "Déjà en place",
+      "statut": "conclu",
+      "preuve": "CLAUDE.md",
+      "note": "Règle ajoutée au CLAUDE.md global le 2026-10-24."
+    },
+    "skillspector": {
+      "decision": "Déjà en place",
+      "statut": "conclu",
+      "preuve": "T7",
+      "note": "En --no-llm, garde-fou d'installation ; bruyant (CRITICAL sur impeccable, hallmark et agent-browser, faux positifs après lecture) : il oblige à lire, il ne décide pas."
+    },
+    "snyk-agent-scan": {
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "Jeton Snyk, API externe, lance les serveurs qu'il analyse ; tu installes peu de serveurs MCP et les lis avant."
+    },
+    "sandbox-wsl": {
+      "decision": "À trancher",
+      "statut": "ouvert",
+      "preuve": "T8 élargi",
+      "note": "Aucun juge de commandes n'est assez fiable (T8 élargi) : l'isolation par l'OS est la vraie alternative, au prix de WSL2. À essayer sur un run autonome jetable."
+    },
+    "juge-commandes": {
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "T8 élargi",
+      "note": "Sur 200 commandes dangereuses et 400 inoffensives, aucune combinaison règle + juge n'atteint 0 fuite et moins de 2 % de faux refus ; s'en tenir aux règles deny natives et à l'auto mode."
+    },
+    "terms": {
+      "decision": "Déjà en place",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "Vérifier les conditions avant de livrer à un client du code produit sous Max."
+    },
+    "git-ai": {
+      "decision": "À trancher",
+      "statut": "ouvert",
+      "preuve": "analyse",
+      "note": "Pour un client qui exige la traçabilité du code IA ; inutile en solo."
+    },
+    "contexte-fixe": {
+      "decision": "Déjà en place",
+      "statut": "conclu",
+      "preuve": "T1, kit 0.11.0",
+      "note": "8 outils rarement appelés : 17,8 k tokens par appel ; listes `tools:` explicites livrées dans le kit 0.11.0."
+    },
+    "alerte-derapage": {
+      "decision": "Déjà en place",
+      "statut": "conclu",
+      "preuve": "T1, kit 0.11.0",
+      "note": "Couper un agent à 2× la médiane n'économise que 1 à 1,3 % et interrompt 10 à 15 % des stories : alerte dans mesurer-couts plutôt que coupure."
+    },
+    "advisor": {
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "T6",
+      "note": "Sans consigne, Sonnet ne consulte le conseiller que dans 1 run sur 12 (+21 % de coût pour rien). Avec consigne, 1,19 $ par story contre 0,53 $ pour Sonnet seul et 1,33 $ pour Opus seul, réussite égale dans le bruit (85 à 89 %). Si une story bute, passer à Opus seul."
+    },
+    "tokeneconomizer": {
+      "decision": "S'inspirer",
+      "statut": "conclu",
+      "preuve": "T1",
+      "note": "Son idée (réduire le contexte fixe) est la bonne et elle est reprise dans le kit ; l'outil ne tourne pas sous Windows."
+    },
+    "green-claude": {
+      "decision": "S'inspirer",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "Référentiel RGESN pour un audit à la demande ; ton projet ImpactIA et mesurer-couts couvrent la mesure."
+    },
+    "headroom": {
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "T1",
+      "note": "Compresse la partie non cachée (2,8 % en rejeu) ; T1 montre que tes sorties d'outils sont surtout des lectures de fichiers. Gain faible, tout ton trafic exposé."
+    },
+    "claude-router": {
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "Aucun résultat mesuré, prompts envoyés à un classifieur tiers."
+    },
+    "rtk": {
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "T1",
+      "note": "~2,7 % de gain ; 54 % de ton volume Bash est de la lecture de fichiers, hors de portée d'un hook de compression."
+    },
+    "ollama-natif": {
+      "decision": "S'inspirer",
+      "statut": "conclu",
+      "preuve": "T8",
+      "note": "Fonctionne sans passerelle, mais qwen3.6:35b-a3b met 52 à 78 s avant le premier jeton et sature la RAM : pour des comparaisons, pas au quotidien."
+    },
+    "openrouter": {
+      "decision": "Déjà en place",
+      "statut": "conclu",
+      "preuve": "T5, T8, T9",
+      "note": "Une clé pour comparer d'autres familles hors de Claude Code ; a servi à T5, T8 élargi et T9 pour quelques dollars."
+    },
+    "llmfit": {
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "Estimations optimistes ; ton slm-quality-bench mesure pour de vrai."
+    },
+    "litellm": {
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "Pour toi : une passerelle à clé API sort de la facturation Max. Chez un client, préférer agentgateway."
+    },
+    "agentgateway": {
+      "decision": "À trancher",
+      "statut": "ouvert",
+      "preuve": "analyse",
+      "note": "Piste de conseil client (Linux Foundation, Apache-2.0) ; aucun intérêt pour ta configuration."
+    },
+    "hint-headers": {
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "T8",
+      "note": "Router Explore vers le local suppose un modèle local rapide ; T8 montre le contraire sur ce poste (et Haiku fait mieux en lookup)."
+    },
+    "claude-code-router": {
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "T8",
+      "note": "Sort de la facturation Max, et le local n'est pas assez rapide ici."
+    },
+    "tabbyapi": {
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "Pas d'endpoint Anthropic, AGPL."
+    },
+    "aaif-labs": {
+      "decision": "Hors périmètre",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "Lab personnel ; voir agentgateway."
+    },
+    "jev": {
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "T9, T9 élargi",
+      "note": "Sur 226 stories, Jev prédit le dérapage et le coût élevé à peine comme la longueur de la spec (AUC 0,61 et 0,65) ; ne rien brancher. Relançable quand tu auras rapatrié les transcriptions des autres postes."
+    },
+    "routeurs-appris": {
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "recherche",
+      "note": "RouteLLM, routeur auto d'OpenRouter : hors facturation Max ; et changer de modèle n'est rentable qu'après ~25 requêtes, alors qu'un sous-agent l'est tout de suite."
+    },
+    "agent-view": {
+      "decision": "À trancher",
+      "statut": "ouvert",
+      "preuve": "analyse",
+      "note": "Aperçu natif pour des stories indépendantes ; à comparer à ton orchestration sur un sprint réel, quand le support Windows sera déclaré."
+    },
+    "orca": {
+      "decision": "Hors périmètre",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "IDE multi-fournisseurs : utile à un client multi-outils, pas à toi."
+    },
+    "beads": {
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "Recoupe run-autonome.md, le sprint status et avancement-run."
+    },
+    "paperclip": {
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "Hors méthode supervisée, blocages silencieux, télémétrie."
+    },
+    "agent-teams": {
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "~7× les tokens, pas de reprise, Windows Terminal non pris en charge."
+    },
+    "smythos": {
+      "decision": "Hors périmètre",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "Constructeur visuel dormant."
+    },
+    "otel": {
+      "decision": "Intégrer",
+      "statut": "conclu",
+      "preuve": "T2",
+      "note": "Tokens identiques à l'unité et coût à ±0,2 % contre mesurer-couts : en contrôle croisé et pour les latences, sans remplacer les transcriptions (qui gardent l'historique)."
+    },
+    "plugin-eval": {
+      "decision": "À trancher",
+      "statut": "ouvert",
+      "preuve": "analyse",
+      "note": "Pour des cas de non-régression du kit ; les cas qui ouvrent un shell exigent WSL2."
+    },
+    "mlflow-otel": {
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "T2",
+      "note": "En solo, les transcriptions et l'OpenTelemetry natif suffisent ; à proposer à une équipe."
+    },
+    "agent-standup": {
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "Trop jeune ; avancement-run couvre le besoin."
+    },
+    "langfuse-phoenix": {
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "T2",
+      "note": "Superflus en solo ; à proposer à une équipe."
+    },
+    "concise": {
+      "decision": "Intégrer",
+      "statut": "ouvert",
+      "preuve": "analyse",
+      "note": "Style natif qui couvre l'essentiel d'i-have-adhd sans dépendance ; à essayer une semaine."
+    },
+    "i-have-adhd": {
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "Régresse sur les succès partiels ; le style Concise le recouvre."
+    },
+    "humanizer": {
+      "decision": "Intégrer",
+      "statut": "ouvert",
+      "preuve": "analyse",
+      "note": "À la demande pour tes textes LinkedIn ; relire, il renforce certains tics."
+    },
+    "firecrawl": {
+      "decision": "Intégrer",
+      "statut": "ouvert",
+      "preuve": "analyse",
+      "note": "À la demande pour les pages rendues en JavaScript ; WebFetch a suffi à cette veille sauf pour Medium."
+    },
+    "hyperframes": {
+      "decision": "Intégrer",
+      "statut": "ouvert",
+      "preuve": "analyse",
+      "note": "À la demande pour une vidéo de démo ; Windows non vérifié."
+    },
+    "apify-mcp": {
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "Télémétrie par défaut, paiements par l'agent."
+    },
+    "public-apis": {
+      "decision": "Hors périmètre",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "Annuaire d'API."
+    },
+    "open-seo": {
+      "decision": "Hors périmètre",
+      "statut": "conclu",
+      "preuve": "analyse",
+      "note": "Mission SEO seulement."
+    }
+  },
+  "duels": [
+    {
+      "nom": "Méthode de développement",
+      "candidats": "BMAD (ta méthode), superpowers, agent-skills d'addyosmani, ECC, Spec Kit, OpenSpec, feature-dev",
+      "meilleur": "Aucun",
+      "strict": false,
+      "explication": "Aucun n'a de mesure indépendante de qualité. Ils se recouvrent tous et revendiquent les mêmes étapes : en installer un à côté de BMAD crée des conflits de déclenchement. ECC est strictement moins bon chez toi (son contexte). OpenSpec reste à tester comme voie légère.",
+      "preuve": "analyse"
+    },
+    {
+      "nom": "Implémenter et relire une story",
+      "candidats": "chaîne agent-cost-kit, bmad-build / bmad-build-auto + bmad-code-review",
+      "meilleur": "chaîne agent-cost-kit",
+      "strict": true,
+      "explication": "1,18 à 1,60 $ par story contre 6,77 à 7,31 $, avec autant de défauts trouvés ensuite par une contre-revue Opus (1 essai sur 3 de chaque côté : petit échantillon). Depuis, le second avis Haiku fait corriger 87 % de ses constats medium ou high pour 0,03 $.",
+      "preuve": "agent-cost-kit docs/mesures.md, T1"
+    },
+    {
+      "nom": "Navigateur piloté par l'agent",
+      "candidats": "Playwright MCP, playwright-cli, agent-browser, Claude in Chrome",
+      "meilleur": "Playwright MCP en run autonome, Claude in Chrome à la main",
+      "strict": false,
+      "explication": "Les trois outils headless réussissent ; écarts de 0,01 à 0,02 $ par parcours, dans le bruit. Le MCP gagne sur la simplicité (rien à autoriser), pas sur la performance.",
+      "preuve": "T7"
+    },
+    {
+      "nom": "Skill de design front",
+      "candidats": "frontend-design, impeccable, hallmark, taste-skill",
+      "meilleur": "frontend-design (provisoire)",
+      "strict": false,
+      "explication": "Aucune ne réduit les violations (0 axe partout) ; frontend-design ne coûte que +1 %, les autres +15 à +21 %. En attente de ta note à l'aveugle.",
+      "preuve": "T7"
+    },
+    {
+      "nom": "Comprendre le code",
+      "candidats": "pyright-lsp + Explore + mémoire native, Serena, graphify, claude-mem, archify",
+      "meilleur": "Natif",
+      "strict": false,
+      "explication": "Aucun tiers n'a de mesure contre le LSP ; Serena est redondant, graphify coûte ~140 k tokens par requête, claude-mem ajoute des hooks synchrones.",
+      "preuve": "analyse"
+    },
+    {
+      "nom": "Réduire la facture de tokens",
+      "candidats": "réduction du contexte fixe, rtk, headroom, TokenEconomizer, TTL 1 h",
+      "meilleur": "Réduction du contexte fixe",
+      "strict": true,
+      "explication": "Sur tes transcriptions : retirer les outils jamais appelés vaut ~13 à 18 % du contexte fixe, compresser les sorties ~2,7 %, et le TTL 1 h des sous-agents est négatif (−358 $). Mêmes risques nuls, gain plusieurs fois supérieur.",
+      "preuve": "T1"
+    },
+    {
+      "nom": "Mesurer les coûts",
+      "candidats": "mesurer-couts (transcriptions), OpenTelemetry natif, MLflow, Langfuse / Phoenix",
+      "meilleur": "Aucun",
+      "strict": false,
+      "explication": "OpenTelemetry donne les mêmes tokens à l'unité ; les transcriptions gardent l'historique, l'OpenTelemetry ajoute les latences. Les plateformes servent une équipe.",
+      "preuve": "T2"
+    },
+    {
+      "nom": "Lookup et lecture de logs",
+      "candidats": "Haiku 5.5, qwen3.5:4b, nemotron (Ollama)",
+      "meilleur": "Haiku 5.5",
+      "strict": true,
+      "explication": "40/40 contre 37/40 et 35,5/40, pour quelques centimes et sans charger le poste.",
+      "preuve": "T8"
+    },
+    {
+      "nom": "Juger une commande shell",
+      "candidats": "règle seule, tev1 4B (local), Haiku, gpt-6-luna, combinaisons",
+      "meilleur": "Aucun",
+      "strict": false,
+      "explication": "Le meilleur compromis (règle + Haiku) laisse passer 1 commande dangereuse sur 200 et refuse 10 % des inoffensives ; aucun n'atteint le critère.",
+      "preuve": "T8 élargi"
+    },
+    {
+      "nom": "Prédire qu'une story va déraper",
+      "candidats": "longueur de la spec, Jev, gpt-6-luna, mimo",
+      "meilleur": "Aucun",
+      "strict": false,
+      "explication": "Les modèles retrouvent ce que dit déjà la longueur de la spec (AUC 0,61 à 0,65) ; il faudrait ~480 stories pour détecter un vrai gain.",
+      "preuve": "T9, T9 élargi"
+    },
+    {
+      "nom": "Mesurer la force des tests",
+      "candidats": "mutation (cosmic-ray), couverture différentielle (diff-cover)",
+      "meilleur": "Mutation",
+      "strict": false,
+      "explication": "La mutation trouve les trous que la couverture déclare couverts (~72 %) et, avec T10b, sert directement à les boucher ; mais elle est 10 à 40 fois plus lente. Les deux se complètent : diff-cover en CI, mutation dans la revue.",
+      "preuve": "T4"
+    },
+    {
+      "nom": "Relecteur d'une autre famille",
+      "candidats": "second avis Haiku, reviewer Opus, gpt-6-luna, gpt-6.1-sol, mimo, kimi",
+      "meilleur": "Aucun (Haiku, Opus et gpt-6.1-sol à égalité)",
+      "strict": false,
+      "explication": "11 défauts semés sur 16 pour Haiku, Opus et sol, 8 pour luna (IC à 95 % de 44 à 86 % : écarts non significatifs). Haiku et Opus trouvent les mêmes 11 ; Opus classe mieux la gravité (9 Important contre 6) et c'est lui qui corrige. 4 défauts échappent à tous : des constantes et des bornes que la spec ne contredit pas.",
+      "preuve": "T5, T5 élargi"
+    },
+    {
+      "nom": "Conseil d'un modèle plus fort",
+      "candidats": "Sonnet seul, Sonnet + /advisor Opus, Opus seul",
+      "meilleur": "Sonnet seul",
+      "strict": true,
+      "explication": "Contre Sonnet + /advisor : même réussite, 21 % (sans consigne) à 55 % (avec consigne) moins cher : strictement meilleur. Contre Opus seul : 2,5 fois moins cher (0,53 $ contre 1,33 $) pour 85 % de réussite contre 87,5 %, écart dans le bruit. Confirme la grille actuelle : Sonnet pour implémenter, Opus en recours.",
+      "preuve": "T6 (48 runs)"
+    },
+    {
+      "nom": "Style de réponse",
+      "candidats": "style Concise natif, i-have-adhd",
+      "meilleur": "Concise",
+      "strict": false,
+      "explication": "Recouvre l'essentiel sans dépendance ; i-have-adhd régresse sur les succès partiels. Non mesuré ici.",
+      "preuve": "analyse"
+    },
+    {
+      "nom": "Renforcer les tests d'une story",
+      "candidats": "consigne « renforce les tests » (exemples), même consigne avec Hypothesis, mutation guidée (survivants montrés à l'agent)",
+      "meilleur": "Mutation guidée",
+      "strict": true,
+      "explication": "Survivants non équivalents tués : 100 % (134/134) quand on les montre à l'agent, 59 % avec la consigne seule, 50 % avec Hypothesis ; et moins cher (0,22 $ contre 0,34 et 0,36 $ par exécution, 15 tests écrits au lieu de 50). Sur des mutants qu'on ne lui a pas montrés, il en tue encore 71 % contre 57 %. Reste le temps de la mutation (80 à 95 % des 3 à 13 min).",
+      "preuve": "T10, T10b"
+    },
+    {
+      "nom": "CLAUDE.md minimal ou complet",
+      "candidats": "CLAUDE.md générique actuel (2,1 k tokens), CLAUDE.md minimal (commandes de contrôle seulement)",
+      "meilleur": "Aucun sur le coût",
+      "strict": false,
+      "explication": "−3,6 % de coût, IC [−8 ; +7], réussite égale ; le minimal est plus propre en lint parce qu'il nomme les commandes. Ce qui compte : des consignes vérifiables, pas la longueur.",
+      "preuve": "T3 (40 runs)"
+    }
+  ],
+  "setup": [
+    {
+      "domaine": "Conception",
+      "garder": "BMAD sur Opus (brief, PRD, UX, architecture, stories)",
+      "changer": "Essayer grill-with-docs (Matt Pocock) en invocation manuelle avant un PRD flou",
+      "ne_pas": "Superpowers, agent-skills, ECC, Spec Kit à côté de BMAD"
+    },
+    {
+      "domaine": "Implémentation (back)",
+      "garder": "chaîne dev-story (Sonnet) → second-avis (Haiku) → reviewer (Opus), une passe ; pyright-lsp",
+      "changer": "Kit 0.11.0 (listes `tools:`, alerte de dérapage) ; règles de convergence du reviewer (0.10.0)",
+      "ne_pas": "bmad-build, bmad-build-auto, bmad-code-review ; Serena, graphify, claude-mem"
+    },
+    {
+      "domaine": "Front",
+      "garder": "frontend-design ; Claude in Chrome pour vérifier à la main",
+      "changer": "Sous-agent de vérification avec Playwright MCP qui parcourt les critères d'acceptation d'une story front ; axe-core en CI",
+      "ne_pas": "impeccable, hallmark en permanence (sauf note à l'aveugle)"
+    },
+    {
+      "domaine": "Tests",
+      "garder": "pytest + ruff, CI sur 3 OS, consigne anti-mock (kit 0.10.0)",
+      "changer": "diff-cover à 80 % en CI ; étape optionnelle de la revue : mutation bornée aux lignes de la story (cosmic-ray, 10 min), puis un agent Sonnet qui écrit les tests tuant les survivants (0,22 $) ; consigne explicite de renforcement des tests dans dev-story",
+      "ne_pas": "Prendre la couverture pour une preuve de tests solides ; porte de mutation bloquante ; consigne Hypothesis systématique"
+    },
+    {
+      "domaine": "Revue",
+      "garder": "second avis Haiku + reviewer Opus",
+      "changer": "Rien : pas de critique d'une autre famille (gain de 6 points, non significatif). Pour attraper les constantes et bornes que personne ne voit, la mutation (Tests) plutôt qu'un relecteur de plus",
+      "ne_pas": "Porte empirique comme filtre ; mimo-v2.6-pro (réponses vides)"
+    },
+    {
+      "domaine": "Coûts",
+      "garder": "effort medium, contexte court, /clear entre tâches, CLAUDE.md court",
+      "changer": "Rien de neuf à activer : Sonnet seul pour implémenter (0,53 $ contre 1,33 $ pour Opus et 1,19 $ avec /advisor, réussite égale) ; commandes de lint et de test dans le CLAUDE.md de chaque projet",
+      "ne_pas": "/advisor par défaut, TTL 1 h des sous-agents, outils de compression (rtk, headroom), routeurs ; tailler un CLAUDE.md de quelques k tokens pour économiser"
+    },
+    {
+      "domaine": "Sécurité de la chaîne d'outils",
+      "garder": "Lire avant d'installer, SkillSpector --no-llm, versions épinglées",
+      "changer": "Rien de plus ; essayer le bac à sable WSL sur un run jetable si tu veux aller plus loin",
+      "ne_pas": "Juge de commandes par modèle (tev1, Haiku) en hook"
+    },
+    {
+      "domaine": "Mesure",
+      "garder": "mesurer-couts, bilan-tokens, ImpactIA",
+      "changer": "OpenTelemetry en contrôle croisé ; relever `cleanupPeriodDays` pour ne plus perdre les transcriptions de plus de 30 jours",
+      "ne_pas": "MLflow, Langfuse en solo"
+    },
+    {
+      "domaine": "Modèles locaux et autres familles",
+      "garder": "Haiku pour le lookup ; OpenRouter pour comparer",
+      "changer": "Ollama pour des comparaisons ponctuelles seulement",
+      "ne_pas": "Passerelle LiteLLM ou claude-code-router, Jev, routage d'Explore vers le local"
+    }
+  ],
+  "tests_ouverts": [
+    {
+      "test": "T7, design front",
+      "manque": "Ta note à l'aveugle des 8 rendus (notation.html, ~10 min).",
+      "elargir": "Si la note départage : 3 écrans métier de plus, 4 essais par bras."
+    },
+    {
+      "test": "T5, critique d'une autre famille",
+      "manque": "16 défauts semés, un seul juge : les écarts entre relecteurs (8 à 12 sur 16) restent dans l'intervalle de confiance.",
+      "elargir": "~60 défauts semés pour distinguer 69 % de 80 % de rappel ; ou un banc public (Martian code-review-benchmark). Utile seulement si tu reconsidères le modèle du reviewer."
+    },
+    {
+      "test": "T3, CLAUDE.md minimal",
+      "manque": "4 stories d'un seul dépôt ; le fichier « actuel » n'était que le CLAUDE.md générique (2,1 k tokens).",
+      "elargir": "Seulement pour un projet dont le CLAUDE.md dépasse ~10 k tokens, seuil où le réduire pourrait valoir 10 %."
+    },
+    {
+      "test": "T6, /advisor",
+      "manque": "12 runs par bras sur des stories bien cadrées : IC [−23 ; +16] contre Opus.",
+      "elargir": "Sur les stories difficiles (celles où Sonnet échoue deux fois), seul cas où un conseiller pourrait valoir son coût."
+    },
+    {
+      "test": "T9, prédiction du dérapage (Jev)",
+      "manque": "15 dérapages sur 226 stories : puissance insuffisante pour un écart de 0,05 d'AUC.",
+      "elargir": "~480 stories (~32 dérapages) avec les transcriptions des deux autres postes (`relancer.py --transcriptions`)."
+    },
+    {
+      "test": "T8, lookup local",
+      "manque": "40 questions, une passe.",
+      "elargir": "Peu utile : même à égalité, Haiku reste moins cher en temps et en charge du poste. Relancer seulement si un nouveau petit modèle local sort."
+    },
+    {
+      "test": "T2, OpenTelemetry",
+      "manque": "Une seule session comparée.",
+      "elargir": "Sous-agents imbriqués, reprise de session, sortie tronquée : utile seulement si tu veux remplacer les transcriptions par l'OpenTelemetry."
+    },
+    {
+      "test": "T4, tests verrouillés",
+      "manque": "EN ATTENTE banc de rejeu",
+      "elargir": "EN ATTENTE"
+    },
+    {
+      "test": "T10 et T10b, renforcement des tests",
+      "manque": "5 stories, un modèle ; les mutants rejoués sont ceux montrés à l'agent (le 100 % est optimiste par construction : 71 % sur des mutants non montrés).",
+      "elargir": "Sur le prochain run réel : brancher l'étape et compter les défauts trouvés ensuite (rétrospective) avec et sans elle ; 10 stories suffisent pour le coût et le délai."
+    }
+  ],
+  "tests": [
+    {
+      "id": "T1",
+      "fichier": "tests-pratiques/T1/resultats.md"
+    },
+    {
+      "id": "T2",
+      "fichier": "tests-pratiques/T2/resultats.md"
+    },
+    {
+      "id": "T3",
+      "fichier": "tests-pratiques/T3/resultats.md"
+    },
+    {
+      "id": "T4",
+      "fichier": "tests-pratiques/T4/resultats-mutation.md"
+    },
+    {
+      "id": "T4 bis",
+      "fichier": "tests-pratiques/T4/resultats-verrou.md"
+    },
+    {
+      "id": "T5",
+      "fichier": "tests-pratiques/T5/resultats.md"
+    },
+    {
+      "id": "T5 élargi",
+      "fichier": "tests-pratiques/T5-elargi/resultats.md"
+    },
+    {
+      "id": "T6",
+      "fichier": "tests-pratiques/T6/resultats.md"
+    },
+    {
+      "id": "T7",
+      "fichier": "tests-pratiques/T7/resultats.md"
+    },
+    {
+      "id": "T8",
+      "fichier": "tests-pratiques/T8/resultats.md"
+    },
+    {
+      "id": "T8 élargi",
+      "fichier": "tests-pratiques/T8-elargi/resultats.md"
+    },
+    {
+      "id": "T9",
+      "fichier": "tests-pratiques/T9/resultats.md"
+    },
+    {
+      "id": "T9 élargi",
+      "fichier": "tests-pratiques/T9-elargi/resultats.md"
+    },
+    {
+      "id": "T10",
+      "fichier": "tests-pratiques/T10-hypothesis/resultats.md"
+    },
+    {
+      "id": "T10b",
+      "fichier": "tests-pratiques/T10-hypothesis/resultats-T10b.md"
+    }
+  ],
+  "essentiel": [
+    "<strong>Aucun dépôt de ta liste ne fait strictement mieux que l'option la plus simple de ta configuration</strong> (natif, ou BMAD et agent-cost-kit). 15 tests pratiques sur tes projets et tes transcriptions l'ont vérifié là où l'analyse ne suffisait pas : navigateur, design, revue, modèles locaux, routage.",
+    "<strong>Ce qui rapporte, mesuré chez toi</strong> : réduire le contexte fixe (17,8 k tokens d'outils rarement appelés, retirés dans le kit 0.11.0) ; le second avis Haiku (87 % de ses constats sérieux corrigés pour 0,03 $) ; Sonnet seul pour implémenter (0,53 $ par story contre 1,33 $ pour Opus, réussite égale) ; la vérification des critères d'acceptation dans un vrai navigateur (seul contrôle à relever un écart en T7).",
+    "<strong>La découverte de la série : la mutation guidée.</strong> Montrer à l'agent les mutants qui survivent à ses tests lui fait boucher 134 trous non équivalents sur 134, contre 59 % avec une simple consigne, pour 0,22 $ par story. C'est le seul ajout à ta chaîne que les tests justifient (étape optionnelle de la revue, 3 à 13 min).",
+    "<strong>Ce qui ne rapporte pas, mesuré aussi</strong> : un relecteur d'une autre famille (+6 points, non significatif), la porte empirique, <code>/advisor</code>, les tests Hypothesis, les juges de commandes shell, les modèles de décision (Jev), la compression des sorties, le TTL d'une heure, les modèles locaux au quotidien, tailler un CLAUDE.md de quelques milliers de tokens.",
+    "<strong>Gagnants stricts</strong> (au moins aussi bons et moins chers, sur tes données) : la chaîne agent-cost-kit contre bmad-build, la réduction du contexte fixe contre la compression, Haiku contre les modèles locaux pour le lookup, Sonnet seul contre Sonnet + conseiller, la mutation guidée contre la consigne seule. Partout ailleurs, pas de gagnant strict : choisir l'option la plus simple.",
+    "<strong>À faire de ton côté</strong> : noter les 8 rendus à l'aveugle (<code>tests-pratiques/T7/notation.html</code>, ~10 min), relever <code>cleanupPeriodDays</code>, valider la story du kit « mutation guidée », rapatrier les transcriptions des deux autres postes si tu veux relancer T9."
+  ]
+}

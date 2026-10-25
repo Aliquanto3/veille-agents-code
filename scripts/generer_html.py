@@ -25,6 +25,14 @@ CLASSE_VERDICT = {
     "Hors périmètre": "hors",
     "Non lu": "hors",
 }
+DECISIONS = {
+    "Déjà en place": ("adopter", "en-place"),
+    "Intégrer": ("adopter", "integrer"),
+    "S'inspirer": ("essayer", "inspirer"),
+    "À trancher": ("evaluer", "trancher"),
+    "Écarter": ("ecarter", "ecarter"),
+    "Hors périmètre": ("hors", "hors"),
+}
 ORIGINE = {
     "liste": "liste initiale",
     "liste-doc": "liste initiale (article)",
@@ -59,7 +67,23 @@ def badge(verdict: str) -> str:
 
 
 def lien_outil(outil: dict) -> str:
+    if not outil.get("url"):
+        return e(outil["nom"])
     return f'<a href="{e(outil["url"])}" target="_blank" rel="noopener">{e(outil["nom"])}</a>'
+
+
+def badge_decision(outil: dict) -> str:
+    b = outil["bilan"]
+    statut = "" if b["statut"] == "conclu" else ' <span class="statut-ouvert">à confirmer</span>'
+    return f'<span class="badge {DECISIONS[b["decision"]][0]}">{e(b["decision"])}</span>{statut}'
+
+
+def anneau_final(bilan: dict) -> str:
+    """Anneau du radar après les tests : on adopte ce qu'on intègre, on écarte ce qu'on n'installe pas."""
+    decision = bilan["decision"]
+    if decision in ("Déjà en place", "Intégrer"):
+        return "Adopter" if bilan["statut"] == "conclu" else "Essayer"
+    return {"À trancher": "Évaluer", "Hors périmètre": "Hors périmètre"}.get(decision, "Écarter")
 
 
 def etiquette_origine(outil: dict) -> str:
@@ -150,11 +174,11 @@ def matrice(donnees: dict, outils: dict) -> str:
                 else:
                     cellules.append('<td class="c"></td>')
             lignes.append(
-                f'<tr data-origine="{o["origine"]}"><th scope="row">{lien_outil(o)} {etiquette_origine(o)}</th>'
-                f'<td>{badge(o["verdict"])}</td>{"".join(cellules)}</tr>'
+                f'<tr data-tags="{o["origine"].replace("liste-doc", "liste")}"><th scope="row">{lien_outil(o)} {etiquette_origine(o)}</th>'
+                f'<td>{badge_decision(o)}</td>{"".join(cellules)}</tr>'
             )
     filtres = (
-        '<div class="filtres" role="group" aria-label="Filtrer les outils">'
+        '<div class="filtres" data-cible="matrice" role="group" aria-label="Filtrer les outils">'
         '<button data-filtre="tous" class="actif">Tous</button>'
         '<button data-filtre="liste">Liste initiale</button>'
         '<button data-filtre="nouveau">Nouveaux</button>'
@@ -162,12 +186,26 @@ def matrice(donnees: dict, outils: dict) -> str:
     )
     return (
         filtres
-        + '<div class="defile"><table class="matrice"><thead><tr><th scope="col">Outil</th><th scope="col">Verdict</th>'
+        + '<div class="defile"><table class="matrice" id="matrice"><thead><tr><th scope="col">Outil</th><th scope="col">Décision</th>'
         + entete
         + "</tr></thead><tbody>"
         + "".join(lignes)
         + "</tbody></table></div>"
     )
+
+
+def classer(p: dict, outils: dict) -> dict:
+    """Range les outils d'un problème selon la décision après les tests ; garde le « pourquoi » de la veille."""
+    pourquoi = {x["outil"]: x["pourquoi"] for k in ("recommandes", "doute", "ecartes", "hors") for x in p[k]}
+    for o in outils.values():
+        if o["problemes"][0] == p["id"]:
+            pourquoi.setdefault(o["id"], "")
+    cible = {"Déjà en place": "recommandes", "Intégrer": "recommandes", "À trancher": "doute",
+             "S'inspirer": "ecartes", "Écarter": "ecartes", "Hors périmètre": "hors"}
+    colonnes: dict[str, list] = {"recommandes": [], "doute": [], "ecartes": [], "hors": []}
+    for ident, texte in pourquoi.items():
+        colonnes[cible[outils[ident]["bilan"]["decision"]]].append({"outil": ident, "pourquoi": texte})
+    return colonnes
 
 
 def liste_verdicts(entrees: list, outils: dict) -> str:
@@ -176,17 +214,21 @@ def liste_verdicts(entrees: list, outils: dict) -> str:
     items = []
     for entree in entrees:
         o = outils[entree["outil"]]
-        items.append(f'<li><strong>{lien_outil(o)}</strong> {etiquette_origine(o)}<br>{e(entree["pourquoi"])}</li>')
+        b = o["bilan"]
+        veille = f'<br>{e(entree["pourquoi"])}' if entree["pourquoi"] else ""
+        apres = f'<span class="bilan"><b>Après les tests ({e(b["preuve"])})</b> : {e(b["note"])}</span>'
+        items.append(f'<li><strong>{lien_outil(o)}</strong> {badge_decision(o)} {etiquette_origine(o)}{veille}{apres}</li>')
     return "<ul>" + "".join(items) + "</ul>"
 
 
 def section_probleme(p: dict, outils: dict, existants: list) -> str:
+    colonnes = classer(p, outils)
     nouveau = ' <span class="origine nouveau">problème nouveau</span>' if p.get("nouveau") else ""
     etat = "".join(f"<li>{e(x)}</li>" for x in p["etat_art"])
     outils_existants = ", ".join(e(x["nom"]) for x in existants if p["id"] in x["problemes"])
     hors = ""
-    if p["hors"]:
-        hors = '<details class="hors-perimetre"><summary>Hors périmètre</summary>' + liste_verdicts(p["hors"], outils) + "</details>"
+    if colonnes["hors"]:
+        hors = '<details class="hors-perimetre"><summary>Hors périmètre</summary>' + liste_verdicts(colonnes["hors"], outils) + "</details>"
     return f"""
 <section class="probleme" id="pb-{p["id"]}">
   <h3>{e(p["nom"])}{nouveau}</h3>
@@ -197,9 +239,9 @@ def section_probleme(p: dict, outils: dict, existants: list) -> str:
     <div class="carte toi"><h4>Chez toi</h4><p>{e(p["chez_toi"])}</p>{f'<p class="petit">Outils en place : {outils_existants}</p>' if outils_existants else ""}</div>
   </div>
   <div class="verdicts">
-    <div class="col recommandes"><h4>Recommandés</h4>{liste_verdicts(p["recommandes"], outils)}</div>
-    <div class="col doute"><h4>Un doute plane</h4>{liste_verdicts(p["doute"], outils)}</div>
-    <div class="col ecartes"><h4>À écarter</h4>{liste_verdicts(p["ecartes"], outils)}</div>
+    <div class="col recommandes"><h4>Recommandés</h4>{liste_verdicts(colonnes["recommandes"], outils)}</div>
+    <div class="col doute"><h4>Un doute plane</h4>{liste_verdicts(colonnes["doute"], outils)}</div>
+    <div class="col ecartes"><h4>À écarter ou s'en inspirer</h4>{liste_verdicts(colonnes["ecartes"], outils)}</div>
   </div>
   {hors}
 </section>"""
@@ -316,6 +358,12 @@ thead th{background:var(--surface2);position:sticky;top:0}
 .col.doute{background:var(--evaluer-f)}.col.doute h4{color:var(--evaluer)}
 .col.ecartes{background:var(--ecarter-f)}.col.ecartes h4{color:var(--ecarter)}
 .vide{color:var(--doux);font-style:italic;margin:0}
+.bilan{display:block;margin-top:4px;font-size:14px;border-left:2px solid var(--accent);padding-left:8px}
+.statut-ouvert{font-size:11px;color:var(--evaluer);white-space:nowrap}
+.tableau-bilan td.note{min-width:300px}
+.tableau-bilan td:first-child{min-width:170px}
+.oui{color:var(--adopter);font-weight:700}.non{color:var(--doux)}
+h3.sous-partie{font-size:1.2rem;margin:32px 0 6px}
 details.hors-perimetre{margin-top:10px;font-size:15px}
 details summary{cursor:pointer;color:var(--doux)}
 .nouveautes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
@@ -343,13 +391,15 @@ JS = """
     var sombre=racine.getAttribute('data-theme')==='dark'||(!racine.getAttribute('data-theme')&&matchMedia('(prefers-color-scheme: dark)').matches);
     var t=sombre?'light':'dark';racine.setAttribute('data-theme',t);try{localStorage.setItem('theme',t);}catch(e){}
   });
-  document.querySelectorAll('.filtres button').forEach(function(b){
-    b.addEventListener('click',function(){
-      document.querySelectorAll('.filtres button').forEach(function(x){x.classList.remove('actif');});
-      b.classList.add('actif');var f=b.dataset.filtre;
-      document.querySelectorAll('.matrice tbody tr').forEach(function(tr){
-        var o=tr.dataset.origine;var vu=f==='tous'||o===f||(f==='liste'&&o==='liste-doc');
-        tr.style.display=vu?'':'none';
+  document.querySelectorAll('.filtres').forEach(function(groupe){
+    groupe.querySelectorAll('button').forEach(function(b){
+      b.addEventListener('click',function(){
+        groupe.querySelectorAll('button').forEach(function(x){x.classList.remove('actif');});
+        b.classList.add('actif');var f=b.dataset.filtre;
+        document.querySelectorAll('#'+groupe.dataset.cible+' tbody tr').forEach(function(tr){
+          var vu=f==='tous'||tr.dataset.tags.split(' ').indexOf(f)>=0;
+          tr.style.display=vu?'':'none';
+        });
       });
     });
   });
@@ -357,10 +407,73 @@ JS = """
 """
 
 
+def partie_bilan(bilan: dict, donnees: dict, outils: dict) -> str:
+    """Partie « Après les tests » : configuration conseillée, duels entre concurrents, bilan outil par outil, tests ouverts."""
+    setup = "".join(
+        f'<tr><th scope="row">{e(s["domaine"])}</th><td>{e(s["garder"])}</td><td>{e(s["changer"])}</td><td>{e(s["ne_pas"])}</td></tr>'
+        for s in bilan["setup"]
+    )
+    duels = "".join(
+        f'<tr><th scope="row">{e(d["nom"])}</th><td>{e(d["candidats"])}</td><td>{e(d["meilleur"])}</td>'
+        f'<td>{"<span class=oui>oui</span>" if d["strict"] else "<span class=non>non</span>"}</td>'
+        f'<td class="note">{e(d["explication"])}</td><td>{e(d["preuve"])}</td></tr>'
+        for d in bilan["duels"]
+    )
+    noms_pb = {p["id"]: COURT[p["id"]] for p in donnees["problemes"]}
+    lignes = []
+    for p in donnees["problemes"]:
+        for o in (o for o in outils.values() if o["problemes"][0] == p["id"]):
+            b = o["bilan"]
+            tags = [DECISIONS[b["decision"]][1], b["statut"]]
+            if b["decision"] in ("Déjà en place", "Intégrer"):
+                tags.append("garder")
+            lignes.append(
+                f'<tr data-tags="{" ".join(tags)}"><td>{lien_outil(o)} {etiquette_origine(o)}</td><td>{e(noms_pb[p["id"]])}</td>'
+                f'<td>{badge(o["verdict_veille"])}</td><td>{badge_decision(o)}</td><td>{e(b["preuve"])}</td><td class="note">{e(b["note"])}</td></tr>'
+            )
+    filtres = (
+        '<div class="filtres" data-cible="tableau-outils" role="group" aria-label="Filtrer le bilan">'
+        '<button data-filtre="tous" class="actif">Tous</button>'
+        '<button data-filtre="garder">À intégrer ou en place</button>'
+        '<button data-filtre="inspirer">S\'en inspirer</button>'
+        '<button data-filtre="trancher">À trancher</button>'
+        '<button data-filtre="ecarter">Écartés</button>'
+        '<button data-filtre="ouvert">Encore ouverts</button></div>'
+    )
+    total = len(outils)
+    conclus = sum(1 for o in outils.values() if o["bilan"]["statut"] == "conclu")
+    par_decision = {d: sum(1 for o in outils.values() if o["bilan"]["decision"] == d) for d in DECISIONS}
+    puces = "".join(f'<span class="badge {DECISIONS[d][0]}">{n} {e(d)}</span> ' for d, n in par_decision.items() if n)
+    ouverts = "".join(
+        f'<tr><th scope="row">{e(t["test"])}</th><td>{e(t["manque"])}</td><td>{e(t["elargir"])}</td></tr>' for t in bilan["tests_ouverts"]
+    )
+    return f"""
+<p class="intro">Après les tests pratiques du {e(bilan["date"])} : ce que ta configuration devrait garder, ajouter ou laisser de côté, quels concurrents se départagent vraiment, et, pour chacun des {total} outils, la décision et ce qui la fonde (un test, ou l'analyse de la veille seule). {conclus} décisions sur {total} sont conclues ; les autres disent quel test les trancherait.</p>
+<p>{puces}</p>
+<h3 class="sous-partie" id="setup">Ta configuration recommandée</h3>
+<div class="defile"><table class="tableau-bilan"><thead><tr><th scope="col">Domaine</th><th scope="col">Garder</th><th scope="col">Ajouter ou changer</th><th scope="col">Ne pas faire</th></tr></thead><tbody>{setup}</tbody></table></div>
+<h3 class="sous-partie" id="duels">Concurrents : y a-t-il un gagnant strict ?</h3>
+<p class="intro">« Strictement meilleur » : au moins aussi bon sur la qualité mesurée et moins cher, ou meilleur à coût égal, sur tes données.</p>
+<div class="defile"><table class="tableau-bilan"><thead><tr><th scope="col">Besoin</th><th scope="col">Candidats</th><th scope="col">Meilleur</th><th scope="col">Strict ?</th><th scope="col">Pourquoi</th><th scope="col">Preuve</th></tr></thead><tbody>{duels}</tbody></table></div>
+<h3 class="sous-partie" id="outil-par-outil">Outil par outil</h3>
+{filtres}
+<div class="defile"><table class="tableau-bilan" id="tableau-outils"><thead><tr><th scope="col">Outil</th><th scope="col">Problème</th><th scope="col">Veille</th><th scope="col">Après les tests</th><th scope="col">Preuve</th><th scope="col">Pourquoi</th></tr></thead><tbody>{"".join(lignes)}</tbody></table></div>
+<h3 class="sous-partie" id="tests-ouverts">Tests encore peu concluants</h3>
+<div class="defile"><table class="tableau-bilan"><thead><tr><th scope="col">Test</th><th scope="col">Ce qui manque</th><th scope="col">Pour l'élargir</th></tr></thead><tbody>{ouverts}</tbody></table></div>"""
+
+
 def main() -> None:
     dossier, sortie = Path(sys.argv[1]), Path(sys.argv[2])
     donnees = json.loads((RACINE / "synthese" / "donnees.json").read_text(encoding="utf-8"))
+    bilan = json.loads((RACINE / "synthese" / "bilan.json").read_text(encoding="utf-8"))
     outils = {o["id"]: o for o in donnees["outils"]}
+    manquants = set(outils) ^ set(bilan["outils"])
+    if manquants:
+        sys.exit(f"bilan.json et donnees.json ne couvrent pas les mêmes outils : {sorted(manquants)}")
+    for o in outils.values():
+        o["verdict_veille"] = o["verdict"]
+        o["bilan"] = bilan["outils"][o["id"]]
+        o["verdict"] = anneau_final(o["bilan"])
     quadrant_de = {p["id"]: p["quadrant"] for p in donnees["problemes"]}
     au_radar = {k: o for k, o in outils.items() if o["verdict"] in ANNEAUX}
     svg, numeros = radar(donnees, au_radar, quadrant_de)
@@ -373,7 +486,8 @@ def main() -> None:
         (str(len(donnees["problemes"])), "problèmes, en 4 familles"),
         (str(nb_nouveaux), "ressources ajoutées par la veille"),
         (str(len(donnees["nouveaux_problemes"])), "problèmes absents de ta liste"),
-        ("21", "affirmations porteuses revérifiées"),
+        (str(len(bilan["tests"])), "tests pratiques sur tes dépôts"),
+        (f'{sum(1 for o in outils.values() if o["bilan"]["statut"] == "conclu")} / {len(outils)}', "décisions conclues après les tests"),
     ]
     bloc_chiffres = "".join(f'<div class="chiffre"><b>{e(a)}</b><span>{e(b)}</span></div>' for a, b in chiffres)
 
@@ -381,10 +495,11 @@ def main() -> None:
     for q in donnees["quadrants"]:
         cartes = []
         for p in (p for p in donnees["problemes"] if p["quadrant"] == q["id"]):
+            colonnes = classer(p, outils)
             compte = (
-                f'<span class="badge adopter">{len(p["recommandes"])} recommandés</span>'
-                f'<span class="badge evaluer">{len(p["doute"])} en doute</span>'
-                f'<span class="badge ecarter">{len(p["ecartes"])} à écarter</span>'
+                f'<span class="badge adopter">{len(colonnes["recommandes"])} recommandés</span>'
+                f'<span class="badge evaluer">{len(colonnes["doute"])} en doute</span>'
+                f'<span class="badge ecarter">{len(colonnes["ecartes"])} à écarter</span>'
             )
             nouveau = ' <span class="origine nouveau">nouveau</span>' if p.get("nouveau") else ""
             cartes.append(f'<a class="pb-carte" href="#pb-{p["id"]}"><b>{e(p["nom"])}{nouveau}</b><small>{e(p["resume"])}</small><div class="compte">{compte}</div></a>')
@@ -409,14 +524,7 @@ def main() -> None:
     nav_rapport = "".join(f'<a class="niv2" href="#{i}">{re.sub("<[^>]+>", "", t)}</a>' for i, t in titres_rapport)
     nav_problemes = "".join(f'<a class="niv2" href="#pb-{p["id"]}">{e(p["nom"])}</a>' for p in donnees["problemes"])
 
-    essentiel = """
-<ul>
-<li><strong>Aucun des 47 dépôts ne fait strictement mieux que son équivalent natif</strong> dans ta configuration : 1 à adopter (en partie), 13 à essayer, 15 à évaluer, 10 à écarter, 8 hors périmètre.</li>
-<li><strong>Le levier, c'est le cadrage de l'agent, pas les plugins</strong> : un contexte court, des contrôles automatiques qui jugent son travail, une validation tôt dans la story. Littérature, Thoughtworks Radar et praticiens convergent.</li>
-<li><strong>Le coût caché, c'est le contexte fixe et le cache</strong>, pas la sortie : compresser les sorties rapporte ~2,7 %, retirer les outils inutilisés 13 à 18 %.</li>
-<li><strong>Les plugins sont peu prouvés ; les contrôles déterministes le sont un peu plus</strong> : tests verrouillés, mutation testing, tests de propriétés, plutôt que des consignes.</li>
-<li><strong>Ta configuration actuelle va déjà dans ce sens</strong> (BMAD, agent-cost-kit, CLAUDE.md et MEMORY.md courts) ; ce qui lui manque : la mesure du contexte fixe, la protection des tests, une preuve empirique en revue, une boucle de vérification du front.</li>
-</ul>"""
+    essentiel = "<ul>" + "".join(f"<li>{x}</li>" for x in bilan["essentiel"]) + "</ul>"
 
     page = f"""<!doctype html>
 <html lang="fr">
@@ -432,6 +540,11 @@ def main() -> None:
 <nav class="sommaire" aria-label="Sommaire">
   <h2>Synthèse</h2>
   <a href="#essentiel">L'essentiel</a>
+  <a href="#apres-tests">0. Après les tests</a>
+  <a class="niv2" href="#setup">Configuration recommandée</a>
+  <a class="niv2" href="#duels">Concurrents</a>
+  <a class="niv2" href="#outil-par-outil">Outil par outil</a>
+  <a class="niv2" href="#tests-ouverts">Tests peu concluants</a>
   <a href="#categories">1. Les catégories de problèmes</a>
   <a href="#radar">2. Le radar</a>
   <a href="#carte">3. Quels outils pour quels problèmes</a>
@@ -451,6 +564,9 @@ def main() -> None:
 
 <h2 class="partie" id="essentiel">L'essentiel</h2>
 <div class="essentiel">{essentiel}</div>
+
+<h2 class="partie" id="apres-tests">0. Après les tests</h2>
+{partie_bilan(bilan, donnees, outils)}
 
 <h2 class="partie" id="categories">1. Les catégories de problèmes</h2>
 <p class="intro">Treize problèmes que rencontrent les agents de code, regroupés en quatre familles. Chaque carte mène au détail : le problème selon les sources, l'état de l'art, ce que tu as déjà, et les verdicts.</p>
