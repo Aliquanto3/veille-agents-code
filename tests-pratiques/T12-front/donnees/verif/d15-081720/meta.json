@@ -1,0 +1,108 @@
+{
+ "outils": {
+  "mcp__playwright__browser_navigate": 4,
+  "mcp__playwright__browser_snapshot": 2,
+  "mcp__playwright__browser_click": 3,
+  "mcp__playwright__browser_evaluate": 10,
+  "mcp__playwright__browser_wait_for": 2,
+  "mcp__playwright__browser_network_requests": 1,
+  "mcp__playwright__browser_console_messages": 1,
+  "mcp__playwright__browser_select_option": 1,
+  "mcp__playwright__browser_press_key": 1,
+  "mcp__playwright__browser_run_code_unsafe": 3,
+  "mcp__playwright__browser_resize": 2,
+  "mcp__playwright__browser_take_screenshot": 1
+ },
+ "refus": 0,
+ "result": "{\"criteres\":[{\"id\":\"C1\",\"verdict\":\"PASS\",\"preuve\":\"/agent en Mode repli : aucune zone de saisie. Message affiché : « En Mode repli, l'Agent ne s'adresse à aucun LLM : choisir une question enregistrée… ». 5 questions enregistrées listées en boutons. Clic sur « Pourquoi ENT-B est-elle rouge ? » : réponse « ENT-B est rouge sur IND-1, qui vaut 9 pour un seuil de 3… », « Contrôle : conforme : chiffres et tickets vérifiés », outils appelés « get_meteo », mention « Mode repli : réponse enregistrée le 13/10/2026 sur le Passage 20261012T221158Z-96c621, rejouée sans LLM ». document.activeElement est la div #reponse (tabindex=-1).\"},{\"id\":\"C2\",\"verdict\":\"PASS\",\"preuve\":\"/avant-apres : « Par Rapport quotidien » (aria-pressed=true) affiche 120 min et 4,4 s. Un clic sur « Cumulé sur 5 Rapports » mène à ?periode=cumul, aria-pressed s'inverse et les cartes affichent 600 min et 22,2 s. Le tableau des deux périodes affiche 120 min / 4,4 s et 600 min / 22,2 s. Aucun écart ni ratio affiché.\"},{\"id\":\"C3\",\"verdict\":\"PASS\",\"preuve\":\"/pseudonymisation?ticket=DEMO-17 : /api/pseudonymisation répond 200. Panneaux « Original » et « Version pseudonymisée » côte à côte, en texte brut (« Dérouler le parcours complet de l'Entité ENT-C… »), 0 balise mark ou em. Deux div role=region tabindex=0, atteintes par Tab (texte-original puis texte-pseudo, outline 2px). Sélection de DEMO-10 puis « Afficher » : URL ?ticket=DEMO-10, texte « Le fonctionnement signalé par l'Entité ENT-F est conforme à l'existant (comptabilité). ». Remarque : le contenu apparaît après un court chargement asynchrone ; le premier snapshot était vide.\"},{\"id\":\"C4\",\"verdict\":\"PASS\",\"preuve\":\"/outillage : fiche rendue en HTML avec h1, quatre h2 (Demandes, Correspondance par brique, Points d'attention par cible, Références), quatre h3 (VM Python, Dataiku, Power Platform, Poste seul), 1 tableau et 5 listes. Pastilles « Oui », « À surveiller » et « Non » présentes (32 occurrences). Aucun ✅, ⚠ ou ❌ dans le texte.\"}],\"transverses\":[{\"id\":\"T1\",\"verdict\":\"PASS\",\"preuve\":\"Sur /pseudonymisation, l'ordre Tab est : lien d'évitement, logo, Lancer la Chaîne, navigation, select, Afficher, région originale, région pseudonymisée. Chaque élément a un outline solid 2px visible. Le clic sur « Afficher » a soumis le formulaire. Les boutons de /agent sont de vrais button. Entrée et Espace n'ont pas été testés séparément.\"},{\"id\":\"T2\",\"verdict\":\"PASS\",\"preuve\":\"À 390x844, /agent, /avant-apres, /pseudonymisation et /outillage ont scrollWidth=clientWidth=390, sans élément débordant. La capture d'/outillage ne montre ni coupure ni superposition. Les captures de /agent, /avant-apres et /pseudonymisation n'ont pas été relues, seule la mesure DOM les couvre. Fenêtre remise à 1280x800.\"},{\"id\":\"T3\",\"verdict\":\"PASS\",\"preuve\":\"Aucune erreur console. Les 4 écrans et les liens de navigation testés se chargent (HTTP 200 sur les API vues, pas de page vide). Aucun message d'erreur vide : le bloc #bloc-message de /pseudonymisation reste hidden. Seuls les écrans de la story ont été parcourus, pas les autres liens.\"}],\"synthese\":\"Les quatre écrans (Agent, Avant / après, Pseudonymisation, Outillage) respectent les critères observés en Mode repli, sans défaut relevé ; /pseudonymisation charge son contenu après un court délai asynchrone.\"}",
+ "cout_usd": 0.1632519,
+ "tours": 32,
+ "duree_ms": 60454,
+ "is_error": false,
+ "subtype": "success",
+ "usage": {
+  "input_tokens": 38,
+  "cache_creation_input_tokens": 17762,
+  "cache_read_input_tokens": 378379,
+  "output_tokens": 5429,
+  "output_tokens_details": {
+   "thinking_tokens": 192
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 17762,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1578,
+    "cache_read_input_tokens": 28068,
+    "cache_creation_input_tokens": 1054,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 1054
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "id": "d15",
+ "run": "d15-081720",
+ "story": "s716",
+ "temoin": false,
+ "statut": "ok",
+ "duree_mur_s": 63.2,
+ "cibles": [
+  "T2",
+  "C2",
+  "C3"
+ ],
+ "oracle": {
+  "C1_agent_repli": [
+   true,
+   "saisie=0 questions=5 badge='Contrôle : conforme : chiffres et tickets vérifiés' mention=True focus=reponse"
+  ],
+  "C2_avant_apres_segment": [
+   true,
+   "avant=('120 min', '4,4 s') après=('600 min', '22,2 s') pressed=true"
+  ],
+  "C3_pseudonymisation": [
+   true,
+   "focus_atteints=['choix-ticket', 'texte-original', 'texte-pseudo'] côte_à_côte=True autre=DEMO-10 url=seudonymisation?ticket=DEMO-10"
+  ],
+  "C4_outillage": [
+   true,
+   "pastilles=32"
+  ],
+  "T2_390px": [
+   false,
+   "écarts : [('/avant-apres', 'colonnes', 2), ('/pseudonymisation?ticket=DEMO-17', 'colonnes', 2)]"
+  ]
+ },
+ "axe": {
+  "/agent@1280": [],
+  "/avant-apres@1280": [
+   "landmark-unique:1"
+  ],
+  "/pseudonymisation?ticket=DEMO-17@1280": [
+   "landmark-unique:2"
+  ],
+  "/outillage@1280": [],
+  "/agent@390": [],
+  "/avant-apres@390": [
+   "landmark-unique:1"
+  ],
+  "/pseudonymisation?ticket=DEMO-17@390": [
+   "landmark-unique:2"
+  ],
+  "/outillage@390": []
+ }
+}

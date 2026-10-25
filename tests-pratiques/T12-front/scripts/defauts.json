@@ -1,0 +1,515 @@
+[
+ {
+  "id": "d01",
+  "story": "s713",
+  "classe": "message absent",
+  "critere": "C3 bandeau de repli visible",
+  "description": "Le bandeau de repli n'est plus posé par le cadre en Mode repli.",
+  "edits": [
+   [
+    "src/usine/ui/statique/cadre.js",
+    "if (vue.bandeau_repli_html) {",
+    "if (false && vue.bandeau_repli_html) {",
+    1
+   ]
+  ],
+  "cibles": [
+   "C3"
+  ],
+  "explicite": true
+ },
+ {
+  "id": "d02",
+  "story": "s713",
+  "classe": "navigation clavier cassée",
+  "critere": "C4 lien d'évitement",
+  "description": "Le lien d'évitement reste hors écran quand il reçoit le focus (le style :focus ne le ramène plus à l'écran).",
+  "edits": [
+   [
+    "src/usine/ui/statique/cadre.css",
+    ".lien-evitement:focus { top: 8px; }",
+    ".lien-evitement:focus { top: -80px; }",
+    1
+   ]
+  ],
+  "cibles": [
+   "C4"
+  ],
+  "remplace": "d02 initial (href vers une ancre inexistante) : refusé, 7 tests pytest échouent",
+  "explicite": true
+ },
+ {
+  "id": "d03",
+  "story": "s713",
+  "classe": "mise en page 390 px",
+  "critere": "C6 390 px",
+  "description": "Le point de rupture mobile passe de 767 px à 300 px : la grille à deux colonnes reste à 390 px.",
+  "edits": [
+   [
+    "src/usine/ui/statique/cadre.css",
+    "@media (max-width: 767px) {\n  .corps {",
+    "@media (max-width: 300px) {\n  .corps {",
+    1
+   ]
+  ],
+  "cibles": [
+   "T2"
+  ],
+  "explicite": true
+ },
+ {
+  "id": "d04",
+  "story": "s714",
+  "classe": "bouton inactif",
+  "critere": "C2 filtre Rouge",
+  "description": "Le filtre météo ne réagit plus au changement de valeur (écouteur retiré).",
+  "edits": [
+   [
+    "src/usine/ui/statique/carte.js",
+    "    champ.addEventListener(\"change\", appliquer);\n",
+    "",
+    1
+   ]
+  ],
+  "cibles": [
+   "C2"
+  ],
+  "explicite": true
+ },
+ {
+  "id": "d05",
+  "story": "s714",
+  "classe": "lien mort",
+  "critere": "C3 livrables",
+  "description": "Le lien de téléchargement d'un livrable pointe vers /livrable/ (404) au lieu de /livrables/.",
+  "edits": [
+   [
+    "src/usine/ui/statique/carte.js",
+    "lien.href = livrable.url;",
+    "lien.href = livrable.url.replace(\"/livrables/\", \"/livrable/\");",
+    1
+   ]
+  ],
+  "cibles": [
+   "C3"
+  ],
+  "explicite": true
+ },
+ {
+  "id": "d06",
+  "story": "s714",
+  "classe": "erreur sans texte",
+  "critere": "C5 Entité absente",
+  "description": "Le message « Entité {entite} absente du Passage affiché. » est vide (le lien vers la carte reste).",
+  "edits": [
+   [
+    "src/usine/ui/statique/detail.js",
+    "document.getElementById(\"message\").textContent = vue.message;",
+    "document.getElementById(\"message\").textContent = \"\";",
+    1
+   ]
+  ],
+  "cibles": [
+   "C5"
+  ],
+  "explicite": true
+ },
+ {
+  "id": "d07",
+  "story": "s714",
+  "classe": "message faux",
+  "critere": "C2 annonce du filtre",
+  "description": "L'annonce du filtre affiche le gabarit « {n} Entités affichées » sans remplacer {n}.",
+  "edits": [
+   [
+    "src/usine/ui/statique/carte.js",
+    "texte = filtre.annonce_plusieurs.replace(\"{n}\", String(affichees));",
+    "texte = filtre.annonce_plusieurs;",
+    1
+   ]
+  ],
+  "cibles": [
+   "C2"
+  ],
+  "explicite": true
+ },
+ {
+  "id": "d08",
+  "story": "s715",
+  "classe": "message absent",
+  "critere": "C2 échec de la Chaîne",
+  "description": "Le bandeau d'échec (étape, code, lignes d'erreur) n'est plus affiché.",
+  "edits": [
+   [
+    "src/usine/ui/statique/chaine.js",
+    "    if (!b) {\n      return;",
+    "    if (!b || b.variante === \"erreur\") {\n      return;",
+    1
+   ]
+  ],
+  "cibles": [
+   "C2"
+  ],
+  "explicite": true
+ },
+ {
+  "id": "d09",
+  "story": "s715",
+  "classe": "état non rafraîchi",
+  "critere": "C4 bascule de mode",
+  "description": "Après la bascule de mode, la pastille de mode de l'en-tête n'est pas relue (elle reste fausse jusqu'au rechargement).",
+  "edits": [
+   [
+    "src/usine/ui/statique/chaine.js",
+    "      u.rafraichirCadre();\n      charger();\n    });",
+    "      charger();\n    });",
+    1
+   ]
+  ],
+  "cibles": [
+   "C4"
+  ],
+  "explicite": true
+ },
+ {
+  "id": "d10",
+  "story": "s715",
+  "classe": "état perdu après rechargement",
+  "critere": "C3 reprise du suivi",
+  "description": "Le bandeau de résultat de la Chaîne n'est affiché que dans la page qui a lancé la Chaîne : il disparaît au rechargement.",
+  "edits": [
+   [
+    "src/usine/ui/statique/chaine.js",
+    "    afficherBandeau(vue);\n    afficherDernierPassage(vue);",
+    "    if (aLance) { afficherBandeau(vue); }\n    afficherDernierPassage(vue);",
+    1
+   ],
+   [
+    "src/usine/ui/statique/chaine.js",
+    "  var vueCourante = null;\n",
+    "  var vueCourante = null;\n  var aLance = false;\n",
+    1
+   ],
+   [
+    "src/usine/ui/statique/chaine.js",
+    "    bouton.setAttribute(\"aria-disabled\", \"true\"); // pas de second clic avant la réponse\n",
+    "    aLance = true;\n    bouton.setAttribute(\"aria-disabled\", \"true\"); // pas de second clic avant la réponse\n",
+    1
+   ]
+  ],
+  "cibles": [
+   "C3"
+  ],
+  "explicite": true
+ },
+ {
+  "id": "d11",
+  "story": "s715",
+  "classe": "bouton inactif (marquage)",
+  "critere": "C5 bouton bloqué avec motif",
+  "description": "Les boutons bloqués ne portent plus aria-disabled=true : ils paraissent actifs alors que le serveur refuse.",
+  "edits": [
+   [
+    "src/usine/ui/statique/chaine.js",
+    "    if (vue.bloque) {\n      bouton.setAttribute(\"aria-disabled\", \"true\");",
+    "    if (false && vue.bloque) {\n      bouton.setAttribute(\"aria-disabled\", \"true\");",
+    1
+   ]
+  ],
+  "cibles": [
+   "C5"
+  ],
+  "explicite": true
+ },
+ {
+  "id": "d12",
+  "story": "s716",
+  "classe": "message absent",
+  "critere": "C1 mention du repli",
+  "description": "La mention de rejeu (agent.mention_repli) n'est plus affichée sous la réponse enregistrée.",
+  "edits": [
+   [
+    "src/usine/ui/statique/agent.js",
+    "    if (reponse.mention_repli) {",
+    "    if (false && reponse.mention_repli) {",
+    1
+   ]
+  ],
+  "cibles": [
+   "C1"
+  ],
+  "explicite": true
+ },
+ {
+  "id": "d13",
+  "story": "s714",
+  "classe": "navigation clavier cassée",
+  "critere": "C3 livrables, T1 clavier",
+  "description": "Les liens de téléchargement des livrables sont exclus de l'ordre de tabulation (tabindex=-1) : inaccessibles au clavier.",
+  "edits": [
+   [
+    "src/usine/ui/statique/carte.js",
+    "lien.setAttribute(\"download\", livrable.fichier);",
+    "lien.setAttribute(\"download\", livrable.fichier);\n        lien.setAttribute(\"tabindex\", \"-1\");",
+    1
+   ]
+  ],
+  "cibles": [
+   "T1",
+   "C3"
+  ],
+  "remplace": "d13 initial (tabindex retiré des régions de texte, s716) : refusé, 1 test pytest échoue",
+  "explicite": true
+ },
+ {
+  "id": "d14",
+  "story": "s716",
+  "classe": "bouton inactif",
+  "critere": "C2 segment de période",
+  "description": "Le segment de période ne change plus les cartes au clic.",
+  "edits": [
+   [
+    "src/usine/ui/statique/avant-apres.js",
+    "        choisir(option.valeur);\n",
+    "",
+    1
+   ]
+  ],
+  "cibles": [
+   "C2"
+  ],
+  "explicite": true
+ },
+ {
+  "id": "d15",
+  "story": "s716",
+  "classe": "mise en page 390 px",
+  "critere": "C2/C3 390 px",
+  "description": "Les cartes jumelles (avant/après, pseudonymisation) restent côte à côte à 390 px (rupture à 300 px).",
+  "edits": [
+   [
+    "src/usine/ui/statique/cadre.css",
+    "@media (max-width: 767px) {\n  .cartes-jumelles {",
+    "@media (max-width: 300px) {\n  .cartes-jumelles {",
+    1
+   ]
+  ],
+  "cibles": [
+   "T2",
+   "C2",
+   "C3"
+  ],
+  "explicite": true
+ },
+ {
+  "id": "d16",
+  "story": "s716",
+  "classe": "lien mort",
+  "critere": "C3 sélection d'un ticket",
+  "description": "Le formulaire de sélection du ticket envoie vers /pseudonymisations (404).",
+  "edits": [
+   [
+    "src/usine/ui/statique/pseudonymisation.html",
+    "action=\"/pseudonymisation\"",
+    "action=\"/pseudonymisations\"",
+    1
+   ]
+  ],
+  "cibles": [
+   "C3"
+  ],
+  "explicite": true
+ },
+ {
+  "id": "e01",
+  "story": "s713",
+  "classe": "donnée fausse",
+  "critere": "C3",
+  "description": "La pastille de mode affiche toujours « Mode réel », même en Mode repli.",
+  "edits": [
+   [
+    "src/usine/ui/statique/cadre.js",
+    "mode.textContent = vue.libelle_mode;",
+    "mode.textContent = \"Mode réel\";",
+    1
+   ]
+  ],
+  "cibles": [
+   "C3"
+  ],
+  "explicite": true
+ },
+ {
+  "id": "e02",
+  "story": "s713",
+  "classe": "message absent",
+  "critere": "C2",
+  "description": "La pastille « Passage publié » n'est jamais affichée.",
+  "edits": [
+   [
+    "src/usine/ui/statique/cadre.js",
+    "if (vue.passage_publie) {",
+    "if (false && vue.passage_publie) {",
+    1
+   ]
+  ],
+  "cibles": [
+   "C2"
+  ],
+  "explicite": true
+ },
+ {
+  "id": "e04",
+  "story": "s714",
+  "classe": "donnée fausse",
+  "critere": "C1",
+  "description": "Le chiffre de chaque tuile de comptage est augmenté de 1 (incohérent avec les lignes du tableau).",
+  "edits": [
+   [
+    "src/usine/ui/statique/carte.js",
+    "String(comptage.nombre)",
+    "String(comptage.nombre + 1)",
+    1
+   ]
+  ],
+  "cibles": [
+   "C1"
+  ],
+  "explicite": false
+ },
+ {
+  "id": "e05",
+  "story": "s714",
+  "classe": "lien mort / mauvais lien",
+  "critere": "C4",
+  "description": "Le lien « Détail » de chaque ligne mène toujours à ENT-A.",
+  "edits": [
+   [
+    "src/usine/ui/statique/carte.js",
+    "lien.href = ligne.url_detail;",
+    "lien.href = \"/entites/ENT-A\";",
+    1
+   ]
+  ],
+  "cibles": [
+   "C4",
+   "C1"
+  ],
+  "explicite": true
+ },
+ {
+  "id": "e06",
+  "story": "s714",
+  "classe": "état perdu",
+  "critere": "C2",
+  "description": "Revenir à l'option « Toutes » du filtre n'affiche plus aucune ligne.",
+  "edits": [
+   [
+    "src/usine/ui/statique/carte.js",
+    "var visible = choisie === \"toutes\" || ligne.getAttribute(\"data-meteo\") === choisie;",
+    "var visible = ligne.getAttribute(\"data-meteo\") === choisie;",
+    1
+   ]
+  ],
+  "cibles": [
+   "C2"
+  ],
+  "explicite": true
+ },
+ {
+  "id": "e07",
+  "story": "s715",
+  "classe": "libellé non mis à jour",
+  "critere": "C4",
+  "description": "Le libellé du bouton de mode ne change plus après la bascule (reste « Passer en Mode repli »).",
+  "edits": [
+   [
+    "src/usine/ui/statique/chaine.js",
+    "    bouton.textContent = vue.libelle;\n    if (vue.bloque) {",
+    "    if (!bouton.textContent || bouton.id === \"bouton-lancement\") { bouton.textContent = vue.libelle; }\n    if (vue.bloque) {",
+    1
+   ]
+  ],
+  "cibles": [
+   "C4",
+   "C5"
+  ],
+  "explicite": true
+ },
+ {
+  "id": "e08",
+  "story": "s715",
+  "classe": "message absent",
+  "critere": "C5",
+  "description": "Le motif du blocage du bouton de lancement n'est plus visible (reste lié par aria-describedby).",
+  "edits": [
+   [
+    "src/usine/ui/statique/chaine.js",
+    "      motif.textContent = vue.motif;\n      motif.hidden = false;",
+    "      motif.textContent = vue.motif;\n      motif.hidden = true;",
+    1
+   ]
+  ],
+  "cibles": [
+   "C5"
+  ],
+  "explicite": true
+ },
+ {
+  "id": "e09",
+  "story": "s716",
+  "classe": "donnée fausse",
+  "critere": "C1",
+  "description": "Les outils appelés ne sont jamais listés dans la réponse rejouée (affiche « aucun »).",
+  "edits": [
+   [
+    "src/usine/ui/statique/agent.js",
+    "if (reponse.outils.length) {",
+    "if (false && reponse.outils.length) {",
+    1
+   ]
+  ],
+  "cibles": [
+   "C1"
+  ],
+  "explicite": true
+ },
+ {
+  "id": "e10",
+  "story": "s716",
+  "classe": "message absent",
+  "critere": "C2",
+  "description": "Le tableau des périodes de l'écran Avant / après n'est plus affiché.",
+  "edits": [
+   [
+    "src/usine/ui/statique/avant-apres.js",
+    "    construireTableau(vue.tableau);\n",
+    "",
+    1
+   ]
+  ],
+  "cibles": [
+   "C2"
+  ],
+  "explicite": true
+ },
+ {
+  "id": "e11",
+  "story": "s716",
+  "classe": "mise en page cassée",
+  "critere": "C4",
+  "description": "La fiche d'outillage affiche son HTML en texte brut (balises visibles).",
+  "edits": [
+   [
+    "src/usine/ui/statique/outillage.js",
+    "document.getElementById(\"fiche\").innerHTML = vue.html;",
+    "document.getElementById(\"fiche\").textContent = vue.html;",
+    1
+   ]
+  ],
+  "cibles": [
+   "C4"
+  ],
+  "explicite": true
+ }
+]

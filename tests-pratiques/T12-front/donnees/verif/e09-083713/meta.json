@@ -1,0 +1,102 @@
+{
+ "outils": {
+  "mcp__playwright__browser_navigate": 6,
+  "mcp__playwright__browser_snapshot": 2,
+  "mcp__playwright__browser_click": 4,
+  "mcp__playwright__browser_evaluate": 12,
+  "mcp__playwright__browser_take_screenshot": 2,
+  "mcp__playwright__browser_select_option": 1,
+  "mcp__playwright__browser_run_code_unsafe": 1,
+  "mcp__playwright__browser_resize": 2
+ },
+ "refus": 0,
+ "result": "{\"criteres\":[{\"id\":\"C1\",\"verdict\":\"FAIL\",\"preuve\":\"/agent en Mode repli : aucune zone de saisie, et le message « En Mode repli, l'Agent ne s'adresse à aucun LLM : choisir une question enregistrée… » s'affiche. 5 questions enregistrées sont listées. Au clic sur « Pourquoi ENT-B est-elle rouge ? », le focus passe sur div#reponse (tabindex=-1) et la réponse s'affiche avec son texte, « Contrôle : conforme : chiffres et tickets vérifiés » et « Mode repli : réponse enregistrée le 13/10/2026 sur le Passage 20261012T221158Z-96c621, rejouée sans LLM ». Échec : « Outils appelés : aucun » pour les deux questions testées (ENT-B et « Quelles entités sont rouges »), donc aucun outil appelé n'est affiché. Les trois autres questions n'ont pas été cliquées.\"},{\"id\":\"C2\",\"verdict\":\"PASS\",\"preuve\":\"/avant-apres : 2 cartes, Reporting manuel déclaré 120 min et Chaîne mesuré 4,4 s. Tableau des deux périodes : 120 min / 4,4 s par Rapport, 600 min / 22,2 s cumulés. Au clic sur « Cumulé sur 5 Rapports », l'URL devient ?periode=cumul, les cartes passent à 600 min et 22,2 s, et aria-pressed bascule (Par Rapport quotidien=false, Cumulé=true).\"},{\"id\":\"C3\",\"verdict\":\"PASS\",\"preuve\":\"/pseudonymisation?ticket=DEMO-17 : « Original » et « Version pseudonymisée » côte à côte, avec le même texte brut « Dérouler le parcours complet de l'Entité ENT-C… (paiements). ». Aucun <mark>. Le contenu apparaît après un court chargement. Deux div role=region avec tabindex=0 : Tab depuis « Afficher » atteint titre-original puis titre-pseudo, avec un outline de 2 px. Le choix de DEMO-100 puis « Afficher » mène à ?ticket=DEMO-100 et affiche le texte « …(comptabilité). ».\"},{\"id\":\"C4\",\"verdict\":\"PASS\",\"preuve\":\"/outillage : fiche rendue en HTML avec h1, h2 (Demandes, Correspondance par brique, Points d'attention par cible, Références), h3, 1 tableau et 5 listes. Pastilles span.pastille : 26 « Oui », 4 « À surveiller », 2 « Non ». Aucun ✅, ⚠ ou ❌ brut dans le texte.\"}],\"transverses\":[{\"id\":\"T1\",\"verdict\":\"PASS\",\"preuve\":\"Sur /pseudonymisation, Tab va de « Afficher » à la région Original puis à la région Version pseudonymisée, avec un outline solid 2px visible. Les boutons de question de l'Agent et du segment sont des button natifs et ont répondu au clic. Entrée/Espace n'ont pas été testés explicitement.\"},{\"id\":\"T2\",\"verdict\":\"PASS\",\"preuve\":\"À 390 px, scrollWidth = clientWidth = 390 sur /outillage, /agent et /pseudonymisation, donc pas de défilement horizontal. La capture de /outillage ne montre ni contenu coupé ni superposition. Seuls /outillage a été capturé, les deux autres n'ont eu que la mesure de largeur. Fenêtre remise à 1280x800.\"},{\"id\":\"T3\",\"verdict\":\"PASS\",\"preuve\":\"Aucun message d'erreur vide observé. Les liens de navigation (/agent, /avant-apres, /pseudonymisation, /outillage) se chargent avec leur titre. Je n'ai pas suivi les autres liens (/, /entites, /chaine) ni vérifié leur statut HTTP.\"}],\"synthese\":\"Trois critères sur quatre passent, mais C1 échoue parce que les réponses de l'Agent affichent « Outils appelés : aucun » au lieu des outils appelés, sur les deux questions testées.\"}",
+ "cout_usd": 0.1670414,
+ "tours": 31,
+ "duree_ms": 71544,
+ "is_error": false,
+ "subtype": "success",
+ "usage": {
+  "input_tokens": 38,
+  "cache_creation_input_tokens": 18801,
+  "cache_read_input_tokens": 385614,
+  "output_tokens": 5320,
+  "output_tokens_details": {
+   "thinking_tokens": 293
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 18801,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1443,
+    "cache_read_input_tokens": 29989,
+    "cache_creation_input_tokens": 172,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 172
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "id": "e09",
+ "run": "e09-083713",
+ "story": "s716",
+ "temoin": false,
+ "statut": "ok",
+ "duree_mur_s": 76.3,
+ "cibles": [
+  "C1"
+ ],
+ "oracle": {
+  "C1_agent_repli": [
+   true,
+   "saisie=0 questions=5 badge='Contrôle : conforme : chiffres et tickets vérifiés' mention=True focus=reponse"
+  ],
+  "C2_avant_apres_segment": [
+   true,
+   "avant=('120 min', '4,4 s') après=('600 min', '22,2 s') pressed=true"
+  ],
+  "C3_pseudonymisation": [
+   true,
+   "focus_atteints=['choix-ticket', 'texte-original', 'texte-pseudo'] côte_à_côte=True autre=DEMO-10 url=seudonymisation?ticket=DEMO-10"
+  ],
+  "C4_outillage": [
+   true,
+   "pastilles=32"
+  ],
+  "T2_390px": [
+   true,
+   "écarts : []"
+  ]
+ },
+ "axe": {
+  "/agent@1280": [],
+  "/avant-apres@1280": [
+   "landmark-unique:1"
+  ],
+  "/pseudonymisation?ticket=DEMO-17@1280": [
+   "landmark-unique:2"
+  ],
+  "/outillage@1280": [],
+  "/agent@390": [],
+  "/avant-apres@390": [
+   "landmark-unique:1"
+  ],
+  "/pseudonymisation?ticket=DEMO-17@390": [
+   "landmark-unique:2"
+  ],
+  "/outillage@390": []
+ }
+}

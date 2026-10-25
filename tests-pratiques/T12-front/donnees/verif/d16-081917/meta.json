@@ -1,0 +1,107 @@
+{
+ "outils": {
+  "mcp__playwright__browser_navigate": 5,
+  "mcp__playwright__browser_snapshot": 3,
+  "mcp__playwright__browser_click": 3,
+  "mcp__playwright__browser_evaluate": 8,
+  "mcp__playwright__browser_take_screenshot": 2,
+  "mcp__playwright__browser_network_requests": 1,
+  "mcp__playwright__browser_console_messages": 1,
+  "mcp__playwright__browser_network_request": 1,
+  "mcp__playwright__browser_select_option": 1,
+  "mcp__playwright__browser_wait_for": 2,
+  "mcp__playwright__browser_press_key": 1,
+  "mcp__playwright__browser_run_code_unsafe": 1,
+  "mcp__playwright__browser_resize": 2
+ },
+ "refus": 0,
+ "result": "{\"criteres\":[{\"id\":\"C1\",\"verdict\":\"PASS\",\"preuve\":\"/agent en Mode repli : aucune zone de saisie, 5 boutons de questions enregistrées, bandeau « Mode repli : la démo lit le Passage enregistré… ». Clic sur « Pourquoi ENT-B est-elle rouge ? » : réponse « ENT-B est rouge sur IND-1, qui vaut 9 pour un seuil de 3… », « Contrôle : conforme : chiffres et tickets vérifiés », « Outils appelés : get_meteo », « Mode repli : réponse enregistrée le 13/10/2026 sur le Passage …, rejouée sans LLM ». Le focus est sur div#reponse (tabindex=-1).\"},{\"id\":\"C2\",\"verdict\":\"PASS\",\"preuve\":\"/avant-apres : cartes « Reporting manuel 120 min (déclaré) » et « Chaîne 4,4 s (mesuré) », tableau des 2 périodes sans écart ni ratio. Clic sur « Cumulé sur 5 Rapports » : URL ?periode=cumul, cartes à 600 min et 22,2 s, aria-pressed true sur Cumulé et false sur Par Rapport quotidien.\"},{\"id\":\"C3\",\"verdict\":\"FAIL\",\"preuve\":\"/pseudonymisation?ticket=DEMO-17 s'affiche correctement, mais seulement après un court délai de chargement. Original et version pseudonymisée sont en texte brut, côte à côte, dans deux div role=region tabindex=0 atteints par Tab (texte-original, puis texte-pseudo). En revanche, choisir DEMO-2842 puis cliquer « Afficher » envoie vers /pseudonymisations?ticket=DEMO-2842, qui renvoie HTTP 404 Not Found (action du formulaire erronée). Le changement de ticket ne fonctionne donc pas. Testé deux fois avec le même résultat.\"},{\"id\":\"C4\",\"verdict\":\"PASS\",\"preuve\":\"/outillage : fiche rendue en HTML (9 titres, 1 tableau « Correspondance par brique », liste de demandes). Pastilles .pastille « Oui », « À surveiller », « Non », aucun ✅ ⚠ ❌ brut. Détail mineur : le texte « Fiche `docs/fiche-outillage.md` » affiche ses backticks bruts.\"}],\"transverses\":[{\"id\":\"T1\",\"verdict\":\"PASS\",\"preuve\":\"Sur /pseudonymisation, Tab va de la liste au bouton « Afficher », puis aux deux régions, dans un ordre logique. Les boutons de /agent et du segment de /avant-apres sont des éléments button natifs, et un clic les active. Je n'ai pas contrôlé visuellement l'indicateur de focus, ni l'activation par Entrée ou Espace.\"},{\"id\":\"T2\",\"verdict\":\"PASS\",\"preuve\":\"/outillage à 390x844 : scrollWidth 390 = clientWidth 390, pas de défilement horizontal, capture sans contenu coupé ni superposé dans la partie visible. Les autres écrans n'ont pas été testés à 390 px. Fenêtre remise à 1280x800.\"},{\"id\":\"T3\",\"verdict\":\"FAIL\",\"preuve\":\"Le bouton « Afficher » de /pseudonymisation mène à /pseudonymisations?ticket=… avec un 404 et des erreurs console. Les autres liens de navigation testés se chargent (200).\"}],\"synthese\":\"Agent, Avant / après et Outillage sont conformes, mais le sélecteur de ticket de Pseudonymisation est cassé : « Afficher » mène à /pseudonymisations, qui répond 404.\"}",
+ "cout_usd": 0.29869880000000004,
+ "tours": 32,
+ "duree_ms": 55295,
+ "is_error": false,
+ "subtype": "success",
+ "usage": {
+  "input_tokens": 40,
+  "cache_creation_input_tokens": 47657,
+  "cache_read_input_tokens": 609708,
+  "output_tokens": 4702,
+  "output_tokens_details": {
+   "thinking_tokens": 296
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 47657,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1293,
+    "cache_read_input_tokens": 58583,
+    "cache_creation_input_tokens": 434,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 434
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "id": "d16",
+ "run": "d16-081917",
+ "story": "s716",
+ "temoin": false,
+ "statut": "ok",
+ "duree_mur_s": 57.3,
+ "cibles": [
+  "C3"
+ ],
+ "oracle": {
+  "C1_agent_repli": [
+   true,
+   "saisie=0 questions=5 badge='Contrôle : conforme : chiffres et tickets vérifiés' mention=True focus=reponse"
+  ],
+  "C2_avant_apres_segment": [
+   true,
+   "avant=('120 min', '4,4 s') après=('600 min', '22,2 s') pressed=true"
+  ],
+  "C3_pseudonymisation": [
+   false,
+   "exception : Locator.wait_for: Timeout 60000ms exceeded."
+  ],
+  "C4_outillage": [
+   true,
+   "pastilles=32"
+  ],
+  "T2_390px": [
+   true,
+   "écarts : []"
+  ]
+ },
+ "axe": {
+  "/agent@1280": [],
+  "/avant-apres@1280": [
+   "landmark-unique:1"
+  ],
+  "/pseudonymisation?ticket=DEMO-17@1280": [
+   "landmark-unique:2"
+  ],
+  "/outillage@1280": [],
+  "/agent@390": [],
+  "/avant-apres@390": [
+   "landmark-unique:1"
+  ],
+  "/pseudonymisation?ticket=DEMO-17@390": [
+   "landmark-unique:2"
+  ],
+  "/outillage@390": []
+ }
+}

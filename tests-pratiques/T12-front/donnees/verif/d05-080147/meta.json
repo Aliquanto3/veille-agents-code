@@ -1,0 +1,113 @@
+{
+ "outils": {
+  "mcp__playwright__browser_navigate": 4,
+  "mcp__playwright__browser_snapshot": 2,
+  "mcp__playwright__browser_select_option": 3,
+  "mcp__playwright__browser_evaluate": 7,
+  "mcp__playwright__browser_console_messages": 1,
+  "mcp__playwright__browser_find": 1,
+  "mcp__playwright__browser_resize": 2,
+  "mcp__playwright__browser_take_screenshot": 1,
+  "mcp__playwright__browser_press_key": 2,
+  "mcp__playwright__browser_click": 1,
+  "mcp__playwright__browser_network_requests": 2
+ },
+ "refus": 0,
+ "result": "{\"criteres\":[{\"id\":\"C1\",\"verdict\":\"PASS\",\"preuve\":\"Sur http://127.0.0.1:8765/ il y a 4 tuiles de comptage (Rouge 2, Orange 1, Jaune 6, Vert 1). Le tableau a 10 lignes, une par Entité, grave d'abord : ENT-A et ENT-B rouges, ENT-C orange, ENT-E à ENT-J jaunes, ENT-D vert. Les tickets en cause sont limités à 3 puis « +N » (ex. « DEMO-3117, DEMO-3234, DEMO-3316 +1 »). Chaque ligne a un lien « Détail ENT-x » vers /entites/ENT-x.\"},{\"id\":\"C2\",\"verdict\":\"PASS\",\"preuve\":\"Le filtre « Rouge » garde 2 lignes (ENT-A, ENT-B) et le role=status annonce « 2 Entités affichées ». Le filtre « Vert » garde 1 ligne et annonce « 1 Entité affichée ». « Toutes » ré-affiche 10 lignes et annonce « 10 Entités affichées ». L'URL reste http://127.0.0.1:8765/ à chaque changement, donc sans rechargement.\"},{\"id\":\"C3\",\"verdict\":\"FAIL\",\"preuve\":\"Les liens de livrables de la carte pointent vers /livrable/rapport_xlsx et /livrable/rapport_pptx (au singulier). Un fetch de /livrable/rapport_xlsx renvoie 404 sans pièce jointe, et la console signale 404. Seule l'URL /livrables/rapport_xlsx (au pluriel) répond 200 avec Content-Disposition: attachment; filename=\\\"rapport-2026-10-09.xlsx\\\"; /livrables/rapport_pptx répond aussi 200 en pièce jointe. Les liens de la page ne mènent donc pas à la bonne route. Le clic a bien déclenché un événement de téléchargement côté navigateur, à cause de l'attribut download, mais la cible répond 404. Le cas « Non généré pour ce Passage » n'est pas observable : les 2 livrables sont présents.\"},{\"id\":\"C4\",\"verdict\":\"PASS\",\"preuve\":\"GET /entites redirige vers http://127.0.0.1:8765/entites/ENT-A, première Entité du tableau. J'ai constaté la redirection (opaqueredirect avec redirect manuel, URL finale ENT-A) mais pas le code 307. /entites/ENT-B affiche la météo Rouge, la règle « IND-1 : 9 (seuil ≥ 3) » avec ses tickets, les KPI, la Prévision (« pas de sortie projetée », probabilité 0 %, horizon 10 jours ouvrés), le Risque (« Sans objet : l'Entité est déjà rouge. ») et l'Explication (« commentaire non généré (Palier 1) »). Le lien « ← Carte météo » pointe vers /.\"},{\"id\":\"C5\",\"verdict\":\"PASS\",\"preuve\":\"/entites/ENT-X affiche « Entité ENT-X absente du Passage affiché. » et un lien « Voir la carte météo » vers /. Je n'ai pas cliqué sur ce lien, seul son href a été vérifié.\"},{\"id\":\"C6\",\"verdict\":\"PASS\",\"preuve\":\"En Mode repli, les tickets (DEMO-xxxx) sont du texte simple, sans lien, dans la carte et le détail. Le « +6 » du détail ENT-B est un bouton. /livrables/autre répond 404.\"}],\"transverses\":[{\"id\":\"T1\",\"verdict\":\"PASS\",\"preuve\":\"Un lien d'évitement « Aller au contenu » vient en premier, puis les liens de l'en-tête. Le focus porte un contour visible (solid 2px). L'ordre est logique. Je n'ai pas testé l'activation par Entrée ou Espace.\"},{\"id\":\"T2\",\"verdict\":\"PASS\",\"preuve\":\"À 390 px, scrollWidth = clientWidth = 390, donc pas de défilement horizontal de la page. Sur la capture, le tableau est tronqué à droite (colonnes Règle principale et suivantes), probablement avec un défilement interne, que je n'ai pas vérifié. Fenêtre remise à 1280x800.\"},{\"id\":\"T3\",\"verdict\":\"FAIL\",\"preuve\":\"Les liens de livrables de la carte (/livrable/rapport_xlsx et /livrable/rapport_pptx) sont morts : 404. Les autres liens vérifiés (carte, détail d'Entité) se chargent. Aucun message d'erreur vide observé.\"}],\"synthese\":\"Carte, filtre, détail d'Entité, Entité absente et redirection /entites sont conformes, mais les liens de livrables de la carte pointent vers /livrable/{nom} (404) au lieu de /livrables/{nom}, ce qui fait échouer C3 et T3.\"}",
+ "cout_usd": 0.14006629999999998,
+ "tours": 27,
+ "duree_ms": 40050,
+ "is_error": false,
+ "subtype": "success",
+ "usage": {
+  "input_tokens": 26,
+  "cache_creation_input_tokens": 16589,
+  "cache_read_input_tokens": 266283,
+  "output_tokens": 4703,
+  "output_tokens_details": {
+   "thinking_tokens": 559
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 16589,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1811,
+    "cache_read_input_tokens": 27506,
+    "cache_creation_input_tokens": 680,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 680
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "id": "d05",
+ "run": "d05-080147",
+ "story": "s714",
+ "temoin": false,
+ "statut": "ok",
+ "duree_mur_s": 42.2,
+ "cibles": [
+  "C3"
+ ],
+ "oracle": {
+  "C1_carte": [
+   true,
+   "lignes=10"
+  ],
+  "C2_filtre": [
+   true,
+   "visibles=2 annonce='2 Entités affichées' sans_rechargement=True retour=10"
+  ],
+  "C3_livrables": [
+   false,
+   "liens=2 écarts=[('/livrable/rapport_xlsx', 404), ('/livrable/rapport_pptx', 404)]"
+  ],
+  "C4_detail": [
+   true,
+   "url=http://127.0.0.1:8765/entites/ENT-A"
+  ],
+  "C5_entite_absente": [
+   true,
+   "message='Entité ENT-X absente du Passage affiché.' après clic=http://127.0.0.1:8765/"
+  ],
+  "C6_tickets_texte_404": [
+   true,
+   "liens_ticket=0 autre=404"
+  ],
+  "T2_390px_carte": [
+   true,
+   "scrollWidth=390"
+  ],
+  "T2_390px_detail": [
+   true,
+   "scrollWidth=390"
+  ]
+ },
+ "axe": {
+  "/@1280": [
+   "landmark-unique:1"
+  ],
+  "/entites/ENT-A@1280": [
+   "landmark-unique:1"
+  ],
+  "/@390": [
+   "landmark-unique:1"
+  ],
+  "/entites/ENT-A@390": [
+   "landmark-unique:1"
+  ]
+ }
+}

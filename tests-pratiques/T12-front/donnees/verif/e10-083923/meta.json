@@ -1,0 +1,100 @@
+{
+ "outils": {
+  "mcp__playwright__browser_navigate": 6,
+  "mcp__playwright__browser_snapshot": 3,
+  "mcp__playwright__browser_click": 3,
+  "mcp__playwright__browser_evaluate": 12,
+  "mcp__playwright__browser_take_screenshot": 2,
+  "mcp__playwright__browser_network_requests": 1,
+  "mcp__playwright__browser_select_option": 1,
+  "mcp__playwright__browser_wait_for": 2,
+  "mcp__playwright__browser_resize": 2,
+  "mcp__playwright__browser_run_code_unsafe": 1
+ },
+ "refus": 0,
+ "result": "{\"criteres\":[{\"id\":\"C1\",\"verdict\":\"PASS\",\"preuve\":\"/agent en Mode repli : bandeau « Mode repli : la démo lit le Passage enregistré… » et message « En Mode repli, l'Agent ne s'adresse à aucun LLM… ». Une textarea #question existe dans le DOM, mais elle est masquée (display none, 0x0) et absente de l'arbre d'accessibilité. 5 questions enregistrées sont listées. Clic sur « Pourquoi ENT-B est-elle rouge ? » : la réponse affiche « ENT-B est rouge sur IND-1, qui vaut 9 pour un seuil de 3… », « Contrôle : conforme : chiffres et tickets vérifiés », « Outils appelés : get_meteo » et « Mode repli : réponse enregistrée le 13/10/2026 sur le Passage 20261012T221158Z-96c621, rejouée sans LLM ». Le focus est sur div#reponse (tabindex -1). Entrée au clavier sur une question déplace aussi le focus sur #reponse.\"},{\"id\":\"C2\",\"verdict\":\"FAIL\",\"preuve\":\"/avant-apres : deux grandes cartes. « Par Rapport quotidien » donne Reporting manuel 120 min et Chaîne 4,4 s. « Cumulé sur 5 Rapports » (URL ?periode=cumul) donne 600 min et 22,2 s, avec aria-pressed qui passe à true sur le bouton cumulé et false sur l'autre, donc cette partie est conforme. En revanche le tableau des périodes est vide : la table avec sa légende « Reporting manuel déclaré et Chaîne mesurée, par Rapport et cumulés » a 0 ligne et une taille 0x0, avant comme après un rechargement et une attente d'une seconde.\"},{\"id\":\"C3\",\"verdict\":\"PASS\",\"preuve\":\"/pseudonymisation?ticket=DEMO-17 : la requête /api/pseudonymisation?ticket=DEMO-17 renvoie 200. Deux div role=region tabindex=0 (aria-labelledby titre-original et titre-pseudo), côte à côte (x=329 et x=811, largeur 424 chacune), white-space pre-wrap, 0 élément mark ou de surlignage. Texte des deux : « Dérouler le parcours complet de l'Entité ENT-C et comparer aux attendus (paiements). ». Choix de DEMO-10 puis clic sur « Afficher » : URL ?ticket=DEMO-10, select = DEMO-10, texte « Le fonctionnement signalé par l'Entité ENT-F est conforme à l'existant (comptabilité). » Le contenu apparaît après le chargement de l'API ; une capture prise trop tôt montrait la page sans contenu.\"},{\"id\":\"C4\",\"verdict\":\"PASS\",\"preuve\":\"/outillage : h1 « Ce qu'il faut pour le faire en vrai », h2 « Demandes, par ordre de priorité », « Correspondance par brique », « Points d'attention par cible » et « Références », h3 VM Python, Dataiku, Power Platform et Poste seul. 1 tableau et 16 li. Pastilles « Oui », « À surveiller » et « Non » présentes. Aucun ✅, ⚠ ou ❌ dans le texte de main.\"}],\"transverses\":[{\"id\":\"T1\",\"verdict\":\"PASS\",\"preuve\":\"Sur /agent, Tab suit l'ordre : lien d'évitement « Aller au contenu », logo, « Lancer la Chaîne », 7 liens de navigation, puis les boutons des questions. Chaque élément focalisé a un contour solide de 2px. Entrée sur une question déclenche la réponse et le focus passe sur #reponse. Seul /agent a été parcouru au clavier.\"},{\"id\":\"T2\",\"verdict\":\"PASS\",\"preuve\":\"/avant-apres à 390x844 : scrollWidth = clientWidth = 390, donc pas de défilement horizontal. La capture montre l'en-tête, la navigation, le segment et les cartes sans coupure ni superposition. Seul le haut de page a été vu ; /agent, /pseudonymisation et /outillage n'ont pas été testés à cette largeur. Fenêtre remise à 1280x800.\"},{\"id\":\"T3\",\"verdict\":\"PASS\",\"preuve\":\"Aucun message d'erreur vide observé (le bloc #bloc-message de /pseudonymisation reste masqué). Les 7 liens de navigation, tous visités ou vus au chargement (/, /entites, /chaine, /agent, /avant-apres, /pseudonymisation, /outillage), pointent vers des chemins valides. Seuls /agent, /avant-apres, /pseudonymisation et /outillage ont été chargés et se sont affichés ; /, /entites et /chaine n'ont pas été ouverts.\"}],\"synthese\":\"C1, C3 et C4 sont conformes, mais C2 échoue car le tableau des périodes de /avant-apres est vide (0 ligne) alors que les cartes et le segment fonctionnent.\"}",
+ "cout_usd": 0.18706630000000002,
+ "tours": 34,
+ "duree_ms": 65677,
+ "is_error": false,
+ "subtype": "success",
+ "usage": {
+  "input_tokens": 42,
+  "cache_creation_input_tokens": 20970,
+  "cache_read_input_tokens": 453423,
+  "output_tokens": 5776,
+  "output_tokens_details": {
+   "thinking_tokens": 356
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 20970,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1768,
+    "cache_read_input_tokens": 31963,
+    "cache_creation_input_tokens": 367,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 367
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "id": "e10",
+ "run": "e10-083923",
+ "story": "s716",
+ "temoin": false,
+ "statut": "ok",
+ "duree_mur_s": 67.5,
+ "cibles": [
+  "C2"
+ ],
+ "oracle": {
+  "C1_agent_repli": [
+   true,
+   "saisie=0 questions=5 badge='Contrôle : conforme : chiffres et tickets vérifiés' mention=True focus=reponse"
+  ],
+  "C2_avant_apres_segment": [
+   true,
+   "avant=('120 min', '4,4 s') après=('600 min', '22,2 s') pressed=true"
+  ],
+  "C3_pseudonymisation": [
+   true,
+   "focus_atteints=['choix-ticket', 'texte-original', 'texte-pseudo'] côte_à_côte=True autre=DEMO-10 url=seudonymisation?ticket=DEMO-10"
+  ],
+  "C4_outillage": [
+   true,
+   "pastilles=32"
+  ],
+  "T2_390px": [
+   true,
+   "écarts : []"
+  ]
+ },
+ "axe": {
+  "/agent@1280": [],
+  "/avant-apres@1280": [],
+  "/pseudonymisation?ticket=DEMO-17@1280": [
+   "landmark-unique:2"
+  ],
+  "/outillage@1280": [],
+  "/agent@390": [],
+  "/avant-apres@390": [],
+  "/pseudonymisation?ticket=DEMO-17@390": [
+   "landmark-unique:2"
+  ],
+  "/outillage@390": []
+ }
+}

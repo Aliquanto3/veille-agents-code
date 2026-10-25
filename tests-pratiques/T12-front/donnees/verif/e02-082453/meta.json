@@ -1,0 +1,102 @@
+{
+ "outils": {
+  "mcp__playwright__browser_run_code_unsafe": 3,
+  "mcp__playwright__browser_take_screenshot": 1
+ },
+ "refus": 0,
+ "result": "{\"criteres\":[{\"id\":\"C1\",\"verdict\":\"PASS\",\"preuve\":\"Les 7 URL (/, /entites/ENT-A, /chaine, /agent, /avant-apres, /pseudonymisation, /outillage) répondent HTTP 200. Chaque titre est « {Écran} · Usine de migration », par exemple « Carte météo · Usine de migration » et « Ce qu'il faut pour le faire en vrai · Usine de migration ». Chaque page a un seul <h1> égal au nom de l'écran, et <html lang=\\\"fr\\\">.\"},{\"id\":\"C2\",\"verdict\":\"FAIL\",\"preuve\":\"La pastille « Passage publié » n'est jamais visible. Dans le DOM, <span id=\\\"pastille-passage\\\" class=\\\"pastille-entete\\\" hidden> reste vide sur la page chargée, y compris après 1,5 s d'attente. /api/cadre renvoie pourtant \\\"passage_publie\\\":\\\"Passage publié · 12/10/2026 22:12 UTC\\\", et la capture d'écran n'affiche que « Mode repli » et « Lancer la Chaîne ». Le reste est conforme : pastille de mode toujours visible, « Lancer la Chaîne » dans l'en-tête de toutes les pages sauf /chaine, et aria-current=\\\"page\\\" sur l'entrée de navigation de l'écran courant (7 pages vérifiées).\"},{\"id\":\"C3\",\"verdict\":\"PASS\",\"preuve\":\"Sur les 7 pages, la pastille « Mode repli » est visible dans l'en-tête, avec le bandeau « Mode repli : la démo lit le Passage enregistré demo/repli/passage/, sans Jira ni LLM réels ; les liens Jira sont inactifs. ». /api/cadre renvoie mode=repli.\"},{\"id\":\"C4\",\"verdict\":\"PASS\",\"preuve\":\"Le premier Tab met le focus sur « Aller au contenu » (href=#titre-ecran). Il est visible à (8,8), 148x44 px, avec un contour solide de 2 px. Entrée met l'URL à #titre-ecran et le focus sur le titre « Carte météo » (id titre-ecran).\"},{\"id\":\"C5\",\"verdict\":\"PASS\",\"preuve\":\"Les requêtes observées pendant la visite des 7 pages vont toutes vers http://127.0.0.1:8765. Ce sont les pages, /statique/cadre.css, /statique/cadre.js, 4 polices woff2 sous /statique/polices/ et /api/cadre. Aucun autre hôte.\"}],\"transverses\":[{\"id\":\"T1\",\"verdict\":\"PASS\",\"preuve\":\"Ordre de Tab : lien d'évitement, marque, « Lancer la Chaîne », puis les 7 entrées de navigation dans l'ordre. Le focus est visible sur le lien d'évitement (contour de 2 px). Entrée active le lien d'évitement.\"},{\"id\":\"T2\",\"verdict\":\"PASS\",\"preuve\":\"À 390x844, sur / et /chaine, scrollWidth vaut 390 et innerWidth vaut 390, donc pas de défilement horizontal. Je n'ai pas contrôlé visuellement l'absence de contenu coupé ou superposé : la capture m390.png a été prise mais je ne l'ai pas consultée. La fenêtre est remise à 1280x800.\"},{\"id\":\"T3\",\"verdict\":\"PASS\",\"preuve\":\"Aucun message d'erreur vide, et le champ erreur de /api/cadre vaut null. Les liens du cadre (/, /chaine, /entites/ENT-A, /agent, /avant-apres, /pseudonymisation, /outillage, #titre-ecran) ont tous été chargés avec HTTP 200 ou résolvent vers l'ancre. Je n'ai pas cliqué les liens un par un.\"}],\"synthese\":\"Les 7 écrans, les titres, le mode repli, le lien d'évitement et l'absence de requêtes externes sont conformes ; seul C2 échoue, car la pastille « Passage publié » reste cachée et vide malgré une valeur correcte dans /api/cadre.\"}",
+ "cout_usd": 0.0721099,
+ "tours": 5,
+ "duree_ms": 40041,
+ "is_error": false,
+ "subtype": "success",
+ "usage": {
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 8497,
+  "cache_read_input_tokens": 56059,
+  "output_tokens": 3250,
+  "output_tokens_details": {
+   "thinking_tokens": 241
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 8497,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1493,
+    "cache_read_input_tokens": 17319,
+    "cache_creation_input_tokens": 2630,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 2630
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "id": "e02",
+ "run": "e02-082453",
+ "story": "s713",
+ "temoin": false,
+ "statut": "ok",
+ "duree_mur_s": 44.9,
+ "cibles": [
+  "C2"
+ ],
+ "oracle": {
+  "C1_titres_h1": [
+   true,
+   "écarts : []"
+  ],
+  "C2_cadre": [
+   false,
+   "écarts : [('passage', '/'), ('passage', '/entites/ENT-A'), ('passage', '/chaine'), ('passage', '/agent'), ('passage', '/avant-apres'), ('passage', '/pseudonymisation'), ('passage', '/outillage')]"
+  ],
+  "C3_repli": [
+   true,
+   "écarts : []"
+  ],
+  "C4_lien_evitement": [
+   true,
+   "actif='lien-evitement|Aller au contenu' top=8 hash=#titre-ecran cible=True"
+  ],
+  "C5_pas_de_requete_externe": [
+   true,
+   "externes : []"
+  ],
+  "T2_390px_accueil": [
+   true,
+   "scrollWidth=390"
+  ],
+  "T2_390px_chaine": [
+   true,
+   "scrollWidth=390"
+  ]
+ },
+ "axe": {
+  "/@1280": [],
+  "/entites/ENT-A@1280": [],
+  "/chaine@1280": [],
+  "/agent@1280": [],
+  "/avant-apres@1280": [],
+  "/pseudonymisation@1280": [],
+  "/outillage@1280": [],
+  "/@390": [],
+  "/entites/ENT-A@390": [],
+  "/chaine@390": [],
+  "/agent@390": [],
+  "/avant-apres@390": [],
+  "/pseudonymisation@390": [],
+  "/outillage@390": []
+ }
+}

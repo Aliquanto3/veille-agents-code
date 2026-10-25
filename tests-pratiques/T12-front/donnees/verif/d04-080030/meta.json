@@ -1,0 +1,110 @@
+{
+ "outils": {
+  "mcp__playwright__browser_navigate": 4,
+  "mcp__playwright__browser_snapshot": 4,
+  "mcp__playwright__browser_select_option": 1,
+  "mcp__playwright__browser_evaluate": 7,
+  "mcp__playwright__browser_console_messages": 1,
+  "mcp__playwright__browser_resize": 2,
+  "mcp__playwright__browser_take_screenshot": 1,
+  "mcp__playwright__browser_press_key": 1
+ },
+ "refus": 0,
+ "result": "{\"criteres\":[{\"id\":\"C1\",\"verdict\":\"PASS\",\"preuve\":\"Sur `/`, les tuiles donnent Rouge 2, Orange 1, Jaune 6, Vert 1. Le tableau compte 10 lignes dans l'ordre ENT-A, B (rouges), C (orange), E à J (jaunes), D (vert). Les tickets sont limités à 3 puis « +N » (ex. « DEMO-3117, DEMO-3234, DEMO-3316 +1 »). Chaque ligne a un lien « Détail ENT-x » vers `/entites/ENT-x`.\"},{\"id\":\"C2\",\"verdict\":\"FAIL\",\"preuve\":\"Après avoir choisi « Rouge » dans le select « Filtrer par météo », le select affiche bien Rouge mais les 10 lignes restent visibles (aucune n'a l'attribut hidden, toutes sont en display:table-row) et le statut reste « 10 Entités affichées ». J'ai refait le test en envoyant l'événement change à la main avec la valeur `rouge`, sans effet non plus. Le filtre ne fonctionne pas. Je n'ai donc pas pu tester le singulier, ni le retour à « Toutes ».\"},{\"id\":\"C3\",\"verdict\":\"NA\",\"preuve\":\"Les 2 livrables sont présents et tous deux des liens : `/livrables/rapport_xlsx` répond 200 avec `attachment; filename=\\\"rapport-2026-10-09.xlsx\\\"`, et `/livrables/rapport_pptx` répond 200 avec `attachment; filename=\\\"rapport-2026-10-09.pptx\\\"`. Je n'ai pas cliqué sur les liens, j'ai seulement fait des fetch. Aucun livrable n'est absent dans ce Passage, donc « Non généré pour ce Passage » n'est pas observable.\"},{\"id\":\"C4\",\"verdict\":\"PASS\",\"preuve\":\"`/entites` redirige vers `/entites/ENT-A`, la première ligne du tableau (je n'ai pas relevé le code 307). Le détail affiche la météo « Rouge », les règles (IND-1 : 4 (seuil ≥ 3)), les KPI, la prévision de sortie du rouge (13/10/2026, 50 %), le risque (« Sans objet : l'Entité est déjà rouge. ») et l'explication (« commentaire non généré (Palier 1) »). Le lien « ← Carte météo » mène à `/`. Je n'ai pas ouvert le détail depuis le lien d'une ligne de la carte.\"},{\"id\":\"C5\",\"verdict\":\"PASS\",\"preuve\":\"`/entites/ENT-X` affiche « Entité ENT-X absente du Passage affiché. » et un lien « Voir la carte météo » vers `/`. Je n'ai pas cliqué sur ce lien, j'ai seulement lu son href.\"},{\"id\":\"C6\",\"verdict\":\"PASS\",\"preuve\":\"Sur la carte et le détail, les clés de ticket (DEMO-3117 et autres) sont du texte simple, sans lien. Le bandeau indique « les liens Jira sont inactifs ». `/livrables/autre` répond 404.\"}],\"transverses\":[{\"id\":\"T1\",\"verdict\":\"PASS\",\"preuve\":\"Au premier Tab, le focus va sur « Aller au contenu » avec un contour visible (solid 2px). Je n'ai testé que ce premier Tab, pas le parcours complet ni l'activation par Entrée ou Espace.\"},{\"id\":\"T2\",\"verdict\":\"FAIL\",\"preuve\":\"À 390 px la page n'a pas de défilement horizontal (scrollWidth 390 = clientWidth 390). En revanche, sur la capture, le tableau de la carte est coupé à droite : les colonnes Règle principale, Tickets en cause et Détail sont tronquées. La légende est aussi coupée (« ↗ ag… »). Je n'ai pas relevé de conteneur à défilement horizontal pour accéder à ce contenu.\"},{\"id\":\"T3\",\"verdict\":\"PASS\",\"preuve\":\"Je n'ai suivi aucun lien. Les liens lus dans le DOM (/, /entites, /entites/ENT-x, /livrables/*) pointent vers des routes qui répondent (200, ou redirection pour `/entites`). Le seul message d'erreur est la 404 volontaire de `/livrables/autre`, et aucun message vide n'est apparu.\"}],\"synthese\":\"Le filtre météo de la carte ne filtre rien (C2 en échec), et à 390 px le tableau est tronqué (T2) ; le reste est conforme, mais C3 n'a pu être vérifié qu'en partie car aucun livrable n'est absent.\"}",
+ "cout_usd": 0.15566850000000002,
+ "tours": 22,
+ "duree_ms": 48072,
+ "is_error": false,
+ "subtype": "success",
+ "usage": {
+  "input_tokens": 32,
+  "cache_creation_input_tokens": 19048,
+  "cache_read_input_tokens": 350525,
+  "output_tokens": 4436,
+  "output_tokens_details": {
+   "thinking_tokens": 489
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 19048,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1669,
+    "cache_read_input_tokens": 30224,
+    "cache_creation_input_tokens": 421,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 421
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "id": "d04",
+ "run": "d04-080030",
+ "story": "s714",
+ "temoin": false,
+ "statut": "ok",
+ "duree_mur_s": 50.4,
+ "cibles": [
+  "C2"
+ ],
+ "oracle": {
+  "C1_carte": [
+   true,
+   "lignes=10"
+  ],
+  "C2_filtre": [
+   false,
+   "visibles=10 annonce='10 Entités affichées' sans_rechargement=True retour=10"
+  ],
+  "C3_livrables": [
+   true,
+   "liens=2 écarts=[]"
+  ],
+  "C4_detail": [
+   true,
+   "url=http://127.0.0.1:8765/entites/ENT-A"
+  ],
+  "C5_entite_absente": [
+   true,
+   "message='Entité ENT-X absente du Passage affiché.' après clic=http://127.0.0.1:8765/"
+  ],
+  "C6_tickets_texte_404": [
+   true,
+   "liens_ticket=0 autre=404"
+  ],
+  "T2_390px_carte": [
+   true,
+   "scrollWidth=390"
+  ],
+  "T2_390px_detail": [
+   true,
+   "scrollWidth=390"
+  ]
+ },
+ "axe": {
+  "/@1280": [
+   "landmark-unique:1"
+  ],
+  "/entites/ENT-A@1280": [
+   "landmark-unique:1"
+  ],
+  "/@390": [
+   "landmark-unique:1"
+  ],
+  "/entites/ENT-A@390": [
+   "landmark-unique:1"
+  ]
+ }
+}

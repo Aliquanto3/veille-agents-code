@@ -1,0 +1,13 @@
+{
+  "id": "v715",
+  "story": "7.15",
+  "titre": "Lancement de la Chaîne et bouton de mode",
+  "commit": "d58ce6c605399c300561fd3ec313d56cb1042e5e",
+  "base": "48fd534f870a259132cfa20e25081b74237298a6",
+  "tests_caches": [
+    "tests/unit/ui/test_chaine.py"
+  ],
+  "depot": "<user>\\Documents\\GitHub\\usine-migration-jira-demo",
+  "total_ref": 27,
+  "base_passed": 0
+}

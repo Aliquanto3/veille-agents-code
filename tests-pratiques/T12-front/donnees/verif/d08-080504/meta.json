@@ -1,0 +1,93 @@
+{
+ "outils": {
+  "mcp__playwright__browser_navigate": 5,
+  "mcp__playwright__browser_snapshot": 2,
+  "mcp__playwright__browser_evaluate": 9,
+  "mcp__playwright__browser_click": 4,
+  "mcp__playwright__browser_network_requests": 3,
+  "mcp__playwright__browser_network_request": 1,
+  "mcp__playwright__browser_run_code_unsafe": 2,
+  "mcp__playwright__browser_resize": 2,
+  "mcp__playwright__browser_take_screenshot": 1
+ },
+ "refus": 0,
+ "result": "{\"criteres\":[{\"id\":\"C1\",\"verdict\":\"PASS\",\"preuve\":\"/chaine en Mode réel : 10 étapes toutes « En attente », compteur « 0 / 10 », progressbar aria-valuenow=0 (min 0, max 10). #bouton-lancement « Lancer la Chaîne » et #bouton-mode « Passer en Mode repli » sans aria-disabled. L'en-tête de /chaine n'a que la pastille « Mode réel », sans bouton « Lancer la Chaîne » (il apparaît sur /).\"},{\"id\":\"C2\",\"verdict\":\"FAIL\",\"preuve\":\"Le clic envoie POST /api/chaine → 202, puis le sondage GET /api/chaine toutes les secondes, puis un statut « echec ». La réponse JSON contient bien le bandeau : « Échec de la Chaîne hors d'une étape (code 1). », la ligne « Erreur : donnees\\\\journal.jsonl : Journal introuvable » et « Aucun rapport publié par ce lancement… ». Mais le DOM ne l'affiche pas : #erreur-chaine (role=alert) reste vide avec hidden, le role=status #annonce reste vide, le journal reste « Aucun événement… ». Aucune étape n'est marquée « Échec ». Le seul changement visible est le libellé du bouton, devenu « Relancer la Chaîne ».\"},{\"id\":\"C3\",\"verdict\":\"FAIL\",\"preuve\":\"Après / puis retour sur /chaine, #erreur-chaine est toujours vide et hidden, et les 10 étapes restent « En attente ». L'échec n'est donc pas restitué à l'écran. Le bouton affiche « Relancer la Chaîne », seul reste de l'état précédent.\"},{\"id\":\"C4\",\"verdict\":\"PASS\",\"preuve\":\"Au clic sur « Passer en Mode repli », sans rechargement : la pastille de l'en-tête devient « Mode repli » avec « Passage publié · 12/10/2026 22:12 UTC ». Le bandeau #bandeau-repli apparaît : « Mode repli : la démo lit le Passage enregistré demo/repli/passage/… ». Le bouton devient « Revenir au Mode réel ». / affiche la carte du Passage de repli (Date d'arrêté 09/10/2026, Rouge 2, Orange 1, Jaune 6, Vert 1) et le bandeau de repli. « Revenir au Mode réel » rétablit la pastille « Mode réel ». Aucune bascule n'a eu lieu sans clic.\"},{\"id\":\"C5\",\"verdict\":\"PASS\",\"preuve\":\"En Mode repli, #bouton-lancement a aria-disabled=\\\"true\\\" et aria-describedby=\\\"motif-lancement\\\". Le motif relié est : « Mode repli : le lancement de la Chaîne est désactivé. L'UI lit le Passage enregistré demo/repli/passage/ ; désactiver le Mode repli pour lancer la Chaîne. ». Un clic forcé n'a émis aucun POST /api/chaine : seuls des GET sont partis.\"}],\"transverses\":[{\"id\":\"T1\",\"verdict\":\"PASS\",\"preuve\":\"Ordre de Tab logique : Aller au contenu, logo, 7 liens de navigation, Lancer la Chaîne, Mode repli, journal. Le focus a un outline solide de 2px. Entrée/Espace n'ont pas été testés sur les boutons, pour ne pas relancer la Chaîne.\"},{\"id\":\"T2\",\"verdict\":\"PASS\",\"preuve\":\"À 390 px, /chaine a scrollWidth 390 = innerWidth 390, donc pas de défilement horizontal. La capture ne montre ni coupure ni superposition. Fenêtre remise à 1280x800.\"},{\"id\":\"T3\",\"verdict\":\"PASS\",\"preuve\":\"Seuls / et /chaine ont été chargés (200), sans console d'erreur relevée. Aucun message d'erreur n'est affiché sans texte : le bandeau d'erreur vide est hidden. Les liens de la navigation n'ont pas tous été suivis. Le défaut d'affichage de l'échec est compté en C2/C3.\"}],\"synthese\":\"Le lancement, le Mode repli et le blocage du bouton fonctionnent, mais l'échec de la Chaîne n'apparaît jamais à l'écran : l'API renvoie bien le bandeau d'erreur, et l'interface ne l'affiche ni après le clic ni après réouverture.\"}",
+ "cout_usd": 0.1666038,
+ "tours": 30,
+ "duree_ms": 60439,
+ "is_error": false,
+ "subtype": "success",
+ "usage": {
+  "input_tokens": 42,
+  "cache_creation_input_tokens": 17848,
+  "cache_read_input_tokens": 445278,
+  "output_tokens": 5060,
+  "output_tokens_details": {
+   "thinking_tokens": 378
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 17848,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1737,
+    "cache_read_input_tokens": 28560,
+    "cache_creation_input_tokens": 1120,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 1120
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "id": "d08",
+ "run": "d08-080504",
+ "story": "s715",
+ "temoin": false,
+ "statut": "ok",
+ "duree_mur_s": 62.3,
+ "cibles": [
+  "C2"
+ ],
+ "oracle": {
+  "C1_etat_initial": [
+   true,
+   "étapes=10 compteur=True valuenow=0 entete=0"
+  ],
+  "C2_echec": [
+   false,
+   "exception : Locator.wait_for: Timeout 20000ms exceeded."
+  ],
+  "C3_reprise_apres_rechargement": [
+   false,
+   "alertes=0"
+  ],
+  "C4_bascule_mode": [
+   true,
+   "sans_rechargement=True bandeau=True lignes_carte=10"
+  ],
+  "C5_bouton_bloque_en_repli": [
+   true,
+   "aria-disabled=true motif=\"Mode repli : le lancement de la Chaîne est désactivé. L'UI lit le Passage enregi\" échec_avant=0 après=0"
+  ],
+  "T2_390px_chaine": [
+   true,
+   "scrollWidth=390"
+  ]
+ },
+ "axe": {
+  "/chaine@1280": [],
+  "/chaine@390": []
+ }
+}

@@ -1,0 +1,105 @@
+{
+ "outils": {
+  "mcp__playwright__browser_navigate": 6,
+  "mcp__playwright__browser_snapshot": 6,
+  "mcp__playwright__browser_click": 2,
+  "mcp__playwright__browser_evaluate": 8,
+  "mcp__playwright__browser_press_key": 1,
+  "mcp__playwright__browser_console_messages": 1,
+  "mcp__playwright__browser_network_requests": 2,
+  "mcp__playwright__browser_wait_for": 3,
+  "mcp__playwright__browser_run_code_unsafe": 2,
+  "mcp__playwright__browser_resize": 2,
+  "mcp__playwright__browser_take_screenshot": 1
+ },
+ "refus": 0,
+ "result": "{\"criteres\":[{\"id\":\"C1\",\"verdict\":\"PASS\",\"preuve\":\"/agent en Mode repli : aucune zone de saisie libre. Le message de repli est affiché (« En Mode repli, l'Agent ne s'adresse à aucun LLM : choisir une question enregistrée… »). 5 questions enregistrées sont listées en boutons. Après un clic sur « Pourquoi ENT-B est-elle rouge ? », la réponse s'affiche dans une région « Réponse de l'Agent » avec le texte « ENT-B est rouge sur IND-1, qui vaut 9 pour un seuil de 3… », le badge « Contrôle : conforme : chiffres et tickets vérifiés », les outils appelés (get_meteo) et la mention « Mode repli : réponse enregistrée le 13/10/2026 sur le Passage 20261012T221158Z-96c621, rejouée sans LLM ». document.activeElement est le div de la réponse (tabindex=-1).\"},{\"id\":\"C2\",\"verdict\":\"FAIL\",\"preuve\":\"/avant-apres affiche les deux cartes (Reporting manuel 120 min, Chaîne 4,4 s) et le tableau des périodes (Par Rapport quotidien 120 min / 4,4 s ; Cumulé sur 5 Rapports 600 min / 22,2 s). Le segment ne fonctionne pas : en cliquant sur « Cumulé sur 5 Rapports » (testé deux fois, plus Entrée au clavier), aria-pressed reste true sur « Par Rapport quotidien » et false sur « Cumulé », et les cartes restent à 120 min et 4,4 s. Aucune erreur dans la console.\"},{\"id\":\"C3\",\"verdict\":\"PASS\",\"preuve\":\"/pseudonymisation?ticket=DEMO-17 : deux régions role=region avec tabindex=0 (titre-original et titre-pseudo), en texte brut sans mark/em/strong. Le texte est « Dérouler le parcours complet de l'Entité ENT-C… » dans les deux, donc identique pour ce ticket. Le côte à côte n'a pas été vérifié visuellement ; le test de Tab n'a pas été fait sur cet écran. Choisir DEMO-2842 puis « Afficher » mène à ?ticket=DEMO-2842 et affiche « Le traitement de l'Entité ENT-B s'arrête faute de place sur le serveur (dépôts). ». Au premier chargement, l'écran est resté vide plus de 8 s, avec la requête /api/pseudonymisation sans statut. Après rechargement, il s'est affiché normalement.\"},{\"id\":\"C4\",\"verdict\":\"PASS\",\"preuve\":\"/outillage : fiche rendue en HTML avec des h1, h2 (Demandes, Correspondance par brique, Points d'attention par cible, Références) et des h3 (VM Python, Dataiku, Power Platform, Poste seul), 1 tableau et 5 listes. On compte 26 « Oui », 4 « À surveiller » et 2 « Non ». Aucun ✅, ⚠ ou ❌ brut dans le texte.\"}],\"transverses\":[{\"id\":\"T1\",\"verdict\":\"NA\",\"preuve\":\"Tab n'a pas été testé de bout en bout. Sur /avant-apres, Tab a donné le focus à un div de tableau, avec un contour plein de 2px. Le bouton « Cumulé sur 5 Rapports » n'a pas activé le segment, ni au clic ni avec Entrée.\"},{\"id\":\"T2\",\"verdict\":\"PASS\",\"preuve\":\"À 390 px sur /outillage et /avant-apres, scrollWidth = clientWidth = 390 (pas de défilement horizontal). La capture de /avant-apres ne montre ni coupure ni superposition. Fenêtre remise à 1280x800.\"},{\"id\":\"T3\",\"verdict\":\"NA\",\"preuve\":\"Aucun message d'erreur vide observé et les liens du menu pointent vers des routes qui se chargent (/agent, /avant-apres, /pseudonymisation, /outillage). Je n'ai pas suivi tous les liens, donc je ne conclus pas.\"}],\"synthese\":\"/agent, /pseudonymisation et /outillage sont conformes ; /avant-apres échoue parce que le segment de période ne change ni aria-pressed ni les valeurs des deux cartes.\"}",
+ "cout_usd": 0.17187919999999998,
+ "tours": 35,
+ "duree_ms": 69206,
+ "is_error": false,
+ "subtype": "success",
+ "usage": {
+  "input_tokens": 42,
+  "cache_creation_input_tokens": 19037,
+  "cache_read_input_tokens": 414772,
+  "output_tokens": 5417,
+  "output_tokens_details": {
+   "thinking_tokens": 296
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 19037,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1515,
+    "cache_read_input_tokens": 29400,
+    "cache_creation_input_tokens": 997,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 997
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "id": "d14",
+ "run": "d14-081516",
+ "story": "s716",
+ "temoin": false,
+ "statut": "ok",
+ "duree_mur_s": 71.3,
+ "cibles": [
+  "C2"
+ ],
+ "oracle": {
+  "C1_agent_repli": [
+   true,
+   "saisie=0 questions=5 badge='Contrôle : conforme : chiffres et tickets vérifiés' mention=True focus=reponse"
+  ],
+  "C2_avant_apres_segment": [
+   false,
+   "avant=('120 min', '4,4 s') après=('120 min', '4,4 s') pressed=false"
+  ],
+  "C3_pseudonymisation": [
+   true,
+   "focus_atteints=['choix-ticket', 'texte-original', 'texte-pseudo'] côte_à_côte=True autre=DEMO-10 url=seudonymisation?ticket=DEMO-10"
+  ],
+  "C4_outillage": [
+   true,
+   "pastilles=32"
+  ],
+  "T2_390px": [
+   true,
+   "écarts : []"
+  ]
+ },
+ "axe": {
+  "/agent@1280": [],
+  "/avant-apres@1280": [
+   "landmark-unique:1"
+  ],
+  "/pseudonymisation?ticket=DEMO-17@1280": [
+   "landmark-unique:2"
+  ],
+  "/outillage@1280": [],
+  "/agent@390": [],
+  "/avant-apres@390": [
+   "landmark-unique:1"
+  ],
+  "/pseudonymisation?ticket=DEMO-17@390": [
+   "landmark-unique:2"
+  ],
+  "/outillage@390": []
+ }
+}

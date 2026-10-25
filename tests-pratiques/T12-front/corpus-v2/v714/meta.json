@@ -1,0 +1,13 @@
+{
+  "id": "v714",
+  "story": "7.14",
+  "titre": "Carte météo, détail d'une Entité et livrables",
+  "commit": "9eb4728c3d477a54124f08bce23cc8864c989bef",
+  "base": "9e4639c0c68867d5d3becd508ee9df9557946560",
+  "tests_caches": [
+    "tests/unit/ui/test_vues_ecrans.py"
+  ],
+  "depot": "<user>\\Documents\\GitHub\\usine-migration-jira-demo",
+  "total_ref": 33,
+  "base_passed": 0
+}

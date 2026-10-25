@@ -1,0 +1,94 @@
+{
+ "outils": {
+  "mcp__playwright__browser_navigate": 5,
+  "mcp__playwright__browser_snapshot": 1,
+  "mcp__playwright__browser_evaluate": 9,
+  "mcp__playwright__browser_click": 4,
+  "mcp__playwright__browser_wait_for": 3,
+  "mcp__playwright__browser_network_requests": 2,
+  "mcp__playwright__browser_press_key": 1,
+  "mcp__playwright__browser_resize": 2,
+  "mcp__playwright__browser_take_screenshot": 1,
+  "mcp__playwright__browser_run_code_unsafe": 2
+ },
+ "refus": 0,
+ "result": "{\"criteres\":[{\"id\":\"C1\",\"verdict\":\"PASS\",\"preuve\":\"/chaine en Mode réel : 10 étapes (extraction à rendu), toutes « En attente ». Compteur « 0 / 10 ». Le progressbar « Étapes terminées » a aria-valuenow=0 et aria-valuemax=10. « Lancer la Chaîne » et « Passer en Mode repli » sont actifs (pas d'aria-disabled, disabled=false). Pas de bouton « Lancer la Chaîne » dans l'en-tête de /chaine. Il y en a un dans l'en-tête de /, vu en Mode repli.\"},{\"id\":\"C2\",\"verdict\":\"PASS\",\"preuve\":\"Après le clic, un bandeau role=alert affiche : « Échec de la Chaîne hors d'une étape (code 1). Erreur : donnees\\\\journal.jsonl : Journal introuvable. Aucun rapport publié par ce lancement : la carte météo reste celle du dernier Passage publié. » Une seule ligne d'erreur (≤20). Le bouton devient « Relancer la Chaîne ». Aucune étape n'est passée en « Échec » (elles restent « En attente », 0 / 10), ce qui est cohérent avec « hors d'une étape ». Je n'ai pas observé l'état intermédiaire « en cours » ni le sondage chaque seconde, l'échec étant trop rapide. Les requêtes réseau montrent des GET /api/chaine.\"},{\"id\":\"C3\",\"verdict\":\"PASS\",\"preuve\":\"Après / puis retour sur /chaine, le même bandeau d'échec (étape, code 1, erreur, mention d'absence de rapport) est restitué. Le bouton « Relancer la Chaîne » est présent.\"},{\"id\":\"C4\",\"verdict\":\"PASS\",\"preuve\":\"Le clic sur « Passer en Mode repli » envoie POST /api/mode (200). Sans rechargement (marqueur window conservé), la pastille passe à « Mode repli », l'en-tête affiche « Passage publié · 12/10/2026 22:12 UTC » et le bandeau « Mode repli : la démo lit le Passage enregistré demo/repli/passage/… » apparaît. / montre le Passage de repli (Date d'arrêté 09/10/2026, 10 Entités). Après « Revenir au Mode réel », la pastille redevient « Mode réel » et le Passage disparaît de l'en-tête. Aucune bascule sans clic. Le mode repli persiste d'une page à l'autre, côté serveur.\"},{\"id\":\"C5\",\"verdict\":\"PASS\",\"preuve\":\"En Mode repli, le bouton de lancement a aria-disabled=\\\"true\\\" et aria-describedby=\\\"motif-lancement\\\". Le motif est « Mode repli : le lancement de la Chaîne est désactivé. L'UI lit le Passage enregistré demo/repli/passage/ ; désactiver le Mode repli pour lancer la Chaîne. » Playwright refuse le clic (élément non activé). Un .click() forcé en JS ne change rien : aucune requête de lancement n'est partie (aucun POST au-delà de /api/mode) et l'écran est resté identique.\"}],\"transverses\":[{\"id\":\"T1\",\"verdict\":\"PASS\",\"preuve\":\"L'ordre de Tab est logique : Aller au contenu, logo, 6 liens de navigation, « Relancer la Chaîne », « Passer en Mode repli », puis le journal. Chaque élément a un contour de focus de 2px. La touche Espace sur « Passer en Mode repli » a activé le Mode repli. Je n'ai pas testé Entrée.\"},{\"id\":\"T2\",\"verdict\":\"PASS\",\"preuve\":\"À 390 px, scrollWidth = clientWidth = 390 : pas de défilement horizontal. Le bandeau, les boutons et les 10 étapes sont lisibles. Réserve mineure : le libellé « repartition_causes » touche presque le badge « En attente » sur la ligne 7. Fenêtre remise à 1280x800.\"},{\"id\":\"T3\",\"verdict\":\"PASS\",\"preuve\":\"Le bandeau d'erreur a un texte complet. Les liens de navigation visités (/, /chaine) se chargent avec les titres « Carte météo » et « Lancement de la Chaîne ». Je n'ai pas suivi les autres liens de navigation (/entites, /agent, /avant-apres, /pseudonymisation, /outillage).\"}],\"synthese\":\"Tous les critères C1 à C5 sont conformes pour le lancement avec échec, la persistance, la bascule de mode et le blocage en Mode repli. Réserves : la progression en cours et le sondage chaque seconde n'ont pas été observés (échec immédiat), et un libellé de l'étape 7 touche presque son badge à 390 px.\"}",
+ "cout_usd": 0.1395002,
+ "tours": 31,
+ "duree_ms": 78025,
+ "is_error": false,
+ "subtype": "success",
+ "usage": {
+  "input_tokens": 30,
+  "cache_creation_input_tokens": 15345,
+  "cache_read_input_tokens": 283702,
+  "output_tokens": 4969,
+  "output_tokens_details": {
+   "thinking_tokens": 215
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 15345,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1668,
+    "cache_read_input_tokens": 26789,
+    "cache_creation_input_tokens": 388,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 388
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "id": "e08",
+ "run": "e08-083528",
+ "story": "s715",
+ "temoin": false,
+ "statut": "ok",
+ "duree_mur_s": 80.1,
+ "cibles": [
+  "C5"
+ ],
+ "oracle": {
+  "C1_etat_initial": [
+   true,
+   "étapes=10 compteur=True valuenow=0 entete=0"
+  ],
+  "C2_echec": [
+   true,
+   "alerte=\"Échec de la Chaîne hors d'une étape (code 1).\\n\\nErreur : donnees\\\\journal.jsonl : Journal introuvable\\n\\nAucun rapport publié par ce lancement : la carte météo rest\""
+  ],
+  "C3_reprise_apres_rechargement": [
+   true,
+   "alertes=1"
+  ],
+  "C4_bascule_mode": [
+   true,
+   "sans_rechargement=True bandeau=True lignes_carte=10"
+  ],
+  "C5_bouton_bloque_en_repli": [
+   true,
+   "aria-disabled=true motif=\"Mode repli : le lancement de la Chaîne est désactivé. L'UI lit le Passage enregi\" échec_avant=1 après=1"
+  ],
+  "T2_390px_chaine": [
+   true,
+   "scrollWidth=390"
+  ]
+ },
+ "axe": {
+  "/chaine@1280": [],
+  "/chaine@390": []
+ }
+}

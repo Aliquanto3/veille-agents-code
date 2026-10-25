@@ -1,0 +1,104 @@
+{
+ "outils": {
+  "mcp__playwright__browser_navigate": 5,
+  "mcp__playwright__browser_snapshot": 5,
+  "mcp__playwright__browser_click": 2,
+  "mcp__playwright__browser_evaluate": 4,
+  "mcp__playwright__browser_find": 1,
+  "mcp__playwright__browser_take_screenshot": 2,
+  "mcp__playwright__browser_console_messages": 1,
+  "mcp__playwright__browser_network_requests": 2,
+  "mcp__playwright__browser_wait_for": 1,
+  "mcp__playwright__browser_run_code_unsafe": 2,
+  "Read": 1,
+  "mcp__playwright__browser_resize": 2
+ },
+ "refus": 0,
+ "result": "{\"criteres\":[{\"id\":\"C1\",\"verdict\":\"PASS\",\"preuve\":\"/agent en Mode repli : aucune zone de saisie dans le snapshot. Message affiché : « En Mode repli, l'Agent ne s'adresse à aucun LLM : choisir une question enregistrée… ». 5 questions enregistrées sont listées sous forme de boutons. En cliquant « Pourquoi ENT-B est-elle rouge ? », la réponse s'affiche : « ENT-B est rouge sur IND-1, qui vaut 9 pour un seuil de 3. Tickets en cause : DEMO-2842… ». Le badge « Contrôle : conforme : chiffres et tickets vérifiés » est présent, ainsi que les outils appelés (get_meteo). La mention est « Mode repli : réponse enregistrée le 13/10/2026 sur le Passage 20261012T221158Z-96c621, rejouée sans LLM ». Le focus est sur div#reponse (tabindex=-1).\"},{\"id\":\"C2\",\"verdict\":\"PASS\",\"preuve\":\"/avant-apres : les cartes affichent « Reporting manuel 120 min » et « Chaîne 4,4 s ». Le tableau des périodes a 2 lignes : 120 min / 4,4 s et 600 min / 22,2 s. Un clic sur « Cumulé sur 5 Rapports » mène à ?periode=cumul. Les cartes passent à 600 min et 22,2 s. aria-pressed passe de true/false à false/true. Aucun écart ni ratio n'est affiché.\"},{\"id\":\"C3\",\"verdict\":\"PASS\",\"preuve\":\"/pseudonymisation?ticket=DEMO-17 : l'API répond 200 mais l'affichage met quelques secondes (liste de 3547 tickets). Ensuite, deux div role=region tabindex=0 (titre-original, titre-pseudo) affichent le texte brut, sans mark ni span. Dans le parcours Tab, elles sont atteintes après le select et le bouton « Afficher ». Les deux textes sont identiques pour DEMO-17 et DEMO-100, donc la pseudonymisation n'est pas visible sur ces exemples. Choisir DEMO-100 puis « Afficher » mène à ?ticket=DEMO-100 et le texte change (« …(comptabilité). »).\"},{\"id\":\"C4\",\"verdict\":\"PASS\",\"preuve\":\"/outillage : fiche rendue en HTML avec H1, 5 H2 (Demandes, Correspondance par brique, Points d'attention par cible, Références…), 4 H3, 1 tableau et 16 li. Pastilles : « Oui » ×26, « À surveiller » ×4, « Non » ×2. Aucun émoji ✅ ⚠ ❌ dans le texte.\"}],\"transverses\":[{\"id\":\"T1\",\"verdict\":\"PASS\",\"preuve\":\"Sur /pseudonymisation, Tab suit l'ordre : lien d'évitement, logo, Lancer la Chaîne, navigation, select, Afficher, région originale, région pseudonymisée. Le focus est visible (outline solid 2px). Le clic sur un bouton fonctionne. Je n'ai pas testé Entrée ni Espace séparément.\"},{\"id\":\"T2\",\"verdict\":\"PASS\",\"preuve\":\"/avant-apres à 390 px : scrollWidth 390 = innerWidth sur /pseudonymisation. La capture pleine page de /avant-apres ne montre ni défilement horizontal ni contenu coupé. Défaut mineur : la note de bas de page affiche des backticks littéraux (`20261012T221158Z-96c621`, `config/demo.yaml`). La fenêtre est remise à 1280x800.\"},{\"id\":\"T3\",\"verdict\":\"PASS\",\"preuve\":\"Les écrans /agent, /avant-apres, /pseudonymisation et /outillage se chargent (HTTP 200, 0 erreur console). Aucun message d'erreur vide. Je n'ai pas suivi les liens /, /entites et /chaine.\"}],\"synthese\":\"Les 4 écrans respectent les critères en Mode repli. Réserves : l'affichage de /pseudonymisation met plusieurs secondes, les textes original et pseudonymisé sont identiques sur DEMO-17 et DEMO-100, et des backticks littéraux apparaissent sur /avant-apres.\"}",
+ "cout_usd": 0.1619837,
+ "tours": 29,
+ "duree_ms": 78406,
+ "is_error": false,
+ "subtype": "success",
+ "usage": {
+  "input_tokens": 38,
+  "cache_creation_input_tokens": 18563,
+  "cache_read_input_tokens": 387057,
+  "output_tokens": 4895,
+  "output_tokens_details": {
+   "thinking_tokens": 168
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 18563,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1515,
+    "cache_read_input_tokens": 29666,
+    "cache_creation_input_tokens": 257,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 257
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "id": "t716",
+ "run": "t716-084715",
+ "story": "s716",
+ "temoin": true,
+ "statut": "ok",
+ "duree_mur_s": 83.2,
+ "cibles": [],
+ "oracle": {
+  "C1_agent_repli": [
+   true,
+   "saisie=0 questions=5 badge='Contrôle : conforme : chiffres et tickets vérifiés' mention=True focus=reponse"
+  ],
+  "C2_avant_apres_segment": [
+   true,
+   "avant=('120 min', '4,4 s') après=('600 min', '22,2 s') pressed=true"
+  ],
+  "C3_pseudonymisation": [
+   true,
+   "focus_atteints=['choix-ticket', 'texte-original', 'texte-pseudo'] côte_à_côte=True autre=DEMO-10 url=seudonymisation?ticket=DEMO-10"
+  ],
+  "C4_outillage": [
+   true,
+   "pastilles=32"
+  ],
+  "T2_390px": [
+   true,
+   "écarts : []"
+  ]
+ },
+ "axe": {
+  "/agent@1280": [],
+  "/avant-apres@1280": [
+   "landmark-unique:1"
+  ],
+  "/pseudonymisation?ticket=DEMO-17@1280": [
+   "landmark-unique:2"
+  ],
+  "/outillage@1280": [],
+  "/agent@390": [],
+  "/avant-apres@390": [
+   "landmark-unique:1"
+  ],
+  "/pseudonymisation?ticket=DEMO-17@390": [
+   "landmark-unique:2"
+  ],
+  "/outillage@390": []
+ }
+}

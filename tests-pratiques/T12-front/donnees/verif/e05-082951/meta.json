@@ -1,0 +1,112 @@
+{
+ "outils": {
+  "mcp__playwright__browser_navigate": 4,
+  "mcp__playwright__browser_snapshot": 2,
+  "mcp__playwright__browser_evaluate": 7,
+  "mcp__playwright__browser_select_option": 2,
+  "mcp__playwright__browser_find": 1,
+  "mcp__playwright__browser_resize": 2,
+  "mcp__playwright__browser_click": 1,
+  "mcp__playwright__browser_take_screenshot": 1,
+  "mcp__playwright__browser_press_key": 2
+ },
+ "refus": 0,
+ "result": "{\"criteres\":[{\"id\":\"C1\",\"verdict\":\"FAIL\",\"preuve\":\"Sur `/`, les tuiles affichent Rouge 2, Orange 1, Jaune 6, Vert 1. Le tableau compte 10 lignes, graves d'abord (ENT-A, ENT-B rouges, ENT-C orange, puis jaunes, puis ENT-D vert). Les tickets en cause s'affichent en 3 clés puis « +N », par exemple « DEMO-3117, DEMO-3234, DEMO-3316 +1 ». Mais 9 liens « Détail » sur 10 sont faux : « Détail ENT-B », « Détail ENT-C », ENT-E, F, G, H, I, J et ENT-D pointent tous vers /entites/ENT-A. Seul « Détail ENT-A » est correct.\"},{\"id\":\"C2\",\"verdict\":\"PASS\",\"preuve\":\"Sans rechargement (un marqueur JS posé sur window a survécu), le filtre « Rouge » ne laisse visibles que ENT-A et ENT-B. Le role=status indique « 2 Entités affichées ». « Orange » donne « 1 Entité affichée » avec 1 ligne. Revenir à « Toutes » donne « 10 Entités affichées » avec 10 lignes.\"},{\"id\":\"C3\",\"verdict\":\"PASS\",\"preuve\":\"Les deux livrables sont des liens : /livrables/rapport_xlsx (« Rapport quotidien · rapport-2026-10-09.xlsx ») et /livrables/rapport_pptx. Les deux répondent 200 avec Content-Disposition: attachment (filenames rapport-2026-10-09.xlsx et .pptx). Aucun livrable absent n'a pu être observé : le texte « Non généré pour ce Passage » est donc non vérifié, mais les deux livrables sont présents.\"},{\"id\":\"C4\",\"verdict\":\"FAIL\",\"preuve\":\"`/entites` redirige vers /entites/ENT-A, la première Entité du tableau (le code 307 n'a pas pu être lu : fetch manual renvoie opaqueredirect). Le détail d'ENT-A affiche la météo Rouge, la règle IND-1 : 4 (seuil ≥ 3), les KPI, la prévision (sortie du rouge estimée le 13/10/2026), le risque (« Sans objet : l'Entité est déjà rouge. »), l'explication (« commentaire non généré (Palier 1) ») et le lien « ← Carte météo » vers /. Échec : les liens de détail des lignes autres qu'ENT-A mènent tous à ENT-A, donc le détail d'une autre Entité n'est pas atteignable depuis la carte. /entites/ENT-B s'ouvre bien en saisissant l'URL.\"},{\"id\":\"C5\",\"verdict\":\"PASS\",\"preuve\":\"/entites/ENT-X affiche « Entité ENT-X absente du Passage affiché. » et un lien « Voir la carte météo » (href=/). Le clic mène à la carte (/), qui se charge. Une erreur est apparue dans la console à ce chargement, probablement le 404 de l'API ; je ne l'ai pas détaillée.\"},{\"id\":\"C6\",\"verdict\":\"PASS\",\"preuve\":\"En Mode repli, les clés de ticket sont du texte simple : aucun lien dans les cellules de tickets (carte et détail ENT-A). /livrables/autre répond 404 en JSON.\"}],\"transverses\":[{\"id\":\"T1\",\"verdict\":\"PASS\",\"preuve\":\"Le lien « Aller au contenu » est en tête de page. Tab passe d'abord à ce lien, puis au lien de marque, et le focus est visible (outline solide de 2 px). Liens et boutons natifs. Je n'ai pas parcouru toute la page ni testé Entrée ou Espace.\"},{\"id\":\"T2\",\"verdict\":\"PASS\",\"preuve\":\"À 390 px, scrollWidth vaut 390 = innerWidth : la page n'a pas de défilement horizontal. Les tuiles et les livrables sont lisibles. Le tableau défile à l'intérieur de sa propre région, donc ses colonnes de droite (Règle, Tickets, Détail) sont hors écran sans glisser. Fenêtre remise à 1280 x 800.\"},{\"id\":\"T3\",\"verdict\":\"FAIL\",\"preuve\":\"Aucun message d'erreur vide, et les liens suivis se chargent (carte, ENT-X, livrables). Mais les liens de détail de 9 lignes sur 10 mènent à la mauvaise Entité (ENT-A), ce qui compte comme lien erroné.\"}],\"synthese\":\"La carte, le filtre, les livrables, la redirection et la page d'Entité absente fonctionnent, mais les liens « Détail » de 9 lignes sur 10 pointent tous vers /entites/ENT-A, ce qui fait échouer C1 et C4.\"}",
+ "cout_usd": 0.1277148,
+ "tours": 23,
+ "duree_ms": 68560,
+ "is_error": false,
+ "subtype": "success",
+ "usage": {
+  "input_tokens": 24,
+  "cache_creation_input_tokens": 15711,
+  "cache_read_input_tokens": 231528,
+  "output_tokens": 4167,
+  "output_tokens_details": {
+   "thinking_tokens": 225
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 15711,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1697,
+    "cache_read_input_tokens": 26957,
+    "cache_creation_input_tokens": 351,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 351
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "id": "e05",
+ "run": "e05-082951",
+ "story": "s714",
+ "temoin": false,
+ "statut": "ok",
+ "duree_mur_s": 73.1,
+ "cibles": [
+  "C4",
+  "C1"
+ ],
+ "oracle": {
+  "C1_carte": [
+   true,
+   "lignes=10"
+  ],
+  "C2_filtre": [
+   true,
+   "visibles=2 annonce='2 Entités affichées' sans_rechargement=True retour=10"
+  ],
+  "C3_livrables": [
+   true,
+   "liens=2 écarts=[]"
+  ],
+  "C4_detail": [
+   true,
+   "url=http://127.0.0.1:8765/entites/ENT-A"
+  ],
+  "C5_entite_absente": [
+   true,
+   "message='Entité ENT-X absente du Passage affiché.' après clic=http://127.0.0.1:8765/"
+  ],
+  "C6_tickets_texte_404": [
+   true,
+   "liens_ticket=0 autre=404"
+  ],
+  "T2_390px_carte": [
+   true,
+   "scrollWidth=390"
+  ],
+  "T2_390px_detail": [
+   true,
+   "scrollWidth=390"
+  ]
+ },
+ "axe": {
+  "/@1280": [
+   "landmark-unique:1"
+  ],
+  "/entites/ENT-A@1280": [
+   "landmark-unique:1"
+  ],
+  "/@390": [
+   "landmark-unique:1"
+  ],
+  "/entites/ENT-A@390": [
+   "landmark-unique:1"
+  ]
+ }
+}

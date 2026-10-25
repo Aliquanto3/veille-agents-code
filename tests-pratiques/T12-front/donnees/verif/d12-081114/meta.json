@@ -1,0 +1,102 @@
+{
+ "outils": {
+  "mcp__playwright__browser_navigate": 5,
+  "mcp__playwright__browser_snapshot": 3,
+  "mcp__playwright__browser_click": 4,
+  "mcp__playwright__browser_evaluate": 11,
+  "mcp__playwright__browser_take_screenshot": 3,
+  "mcp__playwright__browser_select_option": 1,
+  "mcp__playwright__browser_resize": 2,
+  "mcp__playwright__browser_press_key": 1
+ },
+ "refus": 0,
+ "result": "Je termine les vérifications et je rends le verdict. Les quatre écrans sont parcourus. Je n'ai fait le contrôle 390 px que sur `/pseudonymisation`.\n\n{\"criteres\":[{\"id\":\"C1\",\"verdict\":\"FAIL\",\"preuve\":\"/agent en Mode repli : la textarea #question existe mais son conteneur #formulaire-agent est masqué (0x0), donc pas de saisie libre. Le message de repli est affiché : « En Mode repli, l'Agent ne s'adresse à aucun LLM : choisir une question enregistrée… ». Cinq questions enregistrées sont listées en boutons. Au clic sur « Pourquoi ENT-B est-elle rouge ? » et « Combien d'Anomalies sont ouvertes chez ENT-C ? », la réponse s'affiche avec son texte, le badge « Contrôle : conforme : chiffres et tickets vérifiés » et les outils (get_meteo ; list_anomalies). Le focus passe sur div#reponse (tabindex=-1). ÉCHEC : la mention de rejeu n'apparaît pas sur la réponse. Le paragraphe #reponse-repli reste hidden et vide, et aucun texte « rejeu » ou « rejouée » n'est visible à côté de la réponse.\"},{\"id\":\"C2\",\"verdict\":\"PASS\",\"preuve\":\"/avant-apres : deux cartes, Reporting manuel (déclaré) 120 min et Chaîne (mesuré) 4,4 s. Le tableau des périodes a deux lignes : quotidien 120 min / 4,4 s, cumulé 600 min / 22,2 s. Un clic sur « Cumulé sur 5 Rapports » mène à ?periode=cumul. Les cartes affichent alors 600 min et 22,2 s. aria-pressed passe à true sur Cumulé et à false sur Par Rapport quotidien. Aucun écart ni ratio n'est affiché.\"},{\"id\":\"C3\",\"verdict\":\"PASS\",\"preuve\":\"/pseudonymisation?ticket=DEMO-17 : #texte-original et #texte-pseudo (DIV tabindex=0) affichent le texte brut, sans <mark>. Ils sont côte à côte (empilés à 390 px). Pour DEMO-17, les deux affichent « Dérouler le parcours complet de l'Entité ENT-C et comparer aux attendus (paiements). ». J'ai choisi DEMO-10 dans la liste puis cliqué « Afficher ». L'URL devient ?ticket=DEMO-10 et « Ticket : DEMO-10 » s'affiche avec son texte (ENT-F, comptabilité). Je n'ai pas testé Tab sur les deux régions, seulement vérifié leur tabindex=0. Au premier chargement, une capture prise juste après la navigation n'a montré que le bandeau. Le contenu s'est affiché ensuite.\"},{\"id\":\"C4\",\"verdict\":\"PASS\",\"preuve\":\"/outillage : la fiche est rendue en HTML, avec les titres « Demandes, par ordre de priorité », « Correspondance par brique », « Points d'attention par cible », VM Python, Dataiku, Power Platform, Poste seul et Références. Elle contient 1 tableau et 5 listes. J'ai compté 26 « Oui », 4 « À surveiller » et 2 « Non ». Aucun émoji ✅ ⚠ ❌ dans le texte de la page.\"}],\"transverses\":[{\"id\":\"T1\",\"verdict\":\"PASS\",\"preuve\":\"Les boutons de question et le bouton « Afficher » s'activent. Après la réponse de l'Agent, Tab ramène au lien « Aller au contenu », qui a un contour de 2 px. L'ordre logique n'a été vérifié que partiellement : un seul Tab, pas de parcours complet.\"},{\"id\":\"T2\",\"verdict\":\"PASS\",\"preuve\":\"/pseudonymisation à 390x844 : scrollWidth 390 = clientWidth 390, donc pas de défilement horizontal. La capture pleine page montre les blocs Original et Version pseudonymisée empilés, sans coupure ni superposition. Fenêtre remise à 1280x800. Non vérifié à 390 px : /agent, /avant-apres et /outillage.\"},{\"id\":\"T3\",\"verdict\":\"PASS\",\"preuve\":\"Les quatre écrans (/agent, /avant-apres, /pseudonymisation, /outillage) se chargent. Aucun message d'erreur vide n'a été observé. Je n'ai pas suivi les autres liens de la navigation.\"}],\"synthese\":\"Trois critères sur quatre passent, mais C1 échoue : la réponse de l'Agent affichée en Mode repli ne porte aucune mention de rejeu (#reponse-repli reste masqué et vide).\"}",
+ "cout_usd": 0.1820564,
+ "tours": 31,
+ "duree_ms": 61961,
+ "is_error": false,
+ "subtype": "success",
+ "usage": {
+  "input_tokens": 44,
+  "cache_creation_input_tokens": 20337,
+  "cache_read_input_tokens": 447804,
+  "output_tokens": 5584,
+  "output_tokens_details": {
+   "thinking_tokens": 612
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 20337,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1827,
+    "cache_read_input_tokens": 31037,
+    "cache_creation_input_tokens": 660,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 660
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "id": "d12",
+ "run": "d12-081114",
+ "story": "s716",
+ "temoin": false,
+ "statut": "ok",
+ "duree_mur_s": 64.8,
+ "cibles": [
+  "C1"
+ ],
+ "oracle": {
+  "C1_agent_repli": [
+   false,
+   "saisie=0 questions=5 badge='Contrôle : conforme : chiffres et tickets vérifiés' mention=False focus=reponse"
+  ],
+  "C2_avant_apres_segment": [
+   true,
+   "avant=('120 min', '4,4 s') après=('600 min', '22,2 s') pressed=true"
+  ],
+  "C3_pseudonymisation": [
+   true,
+   "focus_atteints=['choix-ticket', 'texte-original', 'texte-pseudo'] côte_à_côte=True autre=DEMO-10 url=seudonymisation?ticket=DEMO-10"
+  ],
+  "C4_outillage": [
+   true,
+   "pastilles=32"
+  ],
+  "T2_390px": [
+   true,
+   "écarts : []"
+  ]
+ },
+ "axe": {
+  "/agent@1280": [],
+  "/avant-apres@1280": [
+   "landmark-unique:1"
+  ],
+  "/pseudonymisation?ticket=DEMO-17@1280": [
+   "landmark-unique:2"
+  ],
+  "/outillage@1280": [],
+  "/agent@390": [],
+  "/avant-apres@390": [
+   "landmark-unique:1"
+  ],
+  "/pseudonymisation?ticket=DEMO-17@390": [
+   "landmark-unique:2"
+  ],
+  "/outillage@390": []
+ }
+}

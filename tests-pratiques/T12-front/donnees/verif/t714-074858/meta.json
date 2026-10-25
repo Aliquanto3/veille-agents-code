@@ -1,0 +1,110 @@
+{
+ "outils": {
+  "mcp__playwright__browser_navigate": 3,
+  "mcp__playwright__browser_snapshot": 2,
+  "mcp__playwright__browser_select_option": 1,
+  "mcp__playwright__browser_evaluate": 6,
+  "mcp__playwright__browser_console_messages": 1,
+  "mcp__playwright__browser_find": 1,
+  "mcp__playwright__browser_click": 1,
+  "mcp__playwright__browser_press_key": 2,
+  "mcp__playwright__browser_resize": 2,
+  "mcp__playwright__browser_take_screenshot": 1
+ },
+ "refus": 0,
+ "result": "{\"criteres\":[{\"id\":\"C1\",\"verdict\":\"PASS\",\"preuve\":\"/ affiche les tuiles Rouge 2, Orange 1, Jaune 6, Vert 1. Le tableau compte 10 lignes, une par Entité, triées ENT-A et ENT-B (rouges), ENT-C (orange), ENT-E à ENT-J (jaunes), ENT-D (vert) en dernier. Les tickets sont limités à 3 puis « +N », par exemple « DEMO-3117, DEMO-3234, DEMO-3316 +1 ». Chaque ligne a un lien « Détail ENT-x » vers /entites/ENT-x.\"},{\"id\":\"C2\",\"verdict\":\"PASS\",\"preuve\":\"Avec « Rouge », 2 lignes visibles et le statut « 2 Entités affichées ». Orange et Vert donnent 1 ligne et « 1 Entité affichée ». Avec « Toutes », 10 lignes et « 10 Entités affichées ». L'URL reste / et un marqueur JS posé dans la page a survécu, donc il n'y a pas eu de rechargement.\"},{\"id\":\"C3\",\"verdict\":\"PASS\",\"preuve\":\"Les deux livrables sont des liens (/livrables/rapport_xlsx et /livrables/rapport_pptx). Un fetch renvoie 200 avec Content-Disposition attachment; filename=\\\"rapport-2026-10-09.xlsx\\\" pour le premier et \\\"rapport-2026-10-09.pptx\\\" pour le second. Le cas d'un livrable absent (« Non généré pour ce Passage ») n'était pas observable, car les deux livrables sont présents. Je n'ai pas non plus cliqué sur les liens dans le navigateur, je les ai testés par fetch.\"},{\"id\":\"C4\",\"verdict\":\"PASS\",\"preuve\":\"/entites redirige vers /entites/ENT-A, la première Entité du tableau. Le fetch en redirect:manual a donné une réponse opaque, donc je n'ai pas pu lire le code 307. Le détail d'ENT-A affiche la météo Rouge, les règles (IND-1 : 4 (seuil ≥ 3)), les KPI clés, la prévision de sortie du rouge (13/10/2026, probabilité 50 %), le risque (« Sans objet : l'Entité est déjà rouge. »), l'explication (« commentaire non généré (Palier 1) ») et le lien « ← Carte météo » vers /. Je n'ai pas cliqué moi-même sur le lien de détail d'une ligne de la carte.\"},{\"id\":\"C5\",\"verdict\":\"PASS\",\"preuve\":\"/entites/ENT-X affiche « Entité ENT-X absente du Passage affiché. » et un lien « Voir la carte météo » vers /. Un clic sur ce lien charge bien la carte.\"},{\"id\":\"C6\",\"verdict\":\"PASS\",\"preuve\":\"Sur la carte et sur le détail ENT-A, les clés DEMO-xxxx sont du texte simple, sans lien. Le « +N » est un bouton sur le détail. Le bandeau indique « Mode repli ». /livrables/autre répond 404 en application/json.\"}],\"transverses\":[{\"id\":\"T1\",\"verdict\":\"PASS\",\"preuve\":\"Sur la carte, Tab va au lien d'évitement puis au logo, dans un ordre logique. Le logo a un contour visible de 2px (solid). Je n'ai pas testé Entrée ou Espace pour activer un bouton ou un lien.\"},{\"id\":\"T2\",\"verdict\":\"PASS\",\"preuve\":\"À 390 px, scrollWidth vaut 390 et innerWidth 390, donc la page ne défile pas horizontalement. Le tableau défile dans son conteneur (overflow-x auto, 528 px de contenu pour 316 px visibles). Les colonnes Règle et Tickets sont donc hors champ sans défilement du conteneur, et la légende du tableau est tronquée. Je n'ai vu aucune superposition.\"},{\"id\":\"T3\",\"verdict\":\"PASS\",\"preuve\":\"Aucun message d'erreur vide. Les liens suivis aboutissent à des pages qui se chargent (/entites vers /entites/ENT-A, le lien de retour vers la carte). La seule erreur console est le 404 voulu de /livrables/autre. Je n'ai pas suivi les autres liens du menu.\"}],\"synthese\":\"La carte, le filtre, les livrables, le détail d'Entité, le cas d'Entité absente et le Mode repli sont conformes. Le cas d'un livrable absent n'a pas pu être observé, et à 390 px les colonnes Règle et Tickets du tableau sont hors champ tant qu'on ne fait pas défiler le tableau.\"}",
+ "cout_usd": 0.1633981,
+ "tours": 21,
+ "duree_ms": 36839,
+ "is_error": false,
+ "subtype": "success",
+ "usage": {
+  "input_tokens": 22,
+  "cache_creation_input_tokens": 26398,
+  "cache_read_input_tokens": 196021,
+  "output_tokens": 3816,
+  "output_tokens_details": {
+   "thinking_tokens": 250
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 26398,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1703,
+    "cache_read_input_tokens": 25797,
+    "cache_creation_input_tokens": 601,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 601
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "id": "t714",
+ "run": "t714-074858",
+ "story": "s714",
+ "temoin": true,
+ "statut": "ok",
+ "duree_mur_s": 39.9,
+ "cibles": [],
+ "oracle": {
+  "C1_carte": [
+   true,
+   "lignes=10"
+  ],
+  "C2_filtre": [
+   true,
+   "visibles=2 annonce='2 Entités affichées' sans_rechargement=True retour=10"
+  ],
+  "C3_livrables": [
+   true,
+   "liens=2 écarts=[]"
+  ],
+  "C4_detail": [
+   true,
+   "url=http://127.0.0.1:8765/entites/ENT-A"
+  ],
+  "C5_entite_absente": [
+   true,
+   "message='Entité ENT-X absente du Passage affiché.' après clic=http://127.0.0.1:8765/"
+  ],
+  "C6_tickets_texte_404": [
+   true,
+   "liens_ticket=0 autre=404"
+  ],
+  "T2_390px_carte": [
+   true,
+   "scrollWidth=390"
+  ],
+  "T2_390px_detail": [
+   true,
+   "scrollWidth=390"
+  ]
+ },
+ "axe": {
+  "/@1280": [
+   "landmark-unique:1"
+  ],
+  "/entites/ENT-A@1280": [
+   "landmark-unique:1"
+  ],
+  "/@390": [
+   "landmark-unique:1"
+  ],
+  "/entites/ENT-A@390": [
+   "landmark-unique:1"
+  ]
+ }
+}

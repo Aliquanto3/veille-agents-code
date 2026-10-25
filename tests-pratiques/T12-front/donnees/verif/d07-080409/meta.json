@@ -1,0 +1,112 @@
+{
+ "outils": {
+  "mcp__playwright__browser_navigate": 3,
+  "mcp__playwright__browser_snapshot": 2,
+  "mcp__playwright__browser_select_option": 2,
+  "mcp__playwright__browser_evaluate": 5,
+  "mcp__playwright__browser_console_messages": 1,
+  "mcp__playwright__browser_find": 1,
+  "mcp__playwright__browser_click": 1,
+  "mcp__playwright__browser_resize": 2,
+  "mcp__playwright__browser_take_screenshot": 1,
+  "mcp__playwright__browser_press_key": 2
+ },
+ "refus": 0,
+ "result": "{\"criteres\":[{\"id\":\"C1\",\"verdict\":\"PASS\",\"preuve\":\"/ affiche 4 tuiles (Rouge 2, Orange 1, Jaune 6, Vert 1) et un tableau de 10 lignes, grave d'abord (ENT-A, ENT-B rouges, ENT-C orange, ENT-E à ENT-J jaunes, ENT-D vert). Chaque ligne a ses tickets (3 puis « +N », par ex. « DEMO-3117, DEMO-3234, DEMO-3316 +1 ») et un lien « Détail ENT-x » vers /entites/ENT-x.\"},{\"id\":\"C2\",\"verdict\":\"FAIL\",\"preuve\":\"Le filtre « Rouge » ramène le tableau à 2 lignes visibles sans rechargement (une seule entrée de navigation). En revanche la région role=status affiche le texte brut « {n} Entités affichées » avant et après le filtre, et aussi après le retour à « Toutes » (10 lignes de nouveau visibles). Le nombre n'est jamais remplacé, donc pas d'annonce « 2 Entités affichées ».\"},{\"id\":\"C3\",\"verdict\":\"PASS\",\"preuve\":\"La section « Livrables du Passage » contient deux liens, /livrables/rapport_xlsx et /livrables/rapport_pptx. Les deux répondent 200 avec Content-Disposition: attachment (filename=\\\"rapport-2026-10-09.xlsx\\\" et \\\".pptx\\\"). Les deux livrables étaient présents, donc le cas « Non généré pour ce Passage » n'a pas pu être observé pour un livrable absent.\"},{\"id\":\"C4\",\"verdict\":\"PASS\",\"preuve\":\"GET /entites redirige vers http://127.0.0.1:8765/entites/ENT-A, la première ligne du tableau. Le détail d'ENT-A affiche la météo Rouge, les règles (IND-1 : 4 (seuil ≥ 3)), 8 KPI, la prévision (sortie estimée le 13/10/2026), le risque (« Sans objet : l'Entité est déjà rouge. »), l'explication (« commentaire non généré (Palier 1) ») et le lien « ← Carte météo » vers /.\"},{\"id\":\"C5\",\"verdict\":\"PASS\",\"preuve\":\"/entites/ENT-X affiche « Entité ENT-X absente du Passage affiché. » et un lien « Voir la carte météo » (/). Le clic charge bien la carte.\"},{\"id\":\"C6\",\"verdict\":\"PASS\",\"preuve\":\"En Mode repli, les clés DEMO-xxxx sont du texte simple (aucun lien dans les cellules de tickets, ni sur la carte ni dans le détail d'ENT-A). /livrables/autre répond 404.\"}],\"transverses\":[{\"id\":\"T1\",\"verdict\":\"PASS\",\"preuve\":\"Contrôle partiel : après deux Tab, le focus est sur le lien d'en-tête « Usine de migration », avec un contour visible de 2px, dans un ordre logique (le lien « Aller au contenu » précède). Je n'ai pas testé Entrée ni Espace.\"},{\"id\":\"T2\",\"verdict\":\"PASS\",\"preuve\":\"À 390x844 sur /, scrollWidth = clientWidth = 390 (pas de défilement horizontal). La capture montre l'en-tête, la navigation et les tuiles sans coupure ni chevauchement. Seul le haut de la page a été capturé, pas le tableau ni le détail. Fenêtre remise à 1280x800.\"},{\"id\":\"T3\",\"verdict\":\"PASS\",\"preuve\":\"Les liens suivis (Voir la carte météo, redirection /entites, liens de livrables) aboutissent à des pages qui se chargent. Aucun message d'erreur vide. La seule erreur console est le 404 volontaire de /livrables/autre.\"}],\"synthese\":\"La carte, les livrables, le détail d'Entité, l'Entité absente et le Mode repli sont conformes, mais le C2 échoue : la région role=status reste figée sur le texte brut « {n} Entités affichées » au lieu d'annoncer le nombre réel.\"}",
+ "cout_usd": 0.10532119999999999,
+ "tours": 21,
+ "duree_ms": 28081,
+ "is_error": false,
+ "subtype": "success",
+ "usage": {
+  "input_tokens": 18,
+  "cache_creation_input_tokens": 13924,
+  "cache_read_input_tokens": 159192,
+  "output_tokens": 3367,
+  "output_tokens_details": {
+   "thinking_tokens": 156
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 13924,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1427,
+    "cache_read_input_tokens": 24533,
+    "cache_creation_input_tokens": 988,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 988
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "id": "d07",
+ "run": "d07-080409",
+ "story": "s714",
+ "temoin": false,
+ "statut": "ok",
+ "duree_mur_s": 30.5,
+ "cibles": [
+  "C2"
+ ],
+ "oracle": {
+  "C1_carte": [
+   true,
+   "lignes=10"
+  ],
+  "C2_filtre": [
+   false,
+   "visibles=2 annonce='{n} Entités affichées' sans_rechargement=True retour=10"
+  ],
+  "C3_livrables": [
+   true,
+   "liens=2 écarts=[]"
+  ],
+  "C4_detail": [
+   true,
+   "url=http://127.0.0.1:8765/entites/ENT-A"
+  ],
+  "C5_entite_absente": [
+   true,
+   "message='Entité ENT-X absente du Passage affiché.' après clic=http://127.0.0.1:8765/"
+  ],
+  "C6_tickets_texte_404": [
+   true,
+   "liens_ticket=0 autre=404"
+  ],
+  "T2_390px_carte": [
+   true,
+   "scrollWidth=390"
+  ],
+  "T2_390px_detail": [
+   true,
+   "scrollWidth=390"
+  ]
+ },
+ "axe": {
+  "/@1280": [
+   "landmark-unique:1"
+  ],
+  "/entites/ENT-A@1280": [
+   "landmark-unique:1"
+  ],
+  "/@390": [
+   "landmark-unique:1"
+  ],
+  "/entites/ENT-A@390": [
+   "landmark-unique:1"
+  ]
+ }
+}

@@ -1,0 +1,927 @@
+{
+ "versions": {
+  "d01": {
+   "story": "s713",
+   "temoin": false,
+   "cout": 0.08794609999999999,
+   "duree_s": 29.8,
+   "tours": 15,
+   "appels_outils": 14,
+   "statut": "ok",
+   "rapport_json_ok": true,
+   "fails_agent": [
+    "C3"
+   ],
+   "ko_oracle": [
+    "C3_repli"
+   ],
+   "axe_nouveaux": {},
+   "pytest_code": 0,
+   "cibles": [
+    "C3"
+   ],
+   "detecte_agent": true,
+   "visible_oracle": true,
+   "detecte_axe": false,
+   "pytest_voit": false,
+   "faux_positifs": [],
+   "principal": true
+  },
+  "d02": {
+   "story": "s713",
+   "temoin": false,
+   "cout": 0.10417000000000001,
+   "duree_s": 40.2,
+   "tours": 14,
+   "appels_outils": 13,
+   "statut": "ok",
+   "rapport_json_ok": true,
+   "fails_agent": [
+    "C4",
+    "T1"
+   ],
+   "ko_oracle": [
+    "C4_lien_evitement"
+   ],
+   "axe_nouveaux": {},
+   "pytest_code": 0,
+   "cibles": [
+    "C4"
+   ],
+   "detecte_agent": true,
+   "visible_oracle": true,
+   "detecte_axe": false,
+   "pytest_voit": false,
+   "faux_positifs": [
+    "T1"
+   ],
+   "principal": true
+  },
+  "d03": {
+   "story": "s713",
+   "temoin": false,
+   "cout": 0.0668001,
+   "duree_s": 25.0,
+   "tours": 5,
+   "appels_outils": 4,
+   "statut": "ok",
+   "rapport_json_ok": true,
+   "fails_agent": [
+    "T2"
+   ],
+   "ko_oracle": [
+    "T2_390px_accueil",
+    "T2_390px_chaine"
+   ],
+   "axe_nouveaux": {},
+   "pytest_code": 0,
+   "cibles": [
+    "T2"
+   ],
+   "detecte_agent": true,
+   "visible_oracle": true,
+   "detecte_axe": false,
+   "pytest_voit": false,
+   "faux_positifs": [],
+   "principal": true
+  },
+  "d04": {
+   "story": "s714",
+   "temoin": false,
+   "cout": 0.15566850000000002,
+   "duree_s": 50.4,
+   "tours": 22,
+   "appels_outils": 21,
+   "statut": "ok",
+   "rapport_json_ok": true,
+   "fails_agent": [
+    "C2",
+    "T2"
+   ],
+   "ko_oracle": [
+    "C2_filtre"
+   ],
+   "axe_nouveaux": {},
+   "pytest_code": 0,
+   "cibles": [
+    "C2"
+   ],
+   "detecte_agent": true,
+   "visible_oracle": true,
+   "detecte_axe": false,
+   "pytest_voit": false,
+   "faux_positifs": [
+    "T2"
+   ],
+   "principal": true
+  },
+  "d05": {
+   "story": "s714",
+   "temoin": false,
+   "cout": 0.14006629999999998,
+   "duree_s": 42.2,
+   "tours": 27,
+   "appels_outils": 26,
+   "statut": "ok",
+   "rapport_json_ok": true,
+   "fails_agent": [
+    "C3",
+    "T3"
+   ],
+   "ko_oracle": [
+    "C3_livrables"
+   ],
+   "axe_nouveaux": {},
+   "pytest_code": 0,
+   "cibles": [
+    "C3"
+   ],
+   "detecte_agent": true,
+   "visible_oracle": true,
+   "detecte_axe": false,
+   "pytest_voit": false,
+   "faux_positifs": [
+    "T3"
+   ],
+   "principal": true
+  },
+  "d06": {
+   "story": "s714",
+   "temoin": false,
+   "cout": 0.14159980000000003,
+   "duree_s": 51.6,
+   "tours": 27,
+   "appels_outils": 26,
+   "statut": "ok",
+   "rapport_json_ok": true,
+   "fails_agent": [
+    "C5",
+    "T3"
+   ],
+   "ko_oracle": [
+    "C5_entite_absente"
+   ],
+   "axe_nouveaux": {},
+   "pytest_code": 0,
+   "cibles": [
+    "C5"
+   ],
+   "detecte_agent": true,
+   "visible_oracle": true,
+   "detecte_axe": false,
+   "pytest_voit": false,
+   "faux_positifs": [
+    "T3"
+   ],
+   "principal": true
+  },
+  "d07": {
+   "story": "s714",
+   "temoin": false,
+   "cout": 0.10532119999999999,
+   "duree_s": 30.5,
+   "tours": 21,
+   "appels_outils": 20,
+   "statut": "ok",
+   "rapport_json_ok": true,
+   "fails_agent": [
+    "C2"
+   ],
+   "ko_oracle": [
+    "C2_filtre"
+   ],
+   "axe_nouveaux": {},
+   "pytest_code": 0,
+   "cibles": [
+    "C2"
+   ],
+   "detecte_agent": true,
+   "visible_oracle": true,
+   "detecte_axe": false,
+   "pytest_voit": false,
+   "faux_positifs": [],
+   "principal": true
+  },
+  "d08": {
+   "story": "s715",
+   "temoin": false,
+   "cout": 0.1666038,
+   "duree_s": 62.3,
+   "tours": 30,
+   "appels_outils": 29,
+   "statut": "ok",
+   "rapport_json_ok": true,
+   "fails_agent": [
+    "C2",
+    "C3"
+   ],
+   "ko_oracle": [
+    "C2_echec",
+    "C3_reprise_apres_rechargement"
+   ],
+   "axe_nouveaux": {},
+   "pytest_code": 0,
+   "cibles": [
+    "C2"
+   ],
+   "detecte_agent": true,
+   "visible_oracle": true,
+   "detecte_axe": false,
+   "pytest_voit": false,
+   "faux_positifs": [
+    "C3"
+   ],
+   "principal": true
+  },
+  "d09": {
+   "story": "s715",
+   "temoin": false,
+   "cout": 0.1418476,
+   "duree_s": 62.1,
+   "tours": 29,
+   "appels_outils": 28,
+   "statut": "ok",
+   "rapport_json_ok": true,
+   "fails_agent": [
+    "T2"
+   ],
+   "ko_oracle": [
+    "C2_echec",
+    "C3_reprise_apres_rechargement",
+    "C4_bascule_mode",
+    "C5_bouton_bloque_en_repli"
+   ],
+   "axe_nouveaux": {},
+   "pytest_code": 0,
+   "cibles": [
+    "C4"
+   ],
+   "detecte_agent": false,
+   "visible_oracle": true,
+   "detecte_axe": false,
+   "pytest_voit": false,
+   "faux_positifs": [
+    "T2"
+   ],
+   "principal": true
+  },
+  "d10": {
+   "story": "s715",
+   "temoin": false,
+   "cout": 0.15083850000000001,
+   "duree_s": 69.5,
+   "tours": 28,
+   "appels_outils": 27,
+   "statut": "ok",
+   "rapport_json_ok": true,
+   "fails_agent": [
+    "C3"
+   ],
+   "ko_oracle": [
+    "C3_reprise_apres_rechargement"
+   ],
+   "axe_nouveaux": {},
+   "pytest_code": 0,
+   "cibles": [
+    "C3"
+   ],
+   "detecte_agent": true,
+   "visible_oracle": true,
+   "detecte_axe": false,
+   "pytest_voit": false,
+   "faux_positifs": [],
+   "principal": true
+  },
+  "d11": {
+   "story": "s715",
+   "temoin": false,
+   "cout": 0.1332321,
+   "duree_s": 48.9,
+   "tours": 28,
+   "appels_outils": 27,
+   "statut": "ok",
+   "rapport_json_ok": true,
+   "fails_agent": [
+    "C5",
+    "T2"
+   ],
+   "ko_oracle": [
+    "C5_bouton_bloque_en_repli"
+   ],
+   "axe_nouveaux": {},
+   "pytest_code": 0,
+   "cibles": [
+    "C5"
+   ],
+   "detecte_agent": true,
+   "visible_oracle": true,
+   "detecte_axe": false,
+   "pytest_voit": false,
+   "faux_positifs": [
+    "T2"
+   ],
+   "principal": true
+  },
+  "d12": {
+   "story": "s716",
+   "temoin": false,
+   "cout": 0.1820564,
+   "duree_s": 64.8,
+   "tours": 31,
+   "appels_outils": 30,
+   "statut": "ok",
+   "rapport_json_ok": true,
+   "fails_agent": [
+    "C1"
+   ],
+   "ko_oracle": [
+    "C1_agent_repli"
+   ],
+   "axe_nouveaux": {},
+   "pytest_code": 0,
+   "cibles": [
+    "C1"
+   ],
+   "detecte_agent": true,
+   "visible_oracle": true,
+   "detecte_axe": false,
+   "pytest_voit": false,
+   "faux_positifs": [],
+   "principal": true
+  },
+  "d13": {
+   "story": "s714",
+   "temoin": false,
+   "cout": 0.1463192,
+   "duree_s": 44.8,
+   "tours": 28,
+   "appels_outils": 27,
+   "statut": "ok",
+   "rapport_json_ok": true,
+   "fails_agent": [
+    "T1"
+   ],
+   "ko_oracle": [
+    "C3b_livrables_clavier"
+   ],
+   "axe_nouveaux": {},
+   "pytest_code": 0,
+   "cibles": [
+    "C3",
+    "T1"
+   ],
+   "detecte_agent": true,
+   "visible_oracle": true,
+   "detecte_axe": false,
+   "pytest_voit": false,
+   "faux_positifs": [],
+   "principal": true
+  },
+  "d14": {
+   "story": "s716",
+   "temoin": false,
+   "cout": 0.17187919999999998,
+   "duree_s": 71.3,
+   "tours": 35,
+   "appels_outils": 34,
+   "statut": "ok",
+   "rapport_json_ok": true,
+   "fails_agent": [
+    "C2"
+   ],
+   "ko_oracle": [
+    "C2_avant_apres_segment"
+   ],
+   "axe_nouveaux": {},
+   "pytest_code": 0,
+   "cibles": [
+    "C2"
+   ],
+   "detecte_agent": true,
+   "visible_oracle": true,
+   "detecte_axe": false,
+   "pytest_voit": false,
+   "faux_positifs": [],
+   "principal": true
+  },
+  "d15": {
+   "story": "s716",
+   "temoin": false,
+   "cout": 0.1632519,
+   "duree_s": 63.2,
+   "tours": 32,
+   "appels_outils": 31,
+   "statut": "ok",
+   "rapport_json_ok": true,
+   "fails_agent": [],
+   "ko_oracle": [
+    "T2_390px"
+   ],
+   "axe_nouveaux": {},
+   "pytest_code": 0,
+   "cibles": [
+    "T2",
+    "C3",
+    "C2"
+   ],
+   "detecte_agent": false,
+   "visible_oracle": true,
+   "detecte_axe": false,
+   "pytest_voit": false,
+   "faux_positifs": [],
+   "principal": true
+  },
+  "d16": {
+   "story": "s716",
+   "temoin": false,
+   "cout": 0.29869880000000004,
+   "duree_s": 57.3,
+   "tours": 32,
+   "appels_outils": 31,
+   "statut": "ok",
+   "rapport_json_ok": true,
+   "fails_agent": [
+    "C3",
+    "T3"
+   ],
+   "ko_oracle": [
+    "C3_pseudonymisation"
+   ],
+   "axe_nouveaux": {},
+   "pytest_code": 0,
+   "cibles": [
+    "C3"
+   ],
+   "detecte_agent": true,
+   "visible_oracle": true,
+   "detecte_axe": false,
+   "pytest_voit": false,
+   "faux_positifs": [
+    "T3"
+   ],
+   "principal": true
+  },
+  "e01": {
+   "story": "s713",
+   "temoin": false,
+   "cout": 0.07058249999999999,
+   "duree_s": 28.9,
+   "tours": 11,
+   "appels_outils": 10,
+   "statut": "ok",
+   "rapport_json_ok": true,
+   "fails_agent": [
+    "C3"
+   ],
+   "ko_oracle": [
+    "C3_repli"
+   ],
+   "axe_nouveaux": {},
+   "pytest_code": 0,
+   "cibles": [
+    "C3"
+   ],
+   "detecte_agent": true,
+   "visible_oracle": true,
+   "detecte_axe": false,
+   "pytest_voit": false,
+   "faux_positifs": [],
+   "principal": true
+  },
+  "e02": {
+   "story": "s713",
+   "temoin": false,
+   "cout": 0.0721099,
+   "duree_s": 44.9,
+   "tours": 5,
+   "appels_outils": 4,
+   "statut": "ok",
+   "rapport_json_ok": true,
+   "fails_agent": [
+    "C2"
+   ],
+   "ko_oracle": [
+    "C2_cadre"
+   ],
+   "axe_nouveaux": {},
+   "pytest_code": 0,
+   "cibles": [
+    "C2"
+   ],
+   "detecte_agent": true,
+   "visible_oracle": true,
+   "detecte_axe": false,
+   "pytest_voit": false,
+   "faux_positifs": [],
+   "principal": true
+  },
+  "e04": {
+   "story": "s714",
+   "temoin": false,
+   "cout": 0.1482979,
+   "duree_s": 185.2,
+   "tours": 24,
+   "appels_outils": 23,
+   "statut": "ok",
+   "rapport_json_ok": true,
+   "fails_agent": [
+    "C1"
+   ],
+   "ko_oracle": [
+    "C1b_tuiles_coherentes"
+   ],
+   "axe_nouveaux": {},
+   "pytest_code": 0,
+   "cibles": [
+    "C1"
+   ],
+   "detecte_agent": true,
+   "visible_oracle": true,
+   "detecte_axe": false,
+   "pytest_voit": false,
+   "faux_positifs": [],
+   "principal": true
+  },
+  "e05": {
+   "story": "s714",
+   "temoin": false,
+   "cout": 0.1277148,
+   "duree_s": 73.1,
+   "tours": 23,
+   "appels_outils": 22,
+   "statut": "ok",
+   "rapport_json_ok": true,
+   "fails_agent": [
+    "C1",
+    "C4",
+    "T3"
+   ],
+   "ko_oracle": [
+    "C4b_lien_detail_ligne"
+   ],
+   "axe_nouveaux": {},
+   "pytest_code": 0,
+   "cibles": [
+    "C1",
+    "C4"
+   ],
+   "detecte_agent": true,
+   "visible_oracle": true,
+   "detecte_axe": false,
+   "pytest_voit": false,
+   "faux_positifs": [
+    "T3"
+   ],
+   "principal": true
+  },
+  "e06": {
+   "story": "s714",
+   "temoin": false,
+   "cout": 0.1352442,
+   "duree_s": 65.3,
+   "tours": 27,
+   "appels_outils": 26,
+   "statut": "ok",
+   "rapport_json_ok": true,
+   "fails_agent": [
+    "C1",
+    "C2",
+    "T2"
+   ],
+   "ko_oracle": [
+    "C2_filtre",
+    "C4b_lien_detail_ligne"
+   ],
+   "axe_nouveaux": {},
+   "pytest_code": 0,
+   "cibles": [
+    "C2"
+   ],
+   "detecte_agent": true,
+   "visible_oracle": true,
+   "detecte_axe": false,
+   "pytest_voit": false,
+   "faux_positifs": [
+    "C1",
+    "T2"
+   ],
+   "principal": true
+  },
+  "e07": {
+   "story": "s715",
+   "temoin": false,
+   "cout": 0.1468304,
+   "duree_s": 96.2,
+   "tours": 24,
+   "appels_outils": 23,
+   "statut": "ok",
+   "rapport_json_ok": true,
+   "fails_agent": [
+    "C4",
+    "T2"
+   ],
+   "ko_oracle": [
+    "C2_echec",
+    "C3_reprise_apres_rechargement",
+    "C4_bascule_mode",
+    "C5_bouton_bloque_en_repli"
+   ],
+   "axe_nouveaux": {},
+   "pytest_code": 0,
+   "cibles": [
+    "C5",
+    "C4"
+   ],
+   "detecte_agent": true,
+   "visible_oracle": true,
+   "detecte_axe": false,
+   "pytest_voit": false,
+   "faux_positifs": [
+    "T2"
+   ],
+   "principal": true
+  },
+  "e08": {
+   "story": "s715",
+   "temoin": false,
+   "cout": 0.1395002,
+   "duree_s": 80.1,
+   "tours": 31,
+   "appels_outils": 30,
+   "statut": "ok",
+   "rapport_json_ok": true,
+   "fails_agent": [],
+   "ko_oracle": [
+    "C5_bouton_bloque_en_repli"
+   ],
+   "axe_nouveaux": {},
+   "pytest_code": 0,
+   "cibles": [
+    "C5"
+   ],
+   "detecte_agent": false,
+   "visible_oracle": true,
+   "detecte_axe": false,
+   "pytest_voit": false,
+   "faux_positifs": [],
+   "principal": true
+  },
+  "e09": {
+   "story": "s716",
+   "temoin": false,
+   "cout": 0.1670414,
+   "duree_s": 76.3,
+   "tours": 31,
+   "appels_outils": 30,
+   "statut": "ok",
+   "rapport_json_ok": true,
+   "fails_agent": [
+    "C1"
+   ],
+   "ko_oracle": [
+    "C1b_outils_listes"
+   ],
+   "axe_nouveaux": {},
+   "pytest_code": 0,
+   "cibles": [
+    "C1"
+   ],
+   "detecte_agent": true,
+   "visible_oracle": true,
+   "detecte_axe": false,
+   "pytest_voit": false,
+   "faux_positifs": [],
+   "principal": true
+  },
+  "e10": {
+   "story": "s716",
+   "temoin": false,
+   "cout": 0.18706630000000002,
+   "duree_s": 67.5,
+   "tours": 34,
+   "appels_outils": 33,
+   "statut": "ok",
+   "rapport_json_ok": true,
+   "fails_agent": [
+    "C2"
+   ],
+   "ko_oracle": [
+    "C2b_tableau_periodes"
+   ],
+   "axe_nouveaux": {},
+   "pytest_code": 0,
+   "cibles": [
+    "C2"
+   ],
+   "detecte_agent": true,
+   "visible_oracle": true,
+   "detecte_axe": false,
+   "pytest_voit": false,
+   "faux_positifs": [],
+   "principal": true
+  },
+  "e11": {
+   "story": "s716",
+   "temoin": false,
+   "cout": 0.1633488,
+   "duree_s": 63.4,
+   "tours": 28,
+   "appels_outils": 27,
+   "statut": "ok",
+   "rapport_json_ok": true,
+   "fails_agent": [
+    "C4"
+   ],
+   "ko_oracle": [
+    "C4_outillage"
+   ],
+   "axe_nouveaux": {},
+   "pytest_code": 1,
+   "cibles": [
+    "C4"
+   ],
+   "detecte_agent": true,
+   "visible_oracle": true,
+   "detecte_axe": false,
+   "pytest_voit": true,
+   "faux_positifs": [],
+   "principal": false
+  },
+  "t713-075051": {
+   "story": "s713",
+   "temoin": true,
+   "cout": 0.12000850000000002,
+   "duree_s": 45.3,
+   "tours": 17,
+   "appels_outils": 16,
+   "statut": "ok",
+   "rapport_json_ok": true,
+   "fails_agent": [],
+   "ko_oracle": [],
+   "axe_nouveaux": {},
+   "pytest_code": null,
+   "faux_positifs": []
+  },
+  "t713-084310": {
+   "story": "s713",
+   "temoin": true,
+   "cout": 0.0955938,
+   "duree_s": 39.6,
+   "tours": 13,
+   "appels_outils": 12,
+   "statut": "ok",
+   "rapport_json_ok": true,
+   "fails_agent": [],
+   "ko_oracle": [],
+   "axe_nouveaux": {},
+   "pytest_code": null,
+   "faux_positifs": []
+  },
+  "t714-074858": {
+   "story": "s714",
+   "temoin": true,
+   "cout": 0.1633981,
+   "duree_s": 39.9,
+   "tours": 21,
+   "appels_outils": 20,
+   "statut": "ok",
+   "rapport_json_ok": true,
+   "fails_agent": [],
+   "ko_oracle": [],
+   "axe_nouveaux": {},
+   "pytest_code": null,
+   "faux_positifs": []
+  },
+  "t714-084433": {
+   "story": "s714",
+   "temoin": true,
+   "cout": 0.11728890000000002,
+   "duree_s": 50.7,
+   "tours": 22,
+   "appels_outils": 21,
+   "statut": "ok",
+   "rapport_json_ok": true,
+   "fails_agent": [],
+   "ko_oracle": [],
+   "axe_nouveaux": {},
+   "pytest_code": null,
+   "faux_positifs": []
+  },
+  "t715-075242": {
+   "story": "s715",
+   "temoin": true,
+   "cout": 0.1472221,
+   "duree_s": 64.9,
+   "tours": 32,
+   "appels_outils": 31,
+   "statut": "ok",
+   "rapport_json_ok": true,
+   "fails_agent": [],
+   "ko_oracle": [],
+   "axe_nouveaux": {},
+   "pytest_code": null,
+   "faux_positifs": []
+  },
+  "t715-084547": {
+   "story": "s715",
+   "temoin": true,
+   "cout": 0.118733,
+   "duree_s": 61.1,
+   "tours": 22,
+   "appels_outils": 21,
+   "statut": "ok",
+   "rapport_json_ok": true,
+   "fails_agent": [],
+   "ko_oracle": [],
+   "axe_nouveaux": {},
+   "pytest_code": null,
+   "faux_positifs": []
+  },
+  "t716-075431": {
+   "story": "s716",
+   "temoin": true,
+   "cout": 0.15688560000000001,
+   "duree_s": 56.8,
+   "tours": 29,
+   "appels_outils": 28,
+   "statut": "ok",
+   "rapport_json_ok": true,
+   "fails_agent": [],
+   "ko_oracle": [],
+   "axe_nouveaux": {},
+   "pytest_code": null,
+   "faux_positifs": []
+  },
+  "t716-084715": {
+   "story": "s716",
+   "temoin": true,
+   "cout": 0.1619837,
+   "duree_s": 83.2,
+   "tours": 29,
+   "appels_outils": 28,
+   "statut": "ok",
+   "rapport_json_ok": true,
+   "fails_agent": [],
+   "ko_oracle": [],
+   "axe_nouveaux": {},
+   "pytest_code": null,
+   "faux_positifs": []
+  }
+ },
+ "synthese": {
+  "defauts_tous": 26,
+  "detectes_tous": 23,
+  "defauts": 25,
+  "detectes_agent": 22,
+  "rappel": 0.88,
+  "wilson95": [
+   0.7,
+   0.958
+  ],
+  "visibles_oracle": 25,
+  "detectes_axe": 0,
+  "vus_par_pytest": 1,
+  "temoins": 8,
+  "temoins_avec_faux_positif": 0,
+  "fp_temoins": [
+   [
+    "t713-075051",
+    []
+   ],
+   [
+    "t713-084310",
+    []
+   ],
+   [
+    "t714-074858",
+    []
+   ],
+   [
+    "t714-084433",
+    []
+   ],
+   [
+    "t715-075242",
+    []
+   ],
+   [
+    "t715-084547",
+    []
+   ],
+   [
+    "t716-075431",
+    []
+   ],
+   [
+    "t716-084715",
+    []
+   ]
+  ],
+  "defauts_avec_critere_non_cible_en_fail": 11,
+  "cout_moyen_defaut": 0.143,
+  "cout_moyen_temoin": 0.135,
+  "cout_moyen_tous": 0.141,
+  "cout_total": 4.795,
+  "duree_moyenne_s": 59.9
+ }
+}

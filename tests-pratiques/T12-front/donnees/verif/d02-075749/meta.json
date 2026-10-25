@@ -1,0 +1,105 @@
+{
+ "outils": {
+  "mcp__playwright__browser_navigate": 3,
+  "mcp__playwright__browser_run_code_unsafe": 3,
+  "mcp__playwright__browser_take_screenshot": 4,
+  "mcp__playwright__browser_press_key": 2,
+  "mcp__playwright__browser_resize": 1
+ },
+ "refus": 0,
+ "result": "{\"criteres\":[{\"id\":\"C1\",\"verdict\":\"PASS\",\"preuve\":\"Les sept URL répondent HTTP 200 : /, /entites/ENT-A, /chaine, /agent, /avant-apres, /pseudonymisation et /outillage. Chaque titre d'onglet est « {Écran} · Usine de migration », par exemple « Carte météo · Usine de migration » et « Ce qu'il faut pour le faire en vrai · Usine de migration ». Chaque page a un seul <h1>, dont le texte est le nom de l'écran. <html lang=\\\"fr\\\"> sur toutes les pages.\"},{\"id\":\"C2\",\"verdict\":\"PASS\",\"preuve\":\"L'en-tête affiche « Passage publié · 12/10/2026 22:12 UTC » et la pastille « Mode repli » sur les sept pages. Le bouton « Lancer la Chaîne » est dans l'en-tête de six pages et absent de /chaine. Sur chaque page, la navigation latérale a un seul lien avec aria-current=\\\"page\\\", celui de l'écran courant (par exemple href=/agent sur /agent).\"},{\"id\":\"C3\",\"verdict\":\"PASS\",\"preuve\":\"Sur les sept pages, la pastille « Mode repli » est visible dans l'en-tête. Le bandeau « Mode repli : la démo lit le Passage enregistré demo/repli/passage/, sans Jira ni LLM réels ; les liens Jira sont inactifs. » est présent (vu en capture sur /entites/ENT-A et /agent).\"},{\"id\":\"C4\",\"verdict\":\"FAIL\",\"preuve\":\"Le premier Tab atteint bien « Aller au contenu » (href #titre-ecran). Entrée amène à #titre-ecran, et le focus passe sur le titre « Agent ». En revanche le lien ne devient pas visible au focus : son rectangle est à y=-80 (hors écran), mesuré aussitôt puis après 600 ms. La capture après Tab sur /agent ne montre aucun lien d'évitement, ni à 1280 px ni à 390 px.\"},{\"id\":\"C5\",\"verdict\":\"PASS\",\"preuve\":\"Pendant la visite des sept pages, 56 requêtes ont été capturées et aucune ne visait un hôte autre que 127.0.0.1. Les polices, le CSS et le script viennent donc du serveur local.\"}],\"transverses\":[{\"id\":\"T1\",\"verdict\":\"FAIL\",\"preuve\":\"L'ordre de Tab est logique : lien d'évitement, logo, Lancer la Chaîne, puis les six liens de navigation, et le cycle repart au lien d'évitement. Chaque élément a un contour solide de 2 px au focus, et Entrée sur le lien d'évitement fonctionne. Le lien d'évitement reste cependant invisible au focus (cf. C4), ce qui rend le focus non visible sur cet élément.\"},{\"id\":\"T2\",\"verdict\":\"PASS\",\"preuve\":\"À 390×844, scrollWidth vaut 390 sur /, /chaine, /outillage, /entites/ENT-A et /agent, donc pas de défilement horizontal. Les captures de /agent et /outillage montrent l'en-tête, la navigation, le bandeau et la carte sans coupure ni superposition. La fenêtre a été remise à 1280×800.\"},{\"id\":\"T3\",\"verdict\":\"PASS\",\"preuve\":\"Aucun message d'erreur vide n'a été vu. Les sept liens de navigation pointent vers les sept URL, qui répondent toutes 200 avec une page rendue. Le lien d'évitement mène à l'ancre #titre-ecran, qui existe.\"}],\"synthese\":\"Le socle respecte C1, C2, C3 et C5 sur les sept écrans, mais C4 échoue : le lien d'évitement reste hors écran (y=-80) au focus au lieu de devenir visible, ce qui fait aussi échouer T1.\"}",
+ "cout_usd": 0.10417000000000001,
+ "tours": 14,
+ "duree_ms": 35312,
+ "is_error": false,
+ "subtype": "success",
+ "usage": {
+  "input_tokens": 14,
+  "cache_creation_input_tokens": 12840,
+  "cache_read_input_tokens": 113120,
+  "output_tokens": 4147,
+  "output_tokens_details": {
+   "thinking_tokens": 445
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 12840,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1449,
+    "cache_read_input_tokens": 22015,
+    "cache_creation_input_tokens": 2277,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 2277
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "id": "d02",
+ "run": "d02-075749",
+ "story": "s713",
+ "temoin": false,
+ "statut": "ok",
+ "duree_mur_s": 40.2,
+ "cibles": [
+  "C4"
+ ],
+ "oracle": {
+  "C1_titres_h1": [
+   true,
+   "écarts : []"
+  ],
+  "C2_cadre": [
+   true,
+   "écarts : []"
+  ],
+  "C3_repli": [
+   true,
+   "écarts : []"
+  ],
+  "C4_lien_evitement": [
+   false,
+   "actif='lien-evitement|Aller au contenu' top=-80 hash=#titre-ecran cible=True"
+  ],
+  "C5_pas_de_requete_externe": [
+   true,
+   "externes : []"
+  ],
+  "T2_390px_accueil": [
+   true,
+   "scrollWidth=390"
+  ],
+  "T2_390px_chaine": [
+   true,
+   "scrollWidth=390"
+  ]
+ },
+ "axe": {
+  "/@1280": [],
+  "/entites/ENT-A@1280": [],
+  "/chaine@1280": [],
+  "/agent@1280": [],
+  "/avant-apres@1280": [],
+  "/pseudonymisation@1280": [],
+  "/outillage@1280": [],
+  "/@390": [],
+  "/entites/ENT-A@390": [],
+  "/chaine@390": [],
+  "/agent@390": [],
+  "/avant-apres@390": [],
+  "/pseudonymisation@390": [],
+  "/outillage@390": []
+ }
+}

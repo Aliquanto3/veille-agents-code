@@ -1,0 +1,110 @@
+{
+ "outils": {
+  "mcp__playwright__browser_navigate": 4,
+  "mcp__playwright__browser_snapshot": 2,
+  "mcp__playwright__browser_select_option": 3,
+  "mcp__playwright__browser_evaluate": 10,
+  "mcp__playwright__browser_console_messages": 1,
+  "mcp__playwright__browser_resize": 2,
+  "mcp__playwright__browser_take_screenshot": 2,
+  "mcp__playwright__browser_press_key": 2
+ },
+ "refus": 0,
+ "result": "{\"criteres\":[{\"id\":\"C1\",\"verdict\":\"PASS\",\"preuve\":\"/ affiche 4 tuiles (Rouge 2, Orange 1, Jaune 6, Vert 1). Le tableau a 10 lignes, une par Entité, grave d'abord : ENT-A et ENT-B rouges, ENT-C orange, ENT-E à ENT-J jaunes, ENT-D vert. Chaque ligne montre ses tickets (3 puis « +1 », « +6 » ou « +24 ») et un lien « Détail ENT-x » vers /entites/ENT-x.\"},{\"id\":\"C2\",\"verdict\":\"PASS\",\"preuve\":\"Filtre Rouge : 2 lignes visibles (ENT-A, ENT-B) et la région role=status indique « 2 Entités affichées ». Filtre Orange : 1 ligne et « 1 Entité affichée ». Retour à Toutes : 10 lignes et « 10 Entités affichées ». Aucun rechargement : l'URL est restée / et un seul document de navigation a été observé. Remarque : la carte compte 2 Entités rouges, donc le singulier n'a été vu qu'avec Orange.\"},{\"id\":\"C3\",\"verdict\":\"PASS\",\"preuve\":\"Deux livrables présents, chacun en lien : /livrables/rapport_xlsx et /livrables/rapport_pptx. Les deux répondent 200 avec content-disposition: attachment (rapport-2026-10-09.xlsx et .pptx). Réserve : aucun livrable absent n'existe dans ce Passage, donc « Non généré pour ce Passage » n'a pas pu être observé (partie NA).\"},{\"id\":\"C4\",\"verdict\":\"PASS\",\"preuve\":\"/entites redirige vers /entites/ENT-A (URL finale après suivi de la redirection ; le 307 lui-même n'a pas pu être lu car le fetch en mode redirect:'manual' renvoie une réponse opaque). Le détail d'ENT-A affiche la météo Rouge, la règle IND-1 : 4 (seuil ≥ 3) avec ses tickets, les KPI, la prévision (sortie du rouge estimée au 13/10/2026), le risque (« Sans objet : l'Entité est déjà rouge. »), l'explication (« commentaire non généré (Palier 1) ») et le lien « ← Carte météo » vers /. Je n'ai pas cliqué sur le lien de détail d'une ligne de la carte, mais j'ai ouvert l'URL qu'il pointe.\"},{\"id\":\"C5\",\"verdict\":\"FAIL\",\"preuve\":\"/entites/ENT-X affiche un paragraphe vide à la place de « Entité ENT-X absente du Passage affiché. ». La capture à 390 px, le snapshot et le texte de la page confirment l'absence du message. /api/entites/ENT-X renvoie pourtant 200 avec ce message dans le champ « message », donc l'interface ne l'affiche pas. Le lien « Voir la carte météo » (href /) est présent et fonctionnel.\"},{\"id\":\"C6\",\"verdict\":\"PASS\",\"preuve\":\"Sur la carte, les clés DEMO-xxxx sont du texte simple : les cellules de tickets ne contiennent aucun lien, seulement le lien de détail. Sur le détail d'ENT-A, aucun lien ne pointe vers un ticket. /livrables/autre répond 404.\"}],\"transverses\":[{\"id\":\"T1\",\"verdict\":\"PASS\",\"preuve\":\"Sur la carte, Tab atteint d'abord « Aller au contenu », puis le logo, dans l'ordre du DOM. Le focus a un contour plein de 2 px. Je n'ai pas testé Entrée ni Espace, ni le parcours au-delà des deux premiers éléments.\"},{\"id\":\"T2\",\"verdict\":\"PASS\",\"preuve\":\"À 390 px, scrollWidth = innerWidth = 390 sur / et sur /entites/ENT-X, sans défilement horizontal. Les captures montrent un en-tête, une navigation et des tuiles lisibles. Je n'ai vu que le haut de la carte, pas le tableau ni les livrables à cette largeur. La fenêtre est remise à 1280 x 800.\"},{\"id\":\"T3\",\"verdict\":\"FAIL\",\"preuve\":\"Sur /entites/ENT-X, un message d'erreur est attendu mais le paragraphe affiché est vide. Les liens suivis (/entites, « Voir la carte météo » vers /, livrables) aboutissent à des pages ou fichiers qui se chargent. La seule erreur console vient du test volontaire de /livrables/autre (404).\"}],\"synthese\":\"La carte, le filtre, les livrables, la redirection /entites, le détail d'ENT-A et le 404 de /livrables/autre sont conformes, mais l'écran d'une Entité absente (/entites/ENT-X) affiche un paragraphe vide au lieu de « Entité ENT-X absente du Passage affiché. », et le cas « Non généré pour ce Passage » n'a pas pu être observé.\"}",
+ "cout_usd": 0.14159980000000003,
+ "tours": 27,
+ "duree_ms": 49642,
+ "is_error": false,
+ "subtype": "success",
+ "usage": {
+  "input_tokens": 32,
+  "cache_creation_input_tokens": 15940,
+  "cache_read_input_tokens": 315058,
+  "output_tokens": 4627,
+  "output_tokens_details": {
+   "thinking_tokens": 341
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 15940,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1752,
+    "cache_read_input_tokens": 26733,
+    "cache_creation_input_tokens": 804,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 804
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "id": "d06",
+ "run": "d06-080254",
+ "story": "s714",
+ "temoin": false,
+ "statut": "ok",
+ "duree_mur_s": 51.6,
+ "cibles": [
+  "C5"
+ ],
+ "oracle": {
+  "C1_carte": [
+   true,
+   "lignes=10"
+  ],
+  "C2_filtre": [
+   true,
+   "visibles=2 annonce='2 Entités affichées' sans_rechargement=True retour=10"
+  ],
+  "C3_livrables": [
+   true,
+   "liens=2 écarts=[]"
+  ],
+  "C4_detail": [
+   true,
+   "url=http://127.0.0.1:8765/entites/ENT-A"
+  ],
+  "C5_entite_absente": [
+   false,
+   "message='' après clic=http://127.0.0.1:8765/"
+  ],
+  "C6_tickets_texte_404": [
+   true,
+   "liens_ticket=0 autre=404"
+  ],
+  "T2_390px_carte": [
+   true,
+   "scrollWidth=390"
+  ],
+  "T2_390px_detail": [
+   true,
+   "scrollWidth=390"
+  ]
+ },
+ "axe": {
+  "/@1280": [
+   "landmark-unique:1"
+  ],
+  "/entites/ENT-A@1280": [
+   "landmark-unique:1"
+  ],
+  "/@390": [
+   "landmark-unique:1"
+  ],
+  "/entites/ENT-A@390": [
+   "landmark-unique:1"
+  ]
+ }
+}

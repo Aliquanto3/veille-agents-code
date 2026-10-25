@@ -1,0 +1,92 @@
+{
+ "outils": {
+  "mcp__playwright__browser_navigate": 6,
+  "mcp__playwright__browser_snapshot": 2,
+  "mcp__playwright__browser_evaluate": 8,
+  "mcp__playwright__browser_click": 4,
+  "mcp__playwright__browser_wait_for": 4,
+  "mcp__playwright__browser_network_requests": 2,
+  "mcp__playwright__browser_press_key": 1,
+  "mcp__playwright__browser_resize": 2,
+  "mcp__playwright__browser_take_screenshot": 1,
+  "mcp__playwright__browser_run_code_unsafe": 1
+ },
+ "refus": 0,
+ "result": "{\"criteres\":[{\"id\":\"C1\",\"verdict\":\"PASS\",\"preuve\":\"/chaine en Mode réel avant tout lancement : 10 étapes (extraction à rendu) toutes « En attente », compteur « 0 / 10 », role=progressbar avec aria-valuenow=0 (min 0, max 10). Boutons « Lancer la Chaîne » et « Passer en Mode repli » sans aria-disabled. L'en-tête ne contient que le titre et la pastille « Mode réel », sans bouton « Lancer la Chaîne ».\"},{\"id\":\"C2\",\"verdict\":\"PASS\",\"preuve\":\"Clic sur « Lancer la Chaîne » : après 3 s, bandeau role=alert « Échec de la Chaîne hors d'une étape (code 1). », puis une ligne d'erreur « Erreur : donnees\\\\journal.jsonl : Journal introuvable », puis « Aucun rapport publié par ce lancement : la carte météo reste celle du dernier Passage publié. ». Le bouton devient « Relancer la Chaîne ». Les étapes restent « En attente » et le compteur reste à 0 / 10. Je n'ai pas vu les étapes avancer, ni la sonde chaque seconde (la Chaîne échoue trop vite). Le journal indique « Aucun événement de progression pour l'instant ».\"},{\"id\":\"C3\",\"verdict\":\"PASS\",\"preuve\":\"Après navigation vers / puis retour sur /chaine, le même bandeau d'alerte est affiché (code 1, même message d'erreur, mention « Aucun rapport publié »). Le bouton affiche « Relancer la Chaîne ».\"},{\"id\":\"C4\",\"verdict\":\"PASS\",\"preuve\":\"Clic sur « Passer en Mode repli » (POST /api/mode 200, aucune navigation, URL inchangée) : la pastille passe à « Mode repli » et le bandeau « Mode repli : la démo lit le Passage enregistré demo/repli/passage/… » apparaît. Sur /, la carte affiche le Passage de repli (en-tête « Passage publié · 12/10/2026 22:12 UTC », Date d'arrêté 09/10/2026, 10 Entités, bandeau de repli). Après « Revenir au Mode réel », la pastille redevient « Mode réel ». Je n'ai observé aucune bascule sans clic. L'en-tête garde le Passage affiché en repli.\"},{\"id\":\"C5\",\"verdict\":\"PASS\",\"preuve\":\"En Mode repli, le bouton de lancement porte aria-disabled=\\\"true\\\" et aria-describedby=\\\"motif-lancement\\\". Le motif visible est « Mode repli : le lancement de la Chaîne est désactivé… désactiver le Mode repli pour lancer la Chaîne. ». Playwright refuse le clic (élément non activé). Un clic forcé en JavaScript n'a déclenché aucune requête vers l'API de lancement.\"}],\"transverses\":[{\"id\":\"T1\",\"verdict\":\"PASS\",\"preuve\":\"Tab suit un ordre logique : lien d'évitement, logo, 7 liens de navigation, « Lancer la Chaîne », bouton de mode, puis le journal. Chaque élément a un contour de focus de 2 px. Entrée et Espace sur le bouton de mode ont basculé repli puis réel. Je n'ai pas testé l'activation d'un lien au clavier.\"},{\"id\":\"T2\",\"verdict\":\"PASS\",\"preuve\":\"À 390x844 sur /chaine : scrollWidth 390 pour une fenêtre de 390, donc pas de défilement horizontal. Capture pleine page sans coupure. Défaut mineur : le nom d'étape « repartition_causes » touche presque la pastille « En attente ».\"},{\"id\":\"T3\",\"verdict\":\"PASS\",\"preuve\":\"Le bandeau d'erreur a toujours un texte. Les liens suivis (/, /chaine) se chargent avec un titre de page correct. Je n'ai pas suivi tous les liens de navigation (/entites, /agent, etc.).\"}],\"synthese\":\"Les critères C1 à C5 et les contrôles transverses sont conformes dans le navigateur. Réserve : le suivi étape par étape et la sonde chaque seconde n'ont pas pu être observés, car la Chaîne échoue immédiatement dans cet environnement.\"}",
+ "cout_usd": 0.1472221,
+ "tours": 32,
+ "duree_ms": 62300,
+ "is_error": false,
+ "subtype": "success",
+ "usage": {
+  "input_tokens": 28,
+  "cache_creation_input_tokens": 18832,
+  "cache_read_input_tokens": 251181,
+  "output_tokens": 4672,
+  "output_tokens_details": {
+   "thinking_tokens": 258
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 18832,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1572,
+    "cache_read_input_tokens": 26589,
+    "cache_creation_input_tokens": 1542,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 1542
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "id": "t715",
+ "run": "t715-075242",
+ "story": "s715",
+ "temoin": true,
+ "statut": "ok",
+ "duree_mur_s": 64.9,
+ "cibles": [],
+ "oracle": {
+  "C1_etat_initial": [
+   true,
+   "étapes=10 compteur=True valuenow=0 entete=0"
+  ],
+  "C2_echec": [
+   true,
+   "alerte=\"Échec de la Chaîne hors d'une étape (code 1).\\n\\nErreur : donnees\\\\journal.jsonl : Journal introuvable\\n\\nAucun rapport publié par ce lancement : la carte météo rest\""
+  ],
+  "C3_reprise_apres_rechargement": [
+   true,
+   "alertes=1"
+  ],
+  "C4_bascule_mode": [
+   true,
+   "sans_rechargement=True bandeau=True lignes_carte=10"
+  ],
+  "C5_bouton_bloque_en_repli": [
+   true,
+   "aria-disabled=true motif=\"Mode repli : le lancement de la Chaîne est désactivé. L'UI lit le Passage enregi\" échec_avant=1 après=1"
+  ],
+  "T2_390px_chaine": [
+   true,
+   "scrollWidth=390"
+  ]
+ },
+ "axe": {
+  "/chaine@1280": [],
+  "/chaine@390": []
+ }
+}

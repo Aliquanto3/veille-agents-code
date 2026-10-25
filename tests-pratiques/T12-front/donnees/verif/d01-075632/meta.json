@@ -1,0 +1,107 @@
+{
+ "outils": {
+  "mcp__playwright__browser_navigate": 3,
+  "mcp__playwright__browser_run_code_unsafe": 1,
+  "mcp__playwright__browser_network_requests": 1,
+  "mcp__playwright__browser_press_key": 2,
+  "mcp__playwright__browser_take_screenshot": 3,
+  "mcp__playwright__browser_evaluate": 2,
+  "mcp__playwright__browser_resize": 2
+ },
+ "refus": 0,
+ "result": "{\"criteres\":[{\"id\":\"C1\",\"verdict\":\"PASS\",\"preuve\":\"Les 7 URL répondent 200. Titres d'onglet : « Carte météo · Usine de migration », « Détail d'une Entité · … », « Lancement de la Chaîne · … », « Agent · … », « Avant / après · … », « Pseudonymisation · … », « Ce qu'il faut pour le faire en vrai · Usine de migration ». Chaque page a un seul <h1> du même nom que l'écran, et <html lang=\\\"fr\\\">.\"},{\"id\":\"C2\",\"verdict\":\"PASS\",\"preuve\":\"L'en-tête affiche « Passage publié · 12/10/2026 22:12 UTC » et la pastille de mode sur les 7 pages. « Lancer la Chaîne » est présent dans l'en-tête de toutes les pages sauf /chaine. La navigation latérale porte un seul aria-current=\\\"page\\\", sur l'écran courant.\"},{\"id\":\"C3\",\"verdict\":\"FAIL\",\"preuve\":\"La pastille « Mode repli » (span pastille-mode--repli) est visible sur les 7 pages. En revanche, je n'ai trouvé aucun bandeau de repli : le seul élément contenant « repli » est la pastille. Les captures de / et /chaine n'en montrent pas non plus.\"},{\"id\":\"C4\",\"verdict\":\"PASS\",\"preuve\":\"Sur /chaine, la première touche Tab met le focus sur le lien « Aller au contenu ». Il devient visible dans l'en-tête, avec un contour de focus. Entrée amène à http://127.0.0.1:8765/chaine#titre-ecran.\"},{\"id\":\"C5\",\"verdict\":\"PASS\",\"preuve\":\"Sur 56 requêtes, toutes vont vers 127.0.0.1:8765 : pages, /statique/cadre.css, /statique/cadre.js, /api/cadre et 3 polices woff2 locales. Aucun href ou src ne pointe vers un hôte externe.\"}],\"transverses\":[{\"id\":\"T1\",\"verdict\":\"PASS\",\"preuve\":\"Le premier Tab atteint le lien d'évitement, avec un focus bien visible, et Entrée l'active. Je n'ai pas fait parcourir tout le reste de l'ordre de tabulation à la main.\"},{\"id\":\"T2\",\"verdict\":\"PASS\",\"preuve\":\"À 390 px sur /, scrollWidth = clientWidth = 390, donc pas de défilement horizontal. La capture montre l'en-tête, la navigation et le contenu empilés sans coupure ni superposition. Fenêtre remise à 1280x800.\"},{\"id\":\"T3\",\"verdict\":\"PASS\",\"preuve\":\"Aucun message d'erreur vide observé. Les 7 URL se chargent en 200, et /api/cadre répond 200. Je n'ai pas suivi chaque lien de la navigation un par un.\"}],\"synthese\":\"Le cadre commun est conforme sur les 7 écrans (titres, en-tête, navigation, lien d'évitement, aucune requête externe), sauf le bandeau de repli, absent alors que seule la pastille « Mode repli » s'affiche (C3 FAIL).\"}",
+ "cout_usd": 0.08794609999999999,
+ "tours": 15,
+ "duree_ms": 27486,
+ "is_error": false,
+ "subtype": "success",
+ "usage": {
+  "input_tokens": 16,
+  "cache_creation_input_tokens": 11643,
+  "cache_read_input_tokens": 134321,
+  "output_tokens": 2791,
+  "output_tokens_details": {
+   "thinking_tokens": 152
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 11643,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1089,
+    "cache_read_input_tokens": 22920,
+    "cache_creation_input_tokens": 175,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 175
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "id": "d01",
+ "run": "d01-075632",
+ "story": "s713",
+ "temoin": false,
+ "statut": "ok",
+ "duree_mur_s": 29.8,
+ "cibles": [
+  "C3"
+ ],
+ "oracle": {
+  "C1_titres_h1": [
+   true,
+   "écarts : []"
+  ],
+  "C2_cadre": [
+   true,
+   "écarts : []"
+  ],
+  "C3_repli": [
+   false,
+   "écarts : [('bandeau', '/'), ('bandeau', '/chaine'), ('bandeau', '/agent')]"
+  ],
+  "C4_lien_evitement": [
+   true,
+   "actif='lien-evitement|Aller au contenu' top=8 hash=#titre-ecran cible=True"
+  ],
+  "C5_pas_de_requete_externe": [
+   true,
+   "externes : []"
+  ],
+  "T2_390px_accueil": [
+   true,
+   "scrollWidth=390"
+  ],
+  "T2_390px_chaine": [
+   true,
+   "scrollWidth=390"
+  ]
+ },
+ "axe": {
+  "/@1280": [],
+  "/entites/ENT-A@1280": [],
+  "/chaine@1280": [],
+  "/agent@1280": [],
+  "/avant-apres@1280": [],
+  "/pseudonymisation@1280": [],
+  "/outillage@1280": [],
+  "/@390": [],
+  "/entites/ENT-A@390": [],
+  "/chaine@390": [],
+  "/agent@390": [],
+  "/avant-apres@390": [],
+  "/pseudonymisation@390": [],
+  "/outillage@390": []
+ }
+}

@@ -1,0 +1,101 @@
+{
+ "outils": {
+  "mcp__playwright__browser_navigate": 5,
+  "mcp__playwright__browser_snapshot": 2,
+  "mcp__playwright__browser_click": 3,
+  "mcp__playwright__browser_evaluate": 11,
+  "mcp__playwright__browser_take_screenshot": 3,
+  "mcp__playwright__browser_resize": 2,
+  "mcp__playwright__browser_run_code_unsafe": 1
+ },
+ "refus": 0,
+ "result": "{\"criteres\":[{\"id\":\"C1\",\"verdict\":\"PASS\",\"preuve\":\"/agent : la page n'a aucune zone de saisie (le snapshot ne montre que 5 boutons de questions enregistrées). Le message « En Mode repli, l'Agent ne s'adresse à aucun LLM : choisir une question enregistrée… » est affiché. Après un clic sur « Pourquoi ENT-B est-elle rouge ? », la réponse affiche le texte « ENT-B est rouge sur IND-1, qui vaut 9 pour un seuil de 3… », « Contrôle : conforme : chiffres et tickets vérifiés », « Outils appelés : get_meteo » et « Mode repli : réponse enregistrée le 13/10/2026 sur le Passage 20261012T221158Z-96c621, rejouée sans LLM ». document.activeElement est div#reponse avec tabindex=-1.\"},{\"id\":\"C2\",\"verdict\":\"PASS\",\"preuve\":\"/avant-apres : « Par Rapport quotidien » affiche 120 min et 4,4 s, avec aria-pressed=true. Le tableau « Les deux périodes » contient 120 min / 4,4 s et 600 min / 22,2 s. Un clic sur « Cumulé sur 5 Rapports » mène à ?periode=cumul, les cartes passent à 600 min et 22,2 s, et aria-pressed s'inverse (false / true). Aucun écart ni ratio affiché.\"},{\"id\":\"C3\",\"verdict\":\"PASS\",\"preuve\":\"/pseudonymisation?ticket=DEMO-17 : les panneaux « Original » et « Version pseudonymisée » sont côte à côte, en texte brut sans surlignage. Chacun est un div role=region, tabindex=0, et les deux reçoivent bien le focus par Tab (#texte-original puis #texte-pseudo). En choisissant DEMO-100 dans la liste puis « Afficher », l'URL devient ?ticket=DEMO-100, « Ticket : DEMO-100 » s'affiche et le texte change (« …attendus (comptabilité). »).\"},{\"id\":\"C4\",\"verdict\":\"FAIL\",\"preuve\":\"/outillage : le HTML de la fiche est affiché en texte littéral. La page montre des chaînes comme '<section class=\\\"carte carte--fiche\\\"><p>Quel outillage…' et '<span class=\\\"pastille pastille--oui\\\">Oui</span>'. Il n'y a ni titre rendu (un seul h1), ni table (0), ni liste (0), ni pastille rendue. Il n'y a pas d'émoji brut ✅ ⚠️ ❌, mais la fiche n'est pas rendue en HTML.\"}],\"transverses\":[{\"id\":\"T1\",\"verdict\":\"PASS\",\"preuve\":\"Sur /pseudonymisation, Tab suit l'ordre : lien d'évitement, logo, Lancer la Chaîne, les 6 liens de navigation, la liste Ticket, le bouton Afficher, puis les deux régions de texte. Chaque élément a un contour de 2 px (outline solid). Le clic sur un bouton de question de /agent et le changement de période de /avant-apres fonctionnent. Entrée et Espace n'ont pas été testés explicitement.\"},{\"id\":\"T2\",\"verdict\":\"PASS\",\"preuve\":\"/pseudonymisation à 390 px : scrollWidth = clientWidth = 390, donc pas de défilement horizontal. La capture ne montre ni contenu coupé ni superposition. Fenêtre remise à 1280x800. Les autres écrans n'ont pas été vérifiés à 390 px, /outillage compris.\"},{\"id\":\"T3\",\"verdict\":\"PASS\",\"preuve\":\"Aucun message d'erreur vide observé sur les écrans visités. Les liens de navigation (/, /entites, /chaine, /agent, /avant-apres, /pseudonymisation, /outillage) sont présents. Seuls les écrans de la story ont été chargés, et chacun s'est chargé. Les autres liens de navigation n'ont pas été suivis.\"}],\"synthese\":\"C1, C2 et C3 sont conformes, mais /outillage (C4) échoue : le HTML de la fiche s'affiche en texte brut, sans pastilles ni tableau rendus.\"}",
+ "cout_usd": 0.1633488,
+ "tours": 28,
+ "duree_ms": 61500,
+ "is_error": false,
+ "subtype": "success",
+ "usage": {
+  "input_tokens": 40,
+  "cache_creation_input_tokens": 18991,
+  "cache_read_input_tokens": 404548,
+  "output_tokens": 4685,
+  "output_tokens_details": {
+   "thinking_tokens": 203
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 18991,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1519,
+    "cache_read_input_tokens": 30079,
+    "cache_creation_input_tokens": 272,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 272
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "id": "e11",
+ "run": "e11-084120",
+ "story": "s716",
+ "temoin": false,
+ "statut": "ok",
+ "duree_mur_s": 63.4,
+ "cibles": [
+  "C4"
+ ],
+ "oracle": {
+  "C1_agent_repli": [
+   true,
+   "saisie=0 questions=5 badge='Contrôle : conforme : chiffres et tickets vérifiés' mention=True focus=reponse"
+  ],
+  "C2_avant_apres_segment": [
+   true,
+   "avant=('120 min', '4,4 s') après=('600 min', '22,2 s') pressed=true"
+  ],
+  "C3_pseudonymisation": [
+   true,
+   "focus_atteints=['choix-ticket', 'texte-original', 'texte-pseudo'] côte_à_côte=True autre=DEMO-10 url=seudonymisation?ticket=DEMO-10"
+  ],
+  "C4_outillage": [
+   false,
+   "pastilles=0"
+  ],
+  "T2_390px": [
+   true,
+   "écarts : []"
+  ]
+ },
+ "axe": {
+  "/agent@1280": [],
+  "/avant-apres@1280": [
+   "landmark-unique:1"
+  ],
+  "/pseudonymisation?ticket=DEMO-17@1280": [
+   "landmark-unique:2"
+  ],
+  "/outillage@1280": [],
+  "/agent@390": [],
+  "/avant-apres@390": [
+   "landmark-unique:1"
+  ],
+  "/pseudonymisation?ticket=DEMO-17@390": [
+   "landmark-unique:2"
+  ],
+  "/outillage@390": []
+ }
+}

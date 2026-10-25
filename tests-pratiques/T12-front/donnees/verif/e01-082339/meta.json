@@ -1,0 +1,106 @@
+{
+ "outils": {
+  "mcp__playwright__browser_navigate": 2,
+  "mcp__playwright__browser_run_code_unsafe": 1,
+  "mcp__playwright__browser_press_key": 2,
+  "mcp__playwright__browser_evaluate": 2,
+  "mcp__playwright__browser_resize": 2,
+  "mcp__playwright__browser_take_screenshot": 1
+ },
+ "refus": 0,
+ "result": "{\"criteres\":[{\"id\":\"C1\",\"verdict\":\"PASS\",\"preuve\":\"Les 7 URL répondent 200. Titres d'onglet : « Carte météo · Usine de migration », « Détail d'une Entité · … », « Lancement de la Chaîne · … », « Agent · … », « Avant / après · … », « Pseudonymisation · … », « Ce qu'il faut pour le faire en vrai · … ». Chaque page a exactement un <h1> du nom de l'écran, avec <html lang=fr>.\"},{\"id\":\"C2\",\"verdict\":\"PASS\",\"preuve\":\"En-tête sur les 7 pages avec « Passage publié · 12/10/2026 22:12 UTC » et une pastille de mode. « Lancer la Chaîne » est présent sur toutes les pages sauf /chaine, où il est absent. La navigation latérale porte un seul aria-current=page, sur l'écran courant (par ex. /agent → « Agent », /chaine → « Lancement de la Chaîne »).\"},{\"id\":\"C3\",\"verdict\":\"FAIL\",\"preuve\":\"Le bandeau « Mode repli : la démo lit le Passage enregistré demo/repli/passage/, sans Jira ni LLM réels ; les liens Jira sont inactifs. » s'affiche sur les 7 pages. Mais la pastille de mode affiche « Mode réel » (classe CSS pastille-mode--repli) au lieu de « Mode repli », alors que le serveur est en repli. Le libellé de la pastille est incohérent avec le bandeau.\"},{\"id\":\"C4\",\"verdict\":\"PASS\",\"preuve\":\"Sur /agent, le premier Tab donne le focus au lien « Aller au contenu » (href #titre-ecran), visible en haut à gauche (x=8, y=8, contour solide de 2px). Entrée mène à /agent#titre-ecran et le focus est sur le <h1> « Agent ».\"},{\"id\":\"C5\",\"verdict\":\"PASS\",\"preuve\":\"56 requêtes enregistrées pendant la visite des 7 pages, toutes vers l'hôte 127.0.0.1:8765.\"}],\"transverses\":[{\"id\":\"T1\",\"verdict\":\"PASS\",\"preuve\":\"Le lien d'évitement est le premier élément atteint par Tab, avec un focus visible (contour de 2px), et Entrée l'active. Je n'ai pas parcouru tout l'ordre de tabulation, seulement le premier arrêt.\"},{\"id\":\"T2\",\"verdict\":\"PASS\",\"preuve\":\"Sur /agent à 390 px, la capture pleine page ne montre ni contenu coupé ni superposition. La navigation passe à la ligne et l'en-tête s'empile. Je n'ai pas relevé scrollWidth à 390 px. À 1280 px, scrollWidth = clientWidth = 1280. Fenêtre remise à 1280x800.\"},{\"id\":\"T3\",\"verdict\":\"PASS\",\"preuve\":\"Aucun message d'erreur vide. Les 7 URL de la navigation chargent avec un statut 200. Je n'ai vu aucun lien mort.\"}],\"synthese\":\"Le cadre commun est conforme sauf la pastille de mode, qui affiche « Mode réel » alors que le serveur est lancé en Mode repli et que le bandeau annonce « Mode repli » (C3 FAIL).\"}",
+ "cout_usd": 0.07058249999999999,
+ "tours": 11,
+ "duree_ms": 24212,
+ "is_error": false,
+ "subtype": "success",
+ "usage": {
+  "input_tokens": 14,
+  "cache_creation_input_tokens": 8077,
+  "cache_read_input_tokens": 106265,
+  "output_tokens": 2762,
+  "output_tokens_details": {
+   "thinking_tokens": 238
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 8077,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1146,
+    "cache_read_input_tokens": 19301,
+    "cache_creation_input_tokens": 228,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 228
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "id": "e01",
+ "run": "e01-082339",
+ "story": "s713",
+ "temoin": false,
+ "statut": "ok",
+ "duree_mur_s": 28.9,
+ "cibles": [
+  "C3"
+ ],
+ "oracle": {
+  "C1_titres_h1": [
+   true,
+   "écarts : []"
+  ],
+  "C2_cadre": [
+   true,
+   "écarts : []"
+  ],
+  "C3_repli": [
+   true,
+   "écarts : []"
+  ],
+  "C4_lien_evitement": [
+   true,
+   "actif='lien-evitement|Aller au contenu' top=8 hash=#titre-ecran cible=True"
+  ],
+  "C5_pas_de_requete_externe": [
+   true,
+   "externes : []"
+  ],
+  "T2_390px_accueil": [
+   true,
+   "scrollWidth=390"
+  ],
+  "T2_390px_chaine": [
+   true,
+   "scrollWidth=390"
+  ]
+ },
+ "axe": {
+  "/@1280": [],
+  "/entites/ENT-A@1280": [],
+  "/chaine@1280": [],
+  "/agent@1280": [],
+  "/avant-apres@1280": [],
+  "/pseudonymisation@1280": [],
+  "/outillage@1280": [],
+  "/@390": [],
+  "/entites/ENT-A@390": [],
+  "/chaine@390": [],
+  "/agent@390": [],
+  "/avant-apres@390": [],
+  "/pseudonymisation@390": [],
+  "/outillage@390": []
+ }
+}

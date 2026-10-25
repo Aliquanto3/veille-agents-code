@@ -1,0 +1,111 @@
+{
+ "outils": {
+  "mcp__playwright__browser_navigate": 3,
+  "mcp__playwright__browser_snapshot": 2,
+  "mcp__playwright__browser_select_option": 2,
+  "mcp__playwright__browser_evaluate": 7,
+  "mcp__playwright__browser_console_messages": 1,
+  "mcp__playwright__browser_click": 3,
+  "mcp__playwright__browser_resize": 2,
+  "mcp__playwright__browser_take_screenshot": 2,
+  "mcp__playwright__browser_run_code_unsafe": 1
+ },
+ "refus": 0,
+ "result": "{\"criteres\":[{\"id\":\"C1\",\"verdict\":\"FAIL\",\"preuve\":\"Sur `/`, les tuiles affichent Rouge 3, Orange 2, Jaune 7, Vert 2, soit 14 au total. Le tableau a 10 lignes (2 rouges, 1 orange, 6 jaunes, 1 verte) et `/api/carte` renvoie les comptages 2/1/6/1. Les tuiles sont donc incohérentes avec le tableau. Le reste est conforme : lignes triées grave d'abord (ENT-A, B rouges, ENT-C orange, E à J jaunes, ENT-D vert). Chaque ligne a 3 tickets puis « +N » (ex. « DEMO-3117, DEMO-3234, DEMO-3316 +1 ») et un lien « Détail ENT-x » vers /entites/ENT-x.\"},{\"id\":\"C2\",\"verdict\":\"PASS\",\"preuve\":\"Choisir « Rouge » laisse 2 lignes visibles. L'URL reste `/` (pas de rechargement) et la région role=status annonce « 2 Entités affichées ». « Toutes » ré-affiche les 10 lignes avec « 10 Entités affichées ». Le cas singulier (1 Entité) n'a pas pu être observé : aucun filtre ne donne une seule ligne.\"},{\"id\":\"C3\",\"verdict\":\"PASS\",\"preuve\":\"Deux livrables sont présents et sont des liens : /livrables/rapport_xlsx répond 200 avec `attachment; filename=\\\"rapport-2026-10-09.xlsx\\\"`, et /livrables/rapport_pptx répond 200 avec une pièce jointe .pptx. Le cas d'un livrable absent (« Non généré pour ce Passage ») n'est pas observable : tous les livrables du Passage sont présents.\"},{\"id\":\"C4\",\"verdict\":\"PASS\",\"preuve\":\"`/entites` redirige vers /entites/ENT-A, la première ligne du tableau (fetch en redirect manual : opaqueredirect, le statut 307 n'est pas lisible). Le détail d'ENT-A affiche la météo Rouge, les règles (IND-1 : 4 (seuil ≥ 3)) et 8 KPI. Il affiche aussi la prévision (« Sortie du rouge estimée : 13/10/2026 »), le risque (« Sans objet : l'Entité est déjà rouge. »), l'explication (« commentaire non généré (Palier 1) ») et le lien « ← Carte météo » vers `/`.\"},{\"id\":\"C5\",\"verdict\":\"PASS\",\"preuve\":\"/entites/ENT-X affiche « Entité ENT-X absente du Passage affiché. » et un lien « Voir la carte météo » (href `/`). Le clic mène à `/`, qui se charge.\"},{\"id\":\"C6\",\"verdict\":\"PASS\",\"preuve\":\"Dans les données de /api/carte, les tickets ont `url:null`. Sur la carte et sur le détail ENT-A, les clés DEMO-xxxx ne sont pas des liens (texte simple). /livrables/autre répond 404.\"}],\"transverses\":[{\"id\":\"T1\",\"verdict\":\"PASS\",\"preuve\":\"Sur la carte, l'ordre de Tab est logique : lien d'évitement, en-tête, navigation, select de filtre, zone de tableau, puis les liens « Détail ENT-A », B, C… Chaque élément focalisé a un outline solide de 2 px. Je n'ai pas testé l'activation par Entrée ou Espace.\"},{\"id\":\"T2\",\"verdict\":\"PASS\",\"preuve\":\"À 390 px, la carte et la page ENT-X ont scrollWidth = clientWidth = 390 : pas de défilement horizontal de la page. Les colonnes du tableau sont tronquées dans sa zone de défilement interne (région scrollable), le texte reste lisible. Fenêtre remise à 1280x800.\"},{\"id\":\"T3\",\"verdict\":\"PASS\",\"preuve\":\"Aucune erreur affichée sans texte et aucune erreur dans la console du navigateur (0 erreur au dernier relevé). Les liens suivis (carte, détail ENT-A, retour à la carte depuis ENT-X) aboutissent à des pages qui se chargent.\"}],\"synthese\":\"Le filtre, les livrables, le détail d'Entité, l'Entité absente et le Mode repli sont conformes, mais les tuiles de comptage de la carte (3/2/7/2) ne correspondent pas au tableau ni à /api/carte (2/1/6/1), donc C1 échoue.\"}",
+ "cout_usd": 0.1482979,
+ "tours": 24,
+ "duree_ms": 180828,
+ "is_error": false,
+ "subtype": "success",
+ "usage": {
+  "input_tokens": 26,
+  "cache_creation_input_tokens": 18483,
+  "cache_read_input_tokens": 272539,
+  "output_tokens": 4706,
+  "output_tokens_details": {
+   "thinking_tokens": 753
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 18483,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1810,
+    "cache_read_input_tokens": 29191,
+    "cache_creation_input_tokens": 889,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 889
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "id": "e04",
+ "run": "e04-082622",
+ "story": "s714",
+ "temoin": false,
+ "statut": "ok",
+ "duree_mur_s": 185.2,
+ "cibles": [
+  "C1"
+ ],
+ "oracle": {
+  "C1_carte": [
+   true,
+   "lignes=10"
+  ],
+  "C2_filtre": [
+   true,
+   "visibles=2 annonce='2 Entités affichées' sans_rechargement=True retour=10"
+  ],
+  "C3_livrables": [
+   true,
+   "liens=2 écarts=[]"
+  ],
+  "C4_detail": [
+   true,
+   "url=http://127.0.0.1:8765/entites/ENT-A"
+  ],
+  "C5_entite_absente": [
+   true,
+   "message='Entité ENT-X absente du Passage affiché.' après clic=http://127.0.0.1:8765/"
+  ],
+  "C6_tickets_texte_404": [
+   true,
+   "liens_ticket=0 autre=404"
+  ],
+  "T2_390px_carte": [
+   true,
+   "scrollWidth=390"
+  ],
+  "T2_390px_detail": [
+   true,
+   "scrollWidth=390"
+  ]
+ },
+ "axe": {
+  "/@1280": [
+   "landmark-unique:1"
+  ],
+  "/entites/ENT-A@1280": [
+   "landmark-unique:1"
+  ],
+  "/@390": [
+   "landmark-unique:1"
+  ],
+  "/entites/ENT-A@390": [
+   "landmark-unique:1"
+  ]
+ }
+}

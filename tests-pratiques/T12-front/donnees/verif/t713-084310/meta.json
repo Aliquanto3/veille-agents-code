@@ -1,0 +1,106 @@
+{
+ "outils": {
+  "mcp__playwright__browser_navigate": 2,
+  "mcp__playwright__browser_run_code_unsafe": 2,
+  "mcp__playwright__browser_network_requests": 1,
+  "mcp__playwright__browser_press_key": 2,
+  "mcp__playwright__browser_evaluate": 2,
+  "mcp__playwright__browser_take_screenshot": 1,
+  "mcp__playwright__browser_snapshot": 1,
+  "Read": 1
+ },
+ "refus": 0,
+ "result": "{\"criteres\":[{\"id\":\"C1\",\"verdict\":\"PASS\",\"preuve\":\"Les 7 URL (/, /entites/ENT-A, /chaine, /agent, /avant-apres, /pseudonymisation, /outillage) répondent 200. Titres : « Carte météo · Usine de migration », « Détail d'une Entité · … », « Lancement de la Chaîne · … », « Agent · … », « Avant / après · … », « Pseudonymisation · … », « Ce qu'il faut pour le faire en vrai · Usine de migration ». Chaque page a exactement un <h1>, de même texte que le nom de l'écran. <html lang=\\\"fr\\\"> partout.\"},{\"id\":\"C2\",\"verdict\":\"PASS\",\"preuve\":\"L'en-tête (banner) de chaque page affiche « Passage publié · 12/10/2026 22:12 UTC » et la pastille « Mode repli ». Le lien « Lancer la Chaîne » (vers /chaine) est dans l'en-tête sur les 6 pages autres que /chaine. Il est absent de /chaine. La navigation latérale porte aria-current=\\\"page\\\" sur le seul lien de l'écran courant, sur les 7 pages.\"},{\"id\":\"C3\",\"verdict\":\"PASS\",\"preuve\":\"Sur les 7 pages, la pastille « Mode repli » est présente. Le bandeau (role=status) dit : « Mode repli : la démo lit le Passage enregistré demo/repli/passage/, sans Jira ni LLM réels ; les liens Jira sont inactifs. » Il est visible sur les captures de /agent et de / à 390 px.\"},{\"id\":\"C4\",\"verdict\":\"PASS\",\"preuve\":\"Sur /agent, le premier Tab met le focus sur le lien « Aller au contenu » (href #titre-ecran). Il est visible à l'écran, en haut à gauche, avec un contour de 2 px. Après Entrée, l'URL devient /agent#titre-ecran et le focus est sur <h1 id=\\\"titre-ecran\\\">Agent</h1>.\"},{\"id\":\"C5\",\"verdict\":\"PASS\",\"preuve\":\"Sur 64 requêtes réseau relevées sur les 7 pages, toutes visent http://127.0.0.1:8765 et répondent 200. Il y a les pages, /statique/cadre.css, /statique/cadre.js, /api/cadre et 4 polices woff2 sous /statique/polices/. Aucune URL externe dans les attributs src ou href.\"}],\"transverses\":[{\"id\":\"T1\",\"verdict\":\"PASS\",\"preuve\":\"Sur /chaine, l'ordre de Tab est : Aller au contenu, logo/accueil, puis les 7 liens de navigation dans l'ordre. Le focus est visible (outline solid) à chaque étape. Le Tab suivant sort de la page, puis le cycle reprend au lien d'évitement. Entrée sur le lien d'évitement active bien le lien. Je n'ai pas testé Espace.\"},{\"id\":\"T2\",\"verdict\":\"PASS\",\"preuve\":\"À 390x844 sur /, scrollWidth = clientWidth = 390, donc pas de défilement horizontal. La capture montre l'en-tête, la navigation, le bandeau et le contenu empilés, sans coupure ni superposition. J'ai capturé seulement /, pas les autres écrans. La fenêtre est remise à 1280x800.\"},{\"id\":\"T3\",\"verdict\":\"PASS\",\"preuve\":\"Tous les liens internes (/, /entites/ENT-A, /chaine, /agent, /avant-apres, /pseudonymisation, /outillage) répondent 200. Je n'ai vu aucun message d'erreur vide ni lien mort.\"}],\"synthese\":\"Les 5 critères et les 3 contrôles transverses sont PASS sur ce que montre le navigateur ; la seule limite est qu'Espace n'a pas été testé et que T2 n'a été capturé que sur /.\"}",
+ "cout_usd": 0.0955938,
+ "tours": 13,
+ "duree_ms": 37227,
+ "is_error": false,
+ "subtype": "success",
+ "usage": {
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 12758,
+  "cache_read_input_tokens": 97778,
+  "output_tokens": 3476,
+  "output_tokens_details": {
+   "thinking_tokens": 234
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 12758,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1352,
+    "cache_read_input_tokens": 23477,
+    "cache_creation_input_tokens": 733,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 733
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "id": "t713",
+ "run": "t713-084310",
+ "story": "s713",
+ "temoin": true,
+ "statut": "ok",
+ "duree_mur_s": 39.6,
+ "cibles": [],
+ "oracle": {
+  "C1_titres_h1": [
+   true,
+   "écarts : []"
+  ],
+  "C2_cadre": [
+   true,
+   "écarts : []"
+  ],
+  "C3_repli": [
+   true,
+   "écarts : []"
+  ],
+  "C4_lien_evitement": [
+   true,
+   "actif='lien-evitement|Aller au contenu' top=8 hash=#titre-ecran cible=True"
+  ],
+  "C5_pas_de_requete_externe": [
+   true,
+   "externes : []"
+  ],
+  "T2_390px_accueil": [
+   true,
+   "scrollWidth=390"
+  ],
+  "T2_390px_chaine": [
+   true,
+   "scrollWidth=390"
+  ]
+ },
+ "axe": {
+  "/@1280": [],
+  "/entites/ENT-A@1280": [],
+  "/chaine@1280": [],
+  "/agent@1280": [],
+  "/avant-apres@1280": [],
+  "/pseudonymisation@1280": [],
+  "/outillage@1280": [],
+  "/@390": [],
+  "/entites/ENT-A@390": [],
+  "/chaine@390": [],
+  "/agent@390": [],
+  "/avant-apres@390": [],
+  "/pseudonymisation@390": [],
+  "/outillage@390": []
+ }
+}

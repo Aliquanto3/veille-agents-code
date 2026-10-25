@@ -1,0 +1,105 @@
+{
+ "outils": {
+  "mcp__playwright__browser_navigate": 6,
+  "mcp__playwright__browser_snapshot": 5,
+  "mcp__playwright__browser_click": 3,
+  "mcp__playwright__browser_evaluate": 13,
+  "mcp__playwright__browser_network_requests": 1,
+  "mcp__playwright__browser_wait_for": 2,
+  "mcp__playwright__browser_press_key": 1,
+  "mcp__playwright__browser_run_code_unsafe": 1,
+  "mcp__playwright__browser_resize": 2,
+  "mcp__playwright__browser_take_screenshot": 1
+ },
+ "refus": 0,
+ "result": "{\"criteres\":[{\"id\":\"C1\",\"verdict\":\"PASS\",\"preuve\":\"/agent en Mode repli : aucune zone de saisie, message « En Mode repli, l'Agent ne s'adresse à aucun LLM : choisir une question enregistrée… » et 5 questions enregistrées sous forme de boutons. Après un clic sur « Pourquoi ENT-B est-elle rouge ? » : réponse « ENT-B est rouge sur IND-1, qui vaut 9 pour un seuil de 3… », « Contrôle : conforme : chiffres et tickets vérifiés », outils appelés « get_meteo », mention « Mode repli : réponse enregistrée le 13/10/2026 sur le Passage 20261012T221158Z-96c621, rejouée sans LLM ». Le focus est sur div#reponse (tabindex=-1).\"},{\"id\":\"C2\",\"verdict\":\"PASS\",\"preuve\":\"/avant-apres : deux cartes « Reporting manuel 120 min » et « Chaîne 4,4 s », tableau « Les deux périodes » (120 min / 4,4 s et 600 min / 22,2 s). Un clic sur « Cumulé sur 5 Rapports » mène à ?periode=cumul, les cartes passent à 600 min et 22,2 s, aria-pressed passe à true sur « Cumulé » et à false sur « Par Rapport quotidien ».\"},{\"id\":\"C3\",\"verdict\":\"FAIL\",\"preuve\":\"/pseudonymisation?ticket=DEMO-17 : « Original » et « Version pseudonymisée » côte à côte (x=308 et x=790) en texte brut, avec le même texte « Dérouler le parcours complet de l'Entité ENT-C… » et aucun surlignage. Le choix de DEMO-18 puis « Afficher » mène à ?ticket=DEMO-18 et affiche « Rejouer les scénarios… ». Mais les deux div.panneau-texte (role=region) ont tabIndex=-1 : en parcourant la page avec Tab (après le bouton « Afficher »), le focus passe au body, puis au lien d'évitement, sans jamais atteindre les régions. Elles ne sont donc pas atteignables au clavier. La page est lente à charger (la liste contient 3547 tickets).\"},{\"id\":\"C4\",\"verdict\":\"PASS\",\"preuve\":\"/outillage : fiche rendue en HTML avec 9 titres, 1 tableau « Correspondance par brique » et 5 listes. Les cellules affichent « Oui », « À surveiller » et « Non » (32 pastilles) et le texte ne contient aucun ✅ ⚠ ❌. Défaut mineur : le paragraphe « Fiche `docs/fiche-outillage.md` (Story 8.1)… » affiche des backticks bruts.\"}],\"transverses\":[{\"id\":\"T1\",\"verdict\":\"FAIL\",\"preuve\":\"Les liens d'évitement et de navigation sont atteignables et le focus est dans l'ordre. Mais sur /pseudonymisation, les deux régions de texte ne reçoivent jamais le focus, et le focus retombe sur body après le bouton « Afficher ». Le focus visible n'a pas été contrôlé en capture.\"},{\"id\":\"T2\",\"verdict\":\"PASS\",\"preuve\":\"À 390 px sur /outillage et /avant-apres, scrollWidth = 390 = innerWidth, donc pas de défilement horizontal. La capture de /outillage ne montre ni coupure ni superposition. La fenêtre est remise à 1280x800.\"},{\"id\":\"T3\",\"verdict\":\"PASS\",\"preuve\":\"Aucun message d'erreur vide observé. Les liens de navigation (/agent, /avant-apres, /pseudonymisation, /outillage) se chargent, avec un statut 200 pour /pseudonymisation. Je n'ai pas suivi les autres liens un par un.\"}],\"synthese\":\"Agent, Avant / après et Outillage respectent leurs critères, mais l'écran Pseudonymisation échoue : ses deux régions de texte ne sont pas focalisables au clavier (tabIndex=-1).\"}",
+ "cout_usd": 0.1764675,
+ "tours": 36,
+ "duree_ms": 61133,
+ "is_error": false,
+ "subtype": "success",
+ "usage": {
+  "input_tokens": 40,
+  "cache_creation_input_tokens": 20329,
+  "cache_read_input_tokens": 419715,
+  "output_tokens": 5310,
+  "output_tokens_details": {
+   "thinking_tokens": 318
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 20329,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1426,
+    "cache_read_input_tokens": 31036,
+    "cache_creation_input_tokens": 653,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 653
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "id": "d13",
+ "run": "d13-081318",
+ "story": "s716",
+ "temoin": false,
+ "statut": "ok",
+ "duree_mur_s": 64.0,
+ "cibles": [
+  "C3",
+  "T1"
+ ],
+ "oracle": {
+  "C1_agent_repli": [
+   true,
+   "saisie=0 questions=5 badge='Contrôle : conforme : chiffres et tickets vérifiés' mention=True focus=reponse"
+  ],
+  "C2_avant_apres_segment": [
+   true,
+   "avant=('120 min', '4,4 s') après=('600 min', '22,2 s') pressed=true"
+  ],
+  "C3_pseudonymisation": [
+   false,
+   "focus_atteints=['choix-ticket'] côte_à_côte=True autre=DEMO-10 url=seudonymisation?ticket=DEMO-10"
+  ],
+  "C4_outillage": [
+   true,
+   "pastilles=32"
+  ],
+  "T2_390px": [
+   true,
+   "écarts : []"
+  ]
+ },
+ "axe": {
+  "/agent@1280": [],
+  "/avant-apres@1280": [
+   "landmark-unique:1"
+  ],
+  "/pseudonymisation?ticket=DEMO-17@1280": [
+   "landmark-unique:2"
+  ],
+  "/outillage@1280": [],
+  "/agent@390": [],
+  "/avant-apres@390": [
+   "landmark-unique:1"
+  ],
+  "/pseudonymisation?ticket=DEMO-17@390": [
+   "landmark-unique:2"
+  ],
+  "/outillage@390": []
+ }
+}
