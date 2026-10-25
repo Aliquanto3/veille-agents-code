@@ -80,3 +80,12 @@
 | B humanizer | 448.8 | 16.0 | 0.0 | 0.0 | 0.2 | 2.5 | 1.1 | 0.8 | 0.9 |
 | C clarity | 449.8 | 14.7 | 0.0 | 0.0 | 0.2 | 2.2 | 0.9 | 1.0 | 3.0 |
 | D clarity puis humanizer | 457.4 | 15.2 | 0.0 | 0.0 | 0.2 | 2.4 | 1.0 | 0.9 | 0.5 |
+
+### Notes d'Anaël (moyennes par condition)
+
+| Condition | fidelite | clarte | naturel | publier | moyenne | voix (X3) | sorties notées |
+|---|---|---|---|---|---|---|---|
+| A sans skill | 5.00 | 4.50 | 3.33 | 4.17 | 4.25 | 5.00 | 6 |
+| B humanizer | 5.00 | 3.83 | 3.50 | 3.33 | 3.92 | 4.50 | 6 |
+| C clarity | 5.00 | 4.33 | 3.50 | 3.83 | 4.17 | 4.50 | 6 |
+| D clarity puis humanizer | 5.00 | 4.17 | 3.50 | 4.00 | 4.17 | 4.00 | 6 |

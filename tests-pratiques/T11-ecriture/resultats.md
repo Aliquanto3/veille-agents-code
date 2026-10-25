@@ -1,8 +1,30 @@
 # T11 : réécrire un texte avec `clarity`, `humanizer`, ou les deux enchaînées
 
-Test du 2026-10-25. Résultat provisoire : **la note à l'aveugle d'Anaël (`notation.html`) décide**. Les mesures automatiques ne départagent presque pas les conditions.
+Test du 2026-10-25, conclu le même jour par la note à l'aveugle d'Anaël. **Verdict : réécrire sans skill.** Ni `clarity`, ni `humanizer`, ni leur enchaînement ne font mieux qu'un simple « réécris plus clair », et chacun coûte 2 à 5 fois plus.
 
-## 1. Résumé provisoire
+## 0. Note à l'aveugle d'Anaël (décision)
+
+Export `donnees/notes-anael.json` croisé avec `correspondance.json` par `scripts/agreger.py`. Anaël a noté 24 sorties sur 32 (X1, X3, X4). Sur X2, il a seulement commenté 4 sorties : il juge la consigne floue (« résumé exécutif » à peine reformulé, renvois `[x]` sans sources visibles) et trouve que la perte du markdown nuit à ce texte.
+
+| Condition | fidélité | clarté | naturel | « je le publierais » | moyenne | voix (X3) | coût par essai |
+|---|---|---|---|---|---|---|---|
+| A sans skill | 5,00 | **4,50** | 3,33 | **4,17** | **4,25** | **5,0** | 0,060 $ |
+| B `humanizer` | 5,00 | 3,83 | 3,50 | 3,33 | 3,92 | 4,5 | 0,133 $ |
+| C `clarity` | 5,00 | 4,33 | 3,50 | 3,83 | 4,17 | 4,5 | 0,113 $ |
+| D `clarity` puis `humanizer` | 5,00 | 4,17 | 3,50 | 4,00 | 4,17 | 4,0 | 0,313 $ |
+
+Sur 5, 6 sorties par condition (3 textes × 2 essais). Par texte, moyenne des quatre critères : X1 A 3,50, B 3,50, C 3,50, D 4,00 ; X3 A 4,75, B 4,50, C 4,75, D 4,25 ; X4 A 4,50, B 3,75, C 4,25, D 4,25.
+
+Application du critère de la section 6 :
+1. **Portes.** Le juge n'élimine aucune condition. Ma relecture, plus sévère, comptait « que je publie aujourd'hui » comme un fait inventé (X3 A-1, A-2, C-2), ce qui éliminait la condition sans skill. Anaël a noté ces trois sorties 5 sur 5 en fidélité sans relever l'ajout : je retiens donc le classement du juge, « mineur ». Il a relevé en revanche un autre écart, que le juge n'avait pas vu : C-2 (`clarity`) qualifie de « chères » ses licences, ce que la source ne dit pas.
+2. **Meilleure note.** La condition sans skill arrive en tête sur la moyenne (4,25), la clarté, « je le publierais » et la voix d'Anaël. Les écarts sont faibles (0,08 avec `clarity` et l'enchaînement) sur 6 sorties par condition, donc non significatifs. D ne dépasse pas les autres de 0,5 point. La règle désigne alors l'option la plus simple et la moins chère : **sans skill**.
+3. **`humanizer` arrive dernier** (3,92) : il perd en clarté et en « je le publierais », il fond les listes à puces utiles et retire le markdown. Il garde « WOUPS », mais cela ne lui rapporte rien en voix (4,5 contre 5,0 sans skill).
+
+Si l'on comptait « aujourd'hui » comme une porte, la condition sans skill serait éliminée et `clarity` (4,17, deux fois moins cher que D) prendrait la place.
+
+Les commentaires d'Anaël confirment la limite de la section 7. Les textes de départ étaient déjà propres, et toutes les versions de X1 restent « très proches du texte initial ». Le test ne dit rien de ces skills sur un premier jet chargé de tics.
+
+## 1. Résumé avant la note (mesures automatiques)
 
 - **Portes dures** (juge Opus aveugle, 32 sorties) : `humanizer` seul 0 essai sur 8, `clarity` seul 0 sur 8, aucune skill 1 sur 8, `clarity` puis `humanizer` 1 sur 8. Aucune condition n'est éliminée (seuil : plus d'un essai sur quatre). Ma relecture, plus sévère, ajoute 2 essais sans skill et 1 essai `clarity` pour un « aujourd'hui » inventé (section 5) : elle éliminerait la condition sans skill (3 sur 8), pas les autres.
 - **Tics de surface** : presque rien à mesurer. Les textes de départ en contiennent peu (0 tiret, 0 « pas X mais Y » dans le brouillon X1), et un simple « réécris plus clair » sans skill les supprime déjà. Seul écart net : `humanizer` retire le gras décoratif (1,8 gras par texte contre 6 sans skill ou avec `clarity`) et réduit les exclamations de X3 (3,5 contre 6,5 sans skill).
@@ -129,7 +151,7 @@ Dépense totale du test : environ 7,2 $ d'équivalent API (32 sorties et X1 : 4,
 - **X4** : un extrait de 314 mots, un article de recherche en anglais. Il teste surtout la préservation des faits : les écarts entre skills y sont de même ordre qu'en français (0 porte pour toutes les conditions).
 - **Ordre des essais et cache** : coûts bruités. La durée dépend de la machine.
 
-## 8. Ce qu'Anaël doit faire
+## 8. Ce qu'Anaël devait faire (points 1 à 4 faits le 2026-10-25)
 
 1. Ouvrir `tests-pratiques/T11-ecriture/notation.html` (4 textes, 8 versions chacun, environ 20 min) et noter. Ne pas ouvrir `correspondance.json` avant.
 2. Exporter le JSON (bouton en bas) et me le transmettre, ou lancer `uv run python scripts/agreger.py --notes <fichier>`.
@@ -152,4 +174,4 @@ Dépense totale du test : environ 7,2 $ d'équivalent API (32 sorties et X1 : 4,
 2. Tics : presque rien à corriger dans les textes de départ ; `humanizer` retire le gras décoratif et les exclamations, `clarity` les garde, aucun ne réduit les triades.
 3. Voix d'Anaël (X3) : `humanizer` garde « WOUPS » 2/2 mais fond la liste à puces ; sans skill 0/2.
 4. Coût par essai : sans skill 0,06 $, `clarity` 0,11 $, `humanizer` 0,13 $, les deux 0,31 $ ; rien ne justifie de les enchaîner.
-5. À faire : ta note à l'aveugle (`notation.html`) tranche entre sans skill, `humanizer` et `clarity` ; D n'est retenue que si elle dépasse les deux de 0,5 point.
+5. Note à l'aveugle d'Anaël (24 sorties) : sans skill 4,25, `clarity` 4,17, les deux 4,17, `humanizer` 3,92 sur 5 ; voix 5,0 sans skill. Verdict : réécrire sans skill ; `clarity` et `humanizer` écartés.

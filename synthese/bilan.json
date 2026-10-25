@@ -550,10 +550,10 @@
       "note": "Régresse sur les succès partiels ; le style Concise le recouvre."
     },
     "humanizer": {
-      "decision": "Intégrer",
-      "statut": "ouvert",
-      "preuve": "T11 (note d'Anaël en attente)",
-      "note": "T11 : aucun fait inventé, retire le gras décoratif et la moitié des exclamations, garde « WOUPS » mais fond une liste à puces en phrase ; 0,13 $ par réécriture. Enchaîné après clarity : 0,31 $ sans gain mesuré. La note à l'aveugle d'Anaël tranchera. Fiche d'essai dans agent-cost-kit 0.12.0 (`docs/experimental.md`, skill `essai-outil`)."
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "T11",
+      "note": "T11, note à l'aveugle d'Anaël sur 24 réécritures : dernier des quatre (3,92 sur 5, contre 4,25 sans skill). Il perd en clarté et en « je le publierais », il fond les listes à puces utiles et retire le markdown. Il garde « WOUPS » mais pas mieux la voix d'Anaël (4,5 contre 5,0). Aucun fait inventé, 0,13 $ par réécriture, 2,2 fois une réécriture sans skill. Non testé sur un premier jet chargé de tics."
     },
     "firecrawl": {
       "decision": "Intégrer",
@@ -592,10 +592,10 @@
       "note": "Moniteur en direct et en lecture seule des sessions Claude Code (graphe des agents, tokens, coût, conflits de fichiers entre agents parallèles, alertes, vue sur plusieurs postes). Recoupe mesurer-couts et l'OpenTelemetry ; son seul apport neuf pour toi est l'alerte de conflit de fichiers pendant un run parallèle. Réserves : une semaine d'existence, 19 hooks sur 16 événements, asynchrones, qui lancent chacun un processus Node, Git Bash et make sous Windows, port 4318 (celui de l'export OpenTelemetry). À essayer en bac à sable sur un run parallèle, après lecture des hooks et SkillSpector. Fiche d'essai dans agent-cost-kit 0.12.0 (`docs/experimental.md`, skill `essai-outil`)."
     },
     "clarity": {
-      "decision": "À trancher",
-      "statut": "ouvert",
-      "preuve": "T11 (note d'Anaël en attente)",
-      "note": "Skill d'écriture à invocation manuelle, 7,7 k caractères, sans hook ni réseau, MIT. T11 (4 textes dont un post d'Anaël et un extrait arXiv, 8 essais) : aucun fait inventé selon le juge, chiffres et renvois intacts, 0,11 $ par réécriture. Les textes de départ avaient trop peu de défauts pour départager : la note à l'aveugle d'Anaël tranchera. Fiche d'essai dans agent-cost-kit 0.12.0 (`docs/experimental.md`, skill `essai-outil`)."
+      "decision": "Écarter",
+      "statut": "conclu",
+      "preuve": "T11",
+      "note": "Skill d'écriture à invocation manuelle, 7,7 k caractères, sans hook ni réseau, MIT. T11, note à l'aveugle d'Anaël sur 24 réécritures : 4,17 sur 5, contre 4,25 sans skill, pour 0,11 $ au lieu de 0,06 $. Aucun gain, et un détail inventé (« licences chères ») relevé par Anaël. Testée en mode réécriture sur des textes déjà propres ; ni le mode revue ni un premier jet brut n'ont été testés."
     },
     "open-ontologies": {
       "decision": "Hors périmètre",
@@ -744,9 +744,9 @@
     {
       "nom": "Réécrire un texte",
       "candidats": "sans skill, humanizer, clarity, clarity puis humanizer",
-      "meilleur": "En attente de la note d'Anaël",
+      "meilleur": "Sans skill (« réécris plus clair »)",
       "strict": false,
-      "explication": "Aucune condition n'invente de fait selon le juge (relecture plus sévère : un « que je publie aujourd'hui » ajouté sans skill, 3 fois sur 8) ; chiffres et renvois intacts partout. Les textes avaient trop peu de tics pour que humanizer fasse la différence ; l'enchaînement coûte 2,5 fois plus sans gain mesuré.",
+      "explication": "Note à l'aveugle d'Anaël sur 24 réécritures : sans skill 4,25 sur 5, clarity 4,17, clarity puis humanizer 4,17, humanizer 3,92 ; voix d'Anaël 5,0 sans skill. Écarts non significatifs (6 sorties par condition), mais l'option la plus simple est aussi deux à cinq fois moins chère. Aucune condition n'invente de fait, chiffres et renvois intacts. Textes de départ déjà propres : le cas d'un premier jet chargé de tics n'est pas tranché.",
       "preuve": "T11"
     },
     {
@@ -823,11 +823,6 @@
     }
   ],
   "tests_ouverts": [
-    {
-      "test": "T11, écriture",
-      "manque": "Ta note à l'aveugle des 32 réécritures (`tests-pratiques/T11-ecriture/notation.html`, ~20 min).",
-      "elargir": "Avec des textes plus chargés en tics (premiers jets bruts d'un modèle) si humanizer et clarity restent à égalité."
-    },
     {
       "test": "T7, design front",
       "manque": "Ta note à l'aveugle des 8 rendus (notation.html, ~10 min).",
@@ -957,8 +952,8 @@
     "<strong>Aucun dépôt de ta liste ne fait strictement mieux que l'option la plus simple de ta configuration</strong> (natif, ou BMAD et agent-cost-kit). 19 tests pratiques sur tes projets et tes transcriptions l'ont vérifié là où l'analyse ne suffisait pas : navigateur, design, revue, modèles locaux, routage.",
     "<strong>Ce qui rapporte, mesuré chez toi</strong> : réduire le contexte fixe (17,8 k tokens d'outils rarement appelés, retirés dans le kit 0.11.0) ; le second avis Haiku (87 % de ses constats sérieux corrigés pour 0,03 $) ; Sonnet seul pour implémenter (0,53 $ par story contre 1,33 $ pour Opus, réussite égale) ; sauter le cadrage BMAD pour une petite story à l'entrée détaillée (−73 %, réussite égale à 10 points près, T13 bis) ; la vérification des critères d'acceptation dans un vrai navigateur par un sous-agent Playwright (22 défauts d'interface semés sur 25 que pytest ne voit pas, 0,14 $ par story, T12), comme filet de sécurité.",
     "<strong>La découverte de la série : la mutation guidée.</strong> Montrer à l'agent les mutants qui survivent à ses tests lui fait boucher 134 trous non équivalents sur 134, contre 59 % avec une simple consigne, pour 0,22 $ par story. C'est le seul ajout à ta chaîne que les tests justifient (étape optionnelle de la revue, 3 à 13 min).",
-    "<strong>Ce qui ne rapporte pas, mesuré aussi</strong> : un relecteur d'une autre famille (+6 points, non significatif), la porte empirique, le verrouillage des tests (aucune triche observée sur 40 runs), <code>/advisor</code>, les tests Hypothesis, les juges de commandes shell, les modèles de décision (Jev), la compression des sorties, une voie « story légère » façon OpenSpec (−46 % de coût mais −10 points de réussite, T13), la correction systématique après vérification du front, le TTL d'une heure, les modèles locaux au quotidien, tailler un CLAUDE.md de quelques milliers de tokens.",
+    "<strong>Ce qui ne rapporte pas, mesuré aussi</strong> : un relecteur d'une autre famille (+6 points, non significatif), la porte empirique, le verrouillage des tests (aucune triche observée sur 40 runs), <code>/advisor</code>, les tests Hypothesis, les juges de commandes shell, les modèles de décision (Jev), la compression des sorties, une voie « story légère » façon OpenSpec (−46 % de coût mais −10 points de réussite, T13), la correction systématique après vérification du front, le TTL d'une heure, les modèles locaux au quotidien, tailler un CLAUDE.md de quelques milliers de tokens, les skills de réécriture <code>clarity</code> et <code>humanizer</code> (T11, ta note : la réécriture sans skill fait au moins aussi bien pour deux à cinq fois moins cher).",
     "<strong>Gagnants stricts</strong> (au moins aussi bons et moins chers, sur tes données) : la chaîne agent-cost-kit contre bmad-build, la réduction du contexte fixe contre la compression, Haiku contre les modèles locaux pour le lookup, Sonnet seul contre Sonnet + conseiller, la mutation guidée contre la consigne seule. Partout ailleurs, pas de gagnant strict : choisir l'option la plus simple.",
-    "<strong>À faire de ton côté</strong> : noter à l'aveugle les 8 rendus de design (<code>tests-pratiques/T7/notation.html</code>, ~10 min) et les 32 réécritures (<code>tests-pratiques/T11-ecriture/notation.html</code>, ~20 min) ; essayer le sous-agent <code>verif-front</code> (agent-cost-kit 0.13.0, expérimental) sur tes prochaines stories front. essayer l'aiguillage des petites stories sans cadrage (agent-cost-kit 0.14.0, expérimental) et suivre les retours du reviewer sur 10 stories."
+    "<strong>À faire de ton côté</strong> : noter à l'aveugle les 8 rendus de design (<code>tests-pratiques/T7/notation.html</code>, ~10 min) ; essayer le sous-agent <code>verif-front</code> (agent-cost-kit 0.13.0, expérimental) sur tes prochaines stories front ; essayer l'aiguillage des petites stories sans cadrage (agent-cost-kit 0.14.0, expérimental) et suivre les retours du reviewer sur 10 stories."
   ]
 }

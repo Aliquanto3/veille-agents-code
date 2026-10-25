@@ -81,16 +81,19 @@ def main():
         for tid, m in corr.items():
             for lettre, cle in m.items():
                 n = notes.get(f"{tid}/{lettre}")
-                if not n:
+                if not n or "fidelite" not in n:  # commentaire seul, sans note
                     continue
                 par.setdefault(cle.split("-")[0], []).append((tid, n))
         L.append("\n### Notes d'Anaël (moyennes par condition)\n")
         crit = ["fidelite", "clarte", "naturel", "publier"]
-        L.append("| Condition | " + " | ".join(crit) + " | moyenne |\n|---|---|---|---|---|---|")
+        L.append("| Condition | " + " | ".join(crit) + " | moyenne | voix (X3) | sorties notées |\n|---|"
+                 + "---|" * (len(crit) + 3))
         for c in CONDITIONS:
             if c in par:
                 ms = [st.mean(n[k] for _, n in par[c] if k in n) for k in crit]
-                L.append(f"| {c} {NOMS[c]} | " + " | ".join(f"{m:.2f}" for m in ms) + f" | {st.mean(ms):.2f} |")
+                voix = [n["voix"] for _, n in par[c] if "voix" in n]
+                L.append(f"| {c} {NOMS[c]} | " + " | ".join(f"{m:.2f}" for m in ms) + f" | {st.mean(ms):.2f} | "
+                         + (f"{st.mean(voix):.2f}" if voix else "-") + f" | {len(par[c])} |")
     (T11 / "donnees" / "resume.json").write_text(json.dumps(res, ensure_ascii=False, indent=1), encoding="utf-8")
     (T11 / "donnees" / "tableaux.md").write_text("\n".join(L) + "\n", encoding="utf-8")
     print("\n".join(L))

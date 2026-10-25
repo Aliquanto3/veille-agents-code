@@ -1,0 +1,194 @@
+{
+ "version": "t11-v1",
+ "exporte_le": "2026-10-25T17:36:18.907Z",
+ "notes": {
+  "X1/A": {
+   "fidelite": 5,
+   "clarte": 4,
+   "naturel": 2,
+   "publier": 3,
+   "commentaire": "Presque aucune modification du texte initial, qui était déjà assez clair (à part l'absence d'explication de ce que sont certains termes techniques)"
+  },
+  "X1/B": {
+   "fidelite": 5,
+   "clarte": 4,
+   "naturel": 3,
+   "publier": 4,
+   "commentaire": "Aussi très proche du texte initial. La partie \"Le résultat qui m'a le plus surpris\" rend un peu plus naturel car elle exprime un avis personnel. De même pour le \"Chez moi\", ou \"je l'ajoute\" qui donne un effet plus personnel.\nN.B. : je ne compte pas la perte du markdown, car elle ne se convertit pas en post LinkedIn. Par contre ça pourrait être un problème pour d'autres textes."
+  },
+  "X1/C": {
+   "fidelite": 5,
+   "naturel": 2,
+   "clarte": 4,
+   "commentaire": "Aussi très proche du texte initial. Tout a été généré par le même modèle, que ce soit le texte initial ou les reformulations, non ?",
+   "publier": 3
+  },
+  "X1/D": {
+   "fidelite": 5,
+   "clarte": 4,
+   "commentaire": "Egalement très proche du texte initial. La section \"Ce qui rapporte\" est un peu plus propre car elle commence chaque fois par un verbe d'action à l'infinitif au lieu d'alterner avec des noms",
+   "naturel": 2,
+   "publier": 3
+  },
+  "X1/E": {
+   "fidelite": 5,
+   "clarte": 4,
+   "commentaire": "Egalement très proche du texte initial. La section \"Ce qui rapporte\" est un peu plus propre car elle commence chaque fois par un verbe d'action à l'infinitif au lieu d'alterner avec des noms.\nN.B. : je ne compte pas la perte du markdown, car elle ne se convertit pas en post LinkedIn. Par contre ça pourrait être un problème pour d'autres textes.",
+   "naturel": 2,
+   "publier": 3
+  },
+  "X1/F": {
+   "fidelite": 5,
+   "clarte": 4,
+   "naturel": 2,
+   "publier": 3,
+   "commentaire": "Mêmes commentaires qu'avant sur la similarité au texte initial et la reformulation en verbes en début de bullet point"
+  },
+  "X1/G": {
+   "fidelite": 5,
+   "clarte": 4,
+   "naturel": 2,
+   "publier": 3,
+   "commentaire": "Toujours les mêmes sujets qu'avant, avec même remarque de markdown"
+  },
+  "X1/H": {
+   "fidelite": 5,
+   "clarte": 4,
+   "naturel": 3,
+   "publier": 4,
+   "commentaire": "Un peu plus de reformulation en enlevant le \"Verdict :\" au début, ainsi qu'en ajoutant plus de personnel après : \"Mon principal résultat\",  \"De tout ce que j'ai testé\". Pas de markdown mais pas grave spécifiquement pour LinkedIn. Bonne reformulation de \"ce qui rapporte\" avec les verbes d'actions au début\n\nPar contre, pour LinkedIn justement, je pense que ça pourrait gagner en clarté en mettant des emojis pour les sections. Par exemple un green check pour \"Ce qui rapporte\", un red stop pour \"Ce qui ne rapporte pas\"..."
+  },
+  "X2/A": {
+   "commentaire": "C'est un résumé exécutif, non ? Qu'est-ce qui était attendu ici ? Il est à peine reformulé et pas synthétisé du tout. Et pourquoi les [x] de référence sont conversés alors qu'on ne voit pas les sources ?\nAu plus cette version a le bon goût de mettre plus de points à la place des points virgules pour faciliter la lecture.\n\nJe suppose que c'est le même modèle qui a généré le texte initial et les versions qu'on propose de corriger ?\n\nJe n'ai pas très envie de noter honnêtement, les notes vont être sensiblement les mêmes pour chaque version vu que c'est quasiment la même chose chaque fois."
+  },
+  "X2/C": {
+   "commentaire": "Moins de markdown ici, je peux comprendre la suppression dans certains cas, mais quitte à en mettre, autant le conserver là où c'est utile. Mauvais choix de réduction de markdown ici."
+  },
+  "X2/E": {
+   "commentaire": "Le markdown a disparu ici, probablement pas pertinent vu la cible ?"
+  },
+  "X2/G": {
+   "commentaire": "Le markdown a disparu ici, probablement pas pertinent vu la cible ?"
+  },
+  "X3/A": {
+   "voix": 4,
+   "fidelite": 5,
+   "clarte": 4,
+   "naturel": 4,
+   "publier": 4,
+   "commentaire": "C'est mon texte à peine reformulé, avec juste de légères réécritures pour optimiser le rythme qui marchent bien.  Un peu moins impactant sur la conclusion de publication du plugin par contre. Conserve le \"WOUPS\""
+  },
+  "X3/B": {
+   "fidelite": 5,
+   "clarte": 5,
+   "naturel": 4,
+   "publier": 5,
+   "voix": 5,
+   "commentaire": "Très proche de l'original encore, mais perdant le \"WOUPS\" transformé en \"OUPS\". Bonnes reformulations globalement"
+  },
+  "X3/C": {
+   "fidelite": 5,
+   "clarte": 4,
+   "naturel": 5,
+   "publier": 4,
+   "voix": 5,
+   "commentaire": "Conserve les formulations naturelles, mais améliore aussi le rythme du post avec quelques reformulations.\nPerd les bullet points utiles pour la structuration par contre."
+  },
+  "X3/D": {
+   "fidelite": 5,
+   "clarte": 5,
+   "naturel": 4,
+   "publier": 4,
+   "voix": 4,
+   "commentaire": "J'ai un peu moins tendance à vraiment parler des coûts de mes outils, je n'ai pas dit que mes licences coûtent \"cher\". Transformation du WOUPS en OUPS"
+  },
+  "X3/E": {
+   "naturel": 3,
+   "fidelite": 5,
+   "clarte": 5,
+   "commentaire": "Le point virgule dans \"sur LinkedIn ; les autres sont publiques sur mon GitHub.\" vend un peu la mèche sur la reformulation par IA. Transformation du WOUPS en OUPS",
+   "publier": 4,
+   "voix": 4
+  },
+  "X3/F": {
+   "fidelite": 5,
+   "clarte": 5,
+   "naturel": 5,
+   "publier": 5,
+   "voix": 5,
+   "commentaire": "Garde bien mon style tout en faisant des reformulations qui améliorent le rythme de lecture."
+  },
+  "X3/G": {
+   "naturel": 4,
+   "voix": 4,
+   "fidelite": 5,
+   "clarte": 5,
+   "publier": 4,
+   "commentaire": "\"ça m'a donné beaucoup de données\" fonctionne mal à l'oral quand on le lit (dans sa tête ou non). Sinon ça fonctionne plutôt bien à part ce point."
+  },
+  "X3/H": {
+   "fidelite": 5,
+   "naturel": 4,
+   "clarte": 5,
+   "publier": 5,
+   "voix": 5,
+   "commentaire": "Perte du WOUPS qui devient OUPS, mais la parenthèse \"(et des dizaines de tests faits pour améliorer mes skills de génération de slides !)\" fonctionne très bien par rapport au style du post, alors qu'elle est perdue ailleurs"
+  },
+  "X4/A": {
+   "fidelite": 5,
+   "commentaire": "Très proche de l'original, mais enlève les tirets cadratins au moins. Phrases un peu raccourcies ou vocabulaire légèrement simplifié. Reste un peu complexe à lire.",
+   "clarte": 3,
+   "naturel": 4,
+   "publier": 3
+  },
+  "X4/B": {
+   "fidelite": 5,
+   "clarte": 4,
+   "naturel": 4,
+   "commentaire": "Pas de tiret cadratin, beaucoup plus facile à lire avec la liste à bullet points et la reformulation de ce paragraphe.",
+   "publier": 4
+  },
+  "X4/C": {
+   "commentaire": "Mêmes remarques et notes que version A.",
+   "fidelite": 5,
+   "clarte": 3,
+   "naturel": 4,
+   "publier": 3
+  },
+  "X4/D": {
+   "commentaire": "Mêmes remarques et notes que version B. Peut-être un poil au-dessus dans le paragraphe grâce aux connecteurs \"First\", \"Second\"... mais pas de beaucoup",
+   "fidelite": 5,
+   "clarte": 4,
+   "naturel": 4,
+   "publier": 4
+  },
+  "X4/E": {
+   "fidelite": 5,
+   "clarte": 4,
+   "naturel": 4,
+   "publier": 4,
+   "commentaire": "Mêmes remarques et notes que version A. Peut-être un poil au-dessus dans le paragraphe grâce aux connecteurs \"First\", \"Second\"... mais pas de beaucoup"
+  },
+  "X4/F": {
+   "fidelite": 5,
+   "clarte": 5,
+   "naturel": 4,
+   "publier": 5,
+   "commentaire": "De loin la version la plus claire grâce aux phrases simplifiées, aux bullet points à plusieurs endroits pertinents et au markdown."
+  },
+  "X4/G": {
+   "fidelite": 5,
+   "clarte": 4,
+   "naturel": 4,
+   "publier": 4,
+   "commentaire": "Mêmes remarques et notes que version B. Peut-être un poil au-dessus dans le paragraphe grâce aux connecteurs \"First\", \"Second\"... mais pas de beaucoup"
+  },
+  "X4/H": {
+   "commentaire": "Mêmes remarques et notes que version B. Peut-être un poil au-dessus dans le paragraphe grâce aux connecteurs \"First\", \"Second\"... mais pas de beaucoup",
+   "fidelite": 5,
+   "clarte": 4,
+   "naturel": 4,
+   "publier": 4
+  }
+ }
+}
