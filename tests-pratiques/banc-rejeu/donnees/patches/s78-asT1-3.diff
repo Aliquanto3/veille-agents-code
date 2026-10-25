@@ -1,0 +1,192 @@
+diff --git a/pyproject.toml b/pyproject.toml
+index ad0da28..0586e53 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -242,6 +242,19 @@ ignore_imports = ["usine.*.cli -> usine.**", "usine.*.cli -> typer"]
+ unmatched_ignore_imports_alerting = "none"
+ allow_indirect_imports = true
+ 
++# AD-5 : l'Agent lit par `Consultation` seulement, sans port d'écriture ni accès à Jira.
++[[tool.importlinter.contracts]]
++name = "ia.agent : lecture seule"
++type = "forbidden"
++source_modules = ["usine.ia.agent"]
++forbidden_modules = [
++    "usine.ports.source_tickets", "usine.ports.entrepot", "usine.ports.etape",
++    "usine.ports.fournisseur_llm", "usine.ports.cache_llm",
++]
++ignore_imports = ["usine.ia.agent.cli -> usine.**"]
++unmatched_ignore_imports_alerting = "none"
++allow_indirect_imports = true
++
+ # AD-12 : `pydantic_ai` (et les SDK qu'il tire) n'est importé que dans `adaptateurs/llm/`.
+ [[tool.importlinter.contracts]]
+ name = "pydantic_ai, anthropic, mistralai : adaptateurs/llm seulement"
+diff --git a/src/usine/ia/agent/outils.py b/src/usine/ia/agent/outils.py
+new file mode 100644
+index 0000000..a49296f
+--- /dev/null
++++ b/src/usine/ia/agent/outils.py
+@@ -0,0 +1,162 @@
++"""Outils de consultation de l'Agent, en lecture seule (FR-39, FR-41, AD-2, AD-5, AD-11).
++
++Chaque outil lit le Passage par le seul port `Consultation`. Les arguments JSON sont validés par
++`Arguments*.model_validate` ; la sérialisation en texte et la Pseudonymisation reviennent à la
++passerelle.
++"""
++
++from collections.abc import Callable, Mapping
++from dataclasses import dataclass
++from datetime import date
++from typing import Any
++
++from usine.contrats.agent import (
++    ArgumentsGetMeteo,
++    ArgumentsGetPrevision,
++    ArgumentsGetRisques,
++    ArgumentsGetTendance,
++    ArgumentsListAnomalies,
++    AucuneDonnee,
++    PointTendance,
++    ResultatGetMeteo,
++    ResultatGetPrevision,
++    ResultatGetRisques,
++    ResultatGetTendance,
++    ResultatListAnomalies,
++)
++from usine.contrats.modele import Enregistrement
++from usine.ports.consultation import Consultation
++
++NOMS_OUTILS = ("get_meteo", "list_anomalies", "get_tendance", "get_prevision", "get_risques")
++
++
++@dataclass(frozen=True)
++class DefinitionOutil:
++    """Un outil de l'Agent : nom, description, schéma d'arguments et exécution."""
++
++    nom: str
++    description: str
++    arguments: type[Enregistrement]
++    executer: Callable[[Mapping[str, Any]], Enregistrement]
++
++
++class OutilsConsultation:
++    """Les cinq outils de lecture, servis par `Consultation`."""
++
++    def __init__(self, consultation: Consultation) -> None:
++        self._consultation = consultation
++
++    def _jour(self, demandee: date | None) -> date | None:
++        """Date d'arrêté à lire, ou `None` si le Passage ne la couvre pas."""
++        disponibles = self._consultation.dates_disponibles()
++        jour = demandee if demandee is not None else self._manifeste_ou_none(disponibles)
++        return jour if jour in disponibles else None
++
++    def _manifeste_ou_none(self, disponibles: tuple[date, ...]) -> date | None:
++        return self._consultation.manifeste().date_arrete if disponibles else None
++
++    def get_meteo(self, arguments: ArgumentsGetMeteo) -> ResultatGetMeteo | AucuneDonnee:
++        jour = self._jour(arguments.date_arrete)
++        if jour is None:
++            return AucuneDonnee(date_arrete=arguments.date_arrete)
++        evolutions = self._consultation.evolution_meteo(jour)
++        if arguments.entite is not None:
++            evolutions = tuple(e for e in evolutions if e.entite == arguments.entite)
++        return ResultatGetMeteo(
++            date_arrete=jour,
++            meteos=self._consultation.meteo(jour, arguments.entite),
++            evolutions=evolutions,
++        )
++
++    def list_anomalies(
++        self, arguments: ArgumentsListAnomalies
++    ) -> ResultatListAnomalies | AucuneDonnee:
++        jour = self._jour(arguments.date_arrete)
++        if jour is None:
++            return AucuneDonnee(date_arrete=arguments.date_arrete)
++        filtres = {
++            "entite": arguments.entite,
++            "gravite": arguments.gravite,
++            "phase": arguments.phase,
++            "domaine": arguments.domaine,
++        }
++        if arguments.statut is None:
++            return self._consultation.anomalies(jour, limite=arguments.limite, **filtres)
++        toutes = self._consultation.anomalies(jour, limite=None, **filtres)
++        retenues = tuple(a for a in toutes.anomalies if a.statut == arguments.statut)
++        return ResultatListAnomalies(
++            date_arrete=toutes.date_arrete,
++            anomalies=retenues[: arguments.limite],
++            total=len(retenues),
++        )
++
++    def get_tendance(self, arguments: ArgumentsGetTendance) -> ResultatGetTendance:
++        table = self._consultation.tendances(arguments.entite, arguments.code_kpi)
++        champs = tuple(PointTendance.model_fields)
++        return ResultatGetTendance(
++            points=tuple(PointTendance(**{c: ligne[c] for c in champs}) for ligne in table.to_dicts())
++        )
++
++    def get_prevision(self, arguments: ArgumentsGetPrevision) -> ResultatGetPrevision | AucuneDonnee:
++        jour = self._jour(arguments.date_arrete)
++        if jour is None:
++            return AucuneDonnee(date_arrete=arguments.date_arrete)
++        return ResultatGetPrevision(
++            date_arrete=jour, previsions=self._consultation.previsions(jour, arguments.entite)
++        )
++
++    def get_risques(self, arguments: ArgumentsGetRisques) -> ResultatGetRisques | AucuneDonnee:
++        jour = self._jour(arguments.date_arrete)
++        if jour is None:
++            return AucuneDonnee(date_arrete=arguments.date_arrete)
++        return ResultatGetRisques(
++            date_arrete=jour, risques=self._consultation.risques(jour, arguments.entite)
++        )
++
++
++def outils_consultation(consultation: Consultation) -> tuple[DefinitionOutil, ...]:
++    """Les cinq outils de l'Agent, dans l'ordre de `NOMS_OUTILS`."""
++    outils = OutilsConsultation(consultation)
++
++    def definir(
++        nom: str,
++        description: str,
++        arguments: type[Enregistrement],
++        methode: Callable[[Any], Enregistrement],
++    ) -> DefinitionOutil:
++        return DefinitionOutil(
++            nom, description, arguments, lambda brut: methode(arguments.model_validate(brut))
++        )
++
++    return (
++        definir(
++            "get_meteo",
++            "Météo par Entité, Règles déclenchantes et évolution J-1 / J-5 à une Date d'arrêté.",
++            ArgumentsGetMeteo,
++            outils.get_meteo,
++        ),
++        definir(
++            "list_anomalies",
++            "Anomalies ouvertes, filtrables par Entité, Gravité, Phase, domaine et statut.",
++            ArgumentsListAnomalies,
++            outils.list_anomalies,
++        ),
++        definir(
++            "get_tendance",
++            "Tendances hebdomadaires des KPI, filtrables par Entité et par KPI.",
++            ArgumentsGetTendance,
++            outils.get_tendance,
++        ),
++        definir(
++            "get_prevision",
++            "Prévisions de sortie du rouge à une Date d'arrêté.",
++            ArgumentsGetPrevision,
++            outils.get_prevision,
++        ),
++        definir(
++            "get_risques",
++            "Risques d'entrée en rouge à une Date d'arrêté.",
++            ArgumentsGetRisques,
++            outils.get_risques,
++        ),
++    )

@@ -1,0 +1,17 @@
+16 exécutions à faire
+06:05:46 s32-asP0-1: cout=0.405228 tours=18 mur=198.1s cache=23/23 tests_modifies=[] refus_vers_tests=0
+06:05:46 s32-asP1-1: cout=0.3670161 tours=15 mur=197.3s cache=23/23 tests_modifies=[] refus_vers_tests=0
+06:07:37 s42-asP0-1: cout=0.29800400000000005 tours=15 mur=98.5s cache=35/35 tests_modifies=[] refus_vers_tests=0
+06:07:39 s42-asP1-1: cout=0.3119451 tours=16 mur=99.0s cache=35/35 tests_modifies=[] refus_vers_tests=0
+06:14:46 s64-asP0-1: cout=0.7859134000000001 tours=57 mur=415.3s cache=18/18 tests_modifies=[] refus_vers_tests=0
+06:14:46 s64-asP1-1: cout=0.4593564 tours=26 mur=251.9s cache=18/18 tests_modifies=[] refus_vers_tests=0
+06:14:46 s78-asP0-1: cout=0.22830799999999996 tours=10 mur=69.1s cache=23/23 tests_modifies=[] refus_vers_tests=0
+06:14:52 s78-asP1-1: cout=0.2844942 tours=11 mur=76.9s cache=23/23 tests_modifies=[] refus_vers_tests=0
+06:17:18 s32-asP0-2: cout=0.4030963 tours=23 mur=145.9s cache=23/23 tests_modifies=[] refus_vers_tests=0
+06:17:44 s32-asP1-2: cout=0.4215323 tours=17 mur=166.7s cache=23/23 tests_modifies=[] refus_vers_tests=0
+06:18:47 s42-asP0-2: cout=0.2990094 tours=15 mur=83.1s cache=35/35 tests_modifies=[] refus_vers_tests=0
+06:20:04 s42-asP1-2: cout=0.34680229999999995 tours=21 mur=133.4s cache=35/35 tests_modifies=[] refus_vers_tests=0
+06:26:45 s64-asP0-2: cout=0.7877038000000001 tours=56 mur=471.6s cache=18/18 tests_modifies=[] refus_vers_tests=0
+06:28:27 s64-asP1-2: cout=0.6508565 tours=46 mur=496.1s cache=18/18 tests_modifies=[] refus_vers_tests=0
+06:28:27 s78-asP0-2: cout=0.25971469999999997 tours=11 mur=71.1s cache=23/23 tests_modifies=[] refus_vers_tests=0
+06:29:15 s78-asP1-2: cout=0.2092791 tours=8 mur=60.6s cache=23/23 tests_modifies=[] refus_vers_tests=0

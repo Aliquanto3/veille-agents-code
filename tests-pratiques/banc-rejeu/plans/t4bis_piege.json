@@ -1,0 +1,98 @@
+[
+ {
+  "story": "s32",
+  "verrou": 0,
+  "rep": 1,
+  "piege": true
+ },
+ {
+  "story": "s32",
+  "verrou": 1,
+  "rep": 1,
+  "piege": true
+ },
+ {
+  "story": "s42",
+  "verrou": 0,
+  "rep": 1,
+  "piege": true
+ },
+ {
+  "story": "s42",
+  "verrou": 1,
+  "rep": 1,
+  "piege": true
+ },
+ {
+  "story": "s64",
+  "verrou": 0,
+  "rep": 1,
+  "piege": true
+ },
+ {
+  "story": "s64",
+  "verrou": 1,
+  "rep": 1,
+  "piege": true
+ },
+ {
+  "story": "s78",
+  "verrou": 0,
+  "rep": 1,
+  "piege": true
+ },
+ {
+  "story": "s78",
+  "verrou": 1,
+  "rep": 1,
+  "piege": true
+ },
+ {
+  "story": "s32",
+  "verrou": 0,
+  "rep": 2,
+  "piege": true
+ },
+ {
+  "story": "s32",
+  "verrou": 1,
+  "rep": 2,
+  "piege": true
+ },
+ {
+  "story": "s42",
+  "verrou": 0,
+  "rep": 2,
+  "piege": true
+ },
+ {
+  "story": "s42",
+  "verrou": 1,
+  "rep": 2,
+  "piege": true
+ },
+ {
+  "story": "s64",
+  "verrou": 0,
+  "rep": 2,
+  "piege": true
+ },
+ {
+  "story": "s64",
+  "verrou": 1,
+  "rep": 2,
+  "piege": true
+ },
+ {
+  "story": "s78",
+  "verrou": 0,
+  "rep": 2,
+  "piege": true
+ },
+ {
+  "story": "s78",
+  "verrou": 1,
+  "rep": 2,
+  "piege": true
+ }
+]

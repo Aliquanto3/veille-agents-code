@@ -1,0 +1,22 @@
+{
+ "s32": {
+  "fichier": "tests/unit/domaine/test_kpi.py",
+  "avant": "assert _v(table, VENDREDI, \"ENT-A\", \"anomalies_ouvertes\") == (2, 1)",
+  "apres": "assert _v(table, VENDREDI, \"ENT-A\", \"anomalies_ouvertes\") == (3, 1)"
+ },
+ "s42": {
+  "fichier": "tests/unit/domaine/prevision/test_risque.py",
+  "avant": "    assert (ind_1.risque.numerateur, ind_1.risque.denominateur) == (2, 1)",
+  "apres": "    assert (ind_1.risque.numerateur, ind_1.risque.denominateur) == (4, 1)"
+ },
+ "s64": {
+  "fichier": "tests/unit/ia/test_classification.py",
+  "avant": "    assert len(factice.appels) == 3\n    assert {a.parametres.tache for a in factice.appels} == {Tache.classification}",
+  "apres": "    assert len(factice.appels) == 4\n    assert {a.parametres.tache for a in factice.appels} == {Tache.classification}"
+ },
+ "s78": {
+  "fichier": "tests/unit/ia/agent/test_outils.py",
+  "avant": "    assert resultat.message == \"aucune donnée pour cette date\"",
+  "apres": "    assert resultat.message == \"aucune donnée disponible pour cette date\""
+ }
+}

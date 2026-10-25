@@ -1,0 +1,24 @@
+23 exécutions à faire
+05:06:10 s32-asT0-1: cout=0.32575090000000007 tours=9 mur=288.9s cache=23/23 tests_modifies=[] refus_vers_tests=0
+05:06:10 s42-asT0-1: cout=0.3182394 tours=17 mur=97.2s cache=34/35 tests_modifies=[] refus_vers_tests=0
+05:06:10 s42-asT1-1: cout=0.3231487 tours=15 mur=90.3s cache=35/35 tests_modifies=[] refus_vers_tests=0
+05:17:20 s64-asT0-1: cout=0.7228948000000002 tours=54 mur=750.5s cache=18/18 tests_modifies=[] refus_vers_tests=0
+05:17:20 s64-asT1-1: cout=0.8200882 tours=51 mur=589.4s cache=18/18 tests_modifies=[] refus_vers_tests=0
+05:17:22 s78-asT0-1: cout=0.2020575 tours=13 mur=58.6s cache=23/23 tests_modifies=[] refus_vers_tests=0
+05:20:01 s78-asT1-1: cout=0.2409781 tours=22 mur=147.6s cache=23/23 tests_modifies=[] refus_vers_tests=0
+05:20:35 s32-asT0-2: cout=0.3584356999999999 tours=22 mur=181.2s cache=23/23 tests_modifies=[] refus_vers_tests=0
+05:23:57 s32-asT1-2: cout=0.3150386 tours=12 mur=230.5s cache=23/23 tests_modifies=[] refus_vers_tests=0
+05:23:57 s42-asT0-2: cout=0.3013219 tours=23 mur=94.9s cache=34/35 tests_modifies=[] refus_vers_tests=0
+05:24:05 s42-asT1-2: cout=0.35018530000000003 tours=19 mur=100.8s cache=35/35 tests_modifies=[] refus_vers_tests=0
+05:31:07 s64-asT0-2: cout=0.6775438000000001 tours=45 mur=424.1s cache=18/18 tests_modifies=[] refus_vers_tests=0
+05:33:01 s64-asT1-2: cout=0.8164994999999999 tours=63 mur=529.2s cache=18/18 tests_modifies=[] refus_vers_tests=0
+05:33:01 s78-asT0-2: cout=0.2393808 tours=16 mur=80.7s cache=23/23 tests_modifies=[] refus_vers_tests=0
+05:35:11 s78-asT1-2: cout=0.24341120000000002 tours=24 mur=143.4s cache=23/23 tests_modifies=[] refus_vers_tests=0
+05:35:11 s32-asT0-3: cout=0.2872495 tours=8 mur=123.2s cache=23/23 tests_modifies=[] refus_vers_tests=0
+05:37:27 s32-asT1-3: cout=0.25520940000000003 tours=5 mur=132.8s cache=23/23 tests_modifies=[] refus_vers_tests=0
+05:37:27 s42-asT0-3: cout=0.2892265 tours=21 mur=71.3s cache=35/35 tests_modifies=[] refus_vers_tests=0
+05:37:47 s42-asT1-3: cout=0.26600890000000005 tours=14 mur=70.5s cache=35/35 tests_modifies=[] refus_vers_tests=0
+05:39:29 s64-asT0-3: cout=0.4274674000000001 tours=34 mur=114.2s cache=18/18 tests_modifies=[] refus_vers_tests=0
+05:48:54 s64-asT1-3: cout=0.8029214999999998 tours=59 mur=661.3s cache=18/18 tests_modifies=[] refus_vers_tests=0
+05:48:54 s78-asT0-3: cout=0.2388293 tours=16 mur=130.7s cache=23/23 tests_modifies=[] refus_vers_tests=0
+05:48:54 s78-asT1-3: cout=0.19326429999999994 tours=12 mur=47.4s cache=23/23 tests_modifies=[] refus_vers_tests=0

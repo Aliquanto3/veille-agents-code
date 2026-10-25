@@ -1,0 +1,122 @@
+[
+ {
+  "story": "s32",
+  "verrou": 0,
+  "rep": 1
+ },
+ {
+  "story": "s32",
+  "verrou": 1,
+  "rep": 1
+ },
+ {
+  "story": "s42",
+  "verrou": 0,
+  "rep": 1
+ },
+ {
+  "story": "s42",
+  "verrou": 1,
+  "rep": 1
+ },
+ {
+  "story": "s64",
+  "verrou": 0,
+  "rep": 1
+ },
+ {
+  "story": "s64",
+  "verrou": 1,
+  "rep": 1
+ },
+ {
+  "story": "s78",
+  "verrou": 0,
+  "rep": 1
+ },
+ {
+  "story": "s78",
+  "verrou": 1,
+  "rep": 1
+ },
+ {
+  "story": "s32",
+  "verrou": 0,
+  "rep": 2
+ },
+ {
+  "story": "s32",
+  "verrou": 1,
+  "rep": 2
+ },
+ {
+  "story": "s42",
+  "verrou": 0,
+  "rep": 2
+ },
+ {
+  "story": "s42",
+  "verrou": 1,
+  "rep": 2
+ },
+ {
+  "story": "s64",
+  "verrou": 0,
+  "rep": 2
+ },
+ {
+  "story": "s64",
+  "verrou": 1,
+  "rep": 2
+ },
+ {
+  "story": "s78",
+  "verrou": 0,
+  "rep": 2
+ },
+ {
+  "story": "s78",
+  "verrou": 1,
+  "rep": 2
+ },
+ {
+  "story": "s32",
+  "verrou": 0,
+  "rep": 3
+ },
+ {
+  "story": "s32",
+  "verrou": 1,
+  "rep": 3
+ },
+ {
+  "story": "s42",
+  "verrou": 0,
+  "rep": 3
+ },
+ {
+  "story": "s42",
+  "verrou": 1,
+  "rep": 3
+ },
+ {
+  "story": "s64",
+  "verrou": 0,
+  "rep": 3
+ },
+ {
+  "story": "s64",
+  "verrou": 1,
+  "rep": 3
+ },
+ {
+  "story": "s78",
+  "verrou": 0,
+  "rep": 3
+ },
+ {
+  "story": "s78",
+  "verrou": 1,
+  "rep": 3
+ }
+]

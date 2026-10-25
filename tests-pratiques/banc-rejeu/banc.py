@@ -102,7 +102,7 @@ def dossier_run(story: str, cond: str, modele: str, advisor: str | None, rep: in
 
 
 # ---------------------------------------------------------------- préparation
-def preparer(story: str, commit: str, cible: Path, claude_md: Path | None, retirer_caches: bool) -> str:
+def preparer(story: str, commit: str, cible: Path, claude_md: Path | None, retirer_caches: bool, avec_caches: bool = False, source_cache: str = "cache") -> str:
     """Dossier jetable sans historique. Rend le sha du commit initial."""
     meta = charger_meta(story)
     effacer(cible)
@@ -118,6 +118,8 @@ def preparer(story: str, commit: str, cible: Path, claude_md: Path | None, retir
             (cible / chemin).unlink(missing_ok=True)
     if claude_md is not None:
         shutil.copyfile(claude_md, cible / "CLAUDE.md")
+    if avec_caches:  # T4 bis : tests d'acceptation présents dès le commit initial
+        copier_caches(story, cible, source_cache)
     subprocess.run(["git", "init", "-q"], cwd=cible, check=True)
     subprocess.run(["git", *GIT_ID, "add", "-A"], cwd=cible, check=True, capture_output=True)
     subprocess.run(["git", *GIT_ID, "commit", "-qm", "etat initial"], cwd=cible, check=True)
@@ -196,10 +198,10 @@ def interface_attendue(story: str, base: Path) -> str:
     )
 
 
-def copier_caches(story: str, cible: Path) -> list[str]:
+def copier_caches(story: str, cible: Path, source: str = "cache") -> list[str]:
     meta = charger_meta(story)
     for chemin in meta["tests_caches"]:
-        src = CORPUS / story / "cache" / chemin
+        src = CORPUS / story / source / chemin
         (cible / chemin).parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(src, cible / chemin)
     return meta["tests_caches"]

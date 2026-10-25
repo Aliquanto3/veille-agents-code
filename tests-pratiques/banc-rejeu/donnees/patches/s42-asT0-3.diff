@@ -1,0 +1,294 @@
+diff --git a/src/usine/domaine/prevision/baseline.py b/src/usine/domaine/prevision/baseline.py
+index 31d6702..f30875b 100644
+--- a/src/usine/domaine/prevision/baseline.py
++++ b/src/usine/domaine/prevision/baseline.py
+@@ -40,6 +40,7 @@ from usine.contrats.prevision import (
+     StatutPrevision,
+ )
+ from usine.contrats.schemas import valider
++from usine.domaine.prevision.commun import avancer, declenche
+ 
+ STOCK = "stock"
+ ENTREES = "entrees"
+@@ -131,8 +132,7 @@ def prevoir_sortie(
+ 
+     regle = next(r for r in meteo.regles if r.code is CodeIndicateur.ind_1)
+     seuil = Fraction(regle.seuil_numerateur, regle.seuil_denominateur)
+-    rouge = stock >= seuil if regle.operateur is Operateur.superieur_ou_egal else stock > seuil
+-    if not rouge:
++    if not declenche(Fraction(stock), regle.operateur, seuil):
+         raise UsineErreur(
+             f"Baseline {entite} : stock {stock} à {meteo.date_arrete.isoformat()} ne déclenche"
+             f" pas la règle IND-1 rouge {regle.operateur} {seuil}"
+@@ -152,7 +152,7 @@ def prevoir_sortie(
+         return prevision(StatutPrevision.pas_de_sortie_projetee, probabilite)
+ 
+     def date_pour(w: Fraction) -> date:
+-        return _avancer(meteo.date_arrete, jours_a_la_sortie(w))
++        return avancer(meteo.date_arrete, jours_a_la_sortie(w))
+ 
+     triees = sorted(velocites)
+     optimiste = max(_centile(triees, Fraction(3, 4)), velocite)
+@@ -220,13 +220,6 @@ def _jours_a_la_sortie(stock: int, seuil: Fraction, operateur: Operateur, w: Fra
+     return max(t, 1)
+ 
+ 
+-def _avancer(jour: date, n: int) -> date:
+-    """`jour` avancé de `n` Jours ouvrés."""
+-    for _ in range(n):
+-        jour = jour_ouvre_suivant(jour)
+-    return jour
+-
+-
+ def _centile(triees: Sequence[Fraction], p: Fraction) -> Fraction:
+     """Centile `p` par interpolation linéaire exacte (« type 7 ») de valeurs triées."""
+     h = (len(triees) - 1) * p
+diff --git a/src/usine/domaine/prevision/commun.py b/src/usine/domaine/prevision/commun.py
+new file mode 100644
+index 0000000..8bc95ff
+--- /dev/null
++++ b/src/usine/domaine/prevision/commun.py
+@@ -0,0 +1,23 @@
++"""Primitives communes de la Prévision (AD-18 : une seule implémentation par calcul).
++
++Avance en Jours ouvrés et test de déclenchement d'un seuil, partagés par la Baseline (FR-20) et
++le Risque d'entrée en rouge (FR-21).
++"""
++
++from datetime import date
++from fractions import Fraction
++
++from usine.contrats.calendrier import jour_ouvre_suivant
++from usine.contrats.meteo import Operateur
++
++
++def avancer(jour: date, n: int) -> date:
++    """`jour` avancé de `n` Jours ouvrés."""
++    for _ in range(n):
++        jour = jour_ouvre_suivant(jour)
++    return jour
++
++
++def declenche(valeur: Fraction, operateur: Operateur, seuil: Fraction) -> bool:
++    """Vrai si `valeur` déclenche la règle `operateur seuil` (`>=` ou `>`)."""
++    return valeur >= seuil if operateur is Operateur.superieur_ou_egal else valeur > seuil
+diff --git a/src/usine/domaine/prevision/risque.py b/src/usine/domaine/prevision/risque.py
+new file mode 100644
+index 0000000..129909d
+--- /dev/null
++++ b/src/usine/domaine/prevision/risque.py
+@@ -0,0 +1,214 @@
++"""Risque d'entrée en rouge (FR-21, AD-18, addendum PRD § E, H-8).
++
++Fonction pure et déterministe, sans horloge ni hasard, en nombres exacts (`Fraction`). Pour une
++Entité non rouge à la Date d'arrêté D, elle ajuste une régression linéaire (moindres carrés) sur
++les `fenetre` derniers Jours ouvrés d'IND-1, IND-3 et IND-4, la projette de 1 à `horizon` Jours
++ouvrés après D et émet un `RisqueEntreeRouge` par indicateur dont une projection déclenche la
++règle rouge de la Grille. Les indicateurs écartés sont restitués avec leur motif.
++
++La valeur projetée n'appartient pas au contrat gelé (qui porte la valeur courante) : elle est
++rendue à côté, dans `RisqueProjete`. Les primitives partagées avec la Baseline sont dans `commun`.
++"""
++
++from dataclasses import dataclass
++from datetime import date
++from fractions import Fraction
++
++import polars as pl
++
++from usine.contrats.calcul import SCHEMA_INDICATEUR
++from usine.contrats.calendrier import est_jour_ouvre, jour_ouvre_suivant
++from usine.contrats.config import GrilleMeteo
++from usine.contrats.erreurs import UsineErreur
++from usine.contrats.meteo import CodeIndicateur, Couleur, MeteoEntite, Operateur
++from usine.contrats.prevision import RisqueEntreeRouge
++from usine.contrats.schemas import valider
++from usine.domaine.prevision.commun import avancer, declenche
++
++INDICATEURS_PROJETES = (CodeIndicateur.ind_1, CodeIndicateur.ind_3, CodeIndicateur.ind_4)
++
++
++@dataclass(frozen=True)
++class ParametresRisque:
++    """Paramètres H-8 du Risque d'entrée en rouge, en Jours ouvrés (chacun entier ≥ 1)."""
++
++    fenetre: int = 10
++    horizon: int = 5
++
++    def __post_init__(self) -> None:
++        for nom in ("fenetre", "horizon"):
++            valeur = getattr(self, nom)
++            if type(valeur) is not int or valeur < 1:
++                raise UsineErreur(
++                    f"Risque : paramètre {nom} invalide {valeur!r} (entier ≥ 1 attendu)"
++                )
++
++
++@dataclass(frozen=True)
++class RisqueProjete:
++    """Risque émis et valeur projetée de l'indicateur à la date de franchissement."""
++
++    risque: RisqueEntreeRouge
++    valeur_projetee: Fraction
++
++
++@dataclass(frozen=True)
++class IndicateurExclu:
++    """Indicateur écarté de la projection, avec le motif."""
++
++    code: CodeIndicateur
++    motif: str
++
++
++@dataclass(frozen=True)
++class ResultatRisque:
++    """Risques émis et indicateurs exclus, dans l'ordre de `CodeIndicateur`."""
++
++    risques: tuple[RisqueProjete, ...]
++    exclus: tuple[IndicateurExclu, ...]
++
++
++@dataclass(frozen=True)
++class _Point:
++    date: date
++    valeur: Fraction | None
++    """`None` : indicateur non évaluable."""
++    motif: str
++    brut: tuple[int, int] = (0, 1)
++    """Numérateur et dénominateur tels que publiés (non réduits)."""
++
++
++def risques_entree_rouge(
++    indicateurs: pl.DataFrame,
++    meteo: MeteoEntite,
++    grille: GrilleMeteo,
++    parametres: ParametresRisque = ParametresRisque(),  # noqa: B008 (dataclass gelée)
++) -> ResultatRisque:
++    """Risques d'entrée en rouge de `meteo.entite` à `meteo.date_arrete` (régression linéaire).
++
++    `indicateurs` suit `SCHEMA_INDICATEUR` ; seules les lignes de l'Entité datées au plus D, pour
++    IND-1, IND-3 et IND-4 actifs avec un seuil rouge, sont lues. Lève une `UsineErreur` nommant
++    l'Entité si la Météo est rouge ou si la table est invalide.
++    """
++    entite = meteo.entite
++    if meteo.couleur is Couleur.rouge:
++        raise UsineErreur(f"Risque {entite} : Météo rouge, Entité non rouge attendue")
++    try:
++        table = valider(indicateurs, SCHEMA_INDICATEUR)
++    except UsineErreur as exc:
++        raise UsineErreur(f"Risque {entite} : {exc}") from exc
++
++    risques: list[RisqueProjete] = []
++    exclus: list[IndicateurExclu] = []
++    for code in INDICATEURS_PROJETES:
++        regle = grille.indicateurs.get(code)
++        if regle is None:
++            exclus.append(IndicateurExclu(code, "indicateur absent de la Grille"))
++            continue
++        if not regle.active:
++            exclus.append(IndicateurExclu(code, "indicateur inactif dans la Grille"))
++            continue
++        rouge = regle.seuils.get(Couleur.rouge)
++        if rouge is None:
++            exclus.append(IndicateurExclu(code, "aucun seuil rouge dans la Grille"))
++            continue
++        points = _points(table, meteo, code)[-parametres.fenetre :]
++        motif = _motif_exclusion(points)
++        if motif is not None:
++            exclus.append(IndicateurExclu(code, motif))
++            continue
++        operateur, seuil = rouge
++        risque = _risque(meteo, code, points, operateur, seuil, parametres.horizon)
++        if risque is not None:
++            risques.append(risque)
++    return ResultatRisque(risques=tuple(risques), exclus=tuple(exclus))
++
++
++def _points(table: pl.DataFrame, meteo: MeteoEntite, code: CodeIndicateur) -> list[_Point]:
++    """Points de l'indicateur de l'Entité jusqu'à D, contrôlés et dans l'ordre."""
++    entite, arrete = meteo.entite, meteo.date_arrete
++    lignes = (
++        table.filter(
++            (pl.col("entite") == entite) & (pl.col("code") == code.value)
++            & (pl.col("date") <= arrete)
++        )
++        .sort("date")
++        .to_dicts()
++    )
++    points: list[_Point] = []
++    for ligne in lignes:
++        jour: date = ligne["date"]
++        if not est_jour_ouvre(jour):
++            raise UsineErreur(
++                f"Risque {entite} {code.value} : {jour.isoformat()} n'est pas un Jour ouvré"
++            )
++        if points and points[-1].date == jour:
++            raise UsineErreur(f"Risque {entite} {code.value} : date {jour.isoformat()} en double")
++        if points and jour_ouvre_suivant(points[-1].date) != jour:
++            raise UsineErreur(
++                f"Risque {entite} {code.value} : trou de Jours ouvrés entre"
++                f" {points[-1].date.isoformat()} et {jour.isoformat()}"
++            )
++        if ligne["statut"] == "evalue":
++            if ligne["denominateur"] <= 0:
++                raise UsineErreur(
++                    f"Risque {entite} {code.value} : {jour.isoformat()} dénominateur > 0 attendu"
++                    f" ({ligne['denominateur']})"
++                )
++            valeur: Fraction | None = Fraction(ligne["numerateur"], ligne["denominateur"])
++        else:
++            valeur = None
++        brut = (ligne["numerateur"], ligne["denominateur"])
++        points.append(_Point(jour, valeur, ligne["motif"], brut))
++    if not points or points[-1].date != arrete:
++        raise UsineErreur(
++            f"Risque {entite} {code.value} : Date d'arrêté {arrete.isoformat()} absente de la table"
++        )
++    return points
++
++
++def _motif_exclusion(points: list[_Point]) -> str | None:
++    """Motif d'exclusion de la fenêtre `points`, ou `None` si elle est projetable."""
++    for point in points:
++        if point.valeur is None:
++            return f"non évaluable le {point.date.isoformat()} : {point.motif}"
++    if len(points) < 2:
++        return f"historique insuffisant : {len(points)} Jour ouvré (2 au moins attendus)"
++    return None
++
++
++def _risque(
++    meteo: MeteoEntite,
++    code: CodeIndicateur,
++    points: list[_Point],
++    operateur: Operateur,
++    seuil: Fraction,
++    horizon: int,
++) -> RisqueProjete | None:
++    """Premier franchissement du seuil rouge par la projection de h = 1 à `horizon`."""
++    valeurs = [p.valeur for p in points if p.valeur is not None]
++    n = len(valeurs)
++    x_moyen = Fraction(n - 1, 2)
++    y_moyen = sum(valeurs, Fraction(0)) / n
++    pente = sum(((x - x_moyen) * (y - y_moyen) for x, y in enumerate(valeurs)), Fraction(0)) / sum(
++        ((x - x_moyen) ** 2 for x in range(n)), Fraction(0)
++    )
++    ordonnee = y_moyen - pente * x_moyen
++    courante = points[-1].brut
++    for h in range(1, horizon + 1):
++        projetee = ordonnee + pente * (n - 1 + h)
++        if declenche(projetee, operateur, seuil):
++            risque = RisqueEntreeRouge(
++                date_arrete=meteo.date_arrete,
++                entite=meteo.entite,
++                indicateur=code,
++                date_franchissement_estimee=avancer(meteo.date_arrete, h),
++                horizon_jours_ouvres=horizon,
++                numerateur=courante[0],
++                denominateur=courante[1],
++                seuil_numerateur=seuil.numerator,
++                seuil_denominateur=seuil.denominator,
++                version_grille=meteo.version_grille,
++            )
++            return RisqueProjete(risque, projetee)
++    return None

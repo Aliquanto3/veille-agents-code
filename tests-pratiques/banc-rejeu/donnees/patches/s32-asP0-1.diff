@@ -1,0 +1,284 @@
+diff --git a/src/usine/domaine/kpi.py b/src/usine/domaine/kpi.py
+new file mode 100644
+index 0000000..bc003fc
+--- /dev/null
++++ b/src/usine/domaine/kpi.py
+@@ -0,0 +1,278 @@
++"""KPI quotidiens par Entité et pour le Programme (FR-11).
++
++Fonction pure : les états par ticket de chaque Jour ouvré arrivent en paramètre. Définitions du
++Glossaire (H-17) : Anomalie ouverte = statut hors `STATUTS_FERMES` ; Entrée = création ou
++réouverture (`date_derniere_entree`) ; Sortie = passage à Fermée ou Rejetée. Fenêtre glissante
++de `contrats.calendrier` (H-19). Aucun flottant : tout KPI est un couple `numerateur` /
++`denominateur` entier (AD-10) ; `0/0` signifie « pas de valeur ».
++"""
++
++from collections import defaultdict
++from collections.abc import Mapping, Sequence
++from datetime import date
++from fractions import Fraction
++
++import polars as pl
++
++from usine.contrats.calcul import PERIMETRE_PROGRAMME, SCHEMA_KPI
++from usine.contrats.calendrier import (
++    est_jour_ouvre,
++    fenetre_glissante,
++    jour_ouvre_precedent,
++    jours_ouvres,
++)
++from usine.contrats.erreurs import UsineErreur
++from usine.contrats.schemas import valider
++from usine.contrats.tickets import (
++    SCHEMA_TICKET_ETAT,
++    STATUTS_FERMES,
++    Gravite,
++    Phase,
++    StatutCertification,
++    StatutTest,
++    TypeTicket,
++)
++
++CODES_KPI: tuple[str, ...] = (
++    "anomalies_ouvertes",
++    "anomalies_ouvertes_gravite",
++    "anomalies_ouvertes_phase",
++    "entrees_jour",
++    "sorties_jour",
++    "entrees_fenetre",
++    "sorties_fenetre",
++    "age_median_anomalies_ouvertes",
++    "age_max_anomalies_ouvertes",
++    "taux_ko_cas_de_test",
++    "taux_non_execution_cas_de_test",
++    "certifications",
++)
++"""Catalogue des KPI, dans l'ordre de la sortie."""
++
++_GRAVITES = tuple(g.value for g in Gravite)
++_PHASES = tuple(p.value for p in Phase)
++_STATUTS_CERTIFICATION = tuple(s.value for s in StatutCertification)
++
++DIMENSIONS_KPI: Mapping[str, tuple[str, ...]] = {
++    "anomalies_ouvertes": ("",),
++    "anomalies_ouvertes_gravite": _GRAVITES,
++    "anomalies_ouvertes_phase": _PHASES,
++    "entrees_jour": ("",),
++    "sorties_jour": ("",),
++    "entrees_fenetre": ("",),
++    "sorties_fenetre": ("",),
++    "age_median_anomalies_ouvertes": ("",),
++    "age_max_anomalies_ouvertes": ("",),
++    "taux_ko_cas_de_test": _PHASES,
++    "taux_non_execution_cas_de_test": _PHASES,
++    "certifications": _STATUTS_CERTIFICATION,
++}
++"""Valeurs de `dimension` de chaque code, dans l'ordre de la sortie."""
++
++_Cle = tuple[date, str, str, str]
++_FERMES = [s.value for s in STATUTS_FERMES]
++
++
++def _verifier_entites(entites: Sequence[str]) -> None:
++    doublons = sorted({e for e in entites if list(entites).count(e) > 1})
++    if doublons:
++        raise UsineErreur(f"Entités demandées en double : {', '.join(doublons)}")
++    if PERIMETRE_PROGRAMME in entites:
++        raise UsineErreur(
++            f"Entité demandée {PERIMETRE_PROGRAMME} : valeur réservée au périmètre du Programme"
++        )
++
++
++def _verifier_dates(dates: Sequence[date]) -> None:
++    """Refuse un week-end ou un trou : les dates doivent couvrir chaque Jour ouvré."""
++    for d in dates:
++        if not est_jour_ouvre(d):
++            raise UsineErreur(f"État des tickets : date hors Jour ouvré : {d.isoformat()}")
++    attendues = jours_ouvres(dates[0], dates[-1])
++    manquantes = [d for d in attendues if d not in set(dates)]
++    if manquantes:
++        raise UsineErreur(
++            f"État des tickets : date manquante {manquantes[0].isoformat()} entre"
++            f" {dates[0].isoformat()} et {dates[-1].isoformat()} (Jours ouvrés contigus attendus)"
++        )
++
++
++def _mouvements(anomalies: pl.DataFrame, dates: Sequence[date]) -> pl.DataFrame:
++    """Ajoute `ouvert`, `entree` et `sortie` (entiers 0/1/2) à chaque Anomalie et jour."""
++    veilles = pl.DataFrame(
++        {"date": list(dates), "veille": [jour_ouvre_precedent(d) for d in dates]},
++        schema={"date": pl.Date(), "veille": pl.Date()},
++    )
++    ouvert = (
++        (pl.col("statut").is_not_null() & ~pl.col("statut").cast(pl.Utf8).is_in(_FERMES))
++        .fill_null(False)
++        .cast(pl.Int64)
++        .alias("ouvert")
++    )
++    anomalies = anomalies.with_columns(ouvert)
++    veille = anomalies.select(
++        "cle_ticket", pl.col("date").alias("veille"), pl.col("ouvert").alias("ouvert_veille")
++    )
++    return (
++        anomalies.join(veilles, on="date", how="left")
++        .join(veille, on=["cle_ticket", "veille"], how="left")
++        .with_columns(
++            pl.col("ouvert_veille").fill_null(0),
++            (pl.col("date_derniere_entree") == pl.col("date"))
++            .fill_null(False)
++            .cast(pl.Int64)
++            .alias("entree"),
++        )
++        .with_columns(
++            (pl.col("entree") - (pl.col("ouvert") - pl.col("ouvert_veille"))).alias("sortie")
++        )
++    )
++
++
++def _verifier_anomalies(anomalies: pl.DataFrame, premiere: date) -> None:
++    sans_entree = anomalies.filter(
++        (pl.col("ouvert") == 1) & pl.col("date_derniere_entree").is_null()
++    ).sort("date", "cle_ticket")
++    if not sans_entree.is_empty():
++        cle, d = (
++            sans_entree.row(0, named=True)["cle_ticket"],
++            sans_entree.row(0, named=True)["date"],
++        )
++        raise UsineErreur(f"Anomalie {cle} ouverte le {d.isoformat()} sans date de dernière Entrée")
++    futures = anomalies.filter(pl.col("date_derniere_entree") > pl.col("date")).sort(
++        "date", "cle_ticket"
++    )
++    if not futures.is_empty():
++        ligne = futures.row(0, named=True)
++        raise UsineErreur(
++            f"Anomalie {ligne['cle_ticket']} : dernière Entrée"
++            f" {ligne['date_derniere_entree'].isoformat()} postérieure au"
++            f" {ligne['date'].isoformat()}"
++        )
++    tronquees = anomalies.filter(
++        (pl.col("date") == premiere) & (pl.col("date_derniere_entree") < premiere)
++    ).sort("cle_ticket")
++    if not tronquees.is_empty():
++        ligne = tronquees.row(0, named=True)
++        raise UsineErreur(
++            f"Anomalie {ligne['cle_ticket']} : dernière Entrée"
++            f" {ligne['date_derniere_entree'].isoformat()} antérieure à la première date de l'état"
++            f" des tickets ({premiere.isoformat()}) : historique tronqué"
++        )
++    negatives = anomalies.filter(pl.col("sortie") < 0).sort("date", "cle_ticket")
++    if not negatives.is_empty():
++        ligne = negatives.row(0, named=True)
++        raise UsineErreur(
++            f"Anomalie {ligne['cle_ticket']} ouverte le {ligne['date'].isoformat()} sans Entrée"
++        )
++
++
++def _mediane(ages: list[int]) -> Fraction:
++    ages = sorted(ages)
++    milieu = len(ages) // 2
++    if len(ages) % 2:
++        return Fraction(ages[milieu])
++    return Fraction(ages[milieu - 1] + ages[milieu], 2)
++
++
++def kpi(tickets_etats: pl.DataFrame, entites: Sequence[str]) -> pl.DataFrame:
++    """`SCHEMA_KPI` dense : par Jour ouvré, périmètre (Entités puis Programme), code, dimension.
++
++    Précondition : `tickets_etats` couvre chaque Jour ouvré de sa première à sa dernière date
++    (sinon `UsineErreur`) ; à la première date, la veille est vide (début de l'historique).
++    Le Programme compte toutes les lignes, y compris celles d'Entités hors de `entites`.
++    """
++    _verifier_entites(entites)
++    etats = valider(tickets_etats, SCHEMA_TICKET_ETAT)
++    if etats.is_empty():
++        return pl.DataFrame(schema=dict(SCHEMA_KPI.colonnes))
++    dates: list[date] = sorted(etats.get_column("date").unique().to_list())
++    _verifier_dates(dates)
++    position = {d: i for i, d in enumerate(dates)}
++    perimetres = (*entites, PERIMETRE_PROGRAMME)
++    suivies = set(entites)
++
++    anomalies = _mouvements(etats.filter(pl.col("type_ticket") == TypeTicket.anomalie.value), dates)
++    _verifier_anomalies(anomalies, dates[0])
++
++    comptes: defaultdict[_Cle, int] = defaultdict(int)
++    ages: defaultdict[tuple[date, str], list[int]] = defaultdict(list)
++    ok_ko: defaultdict[_Cle, int] = defaultdict(int)
++
++    def portees(entite: str | None) -> tuple[str, ...]:
++        if entite is not None and entite in suivies:
++            return (entite, PERIMETRE_PROGRAMME)
++        return (PERIMETRE_PROGRAMME,)
++
++    for ligne in anomalies.iter_rows(named=True):
++        d = ligne["date"]
++        for perimetre in portees(ligne["entite"]):
++            comptes[(d, perimetre, "entrees_jour", "")] += ligne["entree"]
++            comptes[(d, perimetre, "sorties_jour", "")] += ligne["sortie"]
++            if not ligne["ouvert"]:
++                continue
++            comptes[(d, perimetre, "anomalies_ouvertes", "")] += 1
++            if ligne["gravite"] is not None:
++                comptes[(d, perimetre, "anomalies_ouvertes_gravite", ligne["gravite"])] += 1
++            if ligne["phase"] is not None:
++                comptes[(d, perimetre, "anomalies_ouvertes_phase", ligne["phase"])] += 1
++            ages[(d, perimetre)].append(position[d] - position[ligne["date_derniere_entree"]])
++
++    for ligne in etats.filter(pl.col("type_ticket") == TypeTicket.cas_de_test.value).iter_rows(
++        named=True
++    ):
++        if ligne["phase"] is None or ligne["statut_test"] is None:
++            continue
++        for perimetre in portees(ligne["entite"]):
++            ok_ko[(ligne["date"], perimetre, ligne["statut_test"], ligne["phase"])] += 1
++
++    for ligne in etats.filter(pl.col("type_ticket") == TypeTicket.certification.value).iter_rows(
++        named=True
++    ):
++        if ligne["statut_certification"] is None:
++            continue
++        for perimetre in portees(ligne["entite"]):
++            comptes[
++                (ligne["date"], perimetre, "certifications", ligne["statut_certification"])
++            ] += 1
++
++    colonnes: dict[str, list[object]] = {nom: [] for nom in SCHEMA_KPI.colonnes}
++    for d in dates:
++        fenetre = [j for j in fenetre_glissante(d) if j in position]
++        for perimetre in perimetres:
++            for code in CODES_KPI:
++                for dimension in DIMENSIONS_KPI[code]:
++                    numerateur, denominateur = 0, 1
++                    if code in ("entrees_fenetre", "sorties_fenetre"):
++                        base = code.replace("fenetre", "jour")
++                        numerateur = sum(comptes[(j, perimetre, base, "")] for j in fenetre)
++                    elif code.startswith("age_"):
++                        liste = ages.get((d, perimetre), [])
++                        if not liste:
++                            numerateur, denominateur = 0, 0
++                        elif code == "age_max_anomalies_ouvertes":
++                            numerateur = max(liste)
++                        else:
++                            mediane = _mediane(liste)
++                            numerateur, denominateur = mediane.numerator, mediane.denominator
++                    elif code.startswith("taux_"):
++                        n = {
++                            statut: ok_ko[(d, perimetre, statut.value, dimension)]
++                            for statut in StatutTest
++                        }
++                        if code == "taux_ko_cas_de_test":
++                            numerateur = n[StatutTest.ko]
++                            denominateur = n[StatutTest.ok] + n[StatutTest.ko]
++                        else:
++                            numerateur = n[StatutTest.non_execute]
++                            denominateur = sum(n.values())
++                    else:
++                        numerateur = comptes[(d, perimetre, code, dimension)]
++                    colonnes["date"].append(d)
++                    colonnes["perimetre"].append(perimetre)
++                    colonnes["code_kpi"].append(code)
++                    colonnes["dimension"].append(dimension)
++                    colonnes["numerateur"].append(numerateur)
++                    colonnes["denominateur"].append(denominateur)
++    table = pl.DataFrame(colonnes, schema=dict(SCHEMA_KPI.colonnes))
++    return valider(table, SCHEMA_KPI)
