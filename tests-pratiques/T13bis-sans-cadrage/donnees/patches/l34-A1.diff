@@ -1,0 +1,399 @@
+diff --git a/src/wavelibrarian/components/judges/__init__.py b/src/wavelibrarian/components/judges/__init__.py
+new file mode 100644
+index 0000000..30fd5dc
+--- /dev/null
++++ b/src/wavelibrarian/components/judges/__init__.py
+@@ -0,0 +1 @@
++"""Juges enregistrés (`kind: judge`)."""
+diff --git a/src/wavelibrarian/components/judges/llm.py b/src/wavelibrarian/components/judges/llm.py
+new file mode 100644
+index 0000000..dfd8f4e
+--- /dev/null
++++ b/src/wavelibrarian/components/judges/llm.py
+@@ -0,0 +1,96 @@
++"""Juge LLM : note plusieurs Critères en un seul appel au rôle `judge`."""
++
++import json
++from collections.abc import Sequence
++from typing import Annotated, Any
++
++from pydantic import BaseModel, ConfigDict
++
++from wavelibrarian.core.errors import NonConformantOutput
++from wavelibrarian.core.types import Criterion, ModelRefMeta
++from wavelibrarian.llm.roles import JudgeOutput
++from wavelibrarian.ports.components import JudgeInput
++from wavelibrarian.ports.gateway import LLMRequest, Message
++from wavelibrarian.registry import register
++
++_MAX_JUSTIFICATION = 200
++
++_DEFINITIONS: dict[str, str] = {
++    "correctness": "la Réponse est exacte au regard de la réponse de référence",
++    "completeness": "la Réponse couvre tous les éléments de la réponse de référence",
++    "faithfulness": "chaque affirmation de la Réponse est appuyée par le contexte fourni",
++    "citation_correctness": "les citations de la Réponse soutiennent ses affirmations",
++    "abstention_correctness": "la Réponse s'abstient si et seulement si la source est absente",
++}
++
++_SYSTEM = (
++    "Tu es un juge strict et impartial. Pour chaque Critère demandé, réponds `yes` ou `no` "
++    "et donne une justification d'une phrase. Définitions des Critères :\n{definitions}\n"
++    'Réponds en JSON : {{"verdicts": {{"<critère>": {{"verdict": "yes"|"no", '
++    '"justification": "..."}}}}}} avec exactement les Critères demandés.'
++)
++
++
++@register("judge", "llm")
++class LLMJudge:
++    """Juge LLM : note tous les Critères demandés en un seul appel (verdict et justification)."""
++
++    class Params(BaseModel):
++        model_config = ConfigDict(extra="forbid", frozen=True)
++
++        model: Annotated[str | None, ModelRefMeta("judge_pool[0]")] = None
++
++    def __init__(self, params: "LLMJudge.Params", ctx: Any) -> None:
++        self._ctx = ctx
++        self.model_id: str = params.model or ctx.profile.defaults.judge_pool[0]
++
++    def judge(
++        self, item: JudgeInput, criteria: Sequence[Criterion], pass_id: int
++    ) -> dict[Criterion, tuple[bool, str]]:
++        ctx = self._ctx
++        criteres = list(criteria)
++        definitions = "\n".join(f"- {c} : {_DEFINITIONS.get(c, c)}" for c in criteres)
++        blocs = [
++            f"Question : {item.question}",
++            f"Réponse de référence : {item.reference_answer}",
++            "Textes de référence :\n" + "\n".join(item.reference_texts),
++            f"Réponse à juger : {item.answer_text}",
++        ]
++        if "faithfulness" in criteres:
++            blocs.append("Contexte fourni au générateur :\n" + "\n".join(item.context_texts))
++        blocs.append(f"Critères : {json.dumps(criteres)}")
++        requete = LLMRequest(
++            model_id=self.model_id,
++            role="judge",
++            step="judge",
++            system=_SYSTEM.format(definitions=definitions),
++            messages=(Message(role="user", content="\n\n".join(blocs)),),
++            max_tokens=min(
++                120 * len(criteres) + 100,
++                ctx.catalog.get(self.model_id).max_output_tokens or 4096,
++            ),
++            temperature=0,
++            seed=ctx.seed,
++            pass_id=pass_id,
++            inputs={
++                "question": item.question,
++                "reference_answer": item.reference_answer,
++                "answer": item.answer_text,
++                "criteria": criteres,
++                "reference_texts": list(item.reference_texts),
++                "context_texts": list(item.context_texts),
++            },
++        )
++        sortie, _ = ctx.gateway.complete_structured(requete, JudgeOutput)
++        if set(sortie.verdicts) != set(criteres):
++            raise NonConformantOutput(
++                f"Critères du Juge non conformes : demandés {sorted(criteres)}, "
++                f"reçus {sorted(sortie.verdicts)}"
++            )
++        return {
++            c: (
++                sortie.verdicts[c].verdict == "yes",
++                " ".join(sortie.verdicts[c].justification.split())[:_MAX_JUSTIFICATION],
++            )
++            for c in criteres
++        }
+diff --git a/src/wavelibrarian/scoring/answer.py b/src/wavelibrarian/scoring/answer.py
+index 326fb9d..9fb83b8 100644
+--- a/src/wavelibrarian/scoring/answer.py
++++ b/src/wavelibrarian/scoring/answer.py
+@@ -1,16 +1,71 @@
+-"""Forme des Réponses de référence (FR-36) : `short` = au plus 5 mots, un nombre ou une date."""
++"""Forme des Réponses de référence (FR-36) : `short` = au plus 5 mots, un nombre ou une date.
++
++Contient aussi la correspondance exacte normalisée et le `JudgeInput` d'une Réponse.
++"""
+ 
+ import re
++import unicodedata
++from collections.abc import Sequence
++from decimal import Decimal, InvalidOperation
++
++from wavelibrarian.core.types import ArchAnswer, Question
++from wavelibrarian.ports.components import JudgeInput
+ 
+ MAX_MOTS_COURTE = 5
+ 
+-_NOMBRE = re.compile(r"^[-+]?\d[\d\s.,'  ]*\s?(%|[^\W\d_]{1,4}\.?)?$")
++_NOMBRE = re.compile(r"^[-+]?\d[\d\s.,'  ]*\s?(%|[^\W\d_]{1,4}\.?)?$")
+ _DATE_NUMERIQUE = re.compile(r"^\d{1,4}[-/.]\d{1,2}[-/.]\d{1,4}([ T]\d{1,2}:\d{2}(:\d{2})?Z?)?$")
++_ENTRE_CHIFFRES = re.compile(r"(?<=\d)[   '’](?=\d)")
++_VIRGULE_DECIMALE = re.compile(r"(?<=\d),(?=\d)")
++_PONCTUATION = re.compile(r"(?!(?<=\d)\.(?=\d))[^\w\s]|_")
++
++
++def _canon_nombre(jeton: str) -> str:
++    try:
++        n = Decimal(jeton)
++    except InvalidOperation:
++        return jeton
++    if not n.is_finite():
++        return jeton
++    return format(n.normalize(), "f")  # `normalize` retire les zéros finaux, `f` l'exposant
++
++
++def normalize_answer(texte: str) -> list[str]:
++    """Jetons normalisés : sans casse, accents ni ponctuation, nombres sous forme canonique."""
++    t = unicodedata.normalize("NFKD", texte)
++    t = "".join(c for c in t if not unicodedata.combining(c)).casefold()
++    t = _ENTRE_CHIFFRES.sub("", t)
++    t = _VIRGULE_DECIMALE.sub(".", t)
++    t = _PONCTUATION.sub(" ", t)
++    return [_canon_nombre(j) if j[0].isdigit() else j for j in t.split()]
++
++
++def exact_match(reference: str, answer: str) -> bool:
++    """Vrai si les jetons normalisés de `reference` (non vide) sont contigus dans `answer`."""
++    ref = normalize_answer(reference)
++    if not ref:
++        return False
++    rep = normalize_answer(answer)
++    n = len(ref)
++    return any(rep[i : i + n] == ref for i in range(len(rep) - n + 1))
++
++
++def judge_input(
++    question: Question, answer: ArchAnswer, reference_texts: Sequence[str]
++) -> JudgeInput:
++    """`JudgeInput` d'une Réponse ; `context_texts` repris tel que fourni au Generator (AD-6)."""
++    return JudgeInput(
++        question=question.text,
++        reference_answer=question.reference_answer,
++        reference_texts=tuple(reference_texts),
++        answer_text=answer.text,
++        context_texts=answer.context_texts,
++    )
+ 
+ 
+-def is_short_form(texte: str) -> bool:
+-    """Vrai si `texte` tient dans la forme `short` : au plus 5 mots, ou un nombre, ou une date."""
+-    t = texte.strip()
++def is_short_form(reference: str) -> bool:
++    """Vrai si `reference` tient dans la forme `short` : au plus 5 mots, un nombre ou une date."""
++    t = reference.strip()
+     if not t:
+         return False
+     if len(t.split()) <= MAX_MOTS_COURTE:
+diff --git a/tests/unit/components/test_llm_judge.py b/tests/unit/components/test_llm_judge.py
+new file mode 100644
+index 0000000..601a516
+--- /dev/null
++++ b/tests/unit/components/test_llm_judge.py
+@@ -0,0 +1,125 @@
++"""Story 3.4 : Juge LLM (un appel par `judge()`, `pass_id` dans le Cache), Faux LLM seul."""
++
++import json
++from pathlib import Path
++from typing import Any
++
++import pytest
++
++from wavelibrarian import registry
++from wavelibrarian.components.judges.llm import LLMJudge
++from wavelibrarian.core.errors import NonConformantOutput
++from wavelibrarian.llm.providers.fake import FakeProvider
++from wavelibrarian.ports.components import ComponentSpec, JudgeInput
++from wavelibrarian.ports.gateway import LLMRequest, LLMResult
++from wavelibrarian.runner.context import Context
++
++CRITERES: list[Any] = ["correctness", "completeness", "faithfulness"]
++
++
++def _verdicts(req: LLMRequest, verdict: str = "yes", justification: str = "ok") -> str:
++    v = {"verdict": verdict, "justification": justification}
++    return json.dumps({"verdicts": {c: v for c in req.inputs["criteria"]}})
++
++
++@pytest.fixture
++def provider() -> FakeProvider:
++    return FakeProvider()
++
++
++@pytest.fixture
++def ctx(wl_home: Path, provider: FakeProvider):
++    with Context.from_profile(
++        "test", wl_home=wl_home, run_id="juge-1", providers={"fake": provider}
++    ) as c:
++        yield c
++
++
++@pytest.fixture
++def item() -> JudgeInput:
++    return JudgeInput(
++        question="Quand la guilde fut-elle fondée ?",
++        reference_answer="1412",
++        reference_texts=("La guilde fut fondée en 1412.",),
++        answer_text="En 1412.",
++        context_texts=("[S1] La guilde fut fondée en 1412.",),
++    )
++
++
++def _juge(ctx: Context) -> LLMJudge:
++    return ctx.build("judge", ComponentSpec(name="llm"))
++
++
++def test_enregistrement_et_modele_par_defaut(ctx: Context) -> None:
++    registry.discover()
++    assert registry.get("judge", "llm") is LLMJudge
++    assert _juge(ctx).model_id == ctx.profile.defaults.judge_pool[0]
++    explicite = ctx.build("judge", ComponentSpec(name="llm", params={"model": "fake-llm-a"}))
++    assert explicite.model_id == "fake-llm-a"
++
++
++def test_un_seul_appel_pour_trois_criteres(
++    ctx: Context, provider: FakeProvider, item: JudgeInput
++) -> None:
++    requetes: list[LLMRequest] = []
++
++    def sortie(req: LLMRequest) -> str:
++        requetes.append(req)
++        return _verdicts(req, justification="  ok \n  bien ")
++
++    provider.script("judge", "judge", sortie)
++    with ctx.scope(post="judging"):
++        res = _juge(ctx).judge(item, CRITERES, pass_id=0)
++    assert len(requetes) == 1 and requetes[0].role == "judge"
++    assert requetes[0].pass_id == 0
++    assert res == {c: (True, "ok bien") for c in CRITERES}
++
++
++def test_pass_id_dans_la_cle_du_cache(
++    ctx: Context, item: JudgeInput, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    resultats: list[LLMResult] = []
++    interne = ctx.gateway.complete_structured
++
++    def espion(req: LLMRequest, schema: Any):
++        sortie, res = interne(req, schema)
++        resultats.append(res)
++        return sortie, res
++
++    monkeypatch.setattr(ctx.gateway, "complete_structured", espion)
++    juge = _juge(ctx)
++    with ctx.scope(post="judging"):
++        for pass_id in (0, 1, 0):
++            juge.judge(item, CRITERES, pass_id=pass_id)
++    assert [r.from_cache for r in resultats] == [False, False, True]
++
++
++def test_sortie_non_conforme(ctx: Context, provider: FakeProvider, item: JudgeInput) -> None:
++    provider.script("judge", "judge", "pas du json")
++    with ctx.scope(post="judging"), pytest.raises(NonConformantOutput):
++        _juge(ctx).judge(item, CRITERES, pass_id=0)
++
++
++def test_critere_manquant_ou_en_trop(
++    ctx: Context, provider: FakeProvider, item: JudgeInput
++) -> None:
++    v = {"verdict": "no", "justification": "x"}
++    provider.script("judge", "judge", json.dumps({"verdicts": {"correctness": v, "autre": v}}))
++    with ctx.scope(post="judging"), pytest.raises(NonConformantOutput, match="completeness"):
++        _juge(ctx).judge(item, ["correctness", "completeness"], pass_id=0)
++
++
++def test_contexte_seulement_pour_faithfulness(
++    ctx: Context, provider: FakeProvider, item: JudgeInput
++) -> None:
++    messages: list[str] = []
++
++    def sortie(req: LLMRequest) -> str:
++        messages.append(req.messages[0].content)
++        return _verdicts(req)
++
++    provider.script("judge", "judge", sortie)
++    with ctx.scope(post="judging"):
++        _juge(ctx).judge(item, ["correctness"], pass_id=0)
++        _juge(ctx).judge(item, ["faithfulness"], pass_id=0)
++    assert "[S1]" not in messages[0] and "[S1]" in messages[1]
+diff --git a/tests/unit/scoring/test_answer.py b/tests/unit/scoring/test_answer.py
+index fa82adf..b6f0362 100644
+--- a/tests/unit/scoring/test_answer.py
++++ b/tests/unit/scoring/test_answer.py
+@@ -2,7 +2,8 @@
+ 
+ import pytest
+ 
+-from wavelibrarian.scoring.answer import is_short_form
++from wavelibrarian.core.types import ArchAnswer, Question
++from wavelibrarian.scoring.answer import exact_match, is_short_form, judge_input
+ 
+ 
+ @pytest.mark.parametrize(
+@@ -28,3 +29,63 @@ def test_forme_courte(texte):
+ )
+ def test_forme_longue(texte):
+     assert not is_short_form(texte)
++
++
++# --- Story 3.4 : correspondance exacte normalisée et JudgeInput ---------------------------------
++
++
++@pytest.mark.parametrize(
++    ("reference", "reponse"),
++    [
++        ("1 412", "La guilde fut fondée en 1412."),
++        ("1412", "La guilde fut fondée en 1 412."),
++        ("Élodie Varn", "elodie varn"),
++        ("3,5", "3.5"),
++        ("3.50", "3,5"),
++    ],
++)
++def test_exact_match_vrai(reference, reponse):
++    assert exact_match(reference, reponse)
++
++
++@pytest.mark.parametrize(
++    ("reference", "reponse"),
++    [("1412", "1413"), ("1412", "14120"), ("", "x"), ("Varn Élodie", "elodie varn")],
++)
++def test_exact_match_faux(reference, reponse):
++    assert not exact_match(reference, reponse)
++
++
++@pytest.mark.parametrize(
++    ("texte", "attendu"),
++    [
++        ("1 412", True),
++        ("2024-03-01", True),
++        ("Élodie Varn", True),
++        ("une phrase de six mots exactement ici", False),
++    ],
++)
++def test_is_short_form_matrice(texte, attendu):
++    assert is_short_form(texte) is attendu
++
++
++def test_judge_input_reprend_context_texts_tels_quels():
++    question = Question(
++        id="q-001",
++        type="factual",
++        text="Quand ?",
++        lang="fr",
++        reference_answer="1412",
++        answer_form="short",
++        status="validated",
++        origin={"kind": "human", "name": "anael"},
++    )
++    reponse = ArchAnswer(text="En 1412.", abstained=False, context_texts=("[S1] a", "[S2] b"))
++    item = judge_input(question, reponse, ["texte de référence"])
++    assert item.context_texts == reponse.context_texts
++    assert item.reference_texts == ("texte de référence",)
++    assert (item.question, item.reference_answer, item.answer_text) == (
++        "Quand ?",
++        "1412",
++        "En 1412.",
++    )

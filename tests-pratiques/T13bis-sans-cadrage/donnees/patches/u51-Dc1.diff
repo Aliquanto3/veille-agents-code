@@ -1,0 +1,311 @@
+diff --git a/src/usine/chaine/etapes.py b/src/usine/chaine/etapes.py
+index 29a7ea1..fc905d3 100644
+--- a/src/usine/chaine/etapes.py
++++ b/src/usine/chaine/etapes.py
+@@ -5,8 +5,8 @@ Les étapes déterministes réelles enveloppent le domaine ; les autres sont des
+ """
+ 
+ from collections import deque
+-from collections.abc import Sequence
+-from datetime import date
++from collections.abc import Callable, Sequence
++from datetime import date, datetime
+ 
+ import polars as pl
+ 
+@@ -16,7 +16,11 @@ from usine.contrats.config import ConfigProgramme, GrilleMeteo
+ from usine.contrats.erreurs import UsineErreur
+ from usine.contrats.meteo import MeteoEntite
+ from usine.contrats.passage import ContextePassage, ResultatEtape, StatutEtape
++from usine.contrats.prevision import ContenuPrevisions, Prevision
++from usine.contrats.tickets import SCHEMA_TICKET_ETAT
++from usine.contrats.trace import EntreeTrace, TypeTrace
+ from usine.domaine.instantanes import instantane, tickets_etats, tickets_textes
++from usine.domaine.kpi import kpi, tendances
+ from usine.domaine.meteo import DECALAGE_IND8, indicateurs, meteo
+ from usine.ports.consultation import Consultation
+ from usine.ports.source_tickets import SourceTickets
+@@ -54,6 +58,35 @@ class EtapeInstantanes:
+         )
+ 
+ 
++class EtapeKpi:
++    """KPI quotidiens et Tendances hebdomadaires, pour chaque Jour ouvré de l'historique.
++
++    `premier_jour` est l'ancrage des semaines du Programme (Tendances).
++    """
++
++    def __init__(self, entites: Sequence[str], premier_jour: date) -> None:
++        self._entites = tuple(entites)
++        self._premier_jour = premier_jour
++
++    def executer(self, ctx: ContextePassage[Consultation]) -> ResultatEtape:
++        """Sorties `kpi` et `tendances`, lues depuis `tickets_etats` du Passage."""
++        jours = jours_du_passage(self._premier_jour, ctx.date_arrete)
++        tables = [ctx.consultation.tickets_etats(jour) for jour in jours]
++        etats = (
++            pl.concat(tables, how="vertical")
++            if tables
++            else pl.DataFrame(schema=dict(SCHEMA_TICKET_ETAT.colonnes))
++        )
++        table = kpi(etats, self._entites)
++        return ResultatEtape(
++            StatutEtape.reussie,
++            {
++                "kpi": table,
++                "tendances": tendances(table, ctx.date_arrete, self._premier_jour),
++            },
++        )
++
++
+ class EtapeMeteo:
+     """Indicateurs et Météo par Entité, pour chaque Jour ouvré de l'historique.
+ 
+@@ -117,6 +150,61 @@ class EtapeMeteo:
+         return ResultatEtape(StatutEtape.reussie, {"indicateurs": table, "meteo": tuple(meteos)})
+ 
+ 
++CalculPrevisions = Callable[[Consultation, date], ContenuPrevisions]
++"""Calcul déterministe des Prévisions et Risques (domaine de Prévision) à une Date d'arrêté."""
++
++
++def _trace_prevision(
++    prevision: Prevision, ctx: ContextePassage[Consultation], horodatage: datetime, version: str
++) -> EntreeTrace:
++    return EntreeTrace(
++        type_trace=TypeTrace.prevision,
++        horodatage=horodatage,
++        passage_id=ctx.passage_id,
++        date_arrete=prevision.date_arrete,
++        entite=prevision.entite,
++        cible=prevision.entite,
++        version_grille=prevision.version_grille,
++        version_donnees=version,
++        entree_pseudonymisee=", ".join(
++            f"{f.nom}={f.numerateur}/{f.denominateur}" for f in prevision.facteurs
++        ),
++        sortie=prevision.model_dump_json(),
++    )
++
++
++class EtapePrevision:
++    """Prévisions de sortie du rouge et Risques d'entrée en rouge, avec leurs traces (AD-16).
++
++    Le calcul est celui du domaine de Prévision, injecté : l'étape ne recalcule rien. Sans
++    calcul, le contenu est vide (aucune Prévision ni Risque).
++    """
++
++    def __init__(
++        self,
++        version_donnees: str,
++        horloge: Callable[[], datetime],
++        calcul: CalculPrevisions | None = None,
++    ) -> None:
++        self._version_donnees = version_donnees
++        self._horloge = horloge
++        self._calcul = calcul
++
++    def executer(self, ctx: ContextePassage[Consultation]) -> ResultatEtape:
++        """Sortie `previsions` et une trace par Prévision (`trace/previsions.jsonl`)."""
++        contenu = (
++            self._calcul(ctx.consultation, ctx.date_arrete)
++            if self._calcul is not None
++            else ContenuPrevisions(previsions=(), risques=())
++        )
++        horodatage = self._horloge()
++        traces = tuple(
++            _trace_prevision(prevision, ctx, horodatage, self._version_donnees)
++            for prevision in contenu.previsions
++        )
++        return ResultatEtape(StatutEtape.reussie, {"previsions": contenu}, traces)
++
++
+ class EtapeBouchon:
+     """Étape pas encore implémentée : réussie, sans sortie."""
+ 
+diff --git a/src/usine/composition.py b/src/usine/composition.py
+index 0a110db..38079d8 100644
+--- a/src/usine/composition.py
++++ b/src/usine/composition.py
+@@ -47,7 +47,14 @@ from usine.adaptateurs.pseudonymisation import (
+ )
+ from usine.adaptateurs.stockage_sqlite import CacheLLMSqlite, TablePseudonymesSqlite
+ from usine.chaine.ecrivain import EcrivainPassage
+-from usine.chaine.etapes import EtapeBouchon, EtapeInstantanes, EtapeMeteo, EtapeSautee
++from usine.chaine.etapes import (
++    EtapeBouchon,
++    EtapeInstantanes,
++    EtapeKpi,
++    EtapeMeteo,
++    EtapePrevision,
++    EtapeSautee,
++)
+ from usine.chaine.execution import executer_passage
+ from usine.chaine.verrou import verrou_exclusif
+ from usine.config import Secrets, charger_secrets, charger_yaml
+@@ -298,9 +305,9 @@ def construire_rapport(
+     registre: dict[Etape, PortEtape] = {
+         Etape.extraction: EtapeBouchon(),
+         Etape.instantanes: EtapeInstantanes(source, premier_jour),
+-        Etape.kpi: EtapeBouchon(),
++        Etape.kpi: EtapeKpi(entites, premier_jour),
+         Etape.meteo: EtapeMeteo(grille, empreinte_grille, entites, premier_jour, programme),
+-        Etape.prevision: EtapeBouchon(),
++        Etape.prevision: EtapePrevision(empreinte_donnees, horloge),
+         Etape.rendu: EtapeRendu(gabarit),
+     }
+     registre.update({etape: EtapeSautee() for etape in ETAPES_LLM})
+diff --git a/tests/unit/chaine/test_etapes.py b/tests/unit/chaine/test_etapes.py
+new file mode 100644
+index 0000000..2be21db
+--- /dev/null
++++ b/tests/unit/chaine/test_etapes.py
+@@ -0,0 +1,109 @@
++"""Étapes `kpi` et `prevision` : Passage autoportant (Story 5.1)."""
++
++from datetime import date
++
++import polars as pl
++import pytest
++
++from tests.unit.chaine.environnement import DATE_ARRETE, INSTANT, horloge_figee, preparer_racine
++from usine.chaine.etapes import EtapeKpi, EtapePrevision
++from usine.composition import PassageLance, construire_rapport, lancer_rapport
++from usine.consultation.passage import ConsultationPassage
++from usine.contrats.config import ConfigUsine
++from usine.contrats.passage import ContextePassage, Etape, StatutEtape
++from usine.contrats.prevision import (
++    ContenuPrevisions,
++    FacteurExplicatif,
++    MethodePrevision,
++    Prevision,
++    StatutPrevision,
++)
++from usine.contrats.trace import EntreeTrace, TypeTrace
++from usine.ports.consultation import Consultation
++
++
++@pytest.fixture(scope="module")
++def passage(tmp_path_factory: pytest.TempPathFactory) -> PassageLance:
++    racine = preparer_racine(tmp_path_factory.mktemp("racine"))
++    return lancer_rapport(racine, DATE_ARRETE, horloge=horloge_figee())
++
++
++def _consultation(passage: PassageLance) -> ConsultationPassage:
++    return ConsultationPassage(passage.repertoire)
++
++
++def test_passage_autoportant(passage: PassageLance) -> None:
++    fichiers = {p.name for p in passage.repertoire.iterdir()}
++    assert {"kpi.parquet", "tendances.parquet", "previsions.json"} <= fichiers
++    assert not (passage.repertoire / "trace").exists() or not list(
++        (passage.repertoire / "trace").glob("previsions.jsonl")
++    )  # aucune Prévision : aucune trace
++    etapes = {e.etape: e.statut for e in passage.manifeste.etapes}
++    assert etapes[Etape.kpi] is StatutEtape.reussie
++    assert etapes[Etape.prevision] is StatutEtape.reussie
++
++
++def test_kpi_couvre_chaque_jour_ouvre(passage: PassageLance) -> None:
++    consultation = _consultation(passage)
++    jours = set(pl.read_parquet(passage.repertoire / "kpi.parquet").get_column("date").to_list())
++    assert jours == set(consultation.dates_disponibles())
++    assert max(jours) == DATE_ARRETE
++
++
++def test_tendances_a_la_date_d_arrete(passage: PassageLance) -> None:
++    tendances = _consultation(passage).tendances()
++    assert not tendances.is_empty()
++    assert tendances.get_column("date").max() == DATE_ARRETE
++
++
++def _ctx(passage: PassageLance, configuration: ConfigUsine) -> ContextePassage[Consultation]:
++    return ContextePassage(
++        DATE_ARRETE, passage.manifeste.passage_id, configuration, _consultation(passage)
++    )
++
++
++def test_etape_kpi_refuse_date_anterieure(passage: PassageLance) -> None:
++    rapport_conf = construire_rapport_configuration(passage)
++    etape = EtapeKpi(["X"], date(2026, 12, 1))
++    with pytest.raises(Exception, match="antérieure"):
++        etape.executer(_ctx(passage, rapport_conf))
++
++
++def construire_rapport_configuration(passage: PassageLance) -> ConfigUsine:
++    # `<racine>/sorties/passages/<date>/<id>`
++    racine = passage.repertoire.parents[3]
++    return construire_rapport(racine).configuration
++
++
++def _prevision() -> Prevision:
++    return Prevision(
++        date_arrete=DATE_ARRETE,
++        entite="E1",
++        methode=MethodePrevision.baseline,
++        statut=StatutPrevision.pas_de_sortie_projetee,
++        probabilite_numerateur=0,
++        probabilite_denominateur=1,
++        horizon_jours_ouvres=10,
++        facteurs=(FacteurExplicatif(nom="stock", libelle="Stock", numerateur=3, denominateur=1),),
++        version_grille="g1",
++    )
++
++
++def test_etape_prevision_une_trace_par_prevision(passage: PassageLance) -> None:
++    contenu = ContenuPrevisions(previsions=(_prevision(),), risques=())
++    etape = EtapePrevision("d1", horloge_figee(), lambda _consultation, _date: contenu)
++    resultat = etape.executer(_ctx(passage, construire_rapport_configuration(passage)))
++    assert resultat.sorties["previsions"] == contenu
++    (trace,) = resultat.traces
++    assert isinstance(trace, EntreeTrace)
++    assert trace.type_trace is TypeTrace.prevision
++    assert (trace.entite, trace.version_grille, trace.version_donnees) == ("E1", "g1", "d1")
++    assert trace.horodatage == INSTANT
++    assert trace.passage_id == passage.manifeste.passage_id
++
++
++def test_etape_prevision_sans_calcul_est_vide(passage: PassageLance) -> None:
++    etape = EtapePrevision("d1", horloge_figee())
++    resultat = etape.executer(_ctx(passage, construire_rapport_configuration(passage)))
++    assert resultat.sorties["previsions"] == ContenuPrevisions(previsions=(), risques=())
++    assert resultat.traces == ()
+diff --git a/tests/unit/chaine/test_execution.py b/tests/unit/chaine/test_execution.py
+index ff51a5b..90f1271 100644
+--- a/tests/unit/chaine/test_execution.py
++++ b/tests/unit/chaine/test_execution.py
+@@ -112,10 +112,13 @@ def test_passage_publie(rapport: Rapport) -> None:
+     assert sorted(p.name for p in repertoire.iterdir()) == [
+         "indicateurs.parquet",
+         "instantanes.parquet",
++        "kpi.parquet",
+         "manifeste.json",
+         "meteo.json",
++        "previsions.json",
+         "rapport-2026-10-09.pptx",
+         "rapport-2026-10-09.xlsx",
++        "tendances.parquet",
+         "tickets_etats.parquet",
+         "tickets_textes.parquet",
+     ]
+diff --git a/tests/unit/consultation/test_passage.py b/tests/unit/consultation/test_passage.py
+index 403344d..49f793f 100644
+--- a/tests/unit/consultation/test_passage.py
++++ b/tests/unit/consultation/test_passage.py
+@@ -155,12 +155,13 @@ def test_tables_filtrees(lance: PassageLance) -> None:
+     assert set(indicateurs["date"].to_list()) == {date(2026, 10, 8)}
+ 
+ 
+-def test_palier_1_textes_presents_autres_fichiers_absents(lance: PassageLance) -> None:
++def test_palier_1_deterministe_present_llm_absent(lance: PassageLance) -> None:
+     consultation = ConsultationPassage(lance.repertoire)
+     kpi = consultation.kpi()
+-    assert kpi.is_empty()
++    assert not kpi.is_empty()
+     assert kpi.schema == dict(SCHEMA_KPI.colonnes)
+-    assert consultation.tendances().is_empty()
++    assert set(kpi["date"].to_list()) == {DATE_ARRETE}
++    assert not consultation.tendances().is_empty()
+     assert consultation.textes_tickets().height > 0  # écrit par `instantanes` (Story 0.7)
+     assert consultation.explications() == ()
+     assert consultation.narrations() == ()

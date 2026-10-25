@@ -1,0 +1,317 @@
+diff --git a/src/wavelibrarian/cli.py b/src/wavelibrarian/cli.py
+index 1ae9458..e3cae63 100644
+--- a/src/wavelibrarian/cli.py
++++ b/src/wavelibrarian/cli.py
+@@ -1,7 +1,12 @@
+ """Commande `wl` : point d'entrée du banc."""
+ 
++from typing import Annotated
++
+ import typer
+ 
++from wavelibrarian import registry
++from wavelibrarian.core.errors import ConfigError
++
+ app = typer.Typer(
+     name="wl",
+     help="WaveLibrarian : banc de comparaison des architectures de recherche documentaire IA.",
+@@ -13,3 +18,28 @@ app = typer.Typer(
+ @app.callback()
+ def principal() -> None:
+     """WaveLibrarian : banc de comparaison des architectures de recherche documentaire IA."""
++
++
++@app.command("registre")
++def registre(
++    kind: Annotated[
++        str | None, typer.Option("--kind", help="Limite la liste à ce type de Composant.")
++    ] = None,
++) -> None:
++    """Liste les Composants et Architectures enregistrés, avec leurs Params."""
++    try:
++        registry.discover()
++        entrees = registry.list_components(kind=kind)
++    except ConfigError as erreur:
++        typer.echo(f"Erreur : {erreur}", err=True)
++        raise typer.Exit(1) from erreur
++    if not entrees:
++        typer.echo("Aucun Composant enregistré.")
++        return
++    for entree in entrees:
++        typer.echo(f"{entree.kind}/{entree.name} : {entree.description or '(sans description)'}")
++        if not entree.params:
++            typer.echo("  Params : aucun")
++        for p in entree.params:
++            defaut = "requis" if p.required else f"défaut {p.default!r}"
++            typer.echo(f"  - {p.name} ({p.type}) : {defaut}")
+diff --git a/src/wavelibrarian/registry.py b/src/wavelibrarian/registry.py
+index 0fbf6b0..397966b 100644
+--- a/src/wavelibrarian/registry.py
++++ b/src/wavelibrarian/registry.py
+@@ -1 +1,138 @@
+-"""Registre de Composants (story 1.3)."""
++"""Registre de Composants (story 1.3) : un décorateur enregistre, `get` retrouve (AD-2)."""
++
++import importlib
++import pkgutil
++from collections.abc import Callable
++from dataclasses import dataclass
++from typing import Any
++
++from wavelibrarian.core.errors import ConfigError
++
++KINDS: tuple[str, ...] = (
++    "parser",
++    "chunker",
++    "embedder",
++    "vector_store",
++    "lexical_index",
++    "graph_store",
++    "retriever",
++    "reranker",
++    "context_builder",
++    "decider",
++    "generator",
++    "judge",
++    "query_rewriter",
++    "architecture",
++)
++
++PACKAGES_DECOUVERTS: tuple[str, ...] = (
++    "wavelibrarian.components",
++    "wavelibrarian.architectures",
++)
++
++_REGISTRE: dict[tuple[str, str], type] = {}
++
++
++@dataclass(frozen=True)
++class ParamInfo:
++    """Un paramètre d'un Composant : nom, type affiché et défaut (`None` si requis)."""
++
++    name: str
++    type: str
++    default: Any
++    required: bool
++
++
++@dataclass(frozen=True)
++class ComponentInfo:
++    """Description d'une entrée du registre."""
++
++    kind: str
++    name: str
++    description: str
++    params: tuple[ParamInfo, ...]
++    cls: type
++
++
++def _verifier_kind(kind: str) -> None:
++    if kind not in KINDS:
++        raise ConfigError(
++            f"registry.{kind}",
++            f"kind inconnu ; kinds possibles : {', '.join(KINDS)}",
++        )
++
++
++def register[T: type](kind: str, name: str) -> Callable[[T], T]:
++    """Décorateur : enregistre une classe sous `(kind, name)`."""
++    _verifier_kind(kind)
++
++    def decorateur(cls: T) -> T:
++        if (kind, name) in _REGISTRE:
++            raise ConfigError(
++                f"registry.{kind}.{name}",
++                f"Composant déjà enregistré ({_REGISTRE[(kind, name)].__qualname__})",
++            )
++        _REGISTRE[(kind, name)] = cls
++        return cls
++
++    return decorateur
++
++
++def get(kind: str, name: str) -> type:
++    """Renvoie la classe enregistrée ; `ConfigError` listant les noms du `kind` sinon."""
++    _verifier_kind(kind)
++    try:
++        return _REGISTRE[(kind, name)]
++    except KeyError:
++        connus = sorted(n for k, n in _REGISTRE if k == kind)
++        liste = ", ".join(connus) if connus else "aucun"
++        raise ConfigError(
++            f"registry.{kind}.{name}",
++            f"Composant inconnu ; noms disponibles pour « {kind} » : {liste}",
++        ) from None
++
++
++def _nom_type(annotation: Any) -> str:
++    if isinstance(annotation, type):
++        return annotation.__name__
++    return str(annotation).replace("typing.", "")
++
++
++def _params_de(cls: type) -> tuple[ParamInfo, ...]:
++    params = getattr(cls, "Params", None)
++    champs = getattr(params, "model_fields", None)
++    if not champs:
++        return ()
++    return tuple(
++        ParamInfo(
++            name=nom,
++            type=_nom_type(champ.annotation),
++            default=None if champ.is_required() else champ.get_default(call_default_factory=True),
++            required=champ.is_required(),
++        )
++        for nom, champ in champs.items()
++    )
++
++
++def _description_de(cls: type) -> str:
++    doc = (cls.__doc__ or "").strip()
++    return doc.splitlines()[0].strip() if doc else ""
++
++
++def list_components(kind: str | None = None) -> list[ComponentInfo]:
++    """Liste les entrées, triées par `(kind, name)` ; filtrées par `kind` si fourni."""
++    if kind is not None:
++        _verifier_kind(kind)
++    return [
++        ComponentInfo(k, n, _description_de(cls), _params_de(cls), cls)
++        for (k, n), cls in sorted(_REGISTRE.items())
++        if kind is None or k == kind
++    ]
++
++
++def discover() -> None:
++    """Importe récursivement `components` et `architectures` ; un nouvel appel est sans effet."""
++    for nom_paquet in PACKAGES_DECOUVERTS:
++        paquet = importlib.import_module(nom_paquet)
++        for module in pkgutil.walk_packages(paquet.__path__, prefix=f"{nom_paquet}."):
++            importlib.import_module(module.name)
+diff --git a/tests/unit/test_registry.py b/tests/unit/test_registry.py
+new file mode 100644
+index 0000000..ea0f2e2
+--- /dev/null
++++ b/tests/unit/test_registry.py
+@@ -0,0 +1,121 @@
++"""Tests du registre de Composants et de la commande `wl registre`."""
++
++import sys
++from collections.abc import Iterator
++from pathlib import Path
++
++import pytest
++from pydantic import BaseModel, ConfigDict
++from typer.testing import CliRunner
++
++from wavelibrarian import registry
++from wavelibrarian.cli import app
++from wavelibrarian.core.errors import ConfigError
++
++runner = CliRunner()
++
++
++@pytest.fixture(autouse=True)
++def registre_isole(monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
++    """Registre vide pour chaque test, restauré ensuite."""
++    monkeypatch.setattr(registry, "_REGISTRE", {})
++    yield
++
++
++def _definir_toy() -> type:
++    @registry.register("chunker", "toy")
++    class Toy:
++        """Découpeur de test.
++
++        Détail ignoré.
++        """
++
++        class Params(BaseModel):
++            model_config = ConfigDict(extra="forbid", frozen=True)
++            size: int = 300
++            nom: str
++
++    return Toy
++
++
++def test_get_et_list_components() -> None:
++    toy = _definir_toy()
++    assert registry.get("chunker", "toy") is toy
++    [info] = registry.list_components(kind="chunker")
++    assert (info.kind, info.name, info.description) == ("chunker", "toy", "Découpeur de test.")
++    size, nom = info.params
++    assert (size.name, size.type, size.default, size.required) == ("size", "int", 300, False)
++    assert (nom.name, nom.type, nom.required) == ("nom", "str", True)
++
++
++def test_kind_hors_liste_fermee() -> None:
++    with pytest.raises(ConfigError):
++        registry.register("inconnu", "x")
++
++
++def test_double_enregistrement() -> None:
++    _definir_toy()
++    with pytest.raises(ConfigError):
++        _definir_toy()
++
++
++def test_nom_inconnu_liste_le_kind_seulement() -> None:
++    _definir_toy()
++
++    @registry.register("chunker", "toy2")
++    class Toy2:
++        """Autre."""
++
++    @registry.register("parser", "autre")
++    class Autre:
++        """Hors kind."""
++
++    with pytest.raises(ConfigError) as exc:
++        registry.get("chunker", "inconnu")
++    message = str(exc.value)
++    assert "toy" in message and "toy2" in message
++    assert "autre" not in message
++
++
++def test_discover_importe_recursivement_et_est_idempotent(
++    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    import wavelibrarian.components as paquet
++
++    sous = tmp_path / "sous"
++    sous.mkdir()
++    (sous / "__init__.py").write_text("", encoding="utf-8")
++    (sous / "mod_decouvert.py").write_text(
++        "from wavelibrarian.registry import register\n"
++        "@register('chunker', 'decouvert')\n"
++        "class D:\n"
++        "    'Découvert.'\n",
++        encoding="utf-8",
++    )
++    monkeypatch.setattr(paquet, "__path__", [*paquet.__path__, str(tmp_path)])
++    for nom in ("wavelibrarian.components.sous", "wavelibrarian.components.sous.mod_decouvert"):
++        monkeypatch.delitem(sys.modules, nom, raising=False)
++
++    registry.discover()
++    registry.discover()
++    assert [i.name for i in registry.list_components(kind="chunker")] == ["decouvert"]
++
++
++def test_cli_registre() -> None:
++    _definir_toy()
++    resultat = runner.invoke(app, ["registre"])
++    assert resultat.exit_code == 0
++    assert "chunker/toy" in resultat.output
++    assert "Découpeur de test." in resultat.output
++    assert "size (int)" in resultat.output
++
++    filtre = runner.invoke(app, ["registre", "--kind", "parser"])
++    assert filtre.exit_code == 0
++    assert "chunker/toy" not in filtre.output
++
++    assert "chunker/toy" in runner.invoke(app, ["registre", "--kind", "chunker"]).output
++
++
++def test_cli_registre_kind_invalide() -> None:
++    resultat = runner.invoke(app, ["registre", "--kind", "nimporte"])
++    assert resultat.exit_code == 1

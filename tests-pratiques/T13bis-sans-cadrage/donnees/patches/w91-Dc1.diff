@@ -1,0 +1,142 @@
+diff --git a/src/wavelocalai/__main__.py b/src/wavelocalai/__main__.py
+index 036da80..1320cc1 100644
+--- a/src/wavelocalai/__main__.py
++++ b/src/wavelocalai/__main__.py
+@@ -7,9 +7,13 @@ le lanceur s'arrête avec un message clair (AD-23).
+ from __future__ import annotations
+ 
+ import argparse
++import http.client
+ import logging
+ import sqlite3
+ import sys
++import threading
++import time
++import webbrowser
+ from collections.abc import Sequence
+ from pathlib import Path
+ 
+@@ -27,6 +31,9 @@ from wavelocalai.telemetry import disable_telemetry
+ 
+ logger = logging.getLogger("wavelocalai")
+ 
++ATTENTE_NAVIGATEUR_S = 30.0  # attente maximale du serveur avant d'abandonner l'ouverture
++PAUSE_SONDE_S = 0.2
++
+ 
+ def _parse(argv: Sequence[str] | None) -> argparse.Namespace:
+     parser = argparse.ArgumentParser(
+@@ -35,9 +42,46 @@ def _parse(argv: Sequence[str] | None) -> argparse.Namespace:
+     parser.add_argument("--port", type=int, help=f"port d'écoute (défaut {DEFAULT_PORT})")
+     parser.add_argument("--data-dir", type=Path, help="dossier des données (défaut : data/)")
+     parser.add_argument("--config", type=Path, help="fichier de réglages (wavelocalai.toml)")
++    parser.add_argument(
++        "--no-browser", action="store_true", help="n'ouvre pas le navigateur au démarrage"
++    )
+     return parser.parse_args(argv)
+ 
+ 
++def _server_ready(port: int) -> bool:
++    """Vrai si le serveur local répond à `GET /api/health`."""
++    conn = http.client.HTTPConnection("127.0.0.1", port, timeout=1.0)
++    try:
++        conn.request("GET", "/api/health")
++        return conn.getresponse().status < 500
++    except (OSError, http.client.HTTPException):
++        return False
++    finally:
++        conn.close()
++
++
++def _open_browser_when_ready(port: int, timeout_s: float = ATTENTE_NAVIGATEUR_S) -> bool:
++    """Ouvre le navigateur sur l'application dès que le serveur répond ; rend `True` si fait.
++
++    Ne bloque jamais le lanceur : si le serveur ne répond pas dans `timeout_s` ou si aucun
++    navigateur n'est disponible, l'échec est journalisé et le serveur continue."""
++    url = f"http://127.0.0.1:{port}/"
++    deadline = time.monotonic() + timeout_s
++    while not _server_ready(port):
++        if time.monotonic() >= deadline:
++            logger.warning("Navigateur non ouvert : le serveur ne répond pas. Ouvrez %s", url)
++            return False
++        time.sleep(PAUSE_SONDE_S)
++    try:
++        opened = webbrowser.open(url)
++    except webbrowser.Error as exc:
++        logger.warning("Navigateur non ouvert (%s). Ouvrez %s", exc, url)
++        return False
++    if not opened:
++        logger.warning("Aucun navigateur disponible. Ouvrez %s", url)
++    return bool(opened)
++
++
+ def main(argv: Sequence[str] | None = None) -> int:
+     """Point d'entrée du script `wavelocalai-v2` ; rend le code de sortie."""
+     args = _parse(argv)
+@@ -99,6 +143,13 @@ def main(argv: Sequence[str] | None = None) -> int:
+                 settings.server.port,
+                 data_dir,
+             )
++            if not args.no_browser:
++                threading.Thread(
++                    target=_open_browser_when_ready,
++                    args=(settings.server.port,),
++                    name="ouverture-navigateur",
++                    daemon=True,
++                ).start()
+             try:
+                 serve(settings, sock, store)
+             finally:
+diff --git a/tests/v2/unit/test_main.py b/tests/v2/unit/test_main.py
+index d2cbf11..a54bbd4 100644
+--- a/tests/v2/unit/test_main.py
++++ b/tests/v2/unit/test_main.py
+@@ -6,7 +6,7 @@ import socket
+ 
+ import pytest
+ 
+-from wavelocalai.__main__ import main
++from wavelocalai.__main__ import _open_browser_when_ready, main
+ from wavelocalai.store.datadir import DataDirLock
+ from wavelocalai.store.logs import close_logging
+ from wavelocalai.web.server import PortBusyError, bind_socket
+@@ -96,6 +96,39 @@ def test_onedrive_data_dir_is_logged_as_a_warning(tmp_path, busy_port):
+     assert "OneDrive" in log and "WARNING" in log
+ 
+ 
++def test_browser_opens_on_the_local_url_once_the_server_answers(monkeypatch):
++    ouvertures = []
++    monkeypatch.setattr("wavelocalai.__main__._server_ready", lambda port: True)
++    monkeypatch.setattr("webbrowser.open", lambda url: ouvertures.append(url) or True)
++    assert _open_browser_when_ready(8123) is True
++    assert ouvertures == ["http://127.0.0.1:8123/"]
++
++
++def test_browser_waits_for_the_server(monkeypatch):
++    reponses = iter([False, False, True])
++    ouvertures = []
++    monkeypatch.setattr("wavelocalai.__main__._server_ready", lambda port: next(reponses))
++    monkeypatch.setattr("wavelocalai.__main__.PAUSE_SONDE_S", 0)
++    monkeypatch.setattr("webbrowser.open", lambda url: ouvertures.append(url) or True)
++    assert _open_browser_when_ready(8123) is True
++    assert len(ouvertures) == 1
++
++
++def test_browser_is_not_opened_when_the_server_never_answers(monkeypatch):
++    ouvertures = []
++    monkeypatch.setattr("wavelocalai.__main__._server_ready", lambda port: False)
++    monkeypatch.setattr("wavelocalai.__main__.PAUSE_SONDE_S", 0)
++    monkeypatch.setattr("webbrowser.open", lambda url: ouvertures.append(url) or True)
++    assert _open_browser_when_ready(8123, timeout_s=0) is False
++    assert ouvertures == []
++
++
++def test_missing_browser_does_not_raise(monkeypatch):
++    monkeypatch.setattr("wavelocalai.__main__._server_ready", lambda port: True)
++    monkeypatch.setattr("webbrowser.open", lambda url: False)
++    assert _open_browser_when_ready(8123) is False
++
++
+ def test_invalid_settings_stop_the_launch(tmp_path, capsys):
+     bad = tmp_path / "wavelocalai.toml"
+     bad.write_text("[server\n", encoding="utf-8")

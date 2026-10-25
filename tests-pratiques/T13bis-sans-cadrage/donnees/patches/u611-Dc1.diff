@@ -1,0 +1,148 @@
+diff --git a/src/usine/ia/doublons.py b/src/usine/ia/doublons.py
+new file mode 100644
+index 0000000..c91c8a2
+--- /dev/null
++++ b/src/usine/ia/doublons.py
+@@ -0,0 +1,72 @@
++"""Détection de doublons entre Anomalies ouvertes (FR-36, Story 6.11, bonus).
++
++Calcul déterministe, sans LLM ni réseau : la similarité de deux Anomalies est l'indice de
++Jaccard des mots de leur titre et de leur description (minuscules, sans accents, mots d'au
++moins `LONGUEUR_MIN_MOT` caractères). Les textes sont ceux de `TicketTexte`, déjà pseudonymisés.
++
++Le résultat n'est qu'une suggestion à revoir par le Pilote : aucune fusion, aucune écriture
++dans Jira.
++"""
++
++import re
++import unicodedata
++from datetime import date
++from itertools import combinations
++
++import polars as pl
++
++from usine.contrats.llm import PaireDoublon, SortieDoublons
++from usine.contrats.tickets import TypeTicket, rang_cle
++
++SEUIL_DEFAUT = 0.6
++"""Score minimal (inclus) d'une paire retenue comme doublon probable."""
++
++LONGUEUR_MIN_MOT = 3
++"""Les mots plus courts (articles, prépositions) ne comptent pas dans la similarité."""
++
++_MOT = re.compile(r"[a-z0-9]+")
++
++
++def _mots(texte: str | None) -> frozenset[str]:
++    """Mots significatifs d'un texte, en minuscules et sans accents."""
++    decompose = unicodedata.normalize("NFD", (texte or "").lower())
++    sans_accents = "".join(c for c in decompose if not unicodedata.combining(c))
++    return frozenset(m for m in _MOT.findall(sans_accents) if len(m) >= LONGUEUR_MIN_MOT)
++
++
++def _similarite(a: frozenset[str], b: frozenset[str]) -> float:
++    union = a | b
++    return len(a & b) / len(union) if union else 0.0
++
++
++def score_similarite(texte_a: str | None, texte_b: str | None) -> float:
++    """Similarité de deux textes, de 0 (aucun mot commun) à 1 (mêmes mots) ; symétrique.
++
++    Deux textes sans mot significatif ont un score de 0 : rien ne permet de les rapprocher.
++    """
++    return _similarite(_mots(texte_a), _mots(texte_b))
++
++
++def detecter_doublons(
++    textes: pl.DataFrame, date_arrete: date, seuil: float = SEUIL_DEFAUT
++) -> SortieDoublons:
++    """Paires d'Anomalies de `textes` dont le score atteint `seuil`, par score décroissant.
++
++    Seules les Anomalies sont comparées (Cas de test et Certifications sont ignorés) ; à
++    score égal, les paires se suivent par `rang_cle`. `cle_a` précède `cle_b` par rang.
++    """
++    if not 0 <= seuil <= 1:
++        raise ValueError(f"seuil {seuil} hors de l'intervalle [0, 1]")
++    lignes = textes.filter(pl.col("type_ticket") == TypeTicket.anomalie.value).to_dicts()
++    vues = {
++        ligne["cle_ticket"]: _mots(f"{ligne['titre'] or ''} {ligne['description'] or ''}")
++        for ligne in lignes
++    }
++    cles = sorted(vues, key=rang_cle)
++    paires = [
++        PaireDoublon(cle_a=a, cle_b=b, score=score)
++        for a, b in combinations(cles, 2)
++        if (score := _similarite(vues[a], vues[b])) >= seuil
++    ]
++    paires.sort(key=lambda p: -p.score)  # tri stable : l'ordre par rang départage les égalités
++    return SortieDoublons(date_arrete=date_arrete, seuil=seuil, paires=tuple(paires))
+diff --git a/tests/unit/ia/test_doublons.py b/tests/unit/ia/test_doublons.py
+new file mode 100644
+index 0000000..7451648
+--- /dev/null
++++ b/tests/unit/ia/test_doublons.py
+@@ -0,0 +1,64 @@
++"""Tests de la détection de doublons (Story 6.11)."""
++
++from datetime import date
++
++import polars as pl
++import pytest
++
++from usine.ia.doublons import detecter_doublons, score_similarite
++
++D = date(2026, 3, 2)
++
++
++def _textes(*lignes: tuple[str, str, str, str]) -> pl.DataFrame:
++    return pl.DataFrame(
++        [
++            {"cle_ticket": c, "type_ticket": t, "entite": "E1", "titre": ti, "description": de}
++            for c, t, ti, de in lignes
++        ],
++        schema={
++            "cle_ticket": pl.Utf8(),
++            "type_ticket": pl.Utf8(),
++            "entite": pl.Utf8(),
++            "titre": pl.Utf8(),
++            "description": pl.Utf8(),
++        },
++    )
++
++
++def test_score_borne_et_symetrique() -> None:
++    assert score_similarite("Écran de connexion bloqué", "écran de connexion bloqué") == 1.0
++    assert score_similarite("alpha beta gamma", "delta epsilon") == 0.0
++    assert score_similarite("", None) == 0.0
++    a, b = "export des factures échoue", "échec export factures"
++    assert score_similarite(a, b) == score_similarite(b, a)
++    assert 0 < score_similarite(a, b) < 1
++
++
++def test_paires_triees_par_score_et_cles_ordonnees() -> None:
++    textes = _textes(
++        ("DEMO-10", "anomalie", "Export factures échoue", "erreur lors de export des factures"),
++        ("DEMO-2", "anomalie", "Export factures échoue", "erreur lors de export des factures"),
++        ("DEMO-3", "anomalie", "Export factures échoue", "erreur export factures mensuelles"),
++        ("DEMO-4", "anomalie", "Calcul taxe", "taux de TVA incorrect"),
++    )
++    sortie = detecter_doublons(textes, D, seuil=0.5)
++    assert sortie.date_arrete == D
++    assert (sortie.paires[0].cle_a, sortie.paires[0].cle_b) == ("DEMO-2", "DEMO-10")
++    assert sortie.paires[0].score == 1.0
++    scores = [p.score for p in sortie.paires]
++    assert scores == sorted(scores, reverse=True)
++    assert all("DEMO-4" not in (p.cle_a, p.cle_b) for p in sortie.paires)
++
++
++def test_ignore_les_non_anomalies() -> None:
++    textes = _textes(
++        ("DEMO-1", "anomalie", "Export factures", "échoue"),
++        ("DEMO-2", "cas_de_test", "Export factures", "échoue"),
++    )
++    assert detecter_doublons(textes, D).paires == ()
++
++
++def test_seuil_invalide() -> None:
++    with pytest.raises(ValueError, match="seuil"):
++        detecter_doublons(_textes(), D, seuil=1.5)

@@ -1,0 +1,358 @@
+diff --git a/src/wavelibrarian/architectures/cag.py b/src/wavelibrarian/architectures/cag.py
+new file mode 100644
+index 0000000..2023041
+--- /dev/null
++++ b/src/wavelibrarian/architectures/cag.py
+@@ -0,0 +1,40 @@
++"""Architecture `cag` : tout le Corpus préchargé dans le cache de prompt du fournisseur (FR-22)."""
++
++from pathlib import Path
++
++from pydantic import field_validator
++
++from wavelibrarian.architectures.long_context import LongContext
++from wavelibrarian.ports.architecture import ArchCapabilities
++from wavelibrarian.ports.components import ComponentSpec
++from wavelibrarian.registry import register
++
++
++@register("architecture", "cag")
++class Cag(LongContext):
++    """Comme `long_context`, mais `load` précharge le Corpus au poste `indexing`.
++
++    Le préchargement est dans `load` et non dans `index` : le runner appelle toujours `load`,
++    que l'index soit construit ou servi par le cache. Son system est identique à celui des
++    appels `generate`, sans quoi le préfixe en cache ne servirait pas.
++    """
++
++    name = "cag"
++    capabilities = ArchCapabilities(
++        retrieval_method="cited", full_corpus_in_prompt=True, requires_prompt_cache=True
++    )
++
++    class Params(LongContext.Params):
++        @field_validator("generator")
++        @classmethod
++        def _generateur_llm(cls, spec: ComponentSpec) -> ComponentSpec:
++            """Seul le Generator `llm` sait précharger le cache."""
++            if spec.name != "llm":
++                raise ValueError("`cag` exige le Generator `llm`, seul capable de précharger")
++            return spec
++
++    def load(self, directory: Path) -> None:
++        super().load(directory)
++        if self._contexte is None:
++            raise RuntimeError("le Contexte doit exister après `load`")
++        self.generator.precharger(self._contexte)
+diff --git a/src/wavelibrarian/components/generators/llm.py b/src/wavelibrarian/components/generators/llm.py
+index 9278d36..2c873d9 100644
+--- a/src/wavelibrarian/components/generators/llm.py
++++ b/src/wavelibrarian/components/generators/llm.py
+@@ -43,18 +43,40 @@ class LLMGenerator:
+         self._cache_system = params.cache_system
+         self.model_id: str = params.model or ctx.profile.defaults.generator_models[0]
+ 
+-    def generate(self, question: QuestionInput, context: Context) -> GenerationResult:
++    def _construire(self, context: Context) -> tuple[str, str, dict[str, str]]:
++        """Le system, le Contexte et les blocs sans préfixe : partagés par `generate` et
++        `precharger`, pour que le préfixe en cache soit identique."""
+         blocs = {
+             etiquette: _PREFIXE.sub("", bloc, count=1)
+             for etiquette, bloc in zip(context.labels, context.blocks, strict=True)
+         }
+         contexte = context.text if context.blocks else "(aucun passage)"
++        systeme = f"{_SYSTEM}\n\nContexte :\n{contexte}" if self._cache_system else _SYSTEM
++        return systeme, contexte, blocs
++
++    def precharger(self, context: Context) -> None:
++        """Envoie le system seul, pour écrire le préfixe dans le cache de prompt (CAG)."""
++        systeme, _, blocs = self._construire(context)
++        self._ctx.gateway.complete(
++            LLMRequest(
++                model_id=self.model_id,
++                role="generate",
++                step="cag.preload",
++                system=systeme,
++                cache_system=self._cache_system,
++                messages=(Message(role="user", content="Préchargement du Corpus."),),
++                max_tokens=1,
++                seed=self._ctx.seed,
++                inputs={"question": "", "blocks": blocs},
++            )
++        )
++
++    def generate(self, question: QuestionInput, context: Context) -> GenerationResult:
++        systeme, contexte, blocs = self._construire(context)
+         messages = [Message(role=t.role, content=t.text) for t in question.history]
+         if self._cache_system:
+-            systeme = f"{_SYSTEM}\n\nContexte :\n{contexte}"
+             messages.append(Message(role="user", content=f"Question : {question.text}"))
+         else:
+-            systeme = _SYSTEM
+             messages.append(
+                 Message(
+                     role="user", content=f"Contexte :\n{contexte}\n\nQuestion : {question.text}"
+diff --git a/tests/unit/architectures/test_story_6_5.py b/tests/unit/architectures/test_story_6_5.py
+new file mode 100644
+index 0000000..f630e5a
+--- /dev/null
++++ b/tests/unit/architectures/test_story_6_5.py
+@@ -0,0 +1,258 @@
++"""Story 6.5 : Architecture `cag` (Corpus préchargé dans le cache de prompt)."""
++
++import json
++from pathlib import Path
++from typing import Any
++
++import pytest
++import yaml
++
++from wavelibrarian import registry
++from wavelibrarian.architectures.cag import Cag
++from wavelibrarian.config.validate import validate_file
++from wavelibrarian.core.errors import ConfigError, ValidationFailed
++from wavelibrarian.core.types import (
++    Anchor,
++    Block,
++    CorpusProfile,
++    ParsedCorpus,
++    ParsedDocument,
++    QuestionInput,
++)
++from wavelibrarian.llm.providers.fake import FakeProvider
++from wavelibrarian.ports.components import ComponentSpec
++from wavelibrarian.ports.gateway import LLMRequest
++from wavelibrarian.runner.context import Context as RunCtx
++from wavelibrarian.runner.index_cache import IndexCache
++
++GEN = {"name": "llm", "params": {"model": "fake-llm-a"}}
++REPONSE = '{"answer": "Réponse.", "citations": ["S1"], "abstain": false}'
++
++
++@pytest.fixture
++def ctx(tmp_path: Path):  # type: ignore[no-untyped-def]
++    provider = FakeProvider()
++    c = RunCtx.from_profile(
++        "test", wl_home=tmp_path / "wl", run_id="r-1", seed=1, providers={"fake": provider}
++    )
++    c.parser = "markdown"
++    c.provider = provider  # type: ignore[attr-defined]
++    with c:
++        yield c
++
++
++def _arch(ctx: RunCtx, nom: str = "cag", **params: Any) -> Any:
++    params.setdefault("generator", GEN)
++    return ctx.build("architecture", ComponentSpec(name=nom, params=params))
++
++
++def _question(texte: str = "Que sait-on de la guilde Orvane ?") -> QuestionInput:
++    return QuestionInput(question_id="q-001", text=texte, lang="fr")
++
++
++def _espionner(ctx: RunCtx) -> list[LLMRequest]:
++    vues: list[LLMRequest] = []
++
++    def sortie(req: LLMRequest) -> str:
++        vues.append(req)
++        return REPONSE
++
++    ctx.provider.script("generate", "*", sortie)  # type: ignore[attr-defined]
++    return vues
++
++
++def _spans(ctx: RunCtx) -> list[dict[str, Any]]:
++    lignes = (ctx.run_dir / "traces.jsonl").read_text(encoding="utf-8").splitlines()
++    return [json.loads(x) for x in lignes]
++
++
++def _repondre(arch: Any, ctx: RunCtx, qid: str) -> Any:
++    with ctx.scope(post="query", question_id=qid):
++        return arch.answer(_question())
++
++
++def _profil(n_tokens: int) -> CorpusProfile:
++    return CorpusProfile(
++        corpus_id="c",
++        fingerprint="f",
++        parser="markdown",
++        tokenizer="approx",
++        n_documents=1,
++        n_tokens=n_tokens,
++        mean_tokens_per_document=float(n_tokens),
++        heading_depth_max=1,
++        heading_depth_mean=1.0,
++        link_density=0.0,
++        table_share=0.0,
++        images_per_document=0.0,
++        dominant_lang="fr",
++        langs={"fr": 1},
++        formats={"markdown": 1},
++        volatility="low",
++    )
++
++
++def _ancrages(corpus: ParsedCorpus) -> list[str]:
++    return [a for d in corpus.documents for a in d.anchors if corpus.anchor_text(a).strip()]
++
++
++def test_enregistrement_et_capacites() -> None:
++    assert registry.get("architecture", "cag") is Cag
++    caps = Cag.capabilities
++    assert caps.retrieval_method == "cited"
++    assert caps.full_corpus_in_prompt is True and caps.requires_prompt_cache is True
++
++
++def test_index_ecrit_un_passage_par_ancrage_et_load_precharge(
++    ctx: RunCtx, minicorpus: ParsedCorpus, tmp_path: Path
++) -> None:
++    vues = _espionner(ctx)
++    arch = _arch(ctx)
++    dossier = tmp_path / "idx"
++    arch.index(minicorpus, dossier)
++    assert vues == []  # `index` n'appelle pas le LLM
++    lignes = (dossier / "passages.jsonl").read_text(encoding="utf-8").splitlines()
++    assert len(lignes) == len(_ancrages(minicorpus))
++    neuve = _arch(ctx)
++    with ctx.scope(post="indexing"):
++        neuve.load(dossier)
++    assert len(vues) == 1
++    req = vues[0]
++    assert req.step == "cag.preload" and req.role == "generate"
++    assert req.cache_system is True and req.max_tokens == 1
++    for i, a in enumerate(_ancrages(minicorpus), start=1):
++        assert f"[S{i}] ({a})" in req.system
++
++
++def test_le_system_du_prechargement_egale_celui_de_generate(
++    ctx: RunCtx, minicorpus: ParsedCorpus, tmp_path: Path
++) -> None:
++    vues = _espionner(ctx)
++    arch = _arch(ctx)
++    arch.index(minicorpus, tmp_path / "idx")
++    with ctx.scope(post="indexing"):
++        arch.load(tmp_path / "idx")
++    _repondre(arch, ctx, "q-001")
++    assert [v.step for v in vues] == ["cag.preload", "generate"]
++    assert vues[0].system == vues[1].system
++    assert vues[0].inputs["blocks"] == vues[1].inputs["blocks"]
++
++
++def test_seconde_question_lit_le_cache_separement_des_entrees(
++    ctx: RunCtx, minicorpus: ParsedCorpus, tmp_path: Path
++) -> None:
++    _espionner(ctx)
++    arch = _arch(ctx)
++    arch.index(minicorpus, tmp_path / "idx")
++    with ctx.scope(post="indexing"):
++        arch.load(tmp_path / "idx")
++    rep1 = _repondre(arch, ctx, "q-001")
++    rep2 = _repondre(arch, ctx, "q-002")
++    assert rep1.retrieval_method == "cited" and rep2.retrieval_method == "cited"
++    gen = [s for s in _spans(ctx) if s["wl.step"] == "generate"]
++    assert len(gen) == 2
++    assert gen[1]["wl.usage.cache_read_tokens"] > 0
++    assert gen[1]["wl.usage.cache_read_tokens"] != gen[1]["gen_ai.usage.input_tokens"]
++
++
++def test_cache_d_index_servi_prechargement_reemis_au_poste_indexing(
++    ctx: RunCtx, minicorpus: ParsedCorpus, tmp_path: Path
++) -> None:
++    _espionner(ctx)
++    cache = IndexCache(tmp_path / "home")
++    appels: list[int] = []
++
++    def fabrique() -> Any:
++        arch = _arch(ctx)
++        origine = arch.index
++
++        def index(corpus: ParsedCorpus, directory: Path) -> None:
++            appels.append(1)
++            origine(corpus, directory)
++
++        arch.index = index
++        return arch
++
++    _, cle1 = cache.build(ctx, fabrique, minicorpus)
++    _, cle2 = cache.build(ctx, fabrique, minicorpus)
++    assert cle1 == cle2 and appels == [1]  # `index` n'est pas rappelé
++    pre = [s for s in _spans(ctx) if s["wl.step"] == "cag.preload"]
++    assert len(pre) == 2
++    assert all(s["wl.post"] == "indexing" for s in pre)
++
++
++def test_inapplicable_au_dela_de_la_fenetre_ou_du_palier(ctx: RunCtx) -> None:
++    vues = _espionner(ctx)
++    res = _arch(ctx).check(_profil(120_000))
++    assert res.applicable is False and res.reason is not None and "fenêtre" in res.reason
++    haiku = _arch(ctx, generator={"name": "llm", "params": {"model": "claude-haiku-5-5"}})
++    res = haiku.check(_profil(80_000))
++    assert res.applicable is False and res.reason is not None and "palier" in res.reason
++    assert vues == []
++
++
++def test_prompt_cache_false_refuse_par_la_validation(tmp_path: Path, wl_home: Path) -> None:
++    base = {
++        "experiment_id": "exp-test",
++        "seed": 42,
++        "profile": "test",
++        "corpus": "c.yaml",
++        "questions": "q.yaml",
++        "configurations": [
++            {
++                "id": "a",
++                "architecture": "cag",
++                "params": {"generator": {"name": "llm", "params": {"model": "minicpm5:1b-q4_k_m"}}},
++            }
++        ],
++    }
++    chemin = tmp_path / "exp.yaml"
++    chemin.write_text(yaml.safe_dump(base, sort_keys=False), encoding="utf-8")
++    with pytest.raises(ValidationFailed) as info:
++        validate_file(chemin, wl_home)
++    messages = " ".join(e.message for e in info.value.errors)
++    assert "prompt_cache: false" in messages and "minicpm5:1b-q4_k_m" in messages
++
++
++def test_corpus_court_le_prechargement_reussit(ctx: RunCtx, tmp_path: Path) -> None:
++    anchor_id = "doc0#h/s0"
++    ancre = Anchor(anchor_id=anchor_id, doc_id="doc0", source_path="doc0.md", heading_path=("s0",))
++    doc = ParsedDocument(
++        doc_id="doc0",
++        source_path="doc0.md",
++        format="markdown",
++        lang="fr",
++        blocks=(Block(text="un mot", anchor_id=anchor_id, kind="text"),),
++        anchors={anchor_id: ancre},
++    )
++    corpus = ParsedCorpus(corpus_id="synth", fingerprint="fp", documents=(doc,))
++    vues = _espionner(ctx)
++    arch = _arch(ctx)
++    arch.index(corpus, tmp_path / "idx")
++    with ctx.scope(post="indexing"):
++        arch.load(tmp_path / "idx")  # aucune exception
++    assert [v.step for v in vues] == ["cag.preload"]
++
++
++def test_refus_generator_non_llm_ou_sans_cache(ctx: RunCtx) -> None:
++    with pytest.raises(ConfigError):
++        _arch(
++            ctx, generator={"name": "llm", "params": {"model": "fake-llm-a", "cache_system": False}}
++        )
++    with pytest.raises(ConfigError):
++        _arch(ctx, generator={"name": "extractive"})
++
++
++def test_long_context_envoie_le_meme_system_qu_avant(
++    ctx: RunCtx, minicorpus: ParsedCorpus, tmp_path: Path
++) -> None:
++    from wavelibrarian.components.generators.llm import _SYSTEM
++
++    vues = _espionner(ctx)
++    arch = _arch(ctx, "long_context")
++    arch.index(minicorpus, tmp_path / "idx")
++    arch.load(tmp_path / "idx")
++    _repondre(arch, ctx, "q-001")
++    assert [v.step for v in vues] == ["generate"]
++    # la passerelle préfixe le marqueur de rôle ; le reste du system est inchangé
++    assert f"\n{_SYSTEM}\n\nContexte :\n[S1] (" in vues[0].system

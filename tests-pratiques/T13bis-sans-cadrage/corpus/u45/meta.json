@@ -1,0 +1,29 @@
+{
+  "id": "u45",
+  "repo": "usine-migration-jira-demo",
+  "pkg": "usine",
+  "label": "4.5",
+  "commit": "0febaeba56ea26bff89b129ba84cd321dcbdac39",
+  "base": "a663bf357641113585540dfdbb59a06106836ee0",
+  "fichiers_commit": [
+    "_bmad-output/implementation-artifacts/spec-4-5-recette-de-la-prevision-sur-les-scenarios-de-demo.md",
+    "src/usine/domaine/prevision/risque.py",
+    "tests/unit/domaine/prevision/test_recette_scenarios.py",
+    "tests/unit/domaine/prevision/test_risque.py"
+  ],
+  "tests_caches": [
+    "tests/unit/domaine/prevision/test_recette_scenarios.py"
+  ],
+  "tests_executes": [
+    "tests/unit/domaine/prevision/test_recette_scenarios.py"
+  ],
+  "spec_origine": "_bmad-output/implementation-artifacts/spec-4-5-recette-de-la-prevision-sur-les-scenarios-de-demo.md",
+  "src_modifies": [
+    "src/usine/domaine/prevision/risque.py"
+  ],
+  "c_disponible": true,
+  "total_ref": 3,
+  "base_passed": 0,
+  "base_failed": 3,
+  "duree_ref_s": 52.8
+}

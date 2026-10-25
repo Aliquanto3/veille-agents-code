@@ -1,0 +1,188 @@
+diff --git a/src/usine/ia/doublons.py b/src/usine/ia/doublons.py
+new file mode 100644
+index 0000000..42107a9
+--- /dev/null
++++ b/src/usine/ia/doublons.py
+@@ -0,0 +1,110 @@
++"""Tâche `doublons` : paires d'Anomalies probablement en doublon (FR-36).
++
++Tâche locale : aucun appel au fournisseur LLM, donc aucune passerelle. Elle lit les textes
++(titre et description) des Anomalies, déjà pseudonymisés, et note chaque paire par une
++similarité lexicale déterministe de 0 à 1 (coefficient de Jaccard sur les mots, mêlé à celui
++des paires de mots consécutifs). Les paires au score d'au moins `seuil` sont renvoyées par
++score décroissant : ce sont des suggestions à revoir par le Pilote, jamais une fusion ni une
++écriture dans Jira. Les jetons de Pseudonymisation comptent comme des mots : deux textes qui
++visent le même compte pseudonymisé se rapprochent.
++"""
++
++import re
++import unicodedata
++from collections.abc import Collection
++from datetime import date
++from itertools import combinations, pairwise
++from typing import Any
++
++import polars as pl
++
++from usine.contrats.llm import PaireDoublon, SortieDoublons, StatutControle
++from usine.contrats.tickets import TypeTicket, rang_cle
++
++SEUIL_DEFAUT = 0.6
++"""Score minimal d'une paire renvoyée."""
++
++_MOT = re.compile(r"\w+")
++_JETON_PSEUDO = re.compile(r"[A-Z][A-Z_]*_[0-9a-f]{6}")
++_MOTS_VIDES = frozenset(
++    {
++        *("le", "la", "les", "un", "une", "des", "de", "du", "d", "l", "et", "ou", "en", "a"),
++        *("au", "aux", "par", "pour", "sur", "dans", "est", "sont", "ce", "cette"),
++        *("the", "an", "of", "to", "in", "is", "are", "and", "or", "for", "on"),
++    }
++)
++
++
++def _mots(texte: str) -> list[str]:
++    """Mots significatifs : minuscules sans accent, sans mot vide ; un jeton reste entier."""
++    jetons = _JETON_PSEUDO.findall(texte)
++    reste = _JETON_PSEUDO.sub(" ", texte)
++    normalise = unicodedata.normalize("NFD", reste.lower())
++    sans_accent = "".join(c for c in normalise if not unicodedata.combining(c))
++    mots = [m for m in _MOT.findall(sans_accent) if m not in _MOTS_VIDES]
++    return mots + jetons
++
++
++def _jaccard(a: set[Any], b: set[Any]) -> float:
++    return len(a & b) / len(a | b) if a | b else 0.0
++
++
++def score_similarite(texte_a: str, texte_b: str) -> float:
++    """Similarité de deux textes, de 0 (rien en commun) à 1 (mêmes mots, même ordre).
++
++    Symétrique. Deux textes sans mot significatif ne se ressemblent pas (0).
++    """
++    mots_a, mots_b = _mots(texte_a), _mots(texte_b)
++    if not mots_a or not mots_b:
++        return 0.0
++    paires_a, paires_b = set(pairwise(mots_a)), set(pairwise(mots_b))
++    if paires_a or paires_b:
++        score = 0.5 * _jaccard(set(mots_a), set(mots_b)) + 0.5 * _jaccard(paires_a, paires_b)
++    else:
++        score = _jaccard(set(mots_a), set(mots_b))
++    return min(1.0, max(0.0, round(score, 6)))
++
++
++def _texte(ligne: dict[str, Any]) -> str:
++    return f"{ligne['titre'] or ''}\n{ligne['description'] or ''}"
++
++
++def detecter_doublons(
++    textes: pl.DataFrame,
++    date_arrete: date,
++    seuil: float = SEUIL_DEFAUT,
++    ouvertes: Collection[str] | None = None,
++) -> SortieDoublons:
++    """Paires d'Anomalies de `textes` dont le score atteint `seuil`, par score décroissant.
++
++    `ouvertes` : clés des Anomalies ouvertes à retenir (`None` : toutes les Anomalies de
++    `textes`) ; les Cas de test et les Certifications sont toujours écartés. Dans une paire,
++    `cle_a` précède `cle_b` par `rang_cle` ; à score égal, les paires se suivent par clés.
++    """
++    if not 0 <= seuil <= 1:
++        raise ValueError(f"seuil {seuil} hors de [0, 1]")
++    lignes = textes.filter(pl.col("type_ticket") == TypeTicket.anomalie.value)
++    retenues = sorted(
++        (
++            ligne
++            for ligne in lignes.iter_rows(named=True)
++            if ouvertes is None or ligne["cle_ticket"] in ouvertes
++        ),
++        key=lambda ligne: rang_cle(ligne["cle_ticket"]),
++    )
++    paires = []
++    for ligne_a, ligne_b in combinations(retenues, 2):
++        if ligne_a["cle_ticket"] == ligne_b["cle_ticket"]:
++            continue
++        score = score_similarite(_texte(ligne_a), _texte(ligne_b))
++        if score >= seuil:
++            paires.append(
++                PaireDoublon(cle_a=ligne_a["cle_ticket"], cle_b=ligne_b["cle_ticket"], score=score)
++            )
++    paires.sort(key=lambda p: (-p.score, rang_cle(p.cle_a), rang_cle(p.cle_b)))
++    return SortieDoublons(
++        date_arrete=date_arrete,
++        seuil=seuil,
++        paires=tuple(paires),
++        statut_controle=StatutControle.conforme,
++    )
+diff --git a/tests/unit/ia/test_doublons.py b/tests/unit/ia/test_doublons.py
+new file mode 100644
+index 0000000..fc1549d
+--- /dev/null
++++ b/tests/unit/ia/test_doublons.py
+@@ -0,0 +1,66 @@
++"""Détection de doublons : score déterministe, paires triées, rien d'écrit (FR-36)."""
++
++from datetime import date
++
++import polars as pl
++import pytest
++
++from usine.ia.doublons import detecter_doublons, score_similarite
++
++DATE = date(2026, 10, 9)
++
++
++def _textes(*lignes: tuple[str, str, str, str]) -> pl.DataFrame:
++    return pl.DataFrame(
++        {
++            "cle_ticket": [ligne[0] for ligne in lignes],
++            "type_ticket": [ligne[1] for ligne in lignes],
++            "entite": ["E1"] * len(lignes),
++            "titre": [ligne[2] for ligne in lignes],
++            "description": [ligne[3] for ligne in lignes],
++        },
++        schema={
++            "cle_ticket": pl.Utf8,
++            "type_ticket": pl.Utf8,
++            "entite": pl.Utf8,
++            "titre": pl.Utf8,
++            "description": pl.Utf8,
++        },
++    )
++
++
++def test_score_identique_et_disjoint() -> None:
++    assert score_similarite("Écart de solde du compte", "écart de solde du compte") == 1.0
++    assert score_similarite("solde compte", "interface flux") == 0.0
++    assert score_similarite("", "solde") == 0.0
++
++
++def test_score_symetrique_et_borne() -> None:
++    a, b = "Écart solde COMPTE_a1b2c3 migré", "Solde COMPTE_a1b2c3 en écart"
++    assert score_similarite(a, b) == score_similarite(b, a)
++    assert 0 < score_similarite(a, b) < 1
++
++
++def test_paires_triees_sous_seuil_ecartees() -> None:
++    texte = ("Écart de solde COMPTE_a1b2c3", "solde différent après reprise")
++    textes = _textes(
++        ("DEMO-10", "anomalie", *texte),
++        ("DEMO-2", "anomalie", *texte),
++        ("DEMO-3", "anomalie", "Flux interface bloqué", "fichier non reçu"),
++        ("DEMO-4", "cas_de_test", *texte),
++    )
++    sortie = detecter_doublons(textes, DATE)
++    assert [(p.cle_a, p.cle_b) for p in sortie.paires] == [("DEMO-2", "DEMO-10")]
++    assert sortie.paires[0].score == 1.0
++    assert sortie.date_arrete == DATE
++
++
++def test_seuil_et_ouvertes() -> None:
++    textes = _textes(
++        ("DEMO-1", "anomalie", "Écart de solde", "après reprise"),
++        ("DEMO-2", "anomalie", "Écart de solde", "après reprise"),
++    )
++    assert detecter_doublons(textes, DATE, ouvertes={"DEMO-1"}).paires == ()
++    assert len(detecter_doublons(textes, DATE, seuil=1.0).paires) == 1
++    with pytest.raises(ValueError, match="seuil"):
++        detecter_doublons(textes, DATE, seuil=1.5)

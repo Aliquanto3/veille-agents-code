@@ -1,0 +1,295 @@
+diff --git a/src/wavelibrarian/components/judges/__init__.py b/src/wavelibrarian/components/judges/__init__.py
+new file mode 100644
+index 0000000..30fd5dc
+--- /dev/null
++++ b/src/wavelibrarian/components/judges/__init__.py
+@@ -0,0 +1 @@
++"""Juges enregistrés (`kind: judge`)."""
+diff --git a/src/wavelibrarian/components/judges/llm.py b/src/wavelibrarian/components/judges/llm.py
+new file mode 100644
+index 0000000..38f5f09
+--- /dev/null
++++ b/src/wavelibrarian/components/judges/llm.py
+@@ -0,0 +1,68 @@
++"""Juge LLM : note plusieurs Critères en un seul appel au rôle `judge` (FR-36, AD-4)."""
++
++import json
++from collections.abc import Sequence
++from typing import Annotated, Any
++
++from pydantic import BaseModel, ConfigDict
++
++from wavelibrarian.core.types import Criterion, ModelRefMeta
++from wavelibrarian.llm.roles import JudgeOutput
++from wavelibrarian.ports.components import JudgeInput
++from wavelibrarian.ports.gateway import LLMRequest, Message
++from wavelibrarian.registry import register
++
++_TOKENS_PAR_CRITERE = 120
++_SYSTEM = (
++    "Tu es un Juge impartial. Pour chaque Critère demandé, donne un `verdict` (`yes` ou `no`) "
++    "et une `justification` d'une phrase. correctness : la Réponse concorde avec la référence ; "
++    "completeness : elle couvre tous les éléments de la référence ; faithfulness : chaque "
++    "affirmation est soutenue par le contexte fourni. Réponds en JSON : "
++    '{"verdicts": {"<critère>": {"verdict": "yes|no", "justification": "..."}}}.'
++)
++
++
++@register("judge", "llm")
++class LLMJudge:
++    """Un appel par `(item, pass_id)` ; `pass_id` entre dans la clé du Cache de réponses."""
++
++    class Params(BaseModel):
++        model_config = ConfigDict(extra="forbid", frozen=True)
++
++        model: Annotated[str | None, ModelRefMeta("judge_pool[0]")] = None
++
++    def __init__(self, params: "LLMJudge.Params", ctx: Any) -> None:
++        self._ctx = ctx
++        self.model_id: str = params.model or ctx.profile.defaults.judge_pool[0]
++
++    def judge(
++        self, item: JudgeInput, criteria: Sequence[Criterion], pass_id: int
++    ) -> dict[Criterion, tuple[bool, str]]:
++        """Verdict booléen et justification par Critère ; `NonConformantOutput` si illisible."""
++        criteres = list(dict.fromkeys(criteria))
++        inputs: dict[str, Any] = {
++            "question": item.question,
++            "reference_answer": item.reference_answer,
++            "answer": item.answer_text,
++            "criteria": criteres,
++        }
++        contenu: dict[str, Any] = {**inputs, "reference_texts": list(item.reference_texts)}
++        if "faithfulness" in criteres:  # le contexte du Generator, tel quel (AD-6)
++            contenu["context_texts"] = list(item.context_texts)
++        requete = LLMRequest(
++            model_id=self.model_id,
++            role="judge",
++            step="judge",
++            system=_SYSTEM,
++            messages=(Message(role="user", content=json.dumps(contenu, ensure_ascii=False)),),
++            max_tokens=_TOKENS_PAR_CRITERE * len(criteres) + 100,
++            seed=self._ctx.seed,
++            pass_id=pass_id,
++            inputs=inputs,
++        )
++        sortie, _ = self._ctx.gateway.complete_structured(requete, JudgeOutput)
++        return {
++            c: (v.verdict == "yes", v.justification)
++            for c in criteres
++            if (v := sortie.verdicts.get(c)) is not None
++        }
+diff --git a/src/wavelibrarian/scoring/answer.py b/src/wavelibrarian/scoring/answer.py
+index 326fb9d..3db2f2b 100644
+--- a/src/wavelibrarian/scoring/answer.py
++++ b/src/wavelibrarian/scoring/answer.py
+@@ -1,6 +1,7 @@
+ """Forme des Réponses de référence (FR-36) : `short` = au plus 5 mots, un nombre ou une date."""
+ 
+ import re
++import unicodedata
+ 
+ MAX_MOTS_COURTE = 5
+ 
+@@ -16,3 +17,28 @@ def is_short_form(texte: str) -> bool:
+     if len(t.split()) <= MAX_MOTS_COURTE:
+         return True
+     return bool(_NOMBRE.match(t) or _DATE_NUMERIQUE.match(t))
++
++
++_MILLIERS = re.compile(r"(?<=\d)[ '  ](?=\d{3}(?!\d))")
++_DECIMALE = re.compile(r"(?<=\d),(?=\d)")
++_PONCTUATION = re.compile(r"(?!(?<=\d)\.(?=\d))[^\w\s]|_")
++
++
++def _normaliser(texte: str) -> list[str]:
++    """Mots en minuscules, sans accents ni ponctuation ; nombres écrits `1412` / `3.5`."""
++    t = unicodedata.normalize("NFKC", texte).casefold()
++    t = "".join(c for c in unicodedata.normalize("NFD", t) if not unicodedata.combining(c))
++    for _ in range(3):  # un groupe de milliers par passe
++        t = _MILLIERS.sub("", t)
++    t = _DECIMALE.sub(".", t)
++    return _PONCTUATION.sub(" ", t).split()
++
++
++def exact_match(reference: str, answer: str) -> bool:
++    """Vrai si la référence normalisée figure, mot pour mot, dans la réponse normalisée."""
++    ref = _normaliser(reference)
++    rep = _normaliser(answer)
++    if not ref:
++        return False
++    n = len(ref)
++    return any(rep[i : i + n] == ref for i in range(len(rep) - n + 1))
+diff --git a/tests/unit/components/test_llm_judge.py b/tests/unit/components/test_llm_judge.py
+new file mode 100644
+index 0000000..8551596
+--- /dev/null
++++ b/tests/unit/components/test_llm_judge.py
+@@ -0,0 +1,128 @@
++"""Story 3.4 : Juge LLM (un appel, pass_id dans le Cache) sur le Faux LLM, sans réseau."""
++
++import json
++from collections.abc import Iterator
++from pathlib import Path
++from typing import Any
++
++import pytest
++
++from wavelibrarian import registry
++from wavelibrarian.components.judges.llm import LLMJudge
++from wavelibrarian.config.catalog import load_catalog
++from wavelibrarian.config.defaults import load_profile
++from wavelibrarian.config.experiment import Budget
++from wavelibrarian.core.errors import NonConformantOutput
++from wavelibrarian.core.types import Condition, CostPost, Phase
++from wavelibrarian.llm.budget import Ledger
++from wavelibrarian.llm.cache import ResponseCache
++from wavelibrarian.llm.gateway import MeteredGateway
++from wavelibrarian.llm.providers.fake import FakeProvider
++from wavelibrarian.measure.energy import FakeEstimator
++from wavelibrarian.measure.tokenizers import ApproxTokenizer
++from wavelibrarian.measure.tracing import Tracer
++from wavelibrarian.ports.components import ComponentSpec, JudgeInput
++
++CRITERES: list[Any] = ["correctness", "completeness", "faithfulness"]
++
++
++class _Ctx:
++    run_id = "run-1"
++    config_id = "cfg-1"
++    condition: Condition = "standard"
++    tier: int | None = None
++    phase: Phase = "base"
++    post: CostPost = "query"
++    question_id: str | None = "q-1"
++    seed = 7
++
++    def __init__(self, wl_home: Path, tmp: Path) -> None:
++        self.catalog = load_catalog()
++        self.profile = load_profile("test")
++        self.fake = FakeProvider()
++        self.ledger = Ledger(Budget(per_run={}, period={}), "run-1", wl_home)
++        self.cache = ResponseCache(wl_home)
++        self.path = tmp / "traces.jsonl"
++        self.tracer = Tracer(self, self.path)
++        self.gateway = MeteredGateway(
++            catalog=self.catalog,
++            providers={"fake": self.fake},
++            ledger=self.ledger,
++            cache=self.cache,
++            tracer=self.tracer,
++            tokenizer_for=lambda _m: ApproxTokenizer(),
++            estimator=FakeEstimator(),
++            sleep=lambda _s: None,
++        )
++
++    def build(self, kind: str, spec: ComponentSpec) -> Any:
++        cls = registry.get(kind, spec.name)
++        return cls(cls.Params(**spec.params), self)
++
++    def spans(self) -> list[dict[str, Any]]:
++        lignes = self.path.read_text(encoding="utf-8").splitlines() if self.path.exists() else []
++        return [json.loads(x) for x in lignes]
++
++
++@pytest.fixture
++def ctx(wl_home: Path, tmp_path: Path) -> Iterator[_Ctx]:
++    c = _Ctx(wl_home, tmp_path)
++    yield c
++    c.ledger.close()
++    c.cache.close()
++
++
++ITEM = JudgeInput(
++    question="Quand la guilde fut-elle fondée ?",
++    reference_answer="En 1412",
++    reference_texts=("La guilde fut fondée en 1412.",),
++    answer_text="La guilde fut fondée en 1412.",
++    context_texts=("Passage S1 fourni au Generator.",),
++)
++
++
++def test_enregistre_et_un_seul_appel_pour_trois_criteres(ctx: _Ctx) -> None:
++    registry.discover()
++    assert registry.get("judge", "llm") is LLMJudge
++    juge = ctx.build("judge", ComponentSpec(name="llm"))
++    assert juge.model_id == ctx.profile.defaults.judge_pool[0]
++    res = juge.judge(ITEM, CRITERES, pass_id=0)
++    assert set(res) == set(CRITERES)
++    for verdict, justification in res.values():
++        assert isinstance(verdict, bool) and justification
++    spans = ctx.spans()
++    assert len(spans) == 1
++    assert spans[0]["wl.step"] == "judge"
++
++
++def test_sortie_non_conforme_apres_nouvel_essai(ctx: _Ctx) -> None:
++    ctx.fake.script("judge", "*", "pas du json")
++    juge = ctx.build("judge", ComponentSpec(name="llm"))
++    with pytest.raises(NonConformantOutput):
++        juge.judge(ITEM, CRITERES, pass_id=0)
++
++
++def test_pass_id_distinct_n_est_pas_servi_par_le_cache(ctx: _Ctx) -> None:
++    juge = ctx.build("judge", ComponentSpec(name="llm"))
++    juge.judge(ITEM, CRITERES, pass_id=0)
++    juge.judge(ITEM, CRITERES, pass_id=1)
++    juge.judge(ITEM, CRITERES, pass_id=0)
++    cache = [s["wl.llm_cache_hit"] for s in ctx.spans()]
++    assert cache == [False, False, True]
++
++
++def test_contexte_du_generator_transmis_pour_la_fidelite(ctx: _Ctx) -> None:
++    vues: list[str] = []
++
++    def espion(requete: Any) -> str:
++        vues.append(requete.messages[0].content)
++        return json.dumps(
++            {"verdicts": {c: {"verdict": "yes", "justification": "ok"} for c in CRITERES}}
++        )
++
++    ctx.fake.script("judge", "*", espion)
++    juge = ctx.build("judge", ComponentSpec(name="llm"))
++    juge.judge(ITEM, CRITERES, pass_id=0)
++    juge.judge(ITEM, ["correctness"], pass_id=0)
++    assert "Passage S1 fourni au Generator." in vues[0]
++    assert "Passage S1 fourni au Generator." not in vues[1]
+diff --git a/tests/unit/scoring/test_answer.py b/tests/unit/scoring/test_answer.py
+index fa82adf..98e644e 100644
+--- a/tests/unit/scoring/test_answer.py
++++ b/tests/unit/scoring/test_answer.py
+@@ -2,7 +2,7 @@
+ 
+ import pytest
+ 
+-from wavelibrarian.scoring.answer import is_short_form
++from wavelibrarian.scoring.answer import exact_match, is_short_form
+ 
+ 
+ @pytest.mark.parametrize(
+@@ -28,3 +28,25 @@ def test_forme_courte(texte):
+ )
+ def test_forme_longue(texte):
+     assert not is_short_form(texte)
++
++
++@pytest.mark.parametrize(
++    ("reference", "reponse"),
++    [
++        ("1 412", "La guilde fut fondée en 1412."),
++        ("Élodie Varn", "elodie varn"),
++        ("3,5", "3.5"),
++        ("1412", "En 1 412, la guilde."),
++        ("la guilde d'Orvane", "C'est LA GUILDE D'ORVANE !"),
++    ],
++)
++def test_exact_match_vrai(reference, reponse):
++    assert exact_match(reference, reponse)
++
++
++@pytest.mark.parametrize(
++    ("reference", "reponse"),
++    [("1413", "La guilde fut fondée en 1412."), ("1412", "14120"), ("", "texte"), ("3,5", "35")],
++)
++def test_exact_match_faux(reference, reponse):
++    assert not exact_match(reference, reponse)

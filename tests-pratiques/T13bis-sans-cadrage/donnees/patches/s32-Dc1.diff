@@ -1,0 +1,346 @@
+diff --git a/config/outils-mcp.toml b/config/outils-mcp.toml
+index 32abecb..75ce7ff 100644
+--- a/config/outils-mcp.toml
++++ b/config/outils-mcp.toml
+@@ -7,6 +7,8 @@
+ schema_version = 1
+ source = "eval/calibrage/cassettes/tools-list.json"
+ tools_list_sha256 = "38bdeb31324b97789d0a11899aec4d560435d112a79c8da7364992576e3d5b15"
++# Texte de la réponse vide normalisée du Bac à sable (appel sans équivalent en cassette).
++reponse_vide = "Aucun résultat enregistré pour cet appel."
+ 
+ [[outils]]
+ nom = "search_datasets"
+diff --git a/src/slmsp/mcp/bac_a_sable.py b/src/slmsp/mcp/bac_a_sable.py
+new file mode 100644
+index 0000000..1a1a10a
+--- /dev/null
++++ b/src/slmsp/mcp/bac_a_sable.py
+@@ -0,0 +1,127 @@
++"""Bac à sable MCP : adaptateur `ToolPort` qui rejoue une cassette (AD-10).
++
++Le rejeu est sans état : la même séquence d'appels donne les mêmes réponses, à l'octet
++près. L'appariement est exact (JSON canonique des arguments), sinon approché (le plus de
++paires clé/valeur égales, à égalité l'ordre de la cassette), sinon la réponse vide
++normalisée du fichier de config. Les deux derniers cas émettent un avertissement
++« appel non prévu » sans effet sur le score.
++"""
++
++from __future__ import annotations
++
++import copy
++from collections.abc import Callable, Mapping
++from pathlib import Path
++from typing import Any, Final
++
++from slmsp.core.canonique import json_canonique
++from slmsp.core.erreurs import SchemaOutilModifie
++from slmsp.core.evenements import Avertissement
++from slmsp.core.schemas.cassette import Cassette, Interaction
++from slmsp.mcp.cassettes import lire_cassette
++from slmsp.mcp.erreurs import PAR_TYPE_SIMULATION, ErreurHttp
++from slmsp.mcp.outils import charger_config, charger_outils, valider_appel
++
++CODE_APPEL_NON_PREVU: Final = "appel-non-prevu"
++"""Code de l'avertissement émis quand l'appel n'a pas d'appariement exact dans la cassette."""
++
++
++def reponse_vide(chemin: str | Path | None = None) -> dict[str, Any]:
++    """Réponse vide normalisée, au texte de `config/outils-mcp.toml`."""
++    texte = charger_config(chemin).reponse_vide
++    return {"result": {"content": [{"type": "text", "text": texte}], "isError": False}}
++
++
++class BacASable:
++    """Rejoue les interactions `tools/call` d'une cassette.
++
++    `sur_evenement`, s'il est fourni, reçoit les `Avertissement` « appel non prévu ».
++    """
++
++    def __init__(
++        self,
++        cassette: Cassette | str | Path,
++        *,
++        chemin_outils: str | Path | None = None,
++        sur_evenement: Callable[[Avertissement], None] | None = None,
++    ):
++        if not isinstance(cassette, Cassette):
++            cassette = lire_cassette(cassette)
++        config = charger_config(chemin_outils)
++        if cassette.tools_list_sha256 != config.tools_list_sha256:
++            raise SchemaOutilModifie(
++                "cassette refusée : l'empreinte `tools_list_sha256` diffère de "
++                "`config/outils-mcp.toml`"
++            )
++        self.chemin_outils = chemin_outils
++        self._sur_evenement = sur_evenement
++        self._appels: list[tuple[str, dict[str, Any], Interaction]] = []
++        for interaction in cassette.interactions:
++            requete = interaction.request
++            if requete.get("method") != "tools/call":
++                continue
++            params = requete.get("params")
++            if not isinstance(params, dict) or not isinstance(params.get("name"), str):
++                continue
++            arguments = params.get("arguments")
++            arguments = arguments if isinstance(arguments, dict) else {}
++            self._appels.append((params["name"], arguments, interaction.model_copy(deep=True)))
++
++    def lister_outils(self) -> list[dict[str, Any]]:
++        """Outils figés au format `tools` d'OpenAI (aucune requête)."""
++        return charger_outils(self.chemin_outils)
++
++    def _prevenir(self, nom: str, motif: str) -> None:
++        if self._sur_evenement is not None:
++            self._sur_evenement(
++                Avertissement(
++                    code=CODE_APPEL_NON_PREVU,
++                    message=f"appel non prévu à l'outil « {nom} » : {motif}",
++                )
++            )
++
++    def _apparier(self, nom: str, arguments: Mapping[str, Any]) -> tuple[Interaction, bool] | None:
++        voulu = json_canonique(dict(arguments))
++        meilleur: Interaction | None = None
++        score_max = -1
++        for outil, args, interaction in self._appels:
++            if outil != nom:
++                continue
++            if json_canonique(args) == voulu:
++                return interaction, True
++            score = sum(
++                1
++                for cle, valeur in arguments.items()
++                if cle in args and json_canonique(args[cle]) == json_canonique(valeur)
++            )
++            if score > score_max:  # strict : à égalité, la première de la cassette
++                meilleur, score_max = interaction, score
++        return (meilleur, False) if meilleur is not None else None
++
++    def appeler(self, nom: str, arguments: Mapping[str, Any]) -> dict[str, Any]:
++        """Rejoue la réponse enregistrée pour l'outil `nom`.
++
++        Lève `AppelNonConforme` si l'appel viole le schéma figé, puis, pour une interaction
++        simulée, `DelaiDepasse`, `ErreurHttp` ou `Injoignable` comme le client en direct.
++        """
++        valider_appel(nom, arguments, chemin=self.chemin_outils)
++        trouve = self._apparier(nom, arguments)
++        if trouve is None:
++            self._prevenir(nom, "aucune interaction enregistrée pour cet outil")
++            return reponse_vide(self.chemin_outils)
++        interaction, exact = trouve
++        if not exact:
++            self._prevenir(nom, "arguments différents de l'enregistrement le plus proche")
++        simulation = interaction.simulation
++        if simulation is not None:
++            classe = PAR_TYPE_SIMULATION[simulation.type]
++            message = f"panne simulée ({simulation.type})"
++            if classe is ErreurHttp:
++                raise ErreurHttp(message, statut=simulation.statut)
++            raise classe(message)
++        reponse = copy.deepcopy(interaction.response)
++        if reponse is None:  # exclu par `Interaction`, garde pour le typage
++            raise AssertionError("interaction sans réponse ni simulation")
++        if "id" in interaction.request:
++            reponse["id"] = interaction.request["id"]
++        return reponse
+diff --git a/src/slmsp/mcp/outils.py b/src/slmsp/mcp/outils.py
+index 6697d3d..17bd491 100644
+--- a/src/slmsp/mcp/outils.py
++++ b/src/slmsp/mcp/outils.py
+@@ -65,6 +65,7 @@ class ConfigOutilsMcp(ModeleConfig):
+     schema_version: Literal[1]
+     source: str
+     tools_list_sha256: Sha256
++    reponse_vide: str = Field(min_length=1)
+     outils: list[OutilFige] = Field(min_length=1, max_length=len(OUTILS_AUTORISES))
+ 
+     @field_validator("outils")
+diff --git a/tests/mcp/test_bac_a_sable.py b/tests/mcp/test_bac_a_sable.py
+new file mode 100644
+index 0000000..0086c01
+--- /dev/null
++++ b/tests/mcp/test_bac_a_sable.py
+@@ -0,0 +1,182 @@
++"""Bac à sable MCP : rejeu déterministe des cassettes (story 3.2, AD-10)."""
++
++from __future__ import annotations
++
++import json
++from pathlib import Path
++from typing import Any
++
++import pytest
++
++from slmsp.core.canonique import json_canonique
++from slmsp.core.erreurs import SchemaOutilModifie
++from slmsp.core.evenements import Avertissement
++from slmsp.core.ports import ToolPort
++from slmsp.core.schemas.cassette import Cassette, Interaction, Simulation
++from slmsp.mcp.bac_a_sable import CODE_APPEL_NON_PREVU, BacASable, reponse_vide
++from slmsp.mcp.cassettes import lire_cassette
++from slmsp.mcp.erreurs import DelaiDepasse, ErreurHttp, Injoignable
++from slmsp.mcp.outils import charger_config
++
++RACINE = Path(__file__).resolve().parents[2]
++R001 = RACINE / "eval" / "calibrage" / "cassettes" / "R-001.json"
++
++
++def _requete(id_: int, nom: str, arguments: dict[str, Any]) -> dict[str, Any]:
++    return {
++        "jsonrpc": "2.0",
++        "id": id_,
++        "method": "tools/call",
++        "params": {"name": nom, "arguments": arguments},
++    }
++
++
++def _reponse(id_: int, texte: str) -> dict[str, Any]:
++    return {
++        "jsonrpc": "2.0",
++        "id": id_,
++        "result": {"content": [{"type": "text", "text": texte}], "isError": False},
++    }
++
++
++def _cassette(*interactions: Interaction, empreinte: str | None = None) -> Cassette:
++    return Cassette(
++        schema_version=1,
++        server="https://exemple.invalide/mcp",
++        recorded_at="2026-10-12T05:00:00+02:00",
++        initialize=None,
++        tools_list_sha256=empreinte or charger_config().tools_list_sha256,
++        interactions=list(interactions),
++    )
++
++
++def _inter(id_: int, nom: str, arguments: dict[str, Any], texte: str) -> Interaction:
++    return Interaction(request=_requete(id_, nom, arguments), response=_reponse(id_, texte))
++
++
++def _panne(type_: str, statut: int | None = None) -> Interaction:
++    return Interaction(
++        request=_requete(2, "get_dataset_info", {"dataset_id": "x"}),
++        response=None,
++        simulation=Simulation(type=type_, statut=statut),  # type: ignore[arg-type]
++    )
++
++
++def test_respecte_le_port() -> None:
++    assert isinstance(BacASable(_cassette()), ToolPort)
++    assert [o["function"]["name"] for o in BacASable(_cassette()).lister_outils()][0]
++
++
++def test_appariement_exact_calibrage() -> None:
++    cassette = lire_cassette(R001)
++    bac = BacASable(cassette)
++    attendu = cassette.interactions[0]
++    reponse = bac.appeler("search_datasets", {"page_size": 5, "query": "défibrillateurs"})
++    assert reponse == attendu.response
++
++
++def test_exact_remplace_l_id_et_ordre_des_cles_indifferent() -> None:
++    bac = BacASable(_cassette(_inter(7, "search_datasets", {"query": "a", "page": 2}, "ok")))
++    reponse = bac.appeler("search_datasets", {"page": 2, "query": "a"})
++    assert reponse["id"] == 7
++    assert reponse["result"]["content"][0]["text"] == "ok"
++
++
++def test_approche_plus_de_paires_et_evenement() -> None:
++    evenements: list[Avertissement] = []
++    bac = BacASable(
++        _cassette(
++            _inter(2, "search_datasets", {"query": "b"}, "un"),
++            _inter(3, "search_datasets", {"query": "a", "page": 3}, "deux"),
++        ),
++        sur_evenement=evenements.append,
++    )
++    reponse = bac.appeler("search_datasets", {"query": "a", "page": 1})
++    assert reponse["result"]["content"][0]["text"] == "deux"
++    assert [e.code for e in evenements] == [CODE_APPEL_NON_PREVU]
++
++
++def test_approche_egalite_ordre_de_la_cassette() -> None:
++    bac = BacASable(
++        _cassette(
++            _inter(2, "search_datasets", {"query": "x"}, "premier"),
++            _inter(3, "search_datasets", {"query": "y"}, "second"),
++        )
++    )
++    reponse = bac.appeler("search_datasets", {"query": "z"})
++    assert reponse["result"]["content"][0]["text"] == "premier"
++
++
++def test_reponse_vide_si_outil_absent_de_la_cassette() -> None:
++    evenements: list[Avertissement] = []
++    bac = BacASable(
++        _cassette(_inter(2, "search_datasets", {"query": "a"}, "ok")),
++        sur_evenement=evenements.append,
++    )
++    reponse = bac.appeler("get_dataset_info", {"dataset_id": "x"})
++    assert reponse == reponse_vide()
++    assert reponse == {
++        "result": {
++            "content": [{"type": "text", "text": charger_config().reponse_vide}],
++            "isError": False,
++        }
++    }
++    assert [e.code for e in evenements] == [CODE_APPEL_NON_PREVU]
++
++
++def test_exact_n_emet_pas_d_evenement() -> None:
++    evenements: list[Avertissement] = []
++    bac = BacASable(
++        _cassette(_inter(2, "search_datasets", {"query": "a"}, "ok")),
++        sur_evenement=evenements.append,
++    )
++    bac.appeler("search_datasets", {"query": "a"})
++    assert evenements == []
++
++
++@pytest.mark.parametrize(
++    ("type_", "statut", "classe"),
++    [
++        ("delai_depasse", None, DelaiDepasse),
++        ("erreur_http", 503, ErreurHttp),
++        ("injoignable", None, Injoignable),
++    ],
++)
++def test_simulation_leve_l_exception_du_direct(
++    type_: str, statut: int | None, classe: type[Exception]
++) -> None:
++    bac = BacASable(_cassette(_panne(type_, statut)))
++    with pytest.raises(classe) as info:
++        bac.appeler("get_dataset_info", {"dataset_id": "x"})
++    assert type(info.value) is classe
++    if statut is not None:
++        assert info.value.statut == statut  # type: ignore[attr-defined]
++
++
++def test_empreinte_differente_refusee(tmp_path: Path) -> None:
++    with pytest.raises(SchemaOutilModifie):
++        BacASable(_cassette(empreinte="0" * 64))
++    donnees = json.loads(R001.read_text(encoding="utf-8"))
++    donnees |= {"schema_version": 1, "tools_list_sha256": "1" * 64}
++    chemin = tmp_path / "c.json"
++    chemin.write_text(json.dumps(donnees), encoding="utf-8")
++    with pytest.raises(SchemaOutilModifie):
++        BacASable(chemin)
++
++
++def test_rejeu_identique_a_l_octet_pres() -> None:
++    bac = BacASable(lire_cassette(R001))
++    sequence = [
++        ("search_datasets", {"query": "défibrillateurs", "page_size": 5}),
++        ("search_datasets", {"query": "autre"}),
++        ("list_dataset_resources", {"dataset_id": "x"}),
++    ]
++    premier = [json_canonique(bac.appeler(n, a)) for n, a in sequence]
++    second = [json_canonique(bac.appeler(n, a)) for n, a in sequence]
++    assert premier == second
++
++
++def test_reponse_rendue_est_une_copie() -> None:
++    bac = BacASable(_cassette(_inter(2, "search_datasets", {"query": "a"}, "ok")))
++    bac.appeler("search_datasets", {"query": "a"})["result"]["content"].clear()
++    assert bac.appeler("search_datasets", {"query": "a"})["result"]["content"]

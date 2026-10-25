@@ -1,0 +1,106 @@
+diff --git a/README.md b/README.md
+index 507508e..ce3fa4a 100644
+--- a/README.md
++++ b/README.md
+@@ -11,22 +11,43 @@ Projet en cours de cadrage. Licence MIT.
+ 
+ ## Performance (NFR-2)
+ 
+-Mesure de `usine rapport` en Palier 1 sur un Journal synthétique à la volumétrie cible : 10 Entités, 5 000 Anomalies, 8 semaines (63 781 événements, 5 032 tickets ; Journal généré en 0,9 s), Date d'arrêté 2026-10-09. Commande : `uv run python outils/mesurer_nfr2.py` (graine 42, date de génération 2026-10-12, répertoire temporaire).
++Poste de mesure : AMD Ryzen 5 7600 (6 cœurs), 32 Go de RAM, Windows 11 (10.0.26300), Python 3.12.14.
+ 
+-Poste : AMD Ryzen 5 7600 (6 cœurs), 32 Go de RAM, Windows 11, Python 3.12.14. Mesure du 2026-10-12 (Story 1.3, cycle de vie des Anomalies selon le workflow H-17).
++### Mesure synthétique, au majorant de charge
++
++Mesure de `usine rapport` en Palier 1 sur un Journal synthétique à la volumétrie cible : 10 Entités, 5 000 Anomalies, 8 semaines (63 817 événements, 5 036 tickets ; Journal généré en 1,4 s), Date d'arrêté 2026-10-09. Commande : `uv run python outils/mesurer_nfr2.py` (graine 42, date de génération 2026-10-12, répertoire temporaire). Mesure du 2026-10-25 (Story 5.7), Passage `20261025T110702Z-b2ea70`, toutes les étapes réelles. En source `journal`, `extraction` n'a rien à extraire (étape bouchon, 0,00 s).
+ 
+ | Étape | Statut | Durée (s) |
+ |-------|--------|----------:|
+-| extraction | bouchon (reussie) | 0,00 |
+-| instantanes | reussie | 0,64 |
+-| kpi | bouchon (reussie) | 0,00 |
+-| meteo | reussie | 0,10 |
+-| prevision | bouchon (reussie) | 0,00 |
++| extraction | reussie | 0,00 |
++| instantanes | reussie | 0,65 |
++| kpi | reussie | 0,07 |
++| meteo | reussie | 3,17 |
++| prevision | reussie | 0,86 |
+ | classification | sautee | 0,00 |
+ | repartition_causes | sautee | 0,00 |
+ | explications | sautee | 0,00 |
+ | narration | sautee | 0,00 |
+-| rendu | reussie | 0,05 |
+-| **Total de la commande** (lecture du Journal comprise) | | **1,27** |
++| rendu | reussie | 0,28 |
++| **Total de la commande** (lecture du Journal comprise) | | **5,59** |
++
++Cible de 300 s : dans la cible. 5 000 Anomalies est un majorant de charge : la configuration livrée en génère 3 000 à 3 600 (8 semaines × 500 Entrées au plus, moins la marge de réouvertures).
++
++### Mesure réelle, extraction incrémentale comprise (auteur)
++
++La mesure synthétique ne couvre pas l'extraction Jira. L'auteur la complète sur `DEMO` en Source composite :
++
++1. Lancer un premier `uv run usine rapport --date-arrete 2026-10-09` (extraction complète, remplit `donnees/entrepot.duckdb`).
++2. Relancer la même commande : ce second Passage est incrémental.
++3. Relever dans le manifeste du Passage la durée de l'étape `extraction`, et la durée totale affichée par la commande.
++
++| Mesure | Valeur |
++|--------|--------|
++| Date, Passage | _à renseigner par l'auteur_ |
++| Source | composite |
++| Durée de `extraction` (manifeste) | _à renseigner_ s |
++| Total de la commande | _à renseigner_ s (cible : < 300 s) |
++
++### Gain (SM-2)
+ 
+-Aucun écart à la cible de 5 minutes. Les étapes `extraction`, `kpi` et `prevision` ne sont encore que des bouchons : la mesure est à refaire quand les lanes les livrent. 5 000 Anomalies est un majorant de charge : la configuration livrée en génère 3 000 à 3 600 (8 semaines × 500 Entrées au plus, moins la marge de réouvertures).
++Temps manuel déclaré : 120 min par Rapport (`config/demo.yaml`, `temps_manuel_minutes_par_rapport`), soit 600 min par semaine de 5 Jours ouvrés. Durée automatique : 5,59 s en synthétique (majorant de charge) ; la valeur composite de l'auteur remplace ce chiffre une fois renseignée.
+diff --git a/docs/journal-jalon-M3.md b/docs/journal-jalon-M3.md
+new file mode 100644
+index 0000000..718addf
+--- /dev/null
++++ b/docs/journal-jalon-M3.md
+@@ -0,0 +1,42 @@
++# Journal de fin de jalon M3 — Porte Palier 1 (Story 5.7)
++
++- Date : 2026-10-25
++- Révision : `22f04abf0a8d2bd850f943bb3f082ad278ae289d`
++- Poste : AMD Ryzen 5 7600 (6 cœurs), 32 Go de RAM, Windows 11, Python 3.12.14
++- Palier : 1 (`config/chaine.yaml` : `palier: 1`, les quatre étapes LLM `sautee`)
++
++## Critères de la porte
++
++| Critère | Preuve | Résultat | Statut |
++|---------|--------|----------|--------|
++| Contrôles locaux | `uv run ruff check .`, `ruff format --check .`, `mypy`, `lint-imports` | aucun écart ; 315 fichiers formatés ; mypy sur 305 fichiers ; 14 contrats respectés, 0 rompu | constaté |
++| Tests | `uv run pytest -q` | 2 535 passés, 1 sauté, 39 désélectionnés (4 min 46 s) | constaté |
++| Recette `lent` | `uv run pytest -q -m lent tests/unit/chaine/test_recette_complete.py` | 1 passé (7,5 s) | constaté |
++| Réconciliation à 100 % | `tests/unit/domaine/meteo/test_reconciliation.py` (dans `pytest -q`) | vert | constaté |
++| Rejeu idempotent | `tests/unit/chaine/test_rejeu.py::test_rejeu_composite_ne_differe_que_par_les_exclusions`, `tests/unit/rendu/test_exclusions_rejeu.py` (dans `pytest -q`) | vert | constaté |
++| NFR-2 synthétique | `uv run python outils/mesurer_nfr2.py` : Passage `20261025T110702Z-b2ea70`, 5 036 tickets | total 5,59 s, étape `meteo` 3,17 s ; « dans la cible » (< 300 s) | constaté |
++| NFR-2 composite (extraction incrémentale) | second `uv run usine rapport --date-arrete 2026-10-09` sur `DEMO` | durée de `extraction` : … s ; total : … s | à constater par l'auteur |
++| CI verte (Windows et Linux) | push puis résultat de la CI | … | à constater par l'auteur |
++
++Référence antérieure, non retenue comme preuve (rien ne garantit qu'elle était incrémentale) : composite `DEMO` à 22,9 s dont 15 s d'extraction (Story 5.6, 2026-10-13).
++
++## Périmètre livré
++
++Epics 1 à 5 et stories 7.1 à 7.6. La story 1.9 (corpus de textes par LLM) reste après M3, par dépendance à la 6.1.
++
++## Écart d'ordre
++
++Les stories 6.1 à 6.7 (Epic 6) ont été livrées avant la porte, contrairement à l'ordre prévu. Écart consigné sans retour arrière : elles ne sont ni rouvertes ni annulées.
++
++## Points non arbitrés
++
++- **SM-10** : la Baseline perd contre la référence naïve sur les projets tenus à l'écart (Brier 0,0476 contre 0,0452 ; `evaluation/zenodo/RAPPORT.md`).
++- **AD-16** : `version_donnees` inclut le manifeste d'injection (2.6), un écart à la lettre du Glossaire.
++
++Ni l'un ni l'autre ne bloque la porte ; ils restent à arbitrer par l'auteur.
++
++## Verdict
++
++Les critères constatés par l'agent sont satisfaits. La porte M3 est **passée** quand l'auteur a renseigné ses deux lignes (mesure composite et CI) et qu'elles sont conformes ; une mesure ≥ 300 s ou une CI rouge la rend « non passée », avec sa cause consignée ici, sans modification du code pour la faire passer.
++
++Conséquence : une fois la porte passée, les stories restantes de l'Epic 6 (6.8 à 6.10) peuvent démarrer. Aucune ne démarre avant.

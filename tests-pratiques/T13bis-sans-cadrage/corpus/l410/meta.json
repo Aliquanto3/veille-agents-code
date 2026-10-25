@@ -1,0 +1,34 @@
+{
+  "id": "l410",
+  "repo": "wavelibrarian",
+  "pkg": "wavelibrarian",
+  "label": "4.10",
+  "commit": "f83b806f448d7e8bc0afe7992de158d84f7436b4",
+  "base": "8b30f60b636f0ad03e5eb1bc9b3cfcae5801450d",
+  "fichiers_commit": [
+    "_bmad-output/implementation-artifacts/4-10-statistiques-bootstrap-mcnemar-et-fronts-de-pareto.md",
+    "src/wavelibrarian/stats/appariement.py",
+    "src/wavelibrarian/stats/bootstrap.py",
+    "src/wavelibrarian/stats/mcnemar.py",
+    "src/wavelibrarian/stats/pareto.py",
+    "tests/unit/stats/test_bootstrap_mcnemar_pareto.py"
+  ],
+  "tests_caches": [
+    "tests/unit/stats/test_bootstrap_mcnemar_pareto.py"
+  ],
+  "tests_executes": [
+    "tests/unit/stats/test_bootstrap_mcnemar_pareto.py"
+  ],
+  "tests_appui": [],
+  "src_modifies": [
+    "src/wavelibrarian/stats/appariement.py",
+    "src/wavelibrarian/stats/bootstrap.py",
+    "src/wavelibrarian/stats/mcnemar.py",
+    "src/wavelibrarian/stats/pareto.py"
+  ],
+  "c_disponible": false,
+  "total_ref": 6,
+  "base_passed": 0,
+  "base_failed": 1,
+  "duree_ref_s": 12.9
+}

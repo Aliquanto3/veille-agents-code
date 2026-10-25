@@ -66,8 +66,8 @@
     "openspec": {
       "decision": "Écarter",
       "statut": "conclu",
-      "preuve": "T13 (10 petites stories, 3 dépôts)",
-      "note": "La voie légère coûte 46 % de moins que BMAD complet (0,74 $ contre 1,38 $ par story, cadrage compris) mais réussit 10 points de moins aux tests cachés (62 % contre 72 %, IC [−19 ; −3]) : BMAD reste la voie par défaut, petites stories comprises. Piste ouverte : sans aucun cadrage (entrée d'epics.md seule), dev-story fait 70 % pour 0,34 $."
+      "preuve": "T13, T13 bis",
+      "note": "La voie légère coûte 46 % de moins que BMAD complet (0,74 $ contre 1,38 $ par story, cadrage compris) mais réussit 10 points de moins aux tests cachés (62 % contre 72 %, IC [−19 ; −3]) : BMAD reste la voie par défaut, petites stories comprises. T13 bis (22 stories) : sans aucun cadrage, dev-story fait aussi bien que BMAD à 10 points près pour 73 % de moins ; une spec légère est la pire des trois options."
     },
     "feature-dev": {
       "decision": "Écarter",
@@ -752,10 +752,10 @@
     {
       "nom": "Cadrer une petite story",
       "candidats": "BMAD complet (clarifier + planifier), voie légère façon OpenSpec, aucun cadrage (entrée d'epics.md seule)",
-      "meilleur": "BMAD complet (provisoire)",
+      "meilleur": "Aucun cadrage (dev-story direct) pour une petite story à l'entrée détaillée ; BMAD complet sinon",
       "strict": false,
-      "explication": "La voie légère est moins chère (−46 %) mais moins bonne (−10 points, IC [−19 ; −3]) : pas de gagnant strict. Sans cadrage, la réussite est proche de BMAD (−2,7 points, IC [−13 ; +8]) pour 76 % de moins, sur des epics déjà écrits en Given/When/Then : non-infériorité non démontrée, à confirmer (T13 bis).",
-      "preuve": "T13"
+      "explication": "Sur 22 petites stories : sans cadrage −0,6 point de tests cachés contre BMAD complet, IC [−8,4 ; +7,4], pour 0,35 $ contre 1,32 $ (−73 %) : non-infériorité démontrée à 10 points, pas à 5, donc pas de gagnant strict. La voie légère façon OpenSpec fait moins bien que les deux (T13). Entrées brèves (6 stories) : BMAD garde un avantage de 8 à 12 points, non concluant : y garder le cadrage.",
+      "preuve": "T13, T13 bis"
     },
     {
       "nom": "Vérifier une story front",
@@ -869,14 +869,14 @@
       "elargir": "Sur le prochain run réel : brancher l'étape et compter les défauts trouvés ensuite (rétrospective) avec et sans elle ; 10 stories suffisent pour le coût et le délai."
     },
     {
-      "test": "T13, cadrage des petites stories",
-      "manque": "Une répétition par bras, 10 stories, 3 dépôts ; le bras « sans cadrage » a été ajouté en cours de test (hors protocole) et ses epics contenaient déjà des critères Given/When/Then.",
-      "elargir": "T13 bis : sans cadrage contre BMAD complet, 10 autres stories, 2 répétitions (~35 $), avant de toucher à la chaîne agent-cost-kit."
-    },
-    {
       "test": "T12, vérification front",
       "manque": "Défauts semés par l'agent de test, d'une ligne (rappel de 88 % optimiste) ; une exécution par défaut ; volet 2 réduit à 2 stories, sans défaut naturel.",
       "elargir": "Sur le prochain run réel d'une application front : compter les FAIL justifiés par la spec sur 10 stories, et les défauts trouvés ensuite par la revue avec et sans vérification."
+    },
+    {
+      "test": "T13 bis, dev-story sans cadrage",
+      "manque": "Non-infériorité démontrée à 10 points seulement (5 points demanderait ~90 stories) ; tests cachés peu discriminants (~52 % de réussite dans les deux bras) ; 4 dépôts d'un seul auteur ; reviewer non joué.",
+      "elargir": "En production : router les petites stories bien décrites directement vers dev-story et suivre le taux de constats Important du reviewer et des reprises, comparé aux stories cadrées."
     }
   ],
   "tests": [
@@ -947,14 +947,18 @@
     {
       "id": "T13",
       "fichier": "tests-pratiques/T13-story-legere/resultats.md"
+    },
+    {
+      "id": "T13 bis",
+      "fichier": "tests-pratiques/T13bis-sans-cadrage/resultats.md"
     }
   ],
   "essentiel": [
-    "<strong>Aucun dépôt de ta liste ne fait strictement mieux que l'option la plus simple de ta configuration</strong> (natif, ou BMAD et agent-cost-kit). 18 tests pratiques sur tes projets et tes transcriptions l'ont vérifié là où l'analyse ne suffisait pas : navigateur, design, revue, modèles locaux, routage.",
-    "<strong>Ce qui rapporte, mesuré chez toi</strong> : réduire le contexte fixe (17,8 k tokens d'outils rarement appelés, retirés dans le kit 0.11.0) ; le second avis Haiku (87 % de ses constats sérieux corrigés pour 0,03 $) ; Sonnet seul pour implémenter (0,53 $ par story contre 1,33 $ pour Opus, réussite égale) ; la vérification des critères d'acceptation dans un vrai navigateur par un sous-agent Playwright (22 défauts d'interface semés sur 25 que pytest ne voit pas, 0,14 $ par story, T12), comme filet de sécurité.",
+    "<strong>Aucun dépôt de ta liste ne fait strictement mieux que l'option la plus simple de ta configuration</strong> (natif, ou BMAD et agent-cost-kit). 19 tests pratiques sur tes projets et tes transcriptions l'ont vérifié là où l'analyse ne suffisait pas : navigateur, design, revue, modèles locaux, routage.",
+    "<strong>Ce qui rapporte, mesuré chez toi</strong> : réduire le contexte fixe (17,8 k tokens d'outils rarement appelés, retirés dans le kit 0.11.0) ; le second avis Haiku (87 % de ses constats sérieux corrigés pour 0,03 $) ; Sonnet seul pour implémenter (0,53 $ par story contre 1,33 $ pour Opus, réussite égale) ; sauter le cadrage BMAD pour une petite story à l'entrée détaillée (−73 %, réussite égale à 10 points près, T13 bis) ; la vérification des critères d'acceptation dans un vrai navigateur par un sous-agent Playwright (22 défauts d'interface semés sur 25 que pytest ne voit pas, 0,14 $ par story, T12), comme filet de sécurité.",
     "<strong>La découverte de la série : la mutation guidée.</strong> Montrer à l'agent les mutants qui survivent à ses tests lui fait boucher 134 trous non équivalents sur 134, contre 59 % avec une simple consigne, pour 0,22 $ par story. C'est le seul ajout à ta chaîne que les tests justifient (étape optionnelle de la revue, 3 à 13 min).",
     "<strong>Ce qui ne rapporte pas, mesuré aussi</strong> : un relecteur d'une autre famille (+6 points, non significatif), la porte empirique, le verrouillage des tests (aucune triche observée sur 40 runs), <code>/advisor</code>, les tests Hypothesis, les juges de commandes shell, les modèles de décision (Jev), la compression des sorties, une voie « story légère » façon OpenSpec (−46 % de coût mais −10 points de réussite, T13), la correction systématique après vérification du front, le TTL d'une heure, les modèles locaux au quotidien, tailler un CLAUDE.md de quelques milliers de tokens.",
     "<strong>Gagnants stricts</strong> (au moins aussi bons et moins chers, sur tes données) : la chaîne agent-cost-kit contre bmad-build, la réduction du contexte fixe contre la compression, Haiku contre les modèles locaux pour le lookup, Sonnet seul contre Sonnet + conseiller, la mutation guidée contre la consigne seule. Partout ailleurs, pas de gagnant strict : choisir l'option la plus simple.",
-    "<strong>À faire de ton côté</strong> : noter à l'aveugle les 8 rendus de design (<code>tests-pratiques/T7/notation.html</code>, ~10 min) et les 32 réécritures (<code>tests-pratiques/T11-ecriture/notation.html</code>, ~20 min) ; essayer le sous-agent <code>verif-front</code> (agent-cost-kit 0.13.0, expérimental) sur tes prochaines stories front. T13 bis (sauter le cadrage BMAD pour les petites stories bien décrites) est en cours."
+    "<strong>À faire de ton côté</strong> : noter à l'aveugle les 8 rendus de design (<code>tests-pratiques/T7/notation.html</code>, ~10 min) et les 32 réécritures (<code>tests-pratiques/T11-ecriture/notation.html</code>, ~20 min) ; essayer le sous-agent <code>verif-front</code> (agent-cost-kit 0.13.0, expérimental) sur tes prochaines stories front. décider si agent-cost-kit route les petites stories bien décrites directement vers dev-story (T13 bis)."
   ]
 }

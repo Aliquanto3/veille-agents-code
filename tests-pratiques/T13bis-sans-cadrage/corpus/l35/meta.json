@@ -1,0 +1,30 @@
+{
+  "id": "l35",
+  "repo": "wavelibrarian",
+  "pkg": "wavelibrarian",
+  "label": "3.5",
+  "commit": "6cf7561381930280040e3920602b68dd5070c33c",
+  "base": "5bb14119aca6cdaf4e73016f4e8204c4d8ee78ff",
+  "fichiers_commit": [
+    "_bmad-output/implementation-artifacts/3-5-filtre-closed-book-et-commande-wl-questions-closed-book.md",
+    "src/wavelibrarian/cli.py",
+    "src/wavelibrarian/evalset/closed_book.py",
+    "tests/unit/evalset/test_closed_book.py"
+  ],
+  "tests_caches": [
+    "tests/unit/evalset/test_closed_book.py"
+  ],
+  "tests_executes": [
+    "tests/unit/evalset/test_closed_book.py"
+  ],
+  "tests_appui": [],
+  "src_modifies": [
+    "src/wavelibrarian/cli.py",
+    "src/wavelibrarian/evalset/closed_book.py"
+  ],
+  "c_disponible": false,
+  "total_ref": 11,
+  "base_passed": 1,
+  "base_failed": 10,
+  "duree_ref_s": 11.8
+}

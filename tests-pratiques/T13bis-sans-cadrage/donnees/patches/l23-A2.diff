@@ -1,0 +1,230 @@
+diff --git a/src/wavelibrarian/components/parsers/__init__.py b/src/wavelibrarian/components/parsers/__init__.py
+index 0aaa66c..79fe6af 100644
+--- a/src/wavelibrarian/components/parsers/__init__.py
++++ b/src/wavelibrarian/components/parsers/__init__.py
+@@ -1 +1 @@
+-"""Parsers enregistrés (`kind: parser`) : Markdown, texte brut et HTML."""
++"""Parsers enregistrés (`kind: parser`) : Markdown, texte brut, HTML et PDF."""
+diff --git a/src/wavelibrarian/components/parsers/pdf_text.py b/src/wavelibrarian/components/parsers/pdf_text.py
+new file mode 100644
+index 0000000..111dd33
+--- /dev/null
++++ b/src/wavelibrarian/components/parsers/pdf_text.py
+@@ -0,0 +1,71 @@
++"""Parser PDF (pypdfium2) : un Ancrage `<doc_id>#p<page>` par page, numérotée à partir de 1 (AD-5).
++
++Une page sans texte extractible garde son Ancrage mais ne produit aucun Block.
++Pas d'OCR ni de détection de titres : l'Ancrage est la page.
++"""
++
++from typing import Any
++
++import pypdfium2
++from pydantic import BaseModel, ConfigDict
++
++from wavelibrarian.core.ids import sha16_bytes
++from wavelibrarian.core.types import Anchor, Block, DocMeta, ParsedDocument
++from wavelibrarian.registry import register
++
++
++@register("parser", "pdf_text")
++class PdfTextParser:
++    """PDF texte : un Block `text` par page non vide, sous l'Ancrage `#p<page>`."""
++
++    formats = frozenset({"pdf"})
++    version = "1"  # à incrémenter quand la sortie change : invalide le cache de parsing
++
++    class Params(BaseModel):
++        model_config = ConfigDict(extra="forbid", frozen=True)
++
++    def __init__(self, params: Any = None, ctx: Any = None) -> None:
++        pass
++
++    def parse(self, source_path: str, raw: bytes, lang: str, meta: DocMeta) -> ParsedDocument:
++        doc_id = sha16_bytes(raw)
++        anchors: dict[str, Anchor] = {}
++        blocks: list[Block] = []
++        try:
++            pdf = pypdfium2.PdfDocument(raw)
++            try:
++                for n in range(1, len(pdf) + 1):
++                    texte = self._texte_page(pdf, n - 1)
++                    aid = f"{doc_id}#p{n}"
++                    anchors[aid] = Anchor(
++                        anchor_id=aid, doc_id=doc_id, source_path=source_path, page=n
++                    )
++                    if texte:
++                        blocks.append(Block(text=texte, anchor_id=aid, kind="text"))
++            finally:
++                pdf.close()
++        except Exception as exc:
++            raise ValueError(f"PDF illisible : {source_path} ({exc})") from exc
++        return ParsedDocument(
++            doc_id=doc_id,
++            source_path=source_path,
++            format="pdf",
++            lang=lang,
++            blocks=tuple(blocks),
++            anchors=anchors,
++            meta=meta,
++        )
++
++    @staticmethod
++    def _texte_page(pdf: "pypdfium2.PdfDocument", index: int) -> str:
++        """Texte nettoyé d'une page (indice à partir de 0) ; ferme les ressources pdfium."""
++        page = pdf[index]
++        try:
++            textpage = page.get_textpage()
++            try:
++                brut = textpage.get_text_bounded()
++            finally:
++                textpage.close()
++        finally:
++            page.close()
++        return brut.replace("\r\n", "\n").replace("\r", "\n").strip()
+diff --git a/tests/unit/components/test_pdf_text.py b/tests/unit/components/test_pdf_text.py
+new file mode 100644
+index 0000000..3254b1f
+--- /dev/null
++++ b/tests/unit/components/test_pdf_text.py
+@@ -0,0 +1,116 @@
++"""Tests du Parser pdf_text et de l'ingestion PDF (story 2.3)."""
++
++import logging
++from pathlib import Path
++
++import pytest
++import yaml
++from fpdf import FPDF
++
++from wavelibrarian import registry
++from wavelibrarian.components.parsers.pdf_text import PdfTextParser
++from wavelibrarian.core.ids import sha16_bytes
++from wavelibrarian.core.types import DocMeta, ParsedCorpus
++from wavelibrarian.corpus.declare import declare
++from wavelibrarian.corpus.ingest import ingest, parsers_par_format
++
++PAGES = ["Alpha premiere page", "", "Gamma troisieme page"]
++
++
++def _pdf(pages: list[str]) -> bytes:
++    pdf = FPDF()
++    for texte in pages:
++        pdf.add_page()
++        pdf.set_font("Helvetica", size=12)
++        if texte:
++            pdf.multi_cell(0, 10, texte)
++    return bytes(pdf.output())
++
++
++def _parse(raw: bytes, nom: str = "docs/registre.pdf"):
++    return PdfTextParser().parse(nom, raw, "fr", DocMeta())
++
++
++def _corpus(racine: Path, fichiers: dict[str, bytes]) -> Path:
++    for nom, contenu in fichiers.items():
++        cible = racine / nom
++        cible.parent.mkdir(parents=True, exist_ok=True)
++        cible.write_bytes(contenu)
++    spec = {
++        "corpus_id": "demo",
++        "path": ".",
++        "lang": "fr",
++        "license": "CC-BY-4.0",
++        "publishable": True,
++        "volatility": "low",
++    }
++    fichier = racine / "corpus.yaml"
++    fichier.write_text(yaml.safe_dump(spec), encoding="utf-8")
++    return fichier
++
++
++def test_enregistrement():
++    registry.discover()
++    assert registry.get("parser", "pdf_text") is PdfTextParser
++    assert PdfTextParser.formats == frozenset({"pdf"})
++    assert parsers_par_format(["pdf"]) == {"pdf": "pdf_text"}
++
++
++def test_trois_pages():
++    raw = _pdf(["Alpha un", "Beta deux", "Gamma trois"])
++    doc = _parse(raw)
++    d = sha16_bytes(raw)
++    assert doc.format == "pdf" and doc.doc_id == d
++    assert [b.anchor_id for b in doc.blocks] == [f"{d}#p1", f"{d}#p2", f"{d}#p3"]
++    assert [b.kind for b in doc.blocks] == ["text"] * 3
++    assert [b.text for b in doc.blocks] == ["Alpha un", "Beta deux", "Gamma trois"]
++    assert [a.page for a in doc.anchors.values()] == [1, 2, 3]
++    assert all(b.anchor_id in doc.anchors for b in doc.blocks)
++
++
++def test_page_vide():
++    raw = _pdf(PAGES)
++    doc = _parse(raw)
++    d = sha16_bytes(raw)
++    assert list(doc.anchors) == [f"{d}#p1", f"{d}#p2", f"{d}#p3"]
++    assert [b.anchor_id for b in doc.blocks] == [f"{d}#p1", f"{d}#p3"]
++    corpus = ParsedCorpus(corpus_id="c", fingerprint="f", documents=(doc,))
++    assert corpus.anchor_text(f"{d}#p2") == ""
++
++
++@pytest.mark.parametrize("tronque", [None, b"%PDF-1.4 tronque"])
++def test_pdf_illisible(tronque: bytes | None):
++    if tronque is None:
++        raw = _pdf(PAGES)
++        tronque = raw[: len(raw) // 2]
++    with pytest.raises(ValueError, match="PDF illisible"):
++        _parse(tronque)
++
++
++def test_ingest_signale_et_resolve(tmp_path: Path, wl_home: Path, caplog: pytest.LogCaptureFixture):
++    pdf = _pdf(PAGES)
++    fichiers = {
++        "docs/registre.pdf": pdf,
++        "docs/note.md": b"# N\n\nx",
++        "docs/casse.pdf": pdf[: len(pdf) // 2],
++    }
++    corpus = declare(_corpus(tmp_path, fichiers))
++    with caplog.at_level(logging.WARNING):
++        parse = ingest(corpus, wl_home=wl_home)
++    assert "Document illisible ignoré" in caplog.text
++    chemins = {d.source_path for d in parse.documents}
++    assert chemins == {"docs/registre.pdf", "docs/note.md"}
++    d = sha16_bytes(pdf)
++    assert parse.resolve("docs/registre.pdf", 2, ()) == f"{d}#p2"
++    assert parse.resolve("docs/registre.pdf", 9, ()) is None
++
++
++def test_seconde_ingestion_depuis_le_cache(tmp_path: Path, wl_home: Path):
++    pdf = _pdf(PAGES)
++    corpus = declare(_corpus(tmp_path, {"docs/registre.pdf": pdf}))
++    premier = ingest(corpus, wl_home=wl_home)
++    assert (wl_home / "parse_cache" / "pdf_text" / f"{sha16_bytes(pdf)}.json").is_file()
++    second = ingest(corpus, wl_home=wl_home)
++    assert second == premier
++    doc = second.documents[0]
++    assert [a.page for a in doc.anchors.values()] == [1, 2, 3]
+diff --git a/tests/unit/corpus/test_ingest.py b/tests/unit/corpus/test_ingest.py
+index 5d44e68..0d8b3f4 100644
+--- a/tests/unit/corpus/test_ingest.py
++++ b/tests/unit/corpus/test_ingest.py
+@@ -40,7 +40,8 @@ def _parse(cls, nom: str, raw: bytes):
+ 
+ def test_enregistrement_au_registre():
+     registry.discover()
+-    assert {"markdown", "text", "html"} <= set(registry.names("parser"))
++    assert {"markdown", "text", "html", "pdf_text"} <= set(registry.names("parser"))
++    assert registry.get("parser", "pdf_text").formats == frozenset({"pdf"})
+     assert registry.get("parser", "markdown").formats == frozenset({"markdown"})
+     assert registry.get("parser", "text").formats == frozenset({"text"})
+     assert registry.get("parser", "html").formats == frozenset({"html"})
+@@ -212,8 +213,7 @@ def test_parsers_par_format_auto():
+         parsers_par_format(["html"], "markdown")  # le Parser ne couvre pas le format
+     with pytest.raises(ConfigError):
+         parsers_par_format(["markdown"], "inconnu")
+-    with pytest.raises(ConfigError, match="pdf_text » non encore disponible"):
+-        parsers_par_format(["pdf"])  # pdf_text arrive avec la story 2.3
++    assert parsers_par_format(["pdf"]) == {"pdf": "pdf_text"}
+ 
+ 
+ def test_ingest_trie_fingerprint_et_resolve(tmp_path: Path, wl_home: Path):

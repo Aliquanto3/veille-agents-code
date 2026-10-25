@@ -1,0 +1,642 @@
+diff --git a/src/slmsp/train/masque.py b/src/slmsp/train/masque.py
+new file mode 100644
+index 0000000..3582ea5
+--- /dev/null
++++ b/src/slmsp/train/masque.py
+@@ -0,0 +1,138 @@
++"""Masque de perte limité aux tours `assistant` (story 10.2, H-MASQUE, AD-7).
++
++Un tour `assistant` va de la fin du rendu de `messages[:i]` avec invite de génération
++jusqu'à la fin du rendu de `messages[:i+1]` : contenu, appels sérialisés par le template
++et fin de tour. Les intervalles de caractères passent aux tokens par les offsets du
++tokenizer rapide ; les labels valent `IGNORE` (−100) ailleurs. Un token à cheval sur une
++frontière, un préfixe instable ou un tokenizer lent lèvent `ErreurMasque` (masque exact
++exigé). Ni troncature ni padding.
++
++Repli (AC2) : si le template officiel ne se prête pas au rendu incrémental, un template
++d'entraînement limité aux balises `generation` peut être donné ; son rendu doit égaler le
++rendu officiel, et le masque vient de `return_assistant_tokens_mask`.
++"""
++
++from __future__ import annotations
++
++from collections.abc import Mapping, Sequence
++from typing import Any, Final
++
++from slmsp.core.erreurs import SlmspError
++from slmsp.core.messages import valider_conversation, vers_dicts
++from slmsp.core.schemas.config_modele import ConfigModele
++from slmsp.train.rendu import apply_chat_template, kwargs_rendu
++
++IGNORE: Final = -100
++
++
++class ErreurMasque(SlmspError):
++    """Masque de perte impossible à calculer exactement."""
++
++
++def intervalles_assistant(
++    tokenizer: Any,
++    messages: Sequence[Mapping[str, Any]],
++    *,
++    tools: Sequence[Mapping[str, Any]] | None = None,
++    config: ConfigModele | None = None,
++) -> list[tuple[int, int]]:
++    """Intervalles de caractères `[début, fin[` des tours assistant dans le rendu complet."""
++
++    def rendre(sous: Sequence[Mapping[str, Any]], invite: bool = False) -> str:
++        return apply_chat_template(
++            tokenizer, sous, tools=tools, config=config, add_generation_prompt=invite
++        )
++
++    complet = rendre(messages)
++    intervalles: list[tuple[int, int]] = []
++    for i, message in enumerate(messages):
++        if message.get("role") != "assistant":
++            continue
++        avant = rendre(messages[:i], True)
++        avec = rendre(messages[: i + 1])
++        if not avec.startswith(avant) or not complet.startswith(avec):
++            raise ErreurMasque(f"message {i} : rendu non incrémental")
++        intervalles.append((len(avant), len(avec)))
++    if not intervalles:
++        raise ErreurMasque("aucun tour assistant dans la conversation")
++    return intervalles
++
++
++def calculer_masque(
++    tokenizer: Any,
++    messages: Sequence[Mapping[str, Any]],
++    *,
++    tools: Sequence[Mapping[str, Any]] | None = None,
++    config: ConfigModele | None = None,
++    template_entrainement: str | None = None,
++) -> dict[str, list[int]]:
++    """`input_ids` et `labels` (−100 hors des tours assistant) de la conversation."""
++    if not getattr(tokenizer, "is_fast", False):
++        raise ErreurMasque("tokenizer lent : offsets indisponibles")
++    if template_entrainement is not None:
++        return _masque_generation(tokenizer, messages, tools, config, template_entrainement)
++    intervalles = intervalles_assistant(tokenizer, messages, tools=tools, config=config)
++    texte = apply_chat_template(tokenizer, messages, tools=tools, config=config)
++    codage = tokenizer(texte, add_special_tokens=False, return_offsets_mapping=True)
++    ids = list(codage["input_ids"])
++    labels: list[int] = []
++    for position, (debut, fin) in enumerate(codage["offset_mapping"]):
++        if debut == fin:
++            labels.append(IGNORE)
++            continue
++        dedans = any(a <= debut and fin <= b for a, b in intervalles)
++        dehors = all(fin <= a or b <= debut for a, b in intervalles)
++        if not dedans and not dehors:
++            raise ErreurMasque(f"token {position} à cheval sur une frontière de tour")
++        labels.append(ids[position] if dedans else IGNORE)
++    return {"input_ids": ids, "labels": labels}
++
++
++def _masque_generation(
++    tokenizer: Any,
++    messages: Sequence[Mapping[str, Any]],
++    tools: Sequence[Mapping[str, Any]] | None,
++    config: ConfigModele | None,
++    template: str,
++) -> dict[str, list[int]]:
++    officiel = apply_chat_template(tokenizer, messages, tools=tools, config=config)
++    entrainement = apply_chat_template(
++        tokenizer, messages, tools=tools, config=config, chat_template=template
++    )
++    if entrainement != officiel:
++        raise ErreurMasque("le template d'entraînement ne rend pas le texte du template officiel")
++    dicts = vers_dicts(valider_conversation(messages))
++    sortie = tokenizer.apply_chat_template(
++        dicts,
++        chat_template=template,
++        tokenize=True,
++        return_dict=True,
++        return_assistant_tokens_mask=True,
++        **kwargs_rendu(config, tools),
++    )
++    ids = list(sortie["input_ids"])
++    masque = list(sortie["assistant_masks"])
++    if not any(masque):
++        raise ErreurMasque("aucun tour assistant dans la conversation")
++    return {
++        "input_ids": ids,
++        "labels": [i if m else IGNORE for i, m in zip(ids, masque, strict=True)],
++    }
++
++
++def texte_non_masque(tokenizer: Any, input_ids: Sequence[int], labels: Sequence[int]) -> list[str]:
++    """Segments contigus non masqués, décodés (tokens spéciaux conservés)."""
++    segments: list[list[int]] = []
++    precedent = False
++    for identifiant, label in zip(input_ids, labels, strict=True):
++        if label == IGNORE:
++            precedent = False
++            continue
++        if not precedent:
++            segments.append([])
++        segments[-1].append(identifiant)
++        precedent = True
++    return [
++        tokenizer.decode(s, skip_special_tokens=False, clean_up_tokenization_spaces=False)
++        for s in segments
++    ]
+diff --git a/src/slmsp/train/rendu.py b/src/slmsp/train/rendu.py
+new file mode 100644
+index 0000000..acbbc48
+--- /dev/null
++++ b/src/slmsp/train/rendu.py
+@@ -0,0 +1,110 @@
++"""Rendu d'une conversation par le chat template officiel (story 10.2, AD-6, AD-7).
++
++Point unique de rendu de l'entraînement : mêmes `chat_template_kwargs`, même règle `tools`
++et même template que `llama-server --jinja` à l'inférence (`ClientLlama.compter_tokens`).
++Les `arguments` des `tool_calls` restent des chaînes JSON, comme dans les requêtes envoyées
++au serveur.
++
++`transformers` n'est importé que dans les fonctions : les tests unitaires tournent sans
++l'extra `train`, avec un tokenizer factice.
++"""
++
++from __future__ import annotations
++
++from collections.abc import Mapping, Sequence
++from typing import Any, Final
++
++from slmsp.core.artefacts import chemin_autorise, lire_texte
++from slmsp.core.config import dossier_modeles
++from slmsp.core.erreurs import ConfigurationInvalide
++from slmsp.core.messages import valider_conversation, vers_dicts
++from slmsp.core.schemas.config_modele import ConfigModele
++from slmsp.inference.serveur import charger_config_modele
++
++MODULE_RENDU_VERSION: Final = 1
++"""Version du rendu et du masque, consignée dans la campagne (« version du masque »)."""
++
++DOSSIERS_POIDS: Final = ("hf-bf16", "hf")
++"""Dossiers de poids essayés dans l'ordre sous `models/<slug>/`."""
++
++
++def kwargs_template(config: ConfigModele) -> dict[str, Any]:
++    """Copie des `chat_template_kwargs` du modèle."""
++    return dict(config.chat_template_kwargs)
++
++
++def kwargs_rendu(
++    config: ConfigModele | None, tools: Sequence[Mapping[str, Any]] | None
++) -> dict[str, Any]:
++    """Kwargs passés au template : ceux du modèle, plus `tools` si le protocole est natif.
++
++    Sans `config`, aucun kwarg n'est passé et `tools` est transmis tel quel.
++    """
++    kwargs: dict[str, Any] = {}
++    if config is not None:
++        kwargs = kwargs_template(config)
++        if config.protocole_outils != "natif":
++            tools = None
++    if tools:
++        kwargs["tools"] = [dict(outil) for outil in tools]
++    return kwargs
++
++
++def charger_tokenizer(slug: str, *, config: ConfigModele | None = None) -> Any:
++    """Tokenizer de `models/<slug>/hf-bf16/` (sinon `hf/`), avec le template forcé s'il y a lieu.
++
++    Avec `chat_template_force`, `tokenizer.chat_template` reçoit le texte de
++    `models/<slug>/chat_template.jinja`, le fichier passé à `--chat-template-file`.
++    Lève `ConfigurationInvalide` si le dossier ou le fichier de template est absent.
++    """
++    config = charger_config_modele(slug) if config is None else config
++    base = dossier_modeles() / slug
++    dossier = None
++    for nom in DOSSIERS_POIDS:
++        candidat = chemin_autorise(base / nom, "train")
++        if candidat.is_dir():
++            dossier = candidat
++            break
++    if dossier is None:
++        raise ConfigurationInvalide(
++            f"poids absents pour « {slug} » : {base / DOSSIERS_POIDS[-1]} "
++            "(préparer le modèle par `slmsp fetch modeles`)"
++        )
++    modele = None
++    if config.chat_template_force:
++        fichier = chemin_autorise(base / "chat_template.jinja", "train")
++        if not fichier.is_file():
++            raise ConfigurationInvalide(f"chat template forcé absent : {fichier}")
++        modele = lire_texte(fichier, "train")
++
++    from transformers import AutoTokenizer
++
++    tokenizer = AutoTokenizer.from_pretrained(str(dossier))
++    if modele is not None:
++        tokenizer.chat_template = modele
++    return tokenizer
++
++
++def apply_chat_template(
++    tokenizer: Any,
++    messages: Sequence[Mapping[str, Any]],
++    *,
++    tools: Sequence[Mapping[str, Any]] | None = None,
++    config: ConfigModele | None = None,
++    add_generation_prompt: bool = False,
++    chat_template: str | None = None,
++) -> str:
++    """Texte rendu de la conversation par le chat template du tokenizer.
++
++    Les messages sont validés (`ConversationInvalide`). Avec `config`, les kwargs du modèle
++    sont passés et `tools` n'est transmis que si `protocole_outils == "natif"`.
++    """
++    dicts = vers_dicts(valider_conversation(messages))
++    extra: dict[str, Any] = {} if chat_template is None else {"chat_template": chat_template}
++    return tokenizer.apply_chat_template(
++        dicts,
++        tokenize=False,
++        add_generation_prompt=add_generation_prompt,
++        **extra,
++        **kwargs_rendu(config, tools),
++    )
+diff --git a/tests/train/test_masque.py b/tests/train/test_masque.py
+new file mode 100644
+index 0000000..36a10dc
+--- /dev/null
++++ b/tests/train/test_masque.py
+@@ -0,0 +1,228 @@
++"""Story 10.2 : rendu en tokens et masque de perte (H-MASQUE, FR-34).
++
++Les tests unitaires tournent sans l'extra `train`, avec un tokenizer factice (rendu en Python,
++un token par caractère, offsets). Les conversations sont synthétiques et aléatoires (graine
++fixe) ; aucun exemple d'entraînement n'est rédigé. Les tests `lent` utilisent les vrais
++tokenizers sous `models/<slug>/` et se sautent si le modèle est absent.
++"""
++
++from __future__ import annotations
++
++import json
++import random
++from collections.abc import Mapping, Sequence
++from typing import Any
++
++import pytest
++
++from slmsp.core.config import dossier_modeles
++from slmsp.core.erreurs import ConfigurationInvalide
++from slmsp.core.messages import ConversationInvalide
++from slmsp.inference.serveur import charger_config_modele
++from slmsp.mcp.outils import charger_outils
++from slmsp.train.masque import (
++    IGNORE,
++    ErreurMasque,
++    calculer_masque,
++    intervalles_assistant,
++    texte_non_masque,
++)
++from slmsp.train.rendu import MODULE_RENDU_VERSION, apply_chat_template, charger_tokenizer
++
++CANDIDATS = ("granite-4.0-1b", "ministral-3-3b", "smollm3-3b", "qwen-4b")
++
++
++class TokenizerFactice:
++    """Rendu `<|role|>contenu<|fin|>`, un token par caractère (ou par `taille` caractères)."""
++
++    def __init__(self, *, taille: int = 1, reecrit: bool = False, rapide: bool = True) -> None:
++        self.taille = taille
++        self.reecrit = reecrit
++        self.is_fast = rapide
++        self.appels: list[dict[str, Any]] = []
++
++    def apply_chat_template(
++        self,
++        messages: Sequence[Mapping[str, Any]],
++        *,
++        tokenize: bool = False,
++        add_generation_prompt: bool = False,
++        chat_template: str | None = None,
++        **kwargs: Any,
++    ) -> str:
++        assert tokenize is False
++        self.appels.append(dict(kwargs))
++        morceaux = []
++        for i, message in enumerate(messages):
++            contenu = message.get("content") or ""
++            if self.reecrit and message["role"] == "assistant" and i < len(messages) - 1:
++                contenu = ""
++            for appel in message.get("tool_calls") or ():
++                contenu += f"<appel {appel['function']['name']} {appel['function']['arguments']}>"
++            morceaux.append(f"<|{message['role']}|>{contenu}<|fin|>\n")
++        if add_generation_prompt:
++            morceaux.append("<|assistant|>")
++        return "".join(morceaux)
++
++    def __call__(self, texte: str, **_: Any) -> dict[str, Any]:
++        bornes = [(a, min(a + self.taille, len(texte))) for a in range(0, len(texte), self.taille)]
++        return {
++            "input_ids": [ord(texte[a]) for a, _ in bornes],
++            "offset_mapping": bornes,
++        }
++
++    def decode(self, ids: Sequence[int], **_: Any) -> str:
++        return "".join(chr(i) for i in ids)
++
++
++def conversation_aleatoire(graine: int) -> list[dict[str, Any]]:
++    """system, puis des tours user / assistant(tool_calls) / tool / assistant(texte)."""
++    hasard = random.Random(graine)
++    messages: list[dict[str, Any]] = [{"role": "system", "content": "s" * hasard.randint(0, 5)}]
++    compteur = 0
++    for _ in range(hasard.randint(1, 4)):
++        messages.append({"role": "user", "content": "u" * hasard.randint(0, 40)})
++        if hasard.random() < 0.7:
++            appels = []
++            for _ in range(hasard.randint(1, 3)):
++                compteur += 1
++                arguments = json.dumps({"q": "é" * hasard.randint(0, 3)}, ensure_ascii=False)
++                appels.append(
++                    {
++                        "id": f"c{compteur}",
++                        "type": "function",
++                        "function": {"name": f"outil{compteur}", "arguments": arguments},
++                    }
++                )
++            messages.append({"role": "assistant", "tool_calls": appels})
++            for appel in appels:
++                messages.append(
++                    {
++                        "role": "tool",
++                        "tool_call_id": appel["id"],
++                        "content": "t" * hasard.randint(0, 200),
++                    }
++                )
++        messages.append({"role": "assistant", "content": "a" * hasard.randint(1, 120)})
++    return messages
++
++
++@pytest.mark.parametrize("graine", range(20))
++def test_masque_aleatoire_egal_aux_tours_assistant(graine: int) -> None:
++    jeton = TokenizerFactice()
++    messages = conversation_aleatoire(graine)
++    texte = apply_chat_template(jeton, messages)
++    intervalles = intervalles_assistant(jeton, messages)
++    sortie = calculer_masque(jeton, messages)
++    ids, labels = sortie["input_ids"], sortie["labels"]
++    assert len(ids) == len(labels) == len(texte)
++    assert texte_non_masque(jeton, ids, labels) == [texte[a:b] for a, b in intervalles]
++    assert all(
++        (label == ident) if any(a <= p < b for a, b in intervalles) else label == IGNORE
++        for p, (ident, label) in enumerate(zip(ids, labels, strict=True))
++    )
++    nb_assistant = sum(1 for m in messages if m["role"] == "assistant")
++    assert len(intervalles) == nb_assistant
++    # appels d'outils et fin de tour inclus
++    assert all(texte[a:b].endswith("<|fin|>\n") for a, b in intervalles)
++
++
++def test_tours_adjacents_separes_par_l_invite() -> None:
++    jeton = TokenizerFactice()
++    messages = [
++        {"role": "user", "content": "x"},
++        {"role": "assistant", "content": "a"},
++        {"role": "assistant", "content": "b"},
++    ]
++    sortie = calculer_masque(jeton, messages)
++    assert texte_non_masque(jeton, sortie["input_ids"], sortie["labels"]) == [
++        "a<|fin|>\n",
++        "b<|fin|>\n",
++    ]
++
++
++def test_aucun_tour_assistant() -> None:
++    messages = [{"role": "system", "content": "s"}, {"role": "user", "content": "u"}]
++    with pytest.raises(ErreurMasque, match="aucun tour assistant"):
++        calculer_masque(TokenizerFactice(), messages)
++
++
++def test_prefixe_instable_cite_l_index() -> None:
++    messages = [
++        {"role": "user", "content": "u"},
++        {"role": "assistant", "content": "a"},
++        {"role": "user", "content": "v"},
++        {"role": "assistant", "content": "b"},
++    ]
++    with pytest.raises(ErreurMasque, match="message 1"):
++        calculer_masque(TokenizerFactice(reecrit=True), messages)
++
++
++def test_token_a_cheval_sur_une_frontiere() -> None:
++    messages = [{"role": "user", "content": "uu"}, {"role": "assistant", "content": "aa"}]
++    with pytest.raises(ErreurMasque, match="à cheval"):
++        calculer_masque(TokenizerFactice(taille=3), messages)
++
++
++def test_tokenizer_lent_refuse() -> None:
++    messages = [{"role": "user", "content": "u"}, {"role": "assistant", "content": "a"}]
++    with pytest.raises(ErreurMasque, match="lent"):
++        calculer_masque(TokenizerFactice(rapide=False), messages)
++
++
++def test_conversation_invalide_propagee() -> None:
++    messages = [
++        {"role": "user", "content": "u"},
++        {"role": "tool", "tool_call_id": "orphelin", "content": "t"},
++        {"role": "assistant", "content": "a"},
++    ]
++    with pytest.raises(ConversationInvalide):
++        calculer_masque(TokenizerFactice(), messages)
++
++
++def test_version_du_module() -> None:
++    assert MODULE_RENDU_VERSION == 1
++
++
++# -- Tokenizers réels (AC1, AC2) --
++
++
++def _tokenizer_reel(slug: str) -> tuple[Any, Any]:
++    pytest.importorskip("transformers")
++    if not any((dossier_modeles() / slug / nom).is_dir() for nom in ("hf-bf16", "hf")):
++        pytest.skip(f"poids absents pour {slug}")
++    config = charger_config_modele(slug)
++    try:
++        return charger_tokenizer(slug, config=config), config
++    except ConfigurationInvalide as exc:
++        pytest.skip(str(exc))
++
++
++@pytest.mark.lent
++@pytest.mark.parametrize("slug", CANDIDATS)
++def test_reel_masque_egal_aux_tours_assistant(slug: str) -> None:
++    tokenizer, config = _tokenizer_reel(slug)
++    outils = charger_outils()
++    appel = {
++        "id": "c1",
++        "type": "function",
++        "function": {"name": outils[0]["function"]["name"], "arguments": '{"requete": "carte"}'},
++    }
++    messages = [
++        {"role": "system", "content": "Tu es un assistant."},
++        {"role": "user", "content": "Bonjour"},
++        {"role": "assistant", "tool_calls": [appel]},
++        {"role": "tool", "tool_call_id": "c1", "content": "résultat"},
++        {"role": "assistant", "content": "Voici la réponse."},
++    ]
++    try:
++        texte = apply_chat_template(tokenizer, messages, tools=outils, config=config)
++        intervalles = intervalles_assistant(tokenizer, messages, tools=outils, config=config)
++        sortie = calculer_masque(tokenizer, messages, tools=outils, config=config)
++    except ErreurMasque as exc:
++        print(f"[H-MASQUE] {slug} : ko ({exc})")
++        raise
++    ids, labels = sortie["input_ids"], sortie["labels"]
++    assert texte_non_masque(tokenizer, ids, labels) == [texte[a:b] for a, b in intervalles]
++    assert sum(label != IGNORE for label in labels) > 0
++    print(f"[H-MASQUE] {slug} : ok ({len(ids)} tokens)")
+diff --git a/tests/train/test_rendu.py b/tests/train/test_rendu.py
+new file mode 100644
+index 0000000..06669eb
+--- /dev/null
++++ b/tests/train/test_rendu.py
+@@ -0,0 +1,142 @@
++"""Story 10.2 : rendu d'entraînement identique à celui de `llama-server --jinja` (AC3).
++
++Unitaires : kwargs, règle `tools`, template forcé. Le test `lent` démarre un vrai
++`llama-server` local (boucle locale seulement) et se saute si le GGUF ou le binaire manque.
++"""
++
++from __future__ import annotations
++
++from pathlib import Path
++from typing import Any
++
++import pytest
++
++from slmsp.core.erreurs import ConfigurationInvalide
++from slmsp.core.messages import ConversationInvalide
++from slmsp.core.schemas.config_modele import ConfigModele
++from slmsp.inference.serveur import ServeurLlama, charger_config_modele
++from slmsp.mcp.outils import charger_outils
++from slmsp.net import client_local
++from slmsp.train import rendu
++from slmsp.train.rendu import apply_chat_template, charger_tokenizer, kwargs_template
++
++OUTILS = [{"type": "function", "function": {"name": "f", "parameters": {}}}]
++MESSAGES = [{"role": "user", "content": "u"}, {"role": "assistant", "content": "a"}]
++
++
++class Espion:
++    def __init__(self) -> None:
++        self.kwargs: dict[str, Any] = {}
++
++    def apply_chat_template(self, messages: Any, **kwargs: Any) -> str:
++        self.kwargs = kwargs
++        return "rendu"
++
++
++def _config(**champs: Any) -> ConfigModele:
++    base = charger_config_modele("granite-4.0-1b").model_dump()
++    base.update(champs)
++    return ConfigModele.model_validate(base)
++
++
++def test_kwargs_du_modele_et_tools_natifs() -> None:
++    config = _config(chat_template_kwargs={"enable_thinking": False}, protocole_outils="natif")
++    espion = Espion()
++    assert apply_chat_template(espion, MESSAGES, tools=OUTILS, config=config) == "rendu"
++    assert espion.kwargs["enable_thinking"] is False
++    assert espion.kwargs["tools"] == OUTILS
++    assert espion.kwargs["tokenize"] is False
++    assert kwargs_template(config) == {"enable_thinking": False}
++    assert kwargs_template(config) is not config.chat_template_kwargs
++
++
++def test_tools_retire_en_json_generique() -> None:
++    espion = Espion()
++    apply_chat_template(
++        espion, MESSAGES, tools=OUTILS, config=_config(protocole_outils="json-generique")
++    )
++    assert "tools" not in espion.kwargs
++
++
++def test_sans_config_tools_tel_quel_et_aucun_kwarg() -> None:
++    espion = Espion()
++    apply_chat_template(espion, MESSAGES, tools=OUTILS, add_generation_prompt=True)
++    assert espion.kwargs == {"tokenize": False, "add_generation_prompt": True, "tools": OUTILS}
++
++
++def test_conversation_invalide() -> None:
++    with pytest.raises(ConversationInvalide):
++        apply_chat_template(Espion(), [{"role": "tool", "tool_call_id": "x", "content": "t"}])
++
++
++def test_poids_absents(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
++    monkeypatch.setenv("SLMSP_MODELS_DIR", str(tmp_path))
++    with pytest.raises(ConfigurationInvalide, match="poids absents"):
++        charger_tokenizer("granite-4.0-1b", config=_config())
++
++
++def test_template_force_absent(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
++    monkeypatch.setenv("SLMSP_MODELS_DIR", str(tmp_path))
++    (tmp_path / "x" / "hf").mkdir(parents=True)
++    with pytest.raises(ConfigurationInvalide, match="chat template forcé absent"):
++        charger_tokenizer("x", config=_config(chat_template_force=True))
++
++
++def test_template_force_charge(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
++    monkeypatch.setenv("SLMSP_MODELS_DIR", str(tmp_path))
++    (tmp_path / "x" / "hf").mkdir(parents=True)
++    (tmp_path / "x" / "chat_template.jinja").write_text("MODELE", encoding="utf-8")
++
++    class FauxAuto:
++        @staticmethod
++        def from_pretrained(chemin: str) -> Any:
++            return type("T", (), {"chat_template": None, "chemin": chemin})()
++
++    fausse = type("M", (), {"AutoTokenizer": FauxAuto})
++    monkeypatch.setitem(__import__("sys").modules, "transformers", fausse)
++    tokenizer = charger_tokenizer("x", config=_config(chat_template_force=True))
++    assert tokenizer.chat_template == "MODELE"
++    assert Path(tokenizer.chemin) == (tmp_path / "x" / "hf").resolve()
++    assert rendu.DOSSIERS_POIDS == ("hf-bf16", "hf")
++
++
++@pytest.mark.lent
++@pytest.mark.parametrize("slug", ("granite-4.0-1b", "ministral-3-3b", "smollm3-3b", "qwen-4b"))
++def test_reel_rendu_identique_a_llama_server(slug: str) -> None:
++    pytest.importorskip("transformers")
++    config = charger_config_modele(slug)
++    try:
++        tokenizer = charger_tokenizer(slug, config=config)
++        serveur = ServeurLlama(config, "cpu", slug=slug, prendre_verrou_gpu=False)
++        serveur._verifier_fichiers()
++        serveur.programme()
++    except ConfigurationInvalide as exc:
++        pytest.skip(str(exc))
++    outils = charger_outils()
++    appel = {
++        "id": "c1",
++        "type": "function",
++        "function": {"name": outils[0]["function"]["name"], "arguments": '{"requete": "carte"}'},
++    }
++    messages = [
++        {"role": "system", "content": "Tu es un assistant."},
++        {"role": "user", "content": "Bonjour"},
++        {"role": "assistant", "tool_calls": [appel]},
++        {"role": "tool", "tool_call_id": "c1", "content": "résultat"},
++    ]
++    corps: dict[str, Any] = {"messages": messages}
++    if config.protocole_outils == "natif":
++        corps["tools"] = outils
++    if config.chat_template_kwargs:
++        corps["chat_template_kwargs"] = dict(config.chat_template_kwargs)
++    with serveur:
++        with client_local(serveur.port) as http:
++            reponse = http.post(f"http://127.0.0.1:{serveur.port}/apply-template", json=corps)
++            reponse.raise_for_status()
++            prompt = reponse.json()["prompt"]
++    local = apply_chat_template(
++        tokenizer, messages, tools=outils, config=config, add_generation_prompt=True
++    )
++    identique = local == prompt
++    print(f"[rendu llama-server] {slug} : {'identique' if identique else 'DIFFERENT'}")
++    assert local == prompt

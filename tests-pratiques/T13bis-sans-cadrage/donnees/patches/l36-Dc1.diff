@@ -1,0 +1,265 @@
+diff --git a/src/wavelibrarian/cli.py b/src/wavelibrarian/cli.py
+index 144142d..9f6efea 100644
+--- a/src/wavelibrarian/cli.py
++++ b/src/wavelibrarian/cli.py
+@@ -27,6 +27,7 @@ from wavelibrarian.corpus.profile import profile as profil_corpus
+ from wavelibrarian.corpus.scenario import corpus_apres as scenario_corpus_apres
+ from wavelibrarian.corpus.tiers import tirer_chemins
+ from wavelibrarian.evalset import check, closed_book, generate, io
++from wavelibrarian.evalset import freeze as gel
+ from wavelibrarian.llm.preflight import preflight
+ from wavelibrarian.measure.tokenizers import make_tokenizer
+ from wavelibrarian.runner import installer as installation
+@@ -315,6 +316,29 @@ def questions_closed_book(
+     typer.echo("Poste de coût : judging.")
+ 
+ 
++@questions_app.command("geler")
++def questions_geler(
++    questions: Annotated[Path, typer.Argument(help="Fichier questions.yaml à geler.")],
++    dev_ratio: Annotated[
++        float, typer.Option("--dev-ratio", help="Part de la partie dev, par Type.")
++    ] = 0.4,
++    graine: Annotated[int, typer.Option("--graine", help="Graine de la répartition.")] = 42,
++) -> None:
++    """Répartit les Questions en dev / test (stratifié par Type) et écrit l'empreinte du Gel."""
++    try:
++        gele = gel.freeze(io.load(questions), dev_ratio, graine)
++    except ConfigError as erreur:
++        typer.echo(f"Erreur : {erreur}", err=True)
++        raise typer.Exit(2) from erreur
++    io.save(questions, gele)
++    if gele.freeze is not None:
++        typer.echo(f"Jeu gelé : {questions} (empreinte {gele.freeze.sha256})")
++    for type_ in sorted({q.type for q in gele.questions if q.split}):
++        dev = sum(1 for q in gele.questions if q.type == type_ and q.split == "dev")
++        test = sum(1 for q in gele.questions if q.type == type_ and q.split == "test")
++        typer.echo(f"  - {type_} : {dev} dev, {test} test")
++
++
+ def _fr(valeur: float, decimales: int = 2) -> str:
+     """Nombre à virgule décimale, pour les résumés en français."""
+     return f"{valeur:.{decimales}f}".replace(".", ",")
+diff --git a/src/wavelibrarian/evalset/freeze.py b/src/wavelibrarian/evalset/freeze.py
+new file mode 100644
+index 0000000..42f917f
+--- /dev/null
++++ b/src/wavelibrarian/evalset/freeze.py
+@@ -0,0 +1,91 @@
++"""Gel d'un Jeu d'évaluation et séparation dev / test (FR-13, AD-15, AD-20).
++
++Le Gel attribue `split` aux Questions `validated` ou `corrected`, stratifié par `type`, puis
++écrit `freeze = {sha256, at, seed, dev_ratio}`. L'empreinte porte sur `canonical_json` du
++document sans `freeze` ni `contaminated_by` : le Filtre closed-book reste possible après le Gel.
++"""
++
++import hashlib
++import random
++from collections.abc import Sequence
++from datetime import UTC, datetime
++from typing import Literal
++
++from wavelibrarian.core.errors import ConfigError
++from wavelibrarian.core.ids import canonical_json
++from wavelibrarian.core.types import Question
++from wavelibrarian.evalset.io import Freeze, QuestionsFile
++
++STATUTS = frozenset({"validated", "corrected"})
++
++
++def empreinte(fichier: QuestionsFile) -> str:
++    """sha256 de `canonical_json` du document sans `freeze` ni `contaminated_by`."""
++    brut = fichier.model_dump(mode="json", exclude={"freeze"})
++    for q in brut["questions"]:
++        q.pop("contaminated_by", None)
++    return hashlib.sha256(canonical_json(brut).encode("utf-8")).hexdigest()
++
++
++def nb_dev(effectif: int, dev_ratio: float) -> int:
++    """Questions dev d'un Type : `effectif * dev_ratio` arrondi au plus proche, .5 vers le haut."""
++    return int(effectif * dev_ratio + 0.5)
++
++
++def freeze(
++    fichier: QuestionsFile, dev_ratio: float = 0.4, seed: int = 42, at: datetime | None = None
++) -> QuestionsFile:
++    """Renvoie `fichier` gelé ; `ConfigError` s'il reste des Questions `generated`.
++
++    Par Type, les Questions participantes sont triées par `id` puis mélangées par la graine :
++    le même contenu et la même graine donnent la même répartition, quel que soit l'ordre du
++    fichier. Les Questions `rejected` n'ont pas de `split`.
++    """
++    if not 0 < dev_ratio < 1:
++        raise ConfigError("--dev-ratio", "un nombre strictement compris entre 0 et 1 est attendu")
++    restantes = [q.id for q in fichier.questions if q.status == "generated"]
++    if restantes:
++        raise ConfigError(
++            "questions",
++            f"{len(restantes)} Question(s) `generated` à valider, corriger ou rejeter avant le "
++            f"Gel : {', '.join(restantes)}",
++        )
++    par_type: dict[str, list[str]] = {}
++    for q in fichier.questions:
++        if q.status in STATUTS:
++            par_type.setdefault(q.type, []).append(q.id)
++    parts: dict[str, Literal["dev", "test"]] = {}
++    for type_ in sorted(par_type):
++        ids = sorted(par_type[type_])
++        random.Random(f"{seed}:{type_}").shuffle(ids)
++        n = nb_dev(len(ids), dev_ratio)
++        for i, qid in enumerate(ids):
++            parts[qid] = "dev" if i < n else "test"
++    questions = tuple(q.model_copy(update={"split": parts.get(q.id)}) for q in fichier.questions)
++    nouveau = fichier.model_copy(update={"questions": questions, "freeze": None})
++    horodatage = (at or datetime.now(UTC)).astimezone(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
++    marque = Freeze(sha256=empreinte(nouveau), at=horodatage, seed=seed, dev_ratio=dev_ratio)
++    return nouveau.model_copy(update={"freeze": marque})
++
++
++def verify_frozen(fichier: QuestionsFile) -> None:
++    """Refuse un Jeu non Gelé ou modifié depuis le Gel (`ConfigError`)."""
++    if fichier.freeze is None:
++        raise ConfigError("freeze", "jeu non gelé : lancer `wl questions geler` avant l'Exécution")
++    courante = empreinte(fichier)
++    if courante != fichier.freeze.sha256:
++        raise ConfigError(
++            "freeze",
++            "empreinte différente : le jeu a été modifié depuis le Gel "
++            f"(gelé {fichier.freeze.sha256}, actuel {courante})",
++        )
++
++
++def select_questions(
++    questions: QuestionsFile | Sequence[Question], split: Literal["dev", "test"] = "dev"
++) -> tuple[Question, ...]:
++    """Questions `validated` ou `corrected` de la partie `split` ; test seulement si demandé."""
++    if split not in ("dev", "test"):
++        raise ConfigError("split", f"`dev` ou `test` attendu, pas {split!r}")
++    liste = questions.questions if isinstance(questions, QuestionsFile) else questions
++    return tuple(q for q in liste if q.status in STATUTS and q.split == split)
+diff --git a/tests/unit/evalset/test_freeze.py b/tests/unit/evalset/test_freeze.py
+new file mode 100644
+index 0000000..b2d3a86
+--- /dev/null
++++ b/tests/unit/evalset/test_freeze.py
+@@ -0,0 +1,120 @@
++"""Gel et séparation dev / test (story 3.6), sans réseau."""
++
++from pathlib import Path
++from typing import Any
++
++import pytest
++import yaml
++from typer.testing import CliRunner
++
++from wavelibrarian.cli import app
++from wavelibrarian.core.errors import ConfigError
++from wavelibrarian.evalset import freeze, io
++
++TYPES = ("factual", "multi_hop", "comparison", "unanswerable", "knowledge_trap")
++
++
++def _q(i: int, type_: str, **kw: Any) -> dict[str, Any]:
++    base: dict[str, Any] = {
++        "id": f"q-{i:03d}",
++        "type": type_,
++        "text": f"Question numéro {i} ?",
++        "lang": "fr",
++        "reference_answer": "Orvane",
++        "answer_form": "short",
++        "reference_anchors": [{"doc": "a.md", "headings": ["Guide"]}],
++        "status": "validated",
++        "origin": {"kind": "human", "name": "anael"},
++    }
++    base.update(kw)
++    return base
++
++
++def _jeu(n_par_type: int = 10) -> io.QuestionsFile:
++    qs = [_q(i, TYPES[i % 5]) for i in range(5 * n_par_type)]
++    return io.QuestionsFile.model_validate(
++        {"corpus_id": "demo", "target_count": len(qs), "questions": qs}
++    )
++
++
++def test_repartition_stratifiee_et_empreinte() -> None:
++    gele = freeze.freeze(_jeu(), 0.4, 42)
++    for t in TYPES:
++        parts = [q.split for q in gele.questions if q.type == t]
++        assert parts.count("dev") == 4 and parts.count("test") == 6
++    assert gele.freeze is not None
++    assert (gele.freeze.seed, gele.freeze.dev_ratio) == (42, 0.4)
++    assert gele.freeze.sha256 == freeze.empreinte(gele)
++    freeze.verify_frozen(gele)
++
++
++def test_meme_graine_meme_repartition_quel_que_soit_l_ordre() -> None:
++    jeu = _jeu()
++    a = freeze.freeze(jeu, 0.4, 42)
++    inverse = jeu.model_copy(update={"questions": tuple(reversed(jeu.questions))})
++    b = freeze.freeze(inverse, 0.4, 42)
++    assert {q.id: q.split for q in a.questions} == {q.id: q.split for q in b.questions}
++    c = freeze.freeze(jeu, 0.4, 7)
++    assert {q.id: q.split for q in a.questions} != {q.id: q.split for q in c.questions}
++
++
++def test_arrondi_documente() -> None:
++    assert [freeze.nb_dev(n, 0.4) for n in (1, 2, 3, 5, 10)] == [0, 1, 1, 2, 4]
++
++
++def test_modification_detectee_et_non_gele_refuse() -> None:
++    with pytest.raises(ConfigError, match="non gelé"):
++        freeze.verify_frozen(_jeu())
++    gele = freeze.freeze(_jeu())
++    qs = list(gele.questions)
++    qs[0] = qs[0].model_copy(update={"text": "Texte modifié ?"})
++    with pytest.raises(ConfigError, match="empreinte différente"):
++        freeze.verify_frozen(gele.model_copy(update={"questions": tuple(qs)}))
++
++
++def test_contaminated_by_hors_empreinte() -> None:
++    gele = freeze.freeze(_jeu())
++    qs = list(gele.questions)
++    qs[0] = qs[0].model_copy(update={"contaminated_by": ("fake-llm-a",)})
++    freeze.verify_frozen(gele.model_copy(update={"questions": tuple(qs)}))
++
++
++def test_select_questions() -> None:
++    gele = freeze.freeze(_jeu())
++    dev = freeze.select_questions(gele, split="dev")
++    test = freeze.select_questions(gele, split="test")
++    assert len(dev) == 20 and len(test) == 30
++    assert {q.split for q in dev} == {"dev"}
++    rejetee = dev[0].model_copy(update={"status": "rejected"})
++    assert rejetee not in freeze.select_questions((rejetee, *gele.questions), split="dev")
++    assert freeze.select_questions(gele) == dev
++
++
++def test_refus_si_generated() -> None:
++    qs = [_q(0, "factual"), _q(1, "factual", status="generated")]
++    jeu = io.QuestionsFile.model_validate({"corpus_id": "d", "target_count": 2, "questions": qs})
++    with pytest.raises(ConfigError, match="q-001"):
++        freeze.freeze(jeu)
++
++
++def test_commande_geler(tmp_path: Path) -> None:
++    chemin = tmp_path / "questions.yaml"
++    io.save(chemin, _jeu())
++    args = ["questions", "geler", str(chemin), "--dev-ratio", "0.4", "--graine", "42"]
++    res = CliRunner().invoke(app, args)
++    assert res.exit_code == 0, res.output
++    doc = io.load(chemin)
++    freeze.verify_frozen(doc)
++    assert sum(q.split == "dev" for q in doc.questions) == 20
++
++
++def test_commande_geler_refuse_generated(tmp_path: Path) -> None:
++    chemin = tmp_path / "questions.yaml"
++    doc = _jeu()
++    qs = (doc.questions[0].model_copy(update={"status": "generated"}), *doc.questions[1:])
++    io.save(chemin, doc.model_copy(update={"questions": qs}))
++    avant = chemin.read_text(encoding="utf-8")
++    res = CliRunner().invoke(app, ["questions", "geler", str(chemin)])
++    assert res.exit_code == 2
++    assert chemin.read_text(encoding="utf-8") == avant
++    assert yaml.safe_load(avant)["freeze"] is None

@@ -1,0 +1,33 @@
+{
+  "id": "l23",
+  "repo": "wavelibrarian",
+  "pkg": "wavelibrarian",
+  "label": "2.3",
+  "commit": "fe4f03d3de4c1e545cbaf13d3cc0a9ce52cd898e",
+  "base": "5e10d2be8ab3c4329c0c7af9ad6fe4c0992e9aae",
+  "fichiers_commit": [
+    "_bmad-output/implementation-artifacts/2-3-ingestion-pdf-avec-ancrages-par-page.md",
+    "src/wavelibrarian/components/parsers/__init__.py",
+    "src/wavelibrarian/components/parsers/pdf_text.py",
+    "src/wavelibrarian/corpus/ingest.py",
+    "tests/unit/components/test_pdf_text.py",
+    "tests/unit/corpus/test_ingest.py"
+  ],
+  "tests_caches": [
+    "tests/unit/components/test_pdf_text.py"
+  ],
+  "tests_executes": [
+    "tests/unit/components/test_pdf_text.py"
+  ],
+  "spec_origine": "_bmad-output/implementation-artifacts/2-3-ingestion-pdf-avec-ancrages-par-page.md",
+  "src_modifies": [
+    "src/wavelibrarian/components/parsers/__init__.py",
+    "src/wavelibrarian/components/parsers/pdf_text.py",
+    "src/wavelibrarian/corpus/ingest.py"
+  ],
+  "c_disponible": true,
+  "total_ref": 7,
+  "base_passed": 0,
+  "base_failed": 1,
+  "duree_ref_s": 8.4
+}

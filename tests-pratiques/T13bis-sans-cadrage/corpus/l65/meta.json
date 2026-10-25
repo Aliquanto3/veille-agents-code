@@ -1,0 +1,30 @@
+{
+  "id": "l65",
+  "repo": "wavelibrarian",
+  "pkg": "wavelibrarian",
+  "label": "6.5",
+  "commit": "8900082df05b8b24685276c37622484f819875b4",
+  "base": "54506ed05a6b8fa0b35ecfe91d455862a0e6aa11",
+  "fichiers_commit": [
+    "_bmad-output/implementation-artifacts/6-5-cag.md",
+    "src/wavelibrarian/architectures/cag.py",
+    "src/wavelibrarian/components/generators/llm.py",
+    "tests/unit/architectures/test_story_6_5.py"
+  ],
+  "tests_caches": [
+    "tests/unit/architectures/test_story_6_5.py"
+  ],
+  "tests_executes": [
+    "tests/unit/architectures/test_story_6_5.py"
+  ],
+  "spec_origine": "_bmad-output/implementation-artifacts/6-5-cag.md",
+  "src_modifies": [
+    "src/wavelibrarian/architectures/cag.py",
+    "src/wavelibrarian/components/generators/llm.py"
+  ],
+  "c_disponible": true,
+  "total_ref": 8,
+  "base_passed": 0,
+  "base_failed": 1,
+  "duree_ref_s": 21.3
+}

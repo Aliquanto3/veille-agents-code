@@ -1,0 +1,30 @@
+{
+  "id": "l13",
+  "repo": "wavelibrarian",
+  "pkg": "wavelibrarian",
+  "label": "1.3",
+  "commit": "2de29d560b4cc7d735337cde9ded124e876db9fa",
+  "base": "2df162b073a1f75d9985a590e367b8df08ba7008",
+  "fichiers_commit": [
+    "_bmad-output/implementation-artifacts/1-3-registre-de-composants-et-commande-wl-registre.md",
+    "src/wavelibrarian/cli.py",
+    "src/wavelibrarian/registry.py",
+    "tests/unit/test_registry.py"
+  ],
+  "tests_caches": [
+    "tests/unit/test_registry.py"
+  ],
+  "tests_executes": [
+    "tests/unit/test_registry.py"
+  ],
+  "tests_appui": [],
+  "src_modifies": [
+    "src/wavelibrarian/cli.py",
+    "src/wavelibrarian/registry.py"
+  ],
+  "c_disponible": false,
+  "total_ref": 6,
+  "base_passed": 0,
+  "base_failed": 6,
+  "duree_ref_s": 2.5
+}

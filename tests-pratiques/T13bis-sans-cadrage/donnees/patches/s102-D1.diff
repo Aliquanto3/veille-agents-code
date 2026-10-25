@@ -1,0 +1,350 @@
+diff --git a/src/slmsp/train/masque.py b/src/slmsp/train/masque.py
+new file mode 100644
+index 0000000..0e3034d
+--- /dev/null
++++ b/src/slmsp/train/masque.py
+@@ -0,0 +1,93 @@
++"""Masque de perte par rendu incrémental (AD-7, H-MASQUE).
++
++Pour chaque tour `assistant`, l'intervalle de caractères appris va de la fin du rendu des
++messages précédents (avec amorce de génération) à la fin du rendu incluant ce tour. Les
++tokens entièrement contenus dans un intervalle gardent leur identifiant comme label ; tous
++les autres valent `IGNORE`.
++"""
++
++from __future__ import annotations
++
++from collections.abc import Mapping, Sequence
++from typing import Any
++
++from slmsp.core.schemas.config_modele import ConfigModele
++from slmsp.train.rendu import apply_chat_template
++
++IGNORE = -100
++"""Label ignoré par la perte (convention PyTorch / transformers)."""
++
++
++class ErreurMasque(ValueError):
++    """Le rendu ne permet pas de délimiter les tours `assistant`."""
++
++
++def intervalles_assistant(
++    tokenizer: Any,
++    messages: Sequence[Mapping[str, Any]],
++    *,
++    tools: Sequence[Mapping[str, Any]] | None = None,
++    config: ConfigModele | None = None,
++) -> tuple[str, list[tuple[int, int]]]:
++    """Texte complet et intervalles `[début, fin)` (caractères) des tours `assistant`."""
++
++    def rendre(n: int, amorce: bool) -> str:
++        return apply_chat_template(
++            tokenizer, messages[:n], tools=tools, config=config, add_generation_prompt=amorce
++        )
++
++    texte = rendre(len(messages), False)
++    intervalles: list[tuple[int, int]] = []
++    for i, message in enumerate(messages):
++        if message.get("role") != "assistant":
++            continue
++        avant = rendre(i, True)
++        jusque = rendre(i + 1, False)
++        if not jusque.startswith(avant):
++            raise ErreurMasque(
++                f"Le rendu du message {i} ne prolonge pas celui des précédents : "
++                "rendu incrémental impossible avec ce template"
++            )
++        if not texte.startswith(jusque):
++            raise ErreurMasque(
++                f"Le rendu jusqu'au message {i} n'est pas un préfixe du rendu complet"
++            )
++        if len(jusque) == len(avant):
++            raise ErreurMasque(f"Le tour assistant {i} ne produit aucun texte")
++        intervalles.append((len(avant), len(jusque)))
++    return texte, intervalles
++
++
++def calculer_masque(
++    tokenizer: Any,
++    messages: Sequence[Mapping[str, Any]],
++    *,
++    tools: Sequence[Mapping[str, Any]] | None = None,
++    config: ConfigModele | None = None,
++) -> tuple[list[int], list[int]]:
++    """`(input_ids, labels)` : label = identifiant dans un tour `assistant`, −100 ailleurs."""
++    texte, intervalles = intervalles_assistant(tokenizer, messages, tools=tools, config=config)
++    codage = tokenizer(texte, add_special_tokens=False, return_offsets_mapping=True)
++    ids = list(codage["input_ids"])
++    decalages = codage["offset_mapping"]
++    labels = [IGNORE] * len(ids)
++    for k, (debut, fin) in enumerate(decalages):
++        if fin > debut and any(a <= debut and fin <= b for a, b in intervalles):
++            labels[k] = ids[k]
++    return ids, labels
++
++
++def texte_non_masque(tokenizer: Any, ids: Sequence[int], labels: Sequence[int]) -> list[str]:
++    """Décodage de chaque plage contiguë de tokens non masqués."""
++    if len(ids) != len(labels):
++        raise ErreurMasque("ids et labels n'ont pas la même longueur")
++    plages: list[list[int]] = []
++    precedent_appris = False
++    for identifiant, label in zip(ids, labels, strict=True):
++        appris = label != IGNORE
++        if appris:
++            if not precedent_appris:
++                plages.append([])
++            plages[-1].append(identifiant)
++        precedent_appris = appris
++    return [tokenizer.decode(p, skip_special_tokens=False) for p in plages]
+diff --git a/src/slmsp/train/rendu.py b/src/slmsp/train/rendu.py
+new file mode 100644
+index 0000000..2c7cbbc
+--- /dev/null
++++ b/src/slmsp/train/rendu.py
+@@ -0,0 +1,50 @@
++"""Rendu d'une conversation par le chat template officiel (AD-7, AD-6, FR-34).
++
++Une seule implémentation pour tous les Runs : le texte d'entraînement est celui que
++produirait `llama-server --jinja` à l'inférence. `transformers` est importé à la demande
++(extra `train`), jamais au chargement du module.
++"""
++
++from __future__ import annotations
++
++from collections.abc import Mapping, Sequence
++from pathlib import Path
++from typing import Any
++
++from slmsp.core.schemas.config_modele import ConfigModele
++
++
++def kwargs_template(config: ConfigModele | None) -> dict[str, Any]:
++    """`chat_template_kwargs` du modèle (copie), vides sans configuration."""
++    return dict(config.chat_template_kwargs) if config is not None else {}
++
++
++def charger_tokenizer(dossier: str | Path) -> Any:
++    """Charge le tokenizer et son chat template depuis un dossier local, sans réseau.
++
++    Un `chat_template.jinja` présent dans le dossier est celui retenu par `transformers`.
++    """
++    dossier = Path(dossier)
++    if not dossier.is_dir():
++        raise FileNotFoundError(f"Dossier de tokenizer introuvable : {dossier}")
++    from transformers import AutoTokenizer
++
++    return AutoTokenizer.from_pretrained(str(dossier), local_files_only=True)
++
++
++def apply_chat_template(
++    tokenizer: Any,
++    messages: Sequence[Mapping[str, Any]],
++    *,
++    tools: Sequence[Mapping[str, Any]] | None = None,
++    config: ConfigModele | None = None,
++    add_generation_prompt: bool = False,
++) -> str:
++    """Texte rendu par le chat template officiel, avec les `chat_template_kwargs` du modèle."""
++    return tokenizer.apply_chat_template(
++        [dict(m) for m in messages],
++        tools=list(tools) if tools else None,
++        tokenize=False,
++        add_generation_prompt=add_generation_prompt,
++        **kwargs_template(config),
++    )
+diff --git a/tests/train/test_masque.py b/tests/train/test_masque.py
+new file mode 100644
+index 0000000..2031245
+--- /dev/null
++++ b/tests/train/test_masque.py
+@@ -0,0 +1,189 @@
++"""Tests du rendu et du masque de perte (story 10.2, H-MASQUE).
++
++Les tests de base utilisent un faux tokenizer ChatML (un token par caractère), sans réseau.
++Les tokenizers réels des candidats, sous `models/`, sont sautés s'ils sont absents.
++"""
++
++from __future__ import annotations
++
++import json
++import random
++
++import pytest
++
++from slmsp.core.config import charger_toml, racine_projet
++from slmsp.core.schemas.config_modele import ConfigModele
++from slmsp.train.masque import (
++    IGNORE,
++    ErreurMasque,
++    calculer_masque,
++    intervalles_assistant,
++    texte_non_masque,
++)
++from slmsp.train.rendu import apply_chat_template, charger_tokenizer, kwargs_template
++
++
++class FauxTokenizer:
++    """ChatML minimal : un token par caractère, offsets exacts."""
++
++    def __init__(self, *, incremental: bool = True):
++        self.incremental = incremental
++        self.kwargs_recus: list[dict] = []
++
++    def apply_chat_template(
++        self, messages, *, tools=None, tokenize=False, add_generation_prompt=False, **kwargs
++    ):
++        self.kwargs_recus.append(kwargs)
++        sortie = ""
++        if tools:
++            sortie += "<|im_start|>system\nTOOLS " + json.dumps(tools) + "<|im_end|>\n"
++        for m in messages:
++            corps = m.get("content") or ""
++            for appel in m.get("tool_calls") or []:
++                corps += "<tool_call>" + json.dumps(appel, sort_keys=True) + "</tool_call>"
++            sortie += f"<|im_start|>{m['role']}\n{corps}<|im_end|>\n"
++        if add_generation_prompt:
++            sortie += "<|im_start|>assistant\n"
++        elif not self.incremental and messages and messages[-1]["role"] == "assistant":
++            sortie += "FIN"  # rend le rendu non incrémental
++        return sortie
++
++    def __call__(self, texte, *, add_special_tokens=False, return_offsets_mapping=False):
++        return {
++            "input_ids": [ord(c) for c in texte],
++            "offset_mapping": [(i, i + 1) for i in range(len(texte))],
++        }
++
++    def decode(self, ids, skip_special_tokens=False):
++        return "".join(chr(i) for i in ids)
++
++
++def _conversation():
++    return [
++        {"role": "system", "content": "Tu aides."},
++        {"role": "user", "content": "Quel est le tarif ?"},
++        {
++            "role": "assistant",
++            "content": "Je cherche.",
++            "tool_calls": [
++                {"id": "1", "type": "function", "function": {"name": "chercher", "arguments": {}}}
++            ],
++        },
++        {"role": "tool", "content": "42 euros", "tool_call_id": "1"},
++        {"role": "assistant", "content": "Le tarif est de 42 euros."},
++    ]
++
++
++def _attendu(tok, messages, tools=None):
++    """Tours assistant du rendu officiel, du rendu incrémental à la fin de tour."""
++    attendu = []
++    for i, m in enumerate(messages):
++        if m["role"] == "assistant":
++            avant = tok.apply_chat_template(messages[:i], tools=tools, add_generation_prompt=True)
++            jusque = tok.apply_chat_template(messages[: i + 1], tools=tools)
++            attendu.append(jusque[len(avant) :])
++    return attendu
++
++
++def test_tokens_non_masques_egaux_aux_tours_assistant():
++    tok = FauxTokenizer()
++    messages = _conversation()
++    ids, labels = calculer_masque(tok, messages)
++    assert len(ids) == len(labels)
++    assert texte_non_masque(tok, ids, labels) == _attendu(tok, messages)
++    assert all(lab in (IGNORE, i) for i, lab in zip(ids, labels, strict=True))
++    assert IGNORE == -100
++
++
++def test_appels_d_outils_et_fin_de_tour_appris():
++    tok = FauxTokenizer()
++    ids, labels = calculer_masque(tok, _conversation())
++    premier = texte_non_masque(tok, ids, labels)[0]
++    assert "<tool_call>" in premier and premier.endswith("<|im_end|>\n")
++    assert "42 euros" not in premier
++
++
++def test_outils_dans_le_prompt_restent_masques():
++    tok = FauxTokenizer()
++    outils = [{"type": "function", "function": {"name": "chercher"}}]
++    ids, labels = calculer_masque(tok, _conversation(), tools=outils)
++    assert all("TOOLS" not in s for s in texte_non_masque(tok, ids, labels))
++    assert labels[0] == IGNORE
++
++
++def test_conversation_sans_assistant_tout_masque():
++    tok = FauxTokenizer()
++    ids, labels = calculer_masque(tok, _conversation()[:2])
++    assert set(labels) == {IGNORE}
++    assert texte_non_masque(tok, ids, labels) == []
++
++
++def test_conversations_aleatoires():
++    rng = random.Random(7)
++    for _ in range(30):
++        messages = [{"role": "user", "content": "q"}]
++        for _ in range(rng.randint(1, 4)):
++            messages.append({"role": "assistant", "content": "r" * rng.randint(1, 6)})
++            if rng.random() < 0.5:
++                messages.append({"role": "tool", "content": "t" * rng.randint(1, 6)})
++                messages.append({"role": "assistant", "content": "s" * rng.randint(1, 6)})
++            messages.append({"role": "user", "content": "u" * rng.randint(1, 6)})
++        tok = FauxTokenizer()
++        ids, labels = calculer_masque(tok, messages)
++        assert texte_non_masque(tok, ids, labels) == _attendu(tok, messages)
++
++
++def test_rendu_non_incremental_leve_erreur():
++    with pytest.raises(ErreurMasque, match="préfixe"):
++        intervalles_assistant(FauxTokenizer(incremental=False), _conversation())
++
++
++def test_texte_non_masque_longueurs_differentes():
++    with pytest.raises(ErreurMasque):
++        texte_non_masque(FauxTokenizer(), [1, 2], [1])
++
++
++def test_kwargs_du_modele_transmis_au_template():
++    config = charger_toml(racine_projet() / "config" / "modeles" / "smollm3-3b.toml", ConfigModele)
++    assert kwargs_template(config) == {"enable_thinking": False}
++    assert kwargs_template(None) == {}
++    tok = FauxTokenizer()
++    apply_chat_template(tok, _conversation(), config=config)
++    assert tok.kwargs_recus[-1] == {"enable_thinking": False}
++
++
++def test_charger_tokenizer_dossier_absent(tmp_path):
++    with pytest.raises(FileNotFoundError):
++        charger_tokenizer(tmp_path / "absent")
++
++
++CANDIDATS = ["granite-4.0-1b", "ministral-3-3b", "smollm3-3b", "qwen-4b"]
++
++
++def _tokenizer_reel(slug):
++    pytest.importorskip("transformers")
++    dossier = racine_projet() / "models" / slug
++    if not dossier.is_dir():
++        pytest.skip(f"tokenizer absent : {dossier}")
++    return charger_tokenizer(dossier)
++
++
++@pytest.mark.lent
++@pytest.mark.parametrize("slug", CANDIDATS)
++def test_candidat_masque_sur_tokenizer_reel(slug, record_property):
++    tok = _tokenizer_reel(slug)
++    messages = _conversation()
++    messages[2]["tool_calls"][0]["function"]["arguments"] = {"q": "tarif"}
++    try:
++        ids, labels = calculer_masque(tok, messages)
++    except ErreurMasque as e:
++        record_property("rendu_incremental", f"echec : {e}")
++        pytest.fail(f"{slug} : rendu incrémental impossible, variante `generation` requise : {e}")
++    record_property("rendu_incremental", "ok")
++    assert any(lab != IGNORE for lab in labels)
++    assert all("42 euros" not in s for s in texte_non_masque(tok, ids, labels)[:1])
++
++
++@pytest.mark.lent
++def test_rendu_identique_a_llama_server_jinja():
++    pytest.skip("exige llama-server et les poids du candidat (exécution manuelle sous `lent`)")

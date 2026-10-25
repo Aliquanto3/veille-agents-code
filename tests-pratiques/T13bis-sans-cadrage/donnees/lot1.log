@@ -1,0 +1,30 @@
+19 tâches, engagé 0.00 $
+10:15:22 l63-A2 cadrage: cout=1.0186812 tours=28 mur=147.9s chars=9217 vide=False
+10:15:22 l63-A2 dev: cout=0.21846499999999996 tours=11 mur=55.6s cache=7/8 ruff=0/0 hors=0
+10:15:22 l63-D2 dev: cout=0.38085279999999994 tours=21 mur=111.7s cache=5/8 ruff=0/0 hors=0
+10:23:32 u51-A2 cadrage: cout=1.4385298 tours=34 mur=187.4s chars=10451 vide=False
+10:23:32 u51-A2 dev: cout=0.5278424 tours=38 mur=371.4s cache=3/6 ruff=0/0 hors=2
+10:23:32 u51-D2 dev: cout=0.5346202 tours=36 mur=443.7s cache=4/6 ruff=0/0 hors=1
+10:28:32 l65-A2 cadrage: cout=0.8962951999999997 tours=26 mur=149.2s chars=8652 vide=False
+10:28:32 l65-A2 dev: cout=0.47217129999999996 tours=32 mur=133.7s cache=7/8 ruff=0/0 hors=0
+10:28:32 l65-D2 dev: cout=0.5193275 tours=37 mur=239.9s cache=8/8 ruff=0/0 hors=0
+10:35:40 u25-A2 cadrage: cout=0.9385042 tours=22 mur=123.1s chars=10133 vide=False
+10:35:40 u25-A2 dev: cout=0.5959556 tours=45 mur=310.5s cache=11/13 ruff=0/0 hors=3
+10:35:40 u25-D2 dev: cout=0.214902 tours=16 mur=133.0s cache=6/13 ruff=0/0 hors=1
+10:35:40 l27-A2 cadrage: cout=0.7359194 tours=15 mur=101.1s chars=9334 vide=False
+10:35:40 l27-A2 dev: cout=0.2614178 tours=17 mur=80.3s cache=7/9 ruff=0/0 hors=0
+10:35:42 l27-D2 dev: cout=0.2393371 tours=21 mur=62.3s cache=7/9 ruff=0/0 hors=0
+10:40:08 u75-A2 cadrage: cout=0.8227558 tours=16 mur=76.2s chars=7761 vide=False
+10:40:08 u75-A2 dev: cout=0.3847708000000001 tours=26 mur=167.1s cache=3/8 ruff=1/0 hors=0
+10:40:08 u75-D2 dev: cout=0.2463244 tours=25 mur=193.6s cache=5/8 ruff=0/0 hors=0
+10:41:01 l51-D2 dev: cout=0.29765889999999995 tours=14 mur=85.1s cache=10/14 ruff=0/0 hors=0
+10:44:28 l23-A2 cadrage: cout=0.5855980000000001 tours=19 mur=98.8s chars=8895 vide=False
+10:44:28 l23-A2 dev: cout=0.18589989999999998 tours=20 mur=144.5s cache=7/7 ruff=0/0 hors=0
+10:44:28 l23-D2 dev: cout=0.2577239 tours=24 mur=135.9s cache=7/7 ruff=0/0 hors=1
+11:00:32 u45-A2 cadrage: cout=1.5064488 tours=28 mur=242.3s chars=9157 vide=False
+11:00:32 u45-A2 dev: cout=0.5150152000000001 tours=36 mur=747.6s cache=3/3 ruff=0/0 hors=0
+11:00:32 u45-D2 dev: cout=0.4764584 tours=38 mur=271.6s cache=3/3 ruff=0/0 hors=1
+11:00:32 w91-A2 cadrage: cout=0.7713864 tours=21 mur=150.7s chars=9582 vide=False
+11:00:32 w91-A2 dev: cout=0.28071140000000006 tours=22 mur=162.9s cache=2/6 ruff=-1/-1 hors=1
+11:10:55 w91-D2 dev: cout=0.3809574 tours=28 mur=855.3s cache=2/6 ruff=-1/-1 hors=1
+fin du lot, engagé 15.70 $

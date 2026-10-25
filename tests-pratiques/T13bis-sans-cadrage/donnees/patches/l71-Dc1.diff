@@ -1,0 +1,299 @@
+diff --git a/src/wavelibrarian/architectures/raptor.py b/src/wavelibrarian/architectures/raptor.py
+new file mode 100644
+index 0000000..a6a0826
+--- /dev/null
++++ b/src/wavelibrarian/architectures/raptor.py
+@@ -0,0 +1,126 @@
++"""Architecture `raptor` : arbre de résumés par regroupement récursif, recherche sur tout l'arbre
++(FR-23)."""
++
++from pathlib import Path
++from typing import Annotated, Any, ClassVar
++
++from pydantic import Field, model_validator
++
++from wavelibrarian.architectures._passages import ecrire_passages
++from wavelibrarian.architectures.naive_rag import _SOUS_DOSSIER, NaiveRag
++from wavelibrarian.core.errors import ConfigError
++from wavelibrarian.core.ids import sha16
++from wavelibrarian.core.types import ModelRefMeta, ParsedCorpus, Passage
++from wavelibrarian.ports.architecture import ArchCapabilities, CorpusChange
++from wavelibrarian.ports.gateway import LLMRequest, Message
++from wavelibrarian.registry import register
++
++_SYSTEM = (
++    "Résume fidèlement les passages suivants en un court texte, dans leur langue, sans rien "
++    "ajouter qui ne figure pas dans les passages."
++)
++_MOTS_REPLI = 60  # taille du texte d'un nœud dont le résumé est vide : début des enfants
++
++
++def _groupes(noeuds: list[Passage], group_max: int) -> list[list[Passage]]:
++    """Découpe en groupes consécutifs de `group_max` nœuds, dans l'ordre reçu (ordre des
++    Documents, donc déterministe). Règle documentée : seul le dernier groupe d'un niveau peut
++    compter moins de `group_min` nœuds, quand il n'en reste pas assez."""
++    return [noeuds[i : i + group_max] for i in range(0, len(noeuds), group_max)]
++
++
++@register("architecture", "raptor")
++class Raptor(NaiveRag):
++    """Index de `naive_rag` (feuilles) complété d'un arbre de résumés : les nœuds d'un niveau sont
++    regroupés par `group_min` à `group_max`, chaque groupe est résumé par le rôle `summarize`,
++    jusqu'à un nœud unique ou `max_depth` niveaux. La recherche dense porte sur l'arbre aplati ;
++    un résumé porte les Ancrages de ses feuilles, ses Citations y renvoient donc directement.
++    Pas de mise à jour incrémentale : l'arbre est reconstruit."""
++
++    name = "raptor"
++    capabilities = ArchCapabilities(incremental_update=False, retrieval_method="ranked")
++    query_params: ClassVar[frozenset[str]] = frozenset({"k"})
++
++    class Params(NaiveRag.Params):
++        group_min: int = Field(default=5, gt=0)
++        group_max: int = Field(default=10, gt=0)
++        max_depth: int = Field(default=3, gt=0)
++        summarize_model: Annotated[str | None, ModelRefMeta("generator_models[0]")] = None
++        summarize_max_tokens: int = Field(default=256, gt=0)
++
++        @model_validator(mode="after")
++        def _bornes(self) -> "Raptor.Params":
++            if self.group_min > self.group_max:
++                raise ValueError("`group_min` ne peut dépasser `group_max`")
++            return self
++
++    def __init__(self, params: Any, ctx: Any) -> None:
++        if params.retriever.name != "dense":
++            # `lexical` et `hybrid` exigent un index lexical que cet index n'a pas.
++            raise ConfigError(
++                "retriever",
++                f"`raptor` cherche dans l'index dense de ses nœuds : retriever `dense` seul, "
++                f"pas `{params.retriever.name}`",
++            )
++        super().__init__(params, ctx)
++        self._summarize_model: str = (
++            params.summarize_model or ctx.profile.defaults.generator_models[0]
++        )
++
++    def _resumer(self, enfants: list[Passage], niveau: int) -> Passage:
++        texte_enfants = "\n\n".join(e.text for e in enfants)
++        requete = LLMRequest(
++            model_id=self._summarize_model,
++            role="summarize",
++            step=f"raptor.summarize.level{niveau}",
++            system=_SYSTEM,
++            messages=(Message(role="user", content=texte_enfants),),
++            max_tokens=self.params.summarize_max_tokens,  # type: ignore[attr-defined]
++            seed=self.ctx.seed,  # type: ignore[attr-defined]
++            inputs={"text": texte_enfants},
++        )
++        texte = str(self.ctx.gateway.complete(requete).text).strip()  # type: ignore[attr-defined]
++        if not texte:
++            texte = " ".join(texte_enfants.split()[:_MOTS_REPLI])
++        child_ids = tuple(e.passage_id for e in enfants)
++        docs = {e.doc_id for e in enfants}
++        anchor_ids = tuple(dict.fromkeys(a for e in enfants for a in e.anchor_ids))
++        return Passage(
++            passage_id=sha16("node", "raptor", str(niveau), *sorted(child_ids)),
++            doc_id=docs.pop() if len(docs) == 1 else None,
++            text=texte,
++            anchor_ids=anchor_ids,
++            level=niveau,
++            child_ids=child_ids,
++        )
++
++    def _arbre(self, feuilles: list[Passage]) -> list[Passage]:
++        """Nœuds de résumé, niveau après niveau. Au moins un niveau dès qu'il y a une feuille."""
++        group_max: int = self.params.group_max  # type: ignore[attr-defined]
++        max_depth: int = self.params.max_depth  # type: ignore[attr-defined]
++        courant = feuilles
++        noeuds: list[Passage] = []
++        for niveau in range(1, max_depth + 1):
++            if not courant or (niveau > 1 and len(courant) == 1):
++                break
++            courant = [self._resumer(g, niveau) for g in _groupes(courant, group_max)]
++            noeuds.extend(courant)
++        return noeuds
++
++    def index(self, corpus: ParsedCorpus, directory: Path) -> None:
++        feuilles = [p for doc in corpus.documents for p in self.chunker.chunk(doc)]  # type: ignore[attr-defined]
++        passages = [*feuilles, *self._arbre(feuilles)]
++        store = self._nouveau_store()
++        self._encoder(store, passages)
++        ecrire_passages(directory, passages)
++        store.save(directory / _SOUS_DOSSIER)
++
++    def update(
++        self,
++        change: CorpusChange,
++        corpus_after: ParsedCorpus,
++        old_directory: Path,
++        new_directory: Path,
++    ) -> None:
++        """Reconstruit l'arbre sur `corpus_after` : un résumé ne se met pas à jour à la pièce."""
++        self.index(corpus_after, new_directory)
+diff --git a/tests/unit/architectures/test_story_7_1.py b/tests/unit/architectures/test_story_7_1.py
+new file mode 100644
+index 0000000..5b9132c
+--- /dev/null
++++ b/tests/unit/architectures/test_story_7_1.py
+@@ -0,0 +1,161 @@
++"""Story 7.1 : Architecture `raptor` (arbre de résumés, rôle `summarize`)."""
++
++import json
++from pathlib import Path
++from typing import Any
++
++import pytest
++
++from wavelibrarian import registry
++from wavelibrarian.architectures._passages import lire_passages
++from wavelibrarian.architectures.raptor import Raptor
++from wavelibrarian.core.errors import ConfigError
++from wavelibrarian.core.ids import sha16
++from wavelibrarian.core.types import ParsedCorpus, QuestionInput
++from wavelibrarian.llm.providers.fake import FakeProvider
++from wavelibrarian.ports.architecture import CorpusChange
++from wavelibrarian.ports.components import ComponentSpec
++from wavelibrarian.runner.context import Context as RunCtx
++
++PETITS = {"name": "fixed_tokens", "params": {"size": 40, "overlap": 5}}
++
++
++@pytest.fixture
++def ctx(tmp_path: Path):  # type: ignore[no-untyped-def]
++    provider = FakeProvider()
++    c = RunCtx.from_profile(
++        "test", wl_home=tmp_path / "wl", run_id="r-1", seed=1, providers={"fake": provider}
++    )
++    c.parser = "markdown"
++    with c:
++        yield c
++
++
++def _arch(ctx: RunCtx, **params: Any) -> Any:
++    params.setdefault("embedder", {"name": "fake"})
++    params.setdefault("chunker", PETITS)
++    return ctx.build("architecture", ComponentSpec(name="raptor", params=params))
++
++
++def _indexer(ctx: RunCtx, arch: Any, corpus: ParsedCorpus, dossier: Path) -> None:
++    with ctx.scope(post="indexing"):
++        arch.index(corpus, dossier)
++
++
++def _spans(ctx: RunCtx) -> list[dict[str, Any]]:
++    lignes = (ctx.run_dir / "traces.jsonl").read_text(encoding="utf-8").splitlines()
++    return [json.loads(x) for x in lignes]
++
++
++def _attr(span: dict[str, Any], cle: str) -> Any:
++    return span[cle]
++
++
++def test_enregistre_avec_les_defauts_du_contrat() -> None:
++    assert registry.get("architecture", "raptor") is Raptor
++    p = Raptor.Params()
++    assert (p.group_min, p.group_max, p.max_depth) == (5, 10, 3)
++    assert Raptor.capabilities.incremental_update is False
++
++
++def test_params_incoherents_et_retriever_refuses(ctx: RunCtx) -> None:
++    with pytest.raises(ValueError):
++        Raptor.Params(group_min=6, group_max=5)
++    with pytest.raises(ConfigError, match="dense"):
++        _arch(ctx, retriever={"name": "lexical"})
++
++
++def test_noeuds_de_resume(ctx: RunCtx, minicorpus: ParsedCorpus, tmp_path: Path) -> None:
++    arch = _arch(ctx, group_min=2, group_max=3)
++    _indexer(ctx, arch, minicorpus, tmp_path / "i")
++    passages = lire_passages(tmp_path / "i")
++    par_id = {p.passage_id: p for p in passages}
++    feuilles = [p for p in passages if p.level == 0]
++    noeuds = [p for p in passages if p.level > 0]
++    assert feuilles and noeuds
++    assert max(p.level for p in noeuds) <= 3
++    for n in noeuds:
++        assert n.child_ids
++        enfants = [par_id[c] for c in n.child_ids]
++        assert all(e.level == n.level - 1 for e in enfants)
++        assert set(n.anchor_ids) == {a for e in enfants for a in e.anchor_ids}
++        assert n.passage_id == sha16("node", "raptor", str(n.level), *sorted(n.child_ids))
++        docs = {e.doc_id for e in enfants}
++        assert n.doc_id == (docs.pop() if len(docs) == 1 else None)
++    assert any(n.doc_id is None for n in noeuds)  # le sommet couvre plusieurs Documents
++
++
++def test_tailles_de_groupes_et_profondeur(
++    ctx: RunCtx, minicorpus: ParsedCorpus, tmp_path: Path
++) -> None:
++    arch = _arch(ctx, group_min=2, group_max=3, max_depth=2)
++    _indexer(ctx, arch, minicorpus, tmp_path / "i")
++    passages = lire_passages(tmp_path / "i")
++    assert max(p.level for p in passages) <= 2
++    for niveau in {p.level for p in passages if p.level > 0}:
++        noeuds = [p for p in passages if p.level == niveau]
++        tailles = [len(n.child_ids) for n in noeuds]
++        assert all(t <= 3 for t in tailles)
++        # seul le dernier groupe du niveau peut compter moins de group_min nœuds
++        assert all(t >= 2 for t in sorted(tailles)[1:])
++        assert sum(t < 2 for t in tailles) <= 1
++
++
++def test_au_moins_un_niveau_meme_avec_peu_de_feuilles(
++    ctx: RunCtx, minicorpus: ParsedCorpus, tmp_path: Path
++) -> None:
++    arch = _arch(ctx, chunker={"name": "fixed_tokens", "params": {"size": 4000, "overlap": 0}})
++    _indexer(ctx, arch, minicorpus, tmp_path / "i")
++    assert any(p.level == 1 for p in lire_passages(tmp_path / "i"))
++
++
++def test_deterministe(ctx: RunCtx, minicorpus: ParsedCorpus, tmp_path: Path) -> None:
++    for nom in ("a", "b"):
++        _indexer(ctx, _arch(ctx, group_min=2, group_max=3), minicorpus, tmp_path / nom)
++    a = (tmp_path / "a" / "passages.jsonl").read_bytes()
++    assert a == (tmp_path / "b" / "passages.jsonl").read_bytes()
++
++
++def test_appels_summarize_step_et_poste(
++    ctx: RunCtx, minicorpus: ParsedCorpus, tmp_path: Path
++) -> None:
++    arch = _arch(ctx, group_min=2, group_max=3)
++    _indexer(ctx, arch, minicorpus, tmp_path / "i")
++    llm = [s for s in _spans(ctx) if _attr(s, "wl.kind") == "llm"]
++    assert llm
++    for s in llm:
++        assert str(_attr(s, "wl.step")).startswith("raptor.summarize.level")
++        assert _attr(s, "wl.post") == "indexing"
++
++
++def test_answer_cherche_sur_tout_l_arbre_et_cite_les_feuilles(
++    ctx: RunCtx, minicorpus: ParsedCorpus, tmp_path: Path
++) -> None:
++    arch = _arch(ctx, group_min=2, group_max=3, k=50)
++    _indexer(ctx, arch, minicorpus, tmp_path / "i")
++    arch.load(tmp_path / "i")
++    feuilles = {p.passage_id: p for p in lire_passages(tmp_path / "i") if p.level == 0}
++    ancrages = {a for p in feuilles.values() for a in p.anchor_ids}
++    question = QuestionInput(
++        question_id="q-001", text="Que sait-on de la guilde Orvane ?", lang="fr"
++    )
++    with ctx.scope(post="query", question_id="q-001"):
++        rep = arch.answer(question)
++    assert {s.passage.level for s in rep.retrieved} >= {0, 1}
++    assert rep.citations
++    assert all(c.anchor_id in ancrages for c in rep.citations)
++
++
++def test_update_reconstruit_sans_ancrage_du_document_supprime(
++    ctx: RunCtx, minicorpus: ParsedCorpus, tmp_path: Path
++) -> None:
++    arch = _arch(ctx, group_min=2, group_max=3)
++    _indexer(ctx, arch, minicorpus, tmp_path / "i")
++    retire = minicorpus.documents[0]
++    apres = minicorpus.model_copy(update={"documents": minicorpus.documents[1:]})
++    with ctx.scope(post="update"):
++        arch.update(CorpusChange(removed=(retire.doc_id,)), apres, tmp_path / "i", tmp_path / "j")
++    passages = lire_passages(tmp_path / "j")
++    assert passages
++    assert all(not a.startswith(retire.doc_id) for p in passages for a in p.anchor_ids)
++    assert all(p.doc_id != retire.doc_id for p in passages)

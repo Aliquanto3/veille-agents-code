@@ -1,0 +1,283 @@
+diff --git a/src/usine/ia/doublons.py b/src/usine/ia/doublons.py
+new file mode 100644
+index 0000000..9eb1b68
+--- /dev/null
++++ b/src/usine/ia/doublons.py
+@@ -0,0 +1,83 @@
++"""Tâche `doublons` : paires d'Anomalies ouvertes probablement en doublon (FR-36).
++
++Tâche locale d'AD-12 : déterministe, sans appel au fournisseur, à la passerelle ni au cache.
++Le titre et la description de chaque Anomalie ouverte sont pseudonymisés par le callable
++injecté (en production, `Pseudonymiseur.apercu`, qui n'écrit pas la table), puis comparés par
++l'indice de Jaccard des mots normalisés, entre Anomalies d'une même Entité. Les paires sont des
++suggestions à revoir par le Pilote : aucune fusion, aucune écriture dans Jira.
++"""
++
++import re
++import unicodedata
++from collections import defaultdict
++from collections.abc import Callable, Collection
++from datetime import date
++from itertools import combinations
++
++import polars as pl
++
++from usine.contrats.erreurs import UsineErreur
++from usine.contrats.llm import PaireDoublon, SortieDoublons, StatutControle
++from usine.contrats.schemas import valider
++from usine.contrats.tickets import SCHEMA_TICKET_TEXTE, TypeTicket, rang_cle
++
++SEUIL_DOUBLONS = 0.5
++"""Score de similarité à partir duquel une paire est proposée au Pilote."""
++
++_CLE_TICKET = re.compile(r"[A-Z]+-\d+")
++_MOT = re.compile(r"\w+")
++
++
++def _mots(texte: str) -> frozenset[str]:
++    """Mots normalisés du texte : clés de ticket retirées, minuscules, sans accents."""
++    sans_cles = _CLE_TICKET.sub(" ", texte).lower()
++    decompose = unicodedata.normalize("NFKD", sans_cles)
++    sans_accents = "".join(c for c in decompose if not unicodedata.combining(c))
++    return frozenset(_MOT.findall(sans_accents))
++
++
++def score_similarite(texte_a: str, texte_b: str) -> float:
++    """Indice de Jaccard des mots normalisés, de 0 à 1 (4 décimales) ; 0.0 si un texte est vide."""
++    mots_a, mots_b = _mots(texte_a), _mots(texte_b)
++    if not mots_a or not mots_b:
++        return 0.0
++    return round(len(mots_a & mots_b) / len(mots_a | mots_b), 4)
++
++
++def detecter_doublons(
++    textes: pl.DataFrame,
++    cles_ouvertes: Collection[str],
++    date_arrete: date,
++    pseudonymiser: Callable[[str], str],
++    seuil: float = SEUIL_DOUBLONS,
++) -> SortieDoublons:
++    """Paires d'Anomalies ouvertes d'une même Entité dont le score atteint `seuil`.
++
++    Triées par score décroissant puis par rang de clés ; `cle_a` précède `cle_b`. Un `seuil`
++    hors de 0 à 1 ou une table non conforme à `SCHEMA_TICKET_TEXTE` lèvent une `UsineErreur`.
++    """
++    if not 0 <= seuil <= 1:
++        raise UsineErreur(f"seuil de doublons {seuil} hors de l'intervalle 0 à 1")
++    valider(textes, SCHEMA_TICKET_TEXTE)
++    ouvertes = set(cles_ouvertes)
++    lignes = textes.filter(pl.col("type_ticket") == TypeTicket.anomalie.value)
++    groupes: dict[str | None, list[tuple[str, str]]] = defaultdict(list)
++    for ligne in sorted(lignes.iter_rows(named=True), key=lambda r: rang_cle(r["cle_ticket"])):
++        if ligne["cle_ticket"] not in ouvertes:
++            continue
++        texte = pseudonymiser(f"{ligne['titre'] or ''}\n{ligne['description'] or ''}")
++        groupes[ligne["entite"]].append((ligne["cle_ticket"], texte))
++
++    paires: list[PaireDoublon] = []
++    for membres in groupes.values():
++        for (cle_a, texte_a), (cle_b, texte_b) in combinations(membres, 2):
++            score = score_similarite(texte_a, texte_b)
++            if score >= seuil:
++                paires.append(PaireDoublon(cle_a=cle_a, cle_b=cle_b, score=score))
++    paires.sort(key=lambda p: (-p.score, rang_cle(p.cle_a), rang_cle(p.cle_b)))
++    return SortieDoublons(
++        date_arrete=date_arrete,
++        seuil=seuil,
++        paires=tuple(paires),
++        statut_controle=StatutControle.non_controle,
++    )
+diff --git a/tests/unit/ia/test_doublons.py b/tests/unit/ia/test_doublons.py
+new file mode 100644
+index 0000000..a9e9db0
+--- /dev/null
++++ b/tests/unit/ia/test_doublons.py
+@@ -0,0 +1,188 @@
++"""Tests de la tâche locale `doublons` (FR-36)."""
++
++import re
++from datetime import date
++from pathlib import Path
++
++import polars as pl
++import pytest
++
++from usine.contrats.erreurs import UsineErreur
++from usine.contrats.llm import StatutControle
++from usine.contrats.tickets import SCHEMA_TICKET_TEXTE
++from usine.ia.doublons import SEUIL_DOUBLONS, detecter_doublons, score_similarite
++
++DATE = date(2026, 10, 1)
++TEXTE = "Doublons de clients dans la base"
++
++
++def _table(*lignes: tuple[str, str, str | None, str | None, str | None]) -> pl.DataFrame:
++    return pl.DataFrame(
++        [
++            {
++                "cle_ticket": c,
++                "type_ticket": t,
++                "entite": e,
++                "titre": ti,
++                "description": d,
++            }
++            for c, t, e, ti, d in lignes
++        ],
++        schema=dict(SCHEMA_TICKET_TEXTE.colonnes),
++    )
++
++
++def _identite(texte: str) -> str:
++    return texte
++
++
++def _paires(table: pl.DataFrame, cles: list[str], **kw):  # type: ignore[no-untyped-def]
++    return detecter_doublons(table, cles, DATE, _identite, **kw).paires
++
++
++def test_doublon_evident() -> None:
++    table = _table(
++        ("DEMO-1", "anomalie", "ENT-A", TEXTE, "x"),
++        ("DEMO-2", "anomalie", "ENT-A", TEXTE, "x"),
++    )
++    sortie = detecter_doublons(table, ["DEMO-1", "DEMO-2"], DATE, _identite)
++    assert [(p.cle_a, p.cle_b, p.score) for p in sortie.paires] == [("DEMO-1", "DEMO-2", 1.0)]
++    assert sortie.seuil == SEUIL_DOUBLONS
++    assert sortie.date_arrete == DATE
++    assert sortie.statut_controle is StatutControle.non_controle
++
++
++def test_entites_differentes() -> None:
++    table = _table(
++        ("DEMO-1", "anomalie", "ENT-A", TEXTE, None),
++        ("DEMO-2", "anomalie", "ENT-B", TEXTE, None),
++    )
++    assert _paires(table, ["DEMO-1", "DEMO-2"]) == ()
++
++
++def test_entite_nulle_forme_son_groupe() -> None:
++    table = _table(
++        ("DEMO-1", "anomalie", None, TEXTE, None),
++        ("DEMO-2", "anomalie", None, TEXTE, None),
++        ("DEMO-3", "anomalie", "ENT-A", TEXTE, None),
++    )
++    paires = _paires(table, ["DEMO-1", "DEMO-2", "DEMO-3"])
++    assert [(p.cle_a, p.cle_b) for p in paires] == [("DEMO-1", "DEMO-2")]
++
++
++def test_ferme_ou_hors_anomalie_ignore() -> None:
++    table = _table(
++        ("DEMO-1", "anomalie", "ENT-A", TEXTE, None),
++        ("DEMO-2", "anomalie", "ENT-A", TEXTE, None),
++        ("DEMO-3", "cas_de_test", "ENT-A", TEXTE, None),
++    )
++    assert _paires(table, ["DEMO-1", "DEMO-3"]) == ()
++    assert _paires(table, ["DEMO-1", "DEMO-2", "DEMO-3"])[0].cle_b == "DEMO-2"
++
++
++def test_ordre_des_cles_par_rang() -> None:
++    table = _table(
++        ("DEMO-10", "anomalie", "ENT-A", TEXTE, None),
++        ("DEMO-9", "anomalie", "ENT-A", TEXTE, None),
++    )
++    paire = _paires(table, ["DEMO-10", "DEMO-9"])[0]
++    assert (paire.cle_a, paire.cle_b) == ("DEMO-9", "DEMO-10")
++
++
++def test_sous_le_seuil() -> None:
++    table = _table(
++        ("DEMO-1", "anomalie", "ENT-A", "a b c", None),
++        ("DEMO-2", "anomalie", "ENT-A", "a d e f", None),
++    )
++    assert score_similarite("a b c", "a d e f") == pytest.approx(0.1667, abs=1e-4)
++    assert _paires(table, ["DEMO-1", "DEMO-2"], seuil=0.5) == ()
++    assert len(_paires(table, ["DEMO-1", "DEMO-2"], seuil=0.1)) == 1
++
++
++def test_texte_vide() -> None:
++    table = _table(
++        ("DEMO-1", "anomalie", "ENT-A", None, None),
++        ("DEMO-2", "anomalie", "ENT-A", None, None),
++    )
++    assert score_similarite("", "") == 0.0
++    assert _paires(table, ["DEMO-1", "DEMO-2"]) == ()
++
++
++def test_pseudonymiseur_recoit_chaque_texte_avant_le_score() -> None:
++    iban = re.compile(r"FR\d{12}")
++    recus: list[str] = []
++
++    def pseudonymiser(texte: str) -> str:
++        recus.append(texte)
++        return iban.sub("IBAN_X", texte)
++
++    table = _table(
++        ("DEMO-1", "anomalie", "ENT-A", "Erreur", "compte FR123456789012"),
++        ("DEMO-2", "anomalie", "ENT-A", "Erreur", "compte FR999999999999"),
++    )
++    sortie = detecter_doublons(table, ["DEMO-1", "DEMO-2"], DATE, pseudonymiser)
++    assert len(recus) == 2
++    assert "FR123456789012" in recus[0]
++    assert sortie.paires[0].score == 1.0
++
++
++@pytest.mark.parametrize("seuil", [1.5, -0.1])
++def test_seuil_invalide(seuil: float) -> None:
++    with pytest.raises(UsineErreur, match="seuil"):
++        detecter_doublons(_table(), [], DATE, _identite, seuil=seuil)
++
++
++def test_table_invalide() -> None:
++    table = _table(("DEMO-1", "anomalie", "ENT-A", TEXTE, None)).drop("titre")
++    with pytest.raises(UsineErreur):
++        detecter_doublons(table, ["DEMO-1"], DATE, _identite)
++
++
++def test_aucune_anomalie() -> None:
++    table = _table(("DEMO-1", "anomalie", "ENT-A", TEXTE, None))
++    assert detecter_doublons(table, [], DATE, _identite).paires == ()
++
++
++def test_tri_par_score_decroissant() -> None:
++    table = _table(
++        ("DEMO-1", "anomalie", "ENT-A", "a b c d", None),
++        ("DEMO-2", "anomalie", "ENT-A", "a b c x", None),
++        ("DEMO-3", "anomalie", "ENT-A", "a b c d", None),
++    )
++    paires = _paires(table, ["DEMO-1", "DEMO-2", "DEMO-3"], seuil=0.3)
++    assert [(p.cle_a, p.cle_b) for p in paires] == [
++        ("DEMO-1", "DEMO-3"),
++        ("DEMO-1", "DEMO-2"),
++        ("DEMO-2", "DEMO-3"),
++    ]
++    assert [p.score for p in paires] == sorted((p.score for p in paires), reverse=True)
++
++
++def test_determinisme_et_aucune_ecriture(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
++    monkeypatch.chdir(tmp_path)
++    appels: list[str] = []
++
++    def compteur(texte: str) -> str:
++        appels.append(texte)
++        return texte
++
++    table = _table(
++        ("DEMO-1", "anomalie", "ENT-A", TEXTE, None),
++        ("DEMO-2", "anomalie", "ENT-A", TEXTE, None),
++    )
++    un = detecter_doublons(table, ["DEMO-1", "DEMO-2"], DATE, compteur)
++    deux = detecter_doublons(table, ["DEMO-1", "DEMO-2"], DATE, compteur)
++    assert un == deux
++    assert len(appels) == 4
++    assert list(tmp_path.iterdir()) == []
++
++
++def test_proprietes_du_score() -> None:
++    assert score_similarite("Chat noir", "noir chat") == 1.0
++    assert score_similarite("a b", "b c") == score_similarite("b c", "a b")
++    assert 0.0 <= score_similarite("a b c", "c d") <= 1.0
++    assert score_similarite("Café Épuisé", "cafe epuise") == 1.0
++    assert score_similarite("DEMO-1 erreur", "erreur") == 1.0
++    assert score_similarite("DEMO-1 erreur", "DEMO-2 erreur") == 1.0
++    assert score_similarite("abc", "") == 0.0
++    assert score_similarite("DEMO-1", "DEMO-2") == 0.0

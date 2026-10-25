@@ -1,0 +1,380 @@
+diff --git a/src/wavelibrarian/cli.py b/src/wavelibrarian/cli.py
+index 1ae9458..f828e1e 100644
+--- a/src/wavelibrarian/cli.py
++++ b/src/wavelibrarian/cli.py
+@@ -2,6 +2,9 @@
+ 
+ import typer
+ 
++from wavelibrarian import registry
++from wavelibrarian.core.errors import ConfigError
++
+ app = typer.Typer(
+     name="wl",
+     help="WaveLibrarian : banc de comparaison des architectures de recherche documentaire IA.",
+@@ -13,3 +16,30 @@ app = typer.Typer(
+ @app.callback()
+ def principal() -> None:
+     """WaveLibrarian : banc de comparaison des architectures de recherche documentaire IA."""
++
++
++@app.command()
++def registre(
++    kind: str | None = typer.Option(None, "--kind", help="Limite l'affichage à ce kind."),
++) -> None:
++    """Liste les Composants et Architectures enregistrés."""
++    try:
++        registry.discover()
++        entrees = registry.list_components(kind=kind)
++    except ConfigError as erreur:
++        typer.echo(str(erreur), err=True)
++        raise typer.Exit(2) from erreur
++    if not entrees:
++        typer.echo("Aucun Composant enregistré.")
++        return
++    for entree in entrees:
++        typer.echo(f"{entree.kind} / {entree.name}")
++        for ligne in entree.description.splitlines():
++            typer.echo(f"  {ligne}")
++        if not entree.params:
++            typer.echo("  Params : aucun")
++            continue
++        typer.echo("  Params :")
++        for p in entree.params.values():
++            valeur = "(obligatoire)" if p.required else repr(p.default)
++            typer.echo(f"    {p.name} : {p.type} = {valeur}")
+diff --git a/src/wavelibrarian/registry.py b/src/wavelibrarian/registry.py
+index 0fbf6b0..9001f6e 100644
+--- a/src/wavelibrarian/registry.py
++++ b/src/wavelibrarian/registry.py
+@@ -1 +1,133 @@
+-"""Registre de Composants (story 1.3)."""
++"""Registre de Composants et d'Architectures (story 1.3)."""
++
++import importlib
++import inspect
++import pkgutil
++from collections.abc import Callable
++from typing import Any, TypeVar
++
++from pydantic import BaseModel, ConfigDict
++
++from wavelibrarian.core.errors import ConfigError
++from wavelibrarian.ports.components import KINDS
++
++T = TypeVar("T", bound=type)
++
++_REGISTRE: dict[tuple[str, str], type] = {}
++
++_PAQUETS_DECOUVERTE = ("wavelibrarian.components", "wavelibrarian.architectures")
++
++
++class ParamInfo(BaseModel):
++    """Description d'un paramètre d'un Composant."""
++
++    model_config = ConfigDict(frozen=True, extra="forbid")
++
++    name: str
++    type: str
++    default: Any
++    required: bool
++
++
++class ComponentInfo(BaseModel):
++    """Description d'une entrée du registre."""
++
++    model_config = ConfigDict(frozen=True, extra="forbid")
++
++    kind: str
++    name: str
++    description: str
++    params: dict[str, ParamInfo]
++
++
++def _verifier_params(kind: str, name: str, cls: type) -> None:
++    """Vérifie que `Params`, s'il existe, est un modèle pydantic figé et strict."""
++    chemin = f"{kind}.{name}"
++    params = getattr(cls, "Params", None)
++    if params is None:
++        return
++    if not (inspect.isclass(params) and issubclass(params, BaseModel)):
++        raise ConfigError(chemin, "`Params` doit être une sous-classe de pydantic.BaseModel")
++    if params.model_config.get("extra") != "forbid":
++        raise ConfigError(chemin, '`Params` doit déclarer extra="forbid"')
++    if params.model_config.get("frozen") is not True:
++        raise ConfigError(chemin, "`Params` doit déclarer frozen=True")
++
++
++def register(kind: str, name: str) -> Callable[[T], T]:
++    """Décorateur enregistrant une classe sous `(kind, name)`."""
++
++    def decorer(cls: T) -> T:
++        if kind not in KINDS:
++            raise ConfigError(kind, f"kind inconnu ; admis : {', '.join(KINDS)}")
++        if (kind, name) in _REGISTRE:
++            raise ConfigError(f"{kind}.{name}", "déjà enregistré")
++        _verifier_params(kind, name, cls)
++        _REGISTRE[(kind, name)] = cls
++        return cls
++
++    return decorer
++
++
++def _verifier_kind(kind: str) -> None:
++    if kind not in KINDS:
++        raise ConfigError(kind, f"kind inconnu ; admis : {', '.join(KINDS)}")
++
++
++def get(kind: str, name: str) -> type:
++    """Renvoie la classe enregistrée sous `(kind, name)`."""
++    _verifier_kind(kind)
++    try:
++        return _REGISTRE[(kind, name)]
++    except KeyError:
++        noms = sorted(n for (k, n) in _REGISTRE if k == kind)
++        if not noms:
++            raise ConfigError(f"{kind}.{name}", f"aucun Composant enregistré pour {kind}") from None
++        raise ConfigError(
++            f"{kind}.{name}", f"nom inconnu ; disponibles : {', '.join(noms)}"
++        ) from None
++
++
++def _rendre_type(annotation: Any) -> str:
++    if inspect.isclass(annotation) and not getattr(annotation, "__args__", None):
++        return annotation.__name__
++    return str(annotation).replace("typing.", "")
++
++
++def _decrire(kind: str, name: str, cls: type) -> ComponentInfo:
++    description = inspect.cleandoc(cls.__dict__.get("__doc__") or "")
++    params: dict[str, ParamInfo] = {}
++    modele = getattr(cls, "Params", None)
++    if modele is not None:
++        for champ, field in modele.model_fields.items():
++            requis = field.is_required()
++            params[champ] = ParamInfo(
++                name=champ,
++                type=_rendre_type(field.annotation),
++                default=None if requis else field.get_default(call_default_factory=True),
++                required=requis,
++            )
++    return ComponentInfo(kind=kind, name=name, description=description, params=params)
++
++
++def list_components(kind: str | None = None) -> list[ComponentInfo]:
++    """Liste les entrées, triées par ordre de `KINDS` puis par nom."""
++    if kind is not None:
++        _verifier_kind(kind)
++    cles = sorted(
++        (c for c in _REGISTRE if kind is None or c[0] == kind),
++        key=lambda c: (KINDS.index(c[0]), c[1]),
++    )
++    return [_decrire(k, n, _REGISTRE[(k, n)]) for k, n in cles]
++
++
++def discover() -> None:
++    """Importe récursivement les modules de Composants et d'Architectures."""
++    for nom in _PAQUETS_DECOUVERTE:
++        paquet = importlib.import_module(nom)
++
++        def relancer(_nom: str) -> None:
++            raise
++
++        for info in pkgutil.walk_packages(paquet.__path__, f"{nom}.", onerror=relancer):
++            importlib.import_module(info.name)
+diff --git a/tests/unit/registry/conftest.py b/tests/unit/registry/conftest.py
+new file mode 100644
+index 0000000..cbb5f0a
+--- /dev/null
++++ b/tests/unit/registry/conftest.py
+@@ -0,0 +1,19 @@
++"""Isolation du registre entre tests."""
++
++import sys
++from collections.abc import Iterator
++
++import pytest
++
++from wavelibrarian import registry
++
++
++@pytest.fixture(autouse=True)
++def registre_isole(monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
++    """Remplace le registre par un dict vide et purge les modules de test importés."""
++    monkeypatch.setattr(registry, "_REGISTRE", {})
++    avant = set(sys.modules)
++    yield
++    for nom in set(sys.modules) - avant:
++        if nom.endswith("toy_mod"):
++            del sys.modules[nom]
+diff --git a/tests/unit/registry/test_cli_registre.py b/tests/unit/registry/test_cli_registre.py
+new file mode 100644
+index 0000000..0ee7011
+--- /dev/null
++++ b/tests/unit/registry/test_cli_registre.py
+@@ -0,0 +1,52 @@
++"""Tests de la commande `wl registre`."""
++
++from pydantic import BaseModel, ConfigDict
++from typer.testing import CliRunner
++
++from wavelibrarian.cli import app
++from wavelibrarian.registry import register
++
++runner = CliRunner()
++
++
++def _remplir() -> None:
++    @register("chunker", "toy")
++    class Toy:
++        """Chunker jouet."""
++
++        class Params(BaseModel):
++            model_config = ConfigDict(extra="forbid", frozen=True)
++            size: int = 300
++
++    @register("embedder", "x")
++    class X:
++        """Embedder jouet."""
++
++
++def test_toutes_les_entrees() -> None:
++    _remplir()
++    r = runner.invoke(app, ["registre"])
++    assert r.exit_code == 0
++    assert "chunker / toy" in r.output and "embedder / x" in r.output
++    assert "Chunker jouet." in r.output
++    assert "size : int = 300" in r.output
++    assert "Params : aucun" in r.output
++
++
++def test_filtre_kind() -> None:
++    _remplir()
++    r = runner.invoke(app, ["registre", "--kind", "chunker"])
++    assert r.exit_code == 0
++    assert "toy" in r.output and "embedder" not in r.output
++
++
++def test_registre_vide() -> None:
++    r = runner.invoke(app, ["registre"])
++    assert r.exit_code == 0
++    assert "Aucun Composant enregistré." in r.output
++
++
++def test_kind_invalide() -> None:
++    r = runner.invoke(app, ["registre", "--kind", "bidule"])
++    assert r.exit_code == 2
++    assert "bidule" in r.output
+diff --git a/tests/unit/registry/test_registry.py b/tests/unit/registry/test_registry.py
+new file mode 100644
+index 0000000..87aa1f7
+--- /dev/null
++++ b/tests/unit/registry/test_registry.py
+@@ -0,0 +1,107 @@
++"""Tests du registre de Composants."""
++
++from pathlib import Path
++
++import pytest
++from pydantic import BaseModel, ConfigDict
++
++from wavelibrarian import architectures, components, registry
++from wavelibrarian.core.errors import ConfigError
++from wavelibrarian.registry import get, list_components, register
++
++
++class _ParamsOk(BaseModel):
++    model_config = ConfigDict(extra="forbid", frozen=True)
++    size: int = 300
++    obligatoire: str
++
++
++def _definir_toy() -> type:
++    @register("chunker", "toy")
++    class Toy:
++        """Un chunker de test.
++
++        Deuxième ligne.
++        """
++
++        class Params(BaseModel):
++            model_config = ConfigDict(extra="forbid", frozen=True)
++            size: int = 300
++
++    return Toy
++
++
++def test_enregistrement_et_liste() -> None:
++    toy = _definir_toy()
++    assert get("chunker", "toy") is toy
++    (info,) = list_components(kind="chunker")
++    assert (info.kind, info.name) == ("chunker", "toy")
++    assert info.description == "Un chunker de test.\n\nDeuxième ligne."
++    p = info.params["size"]
++    assert (p.type, p.default, p.required) == ("int", 300, False)
++
++
++def test_param_obligatoire() -> None:
++    @register("chunker", "o")
++    class AvecObligatoire:
++        Params = _ParamsOk
++
++    p = list_components()[0].params["obligatoire"]
++    assert p.required and p.default is None
++
++
++def test_kind_invalide() -> None:
++    with pytest.raises(ConfigError) as exc:
++        register("bidule", "x")(type("X", (), {}))
++    assert exc.value.path == "bidule"
++    assert "chunker" in str(exc.value)
++
++
++def test_doublon() -> None:
++    _definir_toy()
++    with pytest.raises(ConfigError) as exc:
++        _definir_toy()
++    assert exc.value.path == "chunker.toy"
++
++
++@pytest.mark.parametrize(
++    "config", [ConfigDict(extra="forbid"), ConfigDict(frozen=True), ConfigDict()]
++)
++def test_params_non_conformes(config: ConfigDict) -> None:
++    class Mauvais(BaseModel):
++        model_config = config
++
++    cls = type("X", (), {"Params": Mauvais})
++    with pytest.raises(ConfigError) as exc:
++        register("chunker", "x")(cls)
++    assert exc.value.path == "chunker.x"
++
++
++def test_nom_inconnu() -> None:
++    register("chunker", "toy")(type("A", (), {}))
++    register("chunker", "toy2")(type("B", (), {}))
++    register("embedder", "autre")(type("C", (), {}))
++    with pytest.raises(ConfigError) as exc:
++        get("chunker", "inconnu")
++    assert exc.value.path == "chunker.inconnu"
++    assert "toy, toy2" in str(exc.value)
++    assert "autre" not in str(exc.value)
++
++
++def test_aucun_nom_pour_le_kind() -> None:
++    with pytest.raises(ConfigError, match="aucun Composant enregistré pour reranker"):
++        get("reranker", "x")
++
++
++def test_decouverte_idempotente(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
++    (tmp_path / "toy_mod.py").write_text(
++        "from wavelibrarian.registry import register\n\n"
++        "@register('chunker', 'decouvert')\nclass D:\n    pass\n",
++        encoding="utf-8",
++    )
++    monkeypatch.setattr(components, "__path__", [*components.__path__, str(tmp_path)])
++    monkeypatch.setattr(architectures, "__path__", list(architectures.__path__))
++    registry.discover()
++    assert get("chunker", "decouvert").__name__ == "D"
++    registry.discover()
++    assert len(list_components(kind="chunker")) == 1

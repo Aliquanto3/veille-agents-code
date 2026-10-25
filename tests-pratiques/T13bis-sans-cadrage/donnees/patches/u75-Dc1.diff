@@ -1,0 +1,180 @@
+diff --git a/src/usine/ui/app.py b/src/usine/ui/app.py
+index f59f517..9904fbc 100644
+--- a/src/usine/ui/app.py
++++ b/src/usine/ui/app.py
+@@ -20,7 +20,7 @@ import streamlit as st
+ 
+ from usine.contrats.erreurs import UsineErreur
+ from usine.contrats.passage import Etape, EvenementProgression, ManifestePassage, StatutEtape
+-from usine.ui import avant_apres, carte, detail, lancement, navigation, progression
++from usine.ui import avant_apres, carte, detail, lancement, navigation, outillage, progression
+ from usine.ui.cli import (
+     config_demo,
+     consultation_dernier_passage,
+@@ -201,6 +201,21 @@ def afficher_avant_apres(racine: Path) -> None:
+     st.caption(avant_apres.legende(manifeste))
+ 
+ 
++def afficher_outillage(racine: Path) -> None:
++    """Fiche d'outillage demandé : demandes par priorité et correspondance avec les cibles."""
++    st.subheader(Ecran.outillage.value)
++    try:
++        fiche = outillage.lire_fiche(racine)
++    except (OSError, UnicodeDecodeError) as exc:
++        st.error(f"Lecture de la fiche d'outillage impossible : {exc}")
++        return
++    if fiche is None:
++        st.warning(outillage.FICHE_ABSENTE)
++        return
++    st.markdown(fiche)
++    st.caption(outillage.LEGENDE)
++
++
+ def afficher_a_venir(ecran: Ecran) -> None:
+     """Emplacement nommé d'un écran livré par une story suivante."""
+     st.subheader(ecran.value)
+@@ -393,6 +408,8 @@ def principal() -> None:
+         afficher_lancement(racine)
+     elif ecran is Ecran.avant_apres:
+         afficher_avant_apres(racine)
++    elif ecran is Ecran.outillage:
++        afficher_outillage(racine)
+     else:
+         afficher_a_venir(ecran)
+ 
+diff --git a/src/usine/ui/navigation.py b/src/usine/ui/navigation.py
+index 8015543..4b7c3a9 100644
+--- a/src/usine/ui/navigation.py
++++ b/src/usine/ui/navigation.py
+@@ -21,7 +21,6 @@ ECRAN_PAR_DEFAUT = Ecran.carte
+ 
+ STORY_A_VENIR: Mapping[Ecran, str] = MappingProxyType(
+     {
+-        Ecran.outillage: "7.5",
+         Ecran.agent: "7.9",
+     }
+ )
+diff --git a/src/usine/ui/outillage.py b/src/usine/ui/outillage.py
+new file mode 100644
+index 0000000..c227dc2
+--- /dev/null
++++ b/src/usine/ui/outillage.py
+@@ -0,0 +1,27 @@
++"""Écran « Ce qu'il faut pour le faire en vrai » : la fiche d'outillage demandé (sans Streamlit).
++
++Le contenu vient de `docs/fiche-outillage.md` (demandes par priorité, correspondance par brique
++et par cible) ; l'écran l'affiche tel quel, sans le recopier dans le code.
++"""
++
++from pathlib import Path
++
++FICHIER_FICHE = "docs/fiche-outillage.md"
++"""Fiche d'outillage demandé, relative à la racine."""
++
++FICHE_ABSENTE = f"Fiche absente : `{FICHIER_FICHE}` ; l'outillage demandé ne peut pas être affiché."
++"""Avertissement affiché quand la fiche n'existe pas."""
++
++LEGENDE = (
++    f"Contenu de `{FICHIER_FICHE}` : demandes d'outillage par ordre de priorité et"
++    " correspondance de chaque brique avec les cibles du client."
++)
++"""Légende de l'écran : d'où vient le contenu affiché."""
++
++
++def lire_fiche(racine: Path) -> str | None:
++    """Texte de `racine/docs/fiche-outillage.md`, ou `None` si le fichier est absent."""
++    chemin = racine / FICHIER_FICHE
++    if not chemin.is_file():
++        return None
++    return chemin.read_text(encoding="utf-8")
+diff --git a/tests/unit/ui/test_app.py b/tests/unit/ui/test_app.py
+index 4693460..b7b9425 100644
+--- a/tests/unit/ui/test_app.py
++++ b/tests/unit/ui/test_app.py
+@@ -31,7 +31,7 @@ from usine.contrats.prevision import (
+     RisqueEntreeRouge,
+     StatutPrevision,
+ )
+-from usine.ui import avant_apres, cli, detail, lancement
++from usine.ui import avant_apres, cli, detail, lancement, outillage
+ from usine.ui.carte import formater_regle, tendance
+ from usine.ui.cli import consultation_dernier_passage, mode_repli
+ from usine.ui.liens import echapper_markdown
+@@ -128,6 +128,20 @@ def test_carte_en_mode_repli(racine_publiee: Path, monkeypatch: pytest.MonkeyPat
+     assert "DEMO-" in tableau
+ 
+ 
++def test_outillage_fiche_presente(
++    racine_publiee: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    (tmp_path / "docs").mkdir()
++    fiche = "# Fiche\n\n| Brique | Cible |\n|---|---|\n| LLM | ✅ |\n"
++    (tmp_path / outillage.FICHIER_FICHE).write_text(fiche, encoding="utf-8")
++    monkeypatch.setenv("USINE_RACINE", str(tmp_path))
++    page = _page(Ecran.outillage)
++    assert not page.exception
++    assert not page.warning
++    assert fiche.strip() in [str(m.value) for m in page.markdown]
++    assert page.caption[-1].value == outillage.LEGENDE
++
++
+ @pytest.mark.parametrize("ecran", list(Ecran))
+ def test_navigation(ecran: Ecran, racine_publiee: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+     monkeypatch.chdir(racine_publiee)
+@@ -153,6 +167,10 @@ def test_navigation(ecran: Ecran, racine_publiee: Path, monkeypatch: pytest.Monk
+         assert page.subheader[0].value == ecran.value
+         assert _tableau_avant_apres(page)
+         assert not page.info  # plus un emplacement
++    elif ecran is Ecran.outillage:
++        assert page.subheader[0].value == ecran.value
++        assert page.warning[-1].value == outillage.FICHE_ABSENTE  # la racine de test n'a pas docs/
++        assert not page.info  # plus un emplacement
+     elif ecran is not Ecran.carte:
+         assert page.subheader[0].value == ecran.value
+         assert f"Story {STORY_A_VENIR[ecran]}" in page.info[-1].value
+diff --git a/tests/unit/ui/test_navigation.py b/tests/unit/ui/test_navigation.py
+index a9d747d..3521eb0 100644
+--- a/tests/unit/ui/test_navigation.py
++++ b/tests/unit/ui/test_navigation.py
+@@ -26,11 +26,11 @@ def test_ordre_et_defaut() -> None:
+ 
+ def test_stories_a_venir() -> None:
+     assert dict(STORY_A_VENIR) == {
+-        Ecran.outillage: "7.5",
+         Ecran.agent: "7.9",
+     }
+     assert Ecran.detail not in STORY_A_VENIR  # écran livré par la Story 7.2
+     assert Ecran.avant_apres not in STORY_A_VENIR  # écran livré par la Story 7.4
++    assert Ecran.outillage not in STORY_A_VENIR  # écran livré par la Story 7.5
+ 
+ 
+ def test_ouvrir_detail() -> None:
+diff --git a/tests/unit/ui/test_outillage.py b/tests/unit/ui/test_outillage.py
+new file mode 100644
+index 0000000..f4d4cdd
+--- /dev/null
++++ b/tests/unit/ui/test_outillage.py
+@@ -0,0 +1,23 @@
++"""Écran « Ce qu'il faut pour le faire en vrai » : lecture de la fiche d'outillage."""
++
++from pathlib import Path
++
++from usine.ui.outillage import FICHE_ABSENTE, FICHIER_FICHE, LEGENDE, lire_fiche
++
++DEPOT = Path(__file__).resolve().parents[3]
++
++
++def test_lire_fiche_du_depot() -> None:
++    fiche = lire_fiche(DEPOT)
++    assert fiche == (DEPOT / FICHIER_FICHE).read_text(encoding="utf-8")
++    assert "Demandes, par ordre de priorité" in fiche
++    assert "Correspondance par brique" in fiche
++
++
++def test_lire_fiche_absente(tmp_path: Path) -> None:
++    assert lire_fiche(tmp_path) is None
++
++
++def test_textes() -> None:
++    assert FICHIER_FICHE in FICHE_ABSENTE
++    assert FICHIER_FICHE in LEGENDE

@@ -1,0 +1,283 @@
+diff --git a/src/wavelibrarian/stats/bootstrap.py b/src/wavelibrarian/stats/bootstrap.py
+new file mode 100644
+index 0000000..f0e551c
+--- /dev/null
++++ b/src/wavelibrarian/stats/bootstrap.py
+@@ -0,0 +1,109 @@
++"""Bootstrap : intervalle de confiance et comparaison appariée (fonctions pures, AD-22)."""
++
++from collections.abc import Mapping, Sequence
++from dataclasses import dataclass
++
++import numpy as np
++from scipy import stats as sps
++
++
++@dataclass(frozen=True)
++class IntervalleConfiance:
++    """Bornes basse et haute d'un intervalle de confiance."""
++
++    bas: float
++    haut: float
++
++
++@dataclass(frozen=True)
++class ComparaisonContinue:
++    """Résultat d'un bootstrap apparié : `diff` = moyenne(a) - moyenne(b)."""
++
++    diff: float
++    ic: IntervalleConfiance
++    p_value: float
++    n_common: int
++
++
++def bootstrap_ci(
++    valeurs: Sequence[float | bool],
++    *,
++    graine: int,
++    resamples: int = 2000,
++    confidence: float = 0.95,
++) -> IntervalleConfiance:
++    """IC par percentile de la moyenne, identique à `scipy.stats.bootstrap(method="percentile")`.
++
++    Le générateur est `numpy.random.default_rng(graine)`. Vecteur vide : `ValueError`.
++    """
++    donnees = np.asarray(valeurs, dtype=float)
++    if donnees.size == 0:
++        raise ValueError("bootstrap impossible sur un vecteur vide")
++    if np.all(donnees == donnees[0]):
++        valeur = float(donnees[0])
++        return IntervalleConfiance(valeur, valeur)
++    res = sps.bootstrap(
++        (donnees,),
++        np.mean,
++        n_resamples=resamples,
++        confidence_level=confidence,
++        method="percentile",
++        random_state=np.random.default_rng(graine),
++    )
++    ic = res.confidence_interval
++    return IntervalleConfiance(float(ic.low), float(ic.high))
++
++
++def paired_bootstrap(
++    a: Sequence[float],
++    b: Sequence[float],
++    *,
++    graine: int,
++    resamples: int = 2000,
++    confidence: float = 0.95,
++) -> ComparaisonContinue:
++    """Bootstrap apparié de la différence moyenne `a - b` sur deux vecteurs alignés.
++
++    L'IC est par percentile. La p-valeur bilatérale est `2 * min(P(d* <= 0), P(d* >= 0))`
++    sur les différences rééchantillonnées, bornée à 1. Longueurs différentes ou vecteurs
++    vides : `ValueError`.
++    """
++    if len(a) != len(b):
++        raise ValueError(f"longueurs différentes : {len(a)} et {len(b)}")
++    if len(a) == 0:
++        raise ValueError("bootstrap impossible sur des vecteurs vides")
++    diffs = np.asarray(a, dtype=float) - np.asarray(b, dtype=float)
++    n = diffs.size
++    rng = np.random.default_rng(graine)
++    indices = rng.integers(0, n, size=(resamples, n))
++    moyennes = diffs[indices].mean(axis=1)
++    alpha = 1.0 - confidence
++    bas, haut = np.quantile(moyennes, [alpha / 2, 1.0 - alpha / 2])
++    p = 2.0 * min(float(np.mean(moyennes <= 0)), float(np.mean(moyennes >= 0)))
++    return ComparaisonContinue(
++        diff=float(diffs.mean()),
++        ic=IntervalleConfiance(float(bas), float(haut)),
++        p_value=min(1.0, p),
++        n_common=n,
++    )
++
++
++def compare_continu(
++    a: Mapping[str, float],
++    b: Mapping[str, float],
++    *,
++    graine: int,
++    resamples: int = 2000,
++    confidence: float = 0.95,
++) -> ComparaisonContinue:
++    """Compare deux scores continus par Question, sur les seules Questions communes."""
++    communes = sorted(a.keys() & b.keys())
++    if not communes:
++        raise ValueError("aucune Question commune")
++    return paired_bootstrap(
++        [a[q] for q in communes],
++        [b[q] for q in communes],
++        graine=graine,
++        resamples=resamples,
++        confidence=confidence,
++    )
+diff --git a/src/wavelibrarian/stats/mcnemar.py b/src/wavelibrarian/stats/mcnemar.py
+new file mode 100644
+index 0000000..cc5b48d
+--- /dev/null
++++ b/src/wavelibrarian/stats/mcnemar.py
+@@ -0,0 +1,40 @@
++"""Test de McNemar exact sur verdicts binaires appariés (fonction pure, AD-22)."""
++
++from collections.abc import Mapping
++from dataclasses import dataclass
++
++from scipy import stats as sps
++
++
++@dataclass(frozen=True)
++class ComparaisonBinaire:
++    """Résultat d'une comparaison appariée de verdicts.
++
++    `b` : Questions réussies par `a` seulement ; `c` : par `b` seulement.
++    """
++
++    b: int
++    c: int
++    diff: float  # taux(a) - taux(b) sur les Questions communes
++    p_value: float
++    n_common: int
++
++
++def mcnemar_exact(b: int, c: int) -> float:
++    """P-valeur bilatérale exacte pour b et c paires discordantes ; 1 si b = c = 0."""
++    if b < 0 or c < 0:
++        raise ValueError(f"effectifs négatifs : {b} et {c}")
++    n = b + c
++    if n == 0:
++        return 1.0
++    return float(sps.binomtest(min(b, c), n, 0.5).pvalue)
++
++
++def compare(a: Mapping[str, bool], b: Mapping[str, bool]) -> ComparaisonBinaire:
++    """Compare deux verdicts par Question, sur les seules Questions communes."""
++    communes = a.keys() & b.keys()
++    nb = sum(1 for q in communes if a[q] and not b[q])
++    nc = sum(1 for q in communes if b[q] and not a[q])
++    n = len(communes)
++    diff = (nb - nc) / n if n else 0.0
++    return ComparaisonBinaire(b=nb, c=nc, diff=diff, p_value=mcnemar_exact(nb, nc), n_common=n)
+diff --git a/src/wavelibrarian/stats/pareto.py b/src/wavelibrarian/stats/pareto.py
+new file mode 100644
+index 0000000..940f21f
+--- /dev/null
++++ b/src/wavelibrarian/stats/pareto.py
+@@ -0,0 +1,30 @@
++"""Front de Pareto (Qualité maximisée, coût minimisé ; fonction pure, AD-22)."""
++
++from collections.abc import Iterable
++from dataclasses import dataclass
++
++
++@dataclass(frozen=True)
++class Point:
++    """Une Configuration placée en (Qualité, coût)."""
++
++    config_id: str
++    qualite: float
++    cout: float
++
++
++def _domine(p: Point, q: Point) -> bool:
++    """`p` domine `q` : au moins aussi bon partout et strictement meilleur quelque part."""
++    return (
++        p.qualite >= q.qualite and p.cout <= q.cout and (p.qualite > q.qualite or p.cout < q.cout)
++    )
++
++
++def front_pareto(points: Iterable[Point]) -> list[Point]:
++    """Points non dominés, triés par coût croissant, Qualité décroissante, puis `config_id`.
++
++    Deux points à égalité ne se dominent pas : les deux restent dans le front.
++    """
++    liste = list(points)
++    front = [p for p in liste if not any(_domine(q, p) for q in liste)]
++    return sorted(front, key=lambda p: (p.cout, -p.qualite, p.config_id))
+diff --git a/tests/unit/stats/test_bootstrap_mcnemar_pareto.py b/tests/unit/stats/test_bootstrap_mcnemar_pareto.py
+new file mode 100644
+index 0000000..b0372ca
+--- /dev/null
++++ b/tests/unit/stats/test_bootstrap_mcnemar_pareto.py
+@@ -0,0 +1,80 @@
++"""Tests de bootstrap, McNemar et Pareto."""
++
++import numpy as np
++import pytest
++from scipy import stats as sps
++
++from wavelibrarian.stats.bootstrap import bootstrap_ci, compare_continu, paired_bootstrap
++from wavelibrarian.stats.mcnemar import compare, mcnemar_exact
++from wavelibrarian.stats.pareto import Point, front_pareto
++
++
++def test_bootstrap_ci_egal_a_scipy():
++    valeurs = [True] * 70 + [False] * 30
++    ic = bootstrap_ci(valeurs, graine=42, resamples=2000, confidence=0.95)
++    ref = sps.bootstrap(
++        (np.array(valeurs, dtype=float),),
++        np.mean,
++        n_resamples=2000,
++        confidence_level=0.95,
++        method="percentile",
++        random_state=np.random.default_rng(42),
++    ).confidence_interval
++    assert ic.bas == pytest.approx(ref.low, abs=1e-9)
++    assert ic.haut == pytest.approx(ref.high, abs=1e-9)
++    assert bootstrap_ci(valeurs, graine=42) == ic
++
++
++def test_bootstrap_ci_constant_et_vide():
++    assert bootstrap_ci([1, 1, 1], graine=1).bas == 1.0
++    with pytest.raises(ValueError):
++        bootstrap_ci([], graine=1)
++
++
++def test_paired_bootstrap_decalage_constant():
++    a = [0.5, 0.7, 0.9, 0.6, 0.8] * 10
++    b = [x - 0.1 for x in a]
++    r = paired_bootstrap(a, b, graine=7)
++    assert r.diff == pytest.approx(0.1)
++    assert r.ic.bas == pytest.approx(0.1)
++    assert r.ic.haut == pytest.approx(0.1)
++    assert r.p_value == 0.0
++    assert paired_bootstrap(a, b, graine=7) == r
++
++
++def test_paired_bootstrap_sans_difference():
++    r = paired_bootstrap([0.0, 1.0] * 20, [1.0, 0.0] * 20, graine=3)
++    assert r.diff == 0.0
++    assert r.p_value == 1.0
++
++
++def test_compare_continu_questions_communes():
++    a = {"q1": 1.0, "q2": 0.5, "q3": 0.0}
++    b = {"q2": 0.0, "q3": 0.0, "q4": 1.0}
++    r = compare_continu(a, b, graine=1)
++    assert r.n_common == 2
++    assert r.diff == pytest.approx(0.25)
++
++
++def test_mcnemar_exact():
++    assert mcnemar_exact(12, 3) == pytest.approx(sps.binomtest(3, 15, 0.5).pvalue)
++    assert mcnemar_exact(0, 0) == 1.0
++
++
++def test_compare_binaire_questions_communes():
++    a = {"q1": True, "q2": True, "q3": False, "q9": True}
++    b = {"q1": False, "q2": True, "q3": True, "q8": False}
++    r = compare(a, b)
++    assert (r.n_common, r.b, r.c) == (3, 1, 1)
++    assert r.p_value == 1.0
++
++
++def test_front_pareto():
++    pts = [
++        Point("d", 0.5, 5.0),  # dominé
++        Point("b", 0.9, 2.0),
++        Point("a", 0.9, 2.0),  # ex æquo avec b
++        Point("c", 0.6, 1.0),
++        Point("e", 0.95, 3.0),
++    ]
++    assert [p.config_id for p in front_pareto(pts)] == ["c", "a", "b", "e"]

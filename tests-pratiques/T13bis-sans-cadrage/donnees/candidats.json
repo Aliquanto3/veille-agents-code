@@ -1,0 +1,917 @@
+[
+ {
+  "repo": "wavelibrarian",
+  "commit": "3153663a",
+  "label": "8.3",
+  "sujet": "Corrige les arbitrages 8.3 d'Anael restes non codes (all_failed, max_error_rate relevable)",
+  "tests": [
+   "tests/unit/runner/test_fix_arbitrages_8_3_8_8.py"
+  ],
+  "src": [
+   "src/wavelibrarian/cli.py",
+   "src/wavelibrarian/runner/execute.py",
+   "src/wavelibrarian/runner/resume.py",
+   "src/wavelibrarian/runner/rundir.py"
+  ],
+  "lignes_src": 32,
+  "richesse": "riche",
+  "entree_chars": 2158
+ },
+ {
+  "repo": "wavelibrarian",
+  "commit": "73d4c8fb",
+  "label": "8.9",
+  "sujet": "Ajoute l'export du paquet d'annotation (wl annotations exporter) et la section de calibrat",
+  "tests": [
+   "tests/unit/report/test_story_8_9.py"
+  ],
+  "src": [
+   "src/wavelibrarian/cli.py",
+   "src/wavelibrarian/report/generer.py",
+   "src/wavelibrarian/report/paquet.py"
+  ],
+  "lignes_src": 241,
+  "richesse": "riche",
+  "entree_chars": 1409
+ },
+ {
+  "repo": "wavelibrarian",
+  "commit": "f83b806f",
+  "label": "4.10",
+  "sujet": "Ajoute les statistiques : bootstrap percentile et apparié, McNemar exact, front de Pareto ",
+  "tests": [
+   "tests/unit/stats/test_bootstrap_mcnemar_pareto.py"
+  ],
+  "src": [
+   "src/wavelibrarian/stats/appariement.py",
+   "src/wavelibrarian/stats/bootstrap.py",
+   "src/wavelibrarian/stats/mcnemar.py",
+   "src/wavelibrarian/stats/pareto.py"
+  ],
+  "lignes_src": 193,
+  "richesse": "riche",
+  "entree_chars": 1642
+ },
+ {
+  "repo": "wavelibrarian",
+  "commit": "8416dbe5",
+  "label": "7.2",
+  "sujet": "Ajoute l'architecture pageindex : arbre de sections par Document navigué par select_nodes ",
+  "tests": [
+   "tests/unit/architectures/test_story_7_2.py"
+  ],
+  "src": [
+   "src/wavelibrarian/architectures/pageindex.py"
+  ],
+  "lignes_src": 331,
+  "richesse": "riche",
+  "entree_chars": 1898
+ },
+ {
+  "repo": "wavelibrarian",
+  "commit": "b9d5cb43",
+  "label": "7.1",
+  "sujet": "Ajoute l'architecture raptor : arbre de résumés et recherche sur l'arbre aplati (story 7.1",
+  "tests": [
+   "tests/unit/architectures/test_story_7_1.py"
+  ],
+  "src": [
+   "src/wavelibrarian/architectures/raptor.py"
+  ],
+  "lignes_src": 184,
+  "richesse": "riche",
+  "entree_chars": 2087
+ },
+ {
+  "repo": "wavelibrarian",
+  "commit": "24e63fc7",
+  "label": "4.7",
+  "sujet": "Exécute la phase après mise à jour : Scénario appliqué, update vers la nouvelle clé d'inde",
+  "tests": [
+   "tests/unit/runner/test_story_4_7.py"
+  ],
+  "src": [
+   "src/wavelibrarian/runner/execute.py",
+   "src/wavelibrarian/runner/index_cache.py"
+  ],
+  "lignes_src": 176,
+  "richesse": "riche",
+  "entree_chars": 1517
+ },
+ {
+  "repo": "wavelibrarian",
+  "commit": "77464bea",
+  "label": "4.6",
+  "sujet": "Exécute la Condition contexte parfait et les Paliers de volume : Passages de référence, so",
+  "tests": [
+   "tests/unit/runner/test_story_4_6.py"
+  ],
+  "src": [
+   "src/wavelibrarian/architectures/long_context.py",
+   "src/wavelibrarian/cli.py",
+   "src/wavelibrarian/runner/execute.py"
+  ],
+  "lignes_src": 237,
+  "richesse": "riche",
+  "entree_chars": 1440
+ },
+ {
+  "repo": "wavelibrarian",
+  "commit": "4fa0220e",
+  "label": "4.5",
+  "sujet": "Mesure l'Exécution : postes, span answer et latence par Question, énergie locale par phase",
+  "tests": [
+   "tests/unit/runner/test_story_4_5.py"
+  ],
+  "src": [
+   "src/wavelibrarian/measure/tracing.py",
+   "src/wavelibrarian/runner/context.py",
+   "src/wavelibrarian/runner/execute.py",
+   "src/wavelibrarian/runner/index_cache.py"
+  ],
+  "lignes_src": 158,
+  "richesse": "riche",
+  "entree_chars": 1799
+ },
+ {
+  "repo": "wavelibrarian",
+  "commit": "71ae3399",
+  "label": "6.2",
+  "sujet": "Ajoute le RAG hybride : retriever hybrid, reranker fake, architecture hybrid_rag (story 6.",
+  "tests": [
+   "tests/unit/architectures/test_story_6_2.py"
+  ],
+  "src": [
+   "src/wavelibrarian/architectures/hybrid_rag.py",
+   "src/wavelibrarian/components/rerankers/__init__.py",
+   "src/wavelibrarian/components/rerankers/fake.py",
+   "src/wavelibrarian/components/retrievers/hybrid.py"
+  ],
+  "lignes_src": 322,
+  "richesse": "riche",
+  "entree_chars": 1932
+ },
+ {
+  "repo": "wavelibrarian",
+  "commit": "3b3ed485",
+  "label": "6.1",
+  "sujet": "Ajoute le RAG naïf : store numpy_exact, retriever dense, architecture naive_rag (story 6.1",
+  "tests": [
+   "tests/unit/architectures/test_story_6_1.py"
+  ],
+  "src": [
+   "src/wavelibrarian/architectures/naive_rag.py",
+   "src/wavelibrarian/components/retrievers/dense.py",
+   "src/wavelibrarian/components/vector_stores/__init__.py",
+   "src/wavelibrarian/components/vector_stores/numpy_exact.py"
+  ],
+  "lignes_src": 263,
+  "richesse": "riche",
+  "entree_chars": 2083
+ },
+ {
+  "repo": "wavelibrarian",
+  "commit": "7595a269",
+  "label": "4.3",
+  "sujet": "Ajoute le cache d'index et le dossier d'Exécution : index_key, index/.tmp, manifeste, pars",
+  "tests": [
+   "tests/unit/runner/test_story_4_3.py"
+  ],
+  "src": [
+   "pyproject.toml",
+   "src/wavelibrarian/runner/index_cache.py",
+   "src/wavelibrarian/runner/rundir.py"
+  ],
+  "lignes_src": 279,
+  "richesse": "riche",
+  "entree_chars": 1925
+ },
+ {
+  "repo": "wavelibrarian",
+  "commit": "1a5638b0",
+  "label": "3.6",
+  "sujet": "Ajoute le Gel et la séparation dev / test (story 3.6)",
+  "tests": [
+   "tests/unit/evalset/test_freeze.py"
+  ],
+  "src": [
+   "src/wavelibrarian/cli.py",
+   "src/wavelibrarian/evalset/freeze.py",
+   "src/wavelibrarian/evalset/io.py"
+  ],
+  "lignes_src": 184,
+  "richesse": "riche",
+  "entree_chars": 1713
+ },
+ {
+  "repo": "wavelibrarian",
+  "commit": "6cf75613",
+  "label": "3.5",
+  "sujet": "Ajoute le Filtre closed-book et wl questions closed-book (story 3.5)",
+  "tests": [
+   "tests/unit/evalset/test_closed_book.py"
+  ],
+  "src": [
+   "src/wavelibrarian/cli.py",
+   "src/wavelibrarian/evalset/closed_book.py"
+  ],
+  "lignes_src": 184,
+  "richesse": "riche",
+  "entree_chars": 1714
+ },
+ {
+  "repo": "wavelibrarian",
+  "commit": "037bfab5",
+  "label": "3.4",
+  "sujet": "Ajoute le Juge LLM et exact_match (story 3.4)",
+  "tests": [
+   "tests/unit/components/test_llm_judge.py"
+  ],
+  "src": [
+   "src/wavelibrarian/components/judges/__init__.py",
+   "src/wavelibrarian/components/judges/llm.py",
+   "src/wavelibrarian/scoring/answer.py"
+  ],
+  "lignes_src": 115,
+  "richesse": "riche",
+  "entree_chars": 1729
+ },
+ {
+  "repo": "wavelibrarian",
+  "commit": "3f9034fb",
+  "label": "2.6",
+  "sujet": "Applique un Scénario de mise à jour à un Corpus et fournit corpus_apres (story 2.6)",
+  "tests": [
+   "tests/unit/corpus/test_scenario.py"
+  ],
+  "src": [
+   "src/wavelibrarian/cli.py",
+   "src/wavelibrarian/corpus/ingest.py",
+   "src/wavelibrarian/corpus/scenario.py"
+  ],
+  "lignes_src": 187,
+  "richesse": "riche",
+  "entree_chars": 1512
+ },
+ {
+  "repo": "wavelibrarian",
+  "commit": "d6b18a59",
+  "label": "3.3",
+  "sujet": "Ajoute la génération de Questions candidates et wl questions generer (story 3.3)",
+  "tests": [
+   "tests/unit/evalset/test_generate.py"
+  ],
+  "src": [
+   "src/wavelibrarian/cli.py",
+   "src/wavelibrarian/evalset/generate.py",
+   "src/wavelibrarian/runner/context.py"
+  ],
+  "lignes_src": 338,
+  "richesse": "riche",
+  "entree_chars": 1899
+ },
+ {
+  "repo": "wavelibrarian",
+  "commit": "3df4e517",
+  "label": "3.2",
+  "sujet": "Ajoute le RunContext concret et le verrou run.lock (story 3.2)",
+  "tests": [
+   "tests/unit/runner/test_context.py"
+  ],
+  "src": [
+   "src/wavelibrarian/runner/context.py",
+   "src/wavelibrarian/runner/lock.py"
+  ],
+  "lignes_src": 295,
+  "richesse": "riche",
+  "entree_chars": 1964
+ },
+ {
+  "repo": "wavelibrarian",
+  "commit": "a244e9e1",
+  "label": "2.4",
+  "sujet": "Ajoute le Profil de corpus, les entités heuristiques et la commande wl corpus profiler (st",
+  "tests": [
+   "tests/unit/corpus/test_profile.py"
+  ],
+  "src": [
+   "src/wavelibrarian/cli.py",
+   "src/wavelibrarian/core/types.py",
+   "src/wavelibrarian/corpus/entities.py",
+   "src/wavelibrarian/corpus/profile.py"
+  ],
+  "lignes_src": 170,
+  "richesse": "riche",
+  "entree_chars": 1859
+ },
+ {
+  "repo": "wavelibrarian",
+  "commit": "3505247e",
+  "label": "3.1",
+  "sujet": "Ajoute le format des Questions et wl questions controler (story 3.1)",
+  "tests": [
+   "tests/unit/evalset/test_questions.py",
+   "tests/unit/scoring/test_answer.py"
+  ],
+  "src": [
+   "src/wavelibrarian/cli.py",
+   "src/wavelibrarian/evalset/check.py",
+   "src/wavelibrarian/evalset/io.py",
+   "src/wavelibrarian/scoring/answer.py"
+  ],
+  "lignes_src": 270,
+  "richesse": "riche",
+  "entree_chars": 2499
+ },
+ {
+  "repo": "wavelibrarian",
+  "commit": "048e4b3d",
+  "label": "2.1",
+  "sujet": "Ajoute la déclaration d'un Corpus avec doc_id de contenu et garde de droits (story 2.1)",
+  "tests": [
+   "tests/unit/corpus/test_declare.py"
+  ],
+  "src": [
+   "src/wavelibrarian/core/ids.py",
+   "src/wavelibrarian/corpus/declare.py"
+  ],
+  "lignes_src": 220,
+  "richesse": "riche",
+  "entree_chars": 1781
+ },
+ {
+  "repo": "wavelibrarian",
+  "commit": "c9130f83",
+  "label": "1.9",
+  "sujet": "Ajoute la passerelle mesurée MeteredGateway et son câblage de profil (story 1.9)",
+  "tests": [
+   "tests/unit/llm/test_gateway.py"
+  ],
+  "src": [
+   "src/wavelibrarian/llm/gateway.py",
+   "src/wavelibrarian/llm/providers/base.py",
+   "src/wavelibrarian/runner/wiring.py"
+  ],
+  "lignes_src": 302,
+  "richesse": "riche",
+  "entree_chars": 2101
+ },
+ {
+  "repo": "wavelibrarian",
+  "commit": "94de848f",
+  "label": "1.8",
+  "sujet": "Ajoute le registre de dépense et le Cache de réponses LLM (story 1.8)",
+  "tests": [
+   "tests/unit/llm/test_ledger_cache.py"
+  ],
+  "src": [
+   "src/wavelibrarian/llm/_db.py",
+   "src/wavelibrarian/llm/budget.py",
+   "src/wavelibrarian/llm/cache.py"
+  ],
+  "lignes_src": 282,
+  "richesse": "riche",
+  "entree_chars": 1907
+ },
+ {
+  "repo": "wavelibrarian",
+  "commit": "4b9788e5",
+  "label": "1.4",
+  "sujet": "Ajoute le Catalogue de modèles, les paramètres de coût et les profils (story 1.4)",
+  "tests": [
+   "tests/unit/config/test_catalog.py"
+  ],
+  "src": [
+   "src/wavelibrarian/config/catalog.py",
+   "src/wavelibrarian/config/defaults.py",
+   "src/wavelibrarian/config/schemas.py"
+  ],
+  "lignes_src": 295,
+  "richesse": "riche",
+  "entree_chars": 2300
+ },
+ {
+  "repo": "wavelibrarian",
+  "commit": "2de29d56",
+  "label": "1.3",
+  "sujet": "Ajoute le registre de Composants et la commande wl registre (story 1.3)",
+  "tests": [
+   "tests/unit/test_registry.py"
+  ],
+  "src": [
+   "src/wavelibrarian/cli.py",
+   "src/wavelibrarian/registry.py"
+  ],
+  "lignes_src": 145,
+  "richesse": "riche",
+  "entree_chars": 1620
+ },
+ {
+  "repo": "usine-migration-jira-demo",
+  "commit": "1fd8210e",
+  "label": "8.3",
+  "sujet": "Feat: Story 8.3 bonus, conteneur et note de portage détaillée",
+  "tests": [
+   "tests/depot/test_conteneur.py"
+  ],
+  "src": [
+   ".dockerignore",
+   "Dockerfile",
+   "src/usine/ui/cli.py"
+  ],
+  "lignes_src": 135,
+  "richesse": "riche",
+  "entree_chars": 781
+ },
+ {
+  "repo": "usine-migration-jira-demo",
+  "commit": "81a97cf0",
+  "label": "6.11",
+  "sujet": "Feat: Story 6.11, détection de doublons",
+  "tests": [
+   "tests/unit/ia/test_doublons.py"
+  ],
+  "src": [
+   "src/usine/composition.py",
+   "src/usine/ia/cli.py",
+   "src/usine/ia/doublons.py"
+  ],
+  "lignes_src": 149,
+  "richesse": "riche",
+  "entree_chars": 614
+ },
+ {
+  "repo": "usine-migration-jira-demo",
+  "commit": "1c284b40",
+  "label": "7.12",
+  "sujet": "Feat: Story 7.12, script de démo, gabarit de répétitions et vérification automatique",
+  "tests": [
+   "tests/unit/outils/test_verifier_demo.py"
+  ],
+  "src": [
+   "outils/verifier_demo.py"
+  ],
+  "lignes_src": 299,
+  "richesse": "riche",
+  "entree_chars": 583
+ },
+ {
+  "repo": "usine-migration-jira-demo",
+  "commit": "def3da4a",
+  "label": "7.8",
+  "sujet": "Feat: Story 7.8, outils de consultation de l'Agent en lecture seule",
+  "tests": [
+   "tests/unit/ia/agent/test_outils.py"
+  ],
+  "src": [
+   "pyproject.toml",
+   "src/usine/ia/agent/outils.py"
+  ],
+  "lignes_src": 196,
+  "richesse": "riche",
+  "entree_chars": 1008
+ },
+ {
+  "repo": "usine-migration-jira-demo",
+  "commit": "5428cbb2",
+  "label": "5.7",
+  "sujet": "Feat: Story 5.7, porte Palier 1 (M3)",
+  "tests": [
+   "tests/unit/outils/test_verifier_rejeu.py"
+  ],
+  "src": [
+   "outils/verifier_rejeu.py"
+  ],
+  "lignes_src": 211,
+  "richesse": "riche",
+  "entree_chars": 819
+ },
+ {
+  "repo": "usine-migration-jira-demo",
+  "commit": "5eb18889",
+  "label": "6.4",
+  "sujet": "Feat: Story 6.4, classification incrémentale des Causes racines",
+  "tests": [
+   "tests/unit/ia/test_classification.py"
+  ],
+  "src": [
+   "src/usine/chaine/execution.py",
+   "src/usine/composition.py",
+   "src/usine/ia/classification.py",
+   "src/usine/ia/passerelle.py"
+  ],
+  "lignes_src": 265,
+  "richesse": "riche",
+  "entree_chars": 1023
+ },
+ {
+  "repo": "usine-migration-jira-demo",
+  "commit": "6f6d1634",
+  "label": "6.2",
+  "sujet": "Feat: Story 6.2, pseudonymisation par Presidio et spaCy fr_core_news_md",
+  "tests": [
+   "tests/unit/adaptateurs/presidio/test_presidio.py"
+  ],
+  "src": [
+   "src/usine/adaptateurs/presidio/__init__.py",
+   "src/usine/adaptateurs/pseudonymisation/__init__.py"
+  ],
+  "lignes_src": 239,
+  "richesse": "riche",
+  "entree_chars": 1535
+ },
+ {
+  "repo": "usine-migration-jira-demo",
+  "commit": "8b2c97c5",
+  "label": "2.7",
+  "sujet": "Feat: Story 2.7, recette en direct sur Jira Cloud",
+  "tests": [
+   "tests/unit/adaptateurs/composite/test_recette_direct.py",
+   "tests/unit/adaptateurs/jira_cloud/test_fixtures.py"
+  ],
+  "src": [
+   "src/usine/adaptateurs/cli.py",
+   "src/usine/adaptateurs/jira_cloud/__init__.py",
+   "src/usine/adaptateurs/jira_cloud/fixtures.py"
+  ],
+  "lignes_src": 198,
+  "richesse": "riche",
+  "entree_chars": 814
+ },
+ {
+  "repo": "usine-migration-jira-demo",
+  "commit": "0c1eaa68",
+  "label": "4.3",
+  "sujet": "Feat: Story 4.3, Conversion du Public Jira Dataset en SerieStock",
+  "tests": [
+   "tests/unit/evaluation/zenodo/test_chargement.py",
+   "tests/unit/evaluation/zenodo/test_conversion.py"
+  ],
+  "src": [
+   "evaluation/zenodo/__init__.py",
+   "evaluation/zenodo/chargement.py",
+   "evaluation/zenodo/conversion.py",
+   "pyproject.toml"
+  ],
+  "lignes_src": 275,
+  "richesse": "riche",
+  "entree_chars": 882
+ },
+ {
+  "repo": "usine-migration-jira-demo",
+  "commit": "379bf92c",
+  "label": "7.4",
+  "sujet": "Feat: Story 7.4, Avant / après",
+  "tests": [
+   "tests/unit/ui/test_avant_apres.py"
+  ],
+  "src": [
+   "src/usine/ui/app.py",
+   "src/usine/ui/avant_apres.py",
+   "src/usine/ui/cli.py",
+   "src/usine/ui/navigation.py"
+  ],
+  "lignes_src": 193,
+  "richesse": "riche",
+  "entree_chars": 769
+ },
+ {
+  "repo": "usine-migration-jira-demo",
+  "commit": "b46cb94b",
+  "label": "7.2",
+  "sujet": "WIP: Story 7.2, détail d'une Entité (reprise après coupure)",
+  "tests": [
+   "tests/unit/ui/test_detail.py"
+  ],
+  "src": [
+   "src/usine/ui/app.py",
+   "src/usine/ui/detail.py",
+   "src/usine/ui/navigation.py"
+  ],
+  "lignes_src": 266,
+  "richesse": "riche",
+  "entree_chars": 909
+ },
+ {
+  "repo": "usine-migration-jira-demo",
+  "commit": "5c60568d",
+  "label": "7.1",
+  "sujet": "Feat: Story 7.1, Carte météo et navigation",
+  "tests": [
+   "tests/unit/ui/test_bout_en_bout.py",
+   "tests/unit/ui/test_liens.py",
+   "tests/unit/ui/test_navigation.py"
+  ],
+  "src": [
+   "src/usine/ui/app.py",
+   "src/usine/ui/carte.py",
+   "src/usine/ui/liens.py",
+   "src/usine/ui/navigation.py"
+  ],
+  "lignes_src": 313,
+  "richesse": "riche",
+  "entree_chars": 833
+ },
+ {
+  "repo": "usine-migration-jira-demo",
+  "commit": "91b0d8c6",
+  "label": "4.2",
+  "sujet": "Feat: Story 4.2, Risque d'entrée en rouge",
+  "tests": [
+   "tests/unit/domaine/prevision/test_risque.py"
+  ],
+  "src": [
+   "src/usine/domaine/prevision/baseline.py",
+   "src/usine/domaine/prevision/commun.py",
+   "src/usine/domaine/prevision/risque.py"
+  ],
+  "lignes_src": 273,
+  "richesse": "riche",
+  "entree_chars": 749
+ },
+ {
+  "repo": "usine-migration-jira-demo",
+  "commit": "a28bb346",
+  "label": "4.1",
+  "sujet": "Feat: Story 4.1, Prévision de sortie du rouge par Baseline",
+  "tests": [
+   "tests/unit/domaine/prevision/test_baseline.py"
+  ],
+  "src": [
+   "src/usine/domaine/prevision/__init__.py",
+   "src/usine/domaine/prevision/baseline.py"
+  ],
+  "lignes_src": 284,
+  "richesse": "riche",
+  "entree_chars": 1512
+ },
+ {
+  "repo": "usine-migration-jira-demo",
+  "commit": "5c138a42",
+  "label": "1.4",
+  "sujet": "Feat: Story 1.4, Identifiants sensibles fictifs",
+  "tests": [
+   "tests/unit/generateur/test_identifiants.py"
+  ],
+  "src": [
+   "pyproject.toml",
+   "src/usine/generateur/cli.py",
+   "src/usine/generateur/identifiants.py",
+   "src/usine/generateur/journal.py"
+  ],
+  "lignes_src": 257,
+  "richesse": "riche",
+  "entree_chars": 917
+ },
+ {
+  "repo": "usine-migration-jira-demo",
+  "commit": "2efea7bf",
+  "label": "1.3",
+  "sujet": "Feat: Story 1.3, Génération reproductible à la volumétrie cible",
+  "tests": [
+   "tests/unit/outils/test_mesurer_nfr2.py"
+  ],
+  "src": [
+   "outils/mesurer_nfr2.py",
+   "src/usine/generateur/journal.py"
+  ],
+  "lignes_src": 210,
+  "richesse": "riche",
+  "entree_chars": 1298
+ },
+ {
+  "repo": "usine-migration-jira-demo",
+  "commit": "b29755a2",
+  "label": "3.2",
+  "sujet": "Feat: Story 3.2, KPI quotidiens",
+  "tests": [
+   "tests/unit/domaine/test_kpi.py"
+  ],
+  "src": [
+   "src/usine/domaine/kpi.py"
+  ],
+  "lignes_src": 341,
+  "richesse": "riche",
+  "entree_chars": 1080
+ },
+ {
+  "repo": "wavelocalai",
+  "commit": "525b21a8",
+  "label": "7.2",
+  "sujet": "Feat: jeu fixe de cas du juge, notes qui disent la troncature, calcul des notes partagé (s",
+  "tests": [
+   "tests/v2/integration/test_eval_fixed_set_ollama.py",
+   "tests/v2/unit/test_eval_fixed_set.py"
+  ],
+  "src": [
+   "src/wavelocalai/evaluation/metrics.py",
+   "src/wavelocalai/evaluation/prompts.py",
+   "src/wavelocalai/evaluation/service.py"
+  ],
+  "lignes_src": 273,
+  "richesse": "riche",
+  "entree_chars": 1104
+ },
+ {
+  "repo": "service-public-slm-fine-tuning",
+  "commit": "eb9b34d4",
+  "label": "12.13",
+  "sujet": "feat(app): installateur Inno Setup par utilisateur et désinstallation (story 12.13)",
+  "tests": [
+   "tests/packaging/test_installateur.py"
+  ],
+  "src": [
+   "outils/construire_installateur.py",
+   "packaging/assistantsp.iss"
+  ],
+  "lignes_src": 329,
+  "richesse": "riche",
+  "entree_chars": 2014
+ },
+ {
+  "repo": "service-public-slm-fine-tuning",
+  "commit": "a2c3a015",
+  "label": "12.3",
+  "sujet": "feat(app): anonymisation de l'export des Retours (story 12.3)",
+  "tests": [
+   "tests/app/test_anonymisation.py",
+   "tests/app/test_export_retours.py"
+  ],
+  "src": [
+   "src/slmsp/app/anonymisation.py",
+   "src/slmsp/app/export_retours.py"
+  ],
+  "lignes_src": 322,
+  "richesse": "riche",
+  "entree_chars": 2050
+ },
+ {
+  "repo": "service-public-slm-fine-tuning",
+  "commit": "670a1000",
+  "label": "10.2",
+  "sujet": "feat(train): rendu en tokens et masque de perte (story 10.2)",
+  "tests": [
+   "tests/train/test_masque.py"
+  ],
+  "src": [
+   "src/slmsp/train/masque.py",
+   "src/slmsp/train/rendu.py"
+  ],
+  "lignes_src": 180,
+  "richesse": "riche",
+  "entree_chars": 1956
+ },
+ {
+  "repo": "service-public-slm-fine-tuning",
+  "commit": "e6d5207a",
+  "label": "4.5",
+  "sujet": "feat(cli): commande ask et test du document témoin (story 4.5)",
+  "tests": [
+   "tests/cli/test_ask.py",
+   "tests/harness/test_document_temoin.py"
+  ],
+  "src": [
+   "src/slmsp/cli/_assemblage.py",
+   "src/slmsp/cli/ask.py"
+  ],
+  "lignes_src": 349,
+  "richesse": "riche",
+  "entree_chars": 2401
+ },
+ {
+  "repo": "service-public-slm-fine-tuning",
+  "commit": "154ece10",
+  "label": "3.2",
+  "sujet": "feat(mcp): Bac à sable MCP, rejeu des cassettes (story 3.2)",
+  "tests": [
+   "tests/mcp/test_bac_a_sable.py"
+  ],
+  "src": [
+   "config/outils-mcp.toml",
+   "src/slmsp/mcp/bac_a_sable.py",
+   "src/slmsp/mcp/outils.py"
+  ],
+  "lignes_src": 215,
+  "richesse": "riche",
+  "entree_chars": 2118
+ },
+ {
+  "repo": "service-public-slm-fine-tuning",
+  "commit": "08766f09",
+  "label": "7.4",
+  "sujet": "feat(eval): items Compte rendu et Langage clair (story 7.4)",
+  "tests": [
+   "tests/eval_outils/test_items_cr_lc.py"
+  ],
+  "src": [
+   "eval/construction/v1.0/CR.jsonl",
+   "eval/construction/v1.0/LC.jsonl",
+   "eval/construction/v1.0/verification/CR.jsonl",
+   "eval/construction/v1.0/verification/LC.jsonl"
+  ],
+  "lignes_src": 121,
+  "richesse": "riche",
+  "entree_chars": 1559
+ },
+ {
+  "repo": "service-public-slm-fine-tuning",
+  "commit": "6db33d0f",
+  "label": "5.2",
+  "sujet": "feat(evaluation): fonctions de texte partagées (story 5.2)",
+  "tests": [
+   "tests/core/test_texte.py"
+  ],
+  "src": [
+   "src/slmsp/core/texte.py"
+  ],
+  "lignes_src": 198,
+  "richesse": "riche",
+  "entree_chars": 1750
+ },
+ {
+  "repo": "wavedevsecops",
+  "commit": "a0d37337",
+  "label": "8.5",
+  "sujet": "feat: scénario LLM « outil trop puissant » (bandit, pip-audit, quality gate, deux approbat",
+  "tests": [
+   "tests/test_outil_trop_puissant.py"
+  ],
+  "src": [
+   "content/fingerprints.json",
+   "src/wavedevsecops/scenarios/order.py"
+  ],
+  "lignes_src": 3,
+  "richesse": "riche",
+  "entree_chars": 1209
+ },
+ {
+  "repo": "wavedevsecops",
+  "commit": "ba400732",
+  "label": "5.7",
+  "sujet": "feat(5.7): scénario B push / pull (push --force d'un agent qui écrase un collègue)",
+  "tests": [
+   "tests/test_scenario_b_push_force.py"
+  ],
+  "src": [
+   "content/fingerprints.json",
+   "src/wavedevsecops/scenarios/ops/fetch.py",
+   "src/wavedevsecops/scenarios/steps/origin_contains.py"
+  ],
+  "lignes_src": 145,
+  "richesse": "riche",
+  "entree_chars": 1049
+ },
+ {
+  "repo": "wavedevsecops",
+  "commit": "10a9f9ab",
+  "label": "8.1",
+  "sujet": "feat: bloquer une PR sur du code vulnérable avec bandit, job pipeline et scénario code-vul",
+  "tests": [
+   "tests/test_code_vulnerable.py"
+  ],
+  "src": [
+   "content/fingerprints.json",
+   "src/wavedevsecops/ci/__init__.py",
+   "src/wavedevsecops/ci/findings.py",
+   "src/wavedevsecops/scenarios/steps/pr_state.py"
+  ],
+  "lignes_src": 80,
+  "richesse": "riche",
+  "entree_chars": 1118
+ },
+ {
+  "repo": "wavedevsecops",
+  "commit": "8917b568",
+  "label": "6.2",
+  "sujet": "feat: scénarios A add-commit, push-pull, branche et pr-merge (story 6.2)",
+  "tests": [
+   "tests/test_scenarios_socle.py"
+  ],
+  "src": [
+   "content/fingerprints.json",
+   "src/wavedevsecops/engine/steps.py",
+   "src/wavedevsecops/scenarios/steps/_base.py",
+   "src/wavedevsecops/scenarios/steps/pr_state.py"
+  ],
+  "lignes_src": 64,
+  "richesse": "riche",
+  "entree_chars": 1392
+ },
+ {
+  "repo": "wavedevsecops",
+  "commit": "99205284",
+  "label": "3.2",
+  "sujet": "feat: ouvre une PR et la merge dans origin sans worktree (story 3.2)",
+  "tests": [
+   "tests/test_pr_intents.py"
+  ],
+  "src": [
+   "src/wavedevsecops/engine/pr_intents.py",
+   "src/wavedevsecops/github_sim/__init__.py",
+   "src/wavedevsecops/web/app.py"
+  ],
+  "lignes_src": 255,
+  "richesse": "riche",
+  "entree_chars": 1548
+ }
+]

@@ -1,0 +1,437 @@
+diff --git a/src/wavelibrarian/architectures/raptor.py b/src/wavelibrarian/architectures/raptor.py
+new file mode 100644
+index 0000000..f0959ae
+--- /dev/null
++++ b/src/wavelibrarian/architectures/raptor.py
+@@ -0,0 +1,161 @@
++"""Architecture `raptor` : arbre de résumés par regroupement récursif, interrogé à plat (FR-23)."""
++
++import logging
++from pathlib import Path
++from typing import Annotated, Any, ClassVar
++
++import numpy as np
++from pydantic import Field, model_validator
++
++from wavelibrarian.architectures._passages import ecrire_passages
++from wavelibrarian.architectures.naive_rag import _LOT, _SOUS_DOSSIER, NaiveRag
++from wavelibrarian.core.errors import ConfigError
++from wavelibrarian.core.ids import sha16
++from wavelibrarian.core.types import ModelRefMeta, ParsedCorpus, Passage
++from wavelibrarian.ports.architecture import ArchCapabilities, CorpusChange
++from wavelibrarian.ports.components import VectorStore
++from wavelibrarian.ports.gateway import LLMRequest, Message
++from wavelibrarian.registry import register
++
++_log = logging.getLogger(__name__)
++
++_SYSTEM = (
++    "Résume fidèlement les passages suivants en un seul texte court, dans leur langue. "
++    "Ne garde que ce qu'ils affirment : n'ajoute aucune information."
++)
++
++
++@register("architecture", "raptor")
++class Raptor(NaiveRag):
++    """Arbre de résumés construit à l'indexation, puis recherche dense sur l'arbre aplati.
++
++    Niveau 0 : les feuilles (Passages du chunker). Chaque niveau n+1 regroupe les nœuds du niveau
++    n de façon gloutonne et déterministe : la graine est le premier nœud restant (ordre des
++    `passage_id`), le groupe est la graine et ses `group_max - 1` plus proches voisins (cosinus,
++    départage par id). Les groupes sont donc pleins ; seul le dernier groupe d'un niveau peut
++    compter moins de `group_min` nœuds (règle documentée : on ne fusionne pas ce reste). Chaque
++    groupe est résumé par le rôle `summarize`. La construction s'arrête à `max_depth` ou quand un
++    niveau ne compte plus qu'un nœud. Pas de mise à jour incrémentale : l'arbre est reconstruit.
++    Une Citation d'un nœud devient des Citations vers les Ancrages de ses feuilles (`labeled`).
++    """
++
++    name = "raptor"
++    capabilities = ArchCapabilities(incremental_update=False, retrieval_method="ranked")
++    query_params: ClassVar[frozenset[str]] = frozenset({"k"})
++
++    class Params(NaiveRag.Params):
++        group_min: int = Field(default=5, gt=0)
++        group_max: int = Field(default=10, gt=0)
++        max_depth: int = Field(default=3, gt=0)
++        summarize_model: Annotated[str | None, ModelRefMeta("generator_models[0]")] = None
++        summary_max_tokens: int = Field(default=256, gt=0)
++
++        @model_validator(mode="after")
++        def _coherence(self) -> "Raptor.Params":
++            if self.group_max < 2:
++                raise ValueError("`group_max` doit valoir au moins 2")
++            if self.group_min > self.group_max:
++                raise ValueError("`group_min` ne peut pas dépasser `group_max`")
++            return self
++
++    def __init__(self, params: Any, ctx: Any) -> None:
++        if params.retriever.name != "dense":
++            raise ConfigError(
++                "retriever",
++                f"`raptor` cherche dans l'index dense de l'arbre aplati : retriever `dense` "
++                f"seul, pas `{params.retriever.name}`",
++            )
++        super().__init__(params, ctx)
++        self._summarize_model: str = (
++            params.summarize_model or ctx.profile.defaults.generator_models[0]
++        )
++
++    def _encoder_vecteurs(self, store: VectorStore, passages: list[Passage]) -> Any:
++        """Encode par lots, remplit le store et rend les vecteurs unitaires (un par Passage)."""
++        morceaux = []
++        for debut in range(0, len(passages), _LOT):
++            lot = passages[debut : debut + _LOT]
++            vecteurs = np.asarray(
++                self.embedder.embed_passages([p.text for p in lot]), dtype=np.float32
++            )
++            store.add([p.passage_id for p in lot], vecteurs)
++            morceaux.append(vecteurs)
++        matrice = np.concatenate(morceaux) if morceaux else np.zeros((0, 0), np.float32)
++        normes = np.linalg.norm(matrice, axis=1, keepdims=True) if len(matrice) else matrice
++        return matrice / np.where(normes > 0.0, normes, 1.0) if len(matrice) else matrice
++
++    def _groupes(self, noeuds: list[Passage], vecteurs: Any) -> list[list[Passage]]:
++        """Regroupement glouton : `noeuds` triés par id, `vecteurs` alignés et unitaires."""
++        taille: int = self.params.group_max  # type: ignore[attr-defined]
++        restants = list(range(len(noeuds)))
++        groupes: list[list[Passage]] = []
++        while restants:
++            graine, autres = restants[0], restants[1:]
++            sims = {i: float(vecteurs[graine] @ vecteurs[i]) for i in autres}
++            voisins = sorted(autres, key=lambda i: (-sims[i], noeuds[i].passage_id))
++            choisis = [graine, *voisins[: taille - 1]]
++            pris = set(choisis)
++            restants = [i for i in restants if i not in pris]
++            groupes.append(sorted((noeuds[i] for i in choisis), key=lambda p: p.passage_id))
++        return groupes
++
++    def _resumer(self, enfants: list[Passage], niveau: int) -> str:
++        texte = "\n\n".join(p.text for p in enfants)
++        requete = LLMRequest(
++            model_id=self._summarize_model,
++            role="summarize",
++            step=f"raptor.summarize.level{niveau}",
++            system=_SYSTEM,
++            messages=(Message(role="user", content=texte),),
++            max_tokens=self.params.summary_max_tokens,  # type: ignore[attr-defined]
++            seed=self.ctx.seed,  # type: ignore[attr-defined]
++            inputs={"text": texte},
++        )
++        resume = str(self.ctx.gateway.complete(requete).text).strip()  # type: ignore[attr-defined]
++        if not resume:
++            _log.warning(
++                "raptor : résumé vide au niveau %d, repli sur la concaténation des enfants", niveau
++            )
++            return texte
++        return resume
++
++    def _noeud(self, enfants: list[Passage], niveau: int) -> Passage:
++        ids = sorted(p.passage_id for p in enfants)
++        ancrages = tuple(dict.fromkeys(a for p in enfants for a in p.anchor_ids))
++        docs = {p.doc_id for p in enfants}
++        return Passage(
++            passage_id=sha16("node", "raptor", str(niveau), *ids),
++            doc_id=next(iter(docs)) if len(docs) == 1 else None,
++            text=self._resumer(enfants, niveau),
++            anchor_ids=ancrages,
++            level=niveau,
++            child_ids=tuple(ids),
++        )
++
++    def index(self, corpus: ParsedCorpus, directory: Path) -> None:
++        feuilles = [p for doc in corpus.documents for p in self.chunker.chunk(doc)]  # type: ignore[attr-defined]
++        feuilles.sort(key=lambda p: p.passage_id)
++        store = self._nouveau_store()
++        tous = list(feuilles)
++        courant, vecteurs = feuilles, self._encoder_vecteurs(store, feuilles)
++        niveau = 0
++        max_depth: int = self.params.max_depth  # type: ignore[attr-defined]
++        while niveau < max_depth and len(courant) > 1:
++            niveau += 1
++            noeuds = [self._noeud(g, niveau) for g in self._groupes(courant, vecteurs)]
++            noeuds.sort(key=lambda p: p.passage_id)
++            vecteurs = self._encoder_vecteurs(store, noeuds)
++            tous.extend(noeuds)
++            courant = noeuds
++        ecrire_passages(directory, tous)
++        store.save(directory / _SOUS_DOSSIER)
++
++    def update(
++        self,
++        change: CorpusChange,
++        corpus_after: ParsedCorpus,
++        old_directory: Path,
++        new_directory: Path,
++    ) -> None:
++        """Pas d'incrémental : l'arbre est reconstruit sur le corpus après changement."""
++        self.index(corpus_after, new_directory)
+diff --git a/tests/unit/architectures/test_story_7_1.py b/tests/unit/architectures/test_story_7_1.py
+new file mode 100644
+index 0000000..8761672
+--- /dev/null
++++ b/tests/unit/architectures/test_story_7_1.py
+@@ -0,0 +1,264 @@
++"""Story 7.1 : Architecture `raptor` (arbre de résumés par regroupement récursif)."""
++
++import json
++import logging
++from pathlib import Path
++from typing import Any
++
++import pytest
++
++from wavelibrarian import registry
++from wavelibrarian.architectures._passages import lire_passages
++from wavelibrarian.architectures.raptor import Raptor
++from wavelibrarian.core.errors import ConfigError
++from wavelibrarian.core.ids import sha16
++from wavelibrarian.core.types import ParsedCorpus, Passage, QuestionInput
++from wavelibrarian.llm.providers.fake import FakeProvider
++from wavelibrarian.ports.components import ComponentSpec
++from wavelibrarian.runner.context import Context as RunCtx
++from wavelibrarian.runner.index_cache import IndexCache
++
++PETITS = {"name": "fixed_tokens", "params": {"size": 40, "overlap": 5}}
++REPONSE = '{"answer": "Réponse.", "citations": ["S1"], "abstain": false}'
++
++
++@pytest.fixture
++def ctx(tmp_path: Path):  # type: ignore[no-untyped-def]
++    provider = FakeProvider()
++    c = RunCtx.from_profile(
++        "test", wl_home=tmp_path / "wl", run_id="r-1", seed=1, providers={"fake": provider}
++    )
++    c.parser = "markdown"
++    c.provider = provider  # type: ignore[attr-defined]
++    with c:
++        yield c
++
++
++def _arch(ctx: RunCtx, **params: Any) -> Any:
++    params.setdefault("embedder", {"name": "fake"})
++    params.setdefault("chunker", PETITS)
++    return ctx.build("architecture", ComponentSpec(name="raptor", params=params))
++
++
++def _spans(ctx: RunCtx, step: str = "raptor.summarize") -> list[dict[str, Any]]:
++    chemin = ctx.run_dir / "traces.jsonl"
++    if not chemin.exists():
++        return []
++    lignes = chemin.read_text(encoding="utf-8").splitlines()
++    return [s for s in map(json.loads, lignes) if s.get("wl.step", "").startswith(step)]
++
++
++def _indexer(ctx: RunCtx, corpus: ParsedCorpus, dossier: Path, **params: Any) -> Any:
++    arch = _arch(ctx, **params)
++    with ctx.scope(post="indexing"):
++        arch.index(corpus, dossier)
++    return arch
++
++
++def _question() -> QuestionInput:
++    return QuestionInput(question_id="q-001", text="Que sait-on de la guilde Orvane ?", lang="fr")
++
++
++def _un_document(corpus: ParsedCorpus) -> ParsedCorpus:
++    return corpus.model_copy(update={"documents": corpus.documents[:1]})
++
++
++def _synthetiques(arch: Any, n: int) -> None:
++    """Remplace le chunker : `n` feuilles distinctes, toutes du même Document."""
++
++    def chunk(doc: Any) -> list[Passage]:
++        return [
++            Passage(
++                passage_id=sha16("feuille", str(i)),
++                doc_id=doc.doc_id,
++                text=f"feuille numéro {i} sujet {i * 7}",
++                anchor_ids=(f"{doc.doc_id}#a{i}",),
++            )
++            for i in range(n)
++        ]
++
++    arch.chunker.chunk = chunk
++
++
++def test_enregistrement_et_params(ctx: RunCtx) -> None:
++    assert registry.get("architecture", "raptor") is Raptor
++    assert Raptor.capabilities.incremental_update is False
++    assert Raptor.capabilities.retrieval_method == "ranked"
++    assert Raptor.query_params == frozenset({"k"})
++    p = _arch(ctx).params
++    assert (p.group_min, p.group_max, p.max_depth, p.k, p.summary_max_tokens) == (5, 10, 3, 5, 256)
++
++
++@pytest.mark.parametrize(
++    "params",
++    [
++        {"group_min": 6, "group_max": 5},
++        {"group_max": 1, "group_min": 1},
++        {"max_depth": 0},
++    ],
++)
++def test_params_invalides_refuses(ctx: RunCtx, params: dict[str, int]) -> None:
++    with pytest.raises(Exception, match="group|max_depth"):
++        _arch(ctx, **params)
++
++
++def test_retriever_non_dense_refuse(ctx: RunCtx) -> None:
++    with pytest.raises(ConfigError, match="dense"):
++        _arch(ctx, retriever={"name": "lexical"})
++
++
++def test_minicorpus_invariants_des_noeuds(
++    ctx: RunCtx, minicorpus: ParsedCorpus, tmp_path: Path
++) -> None:
++    _indexer(ctx, minicorpus, tmp_path / "i")
++    passages = lire_passages(tmp_path / "i")
++    par_id = {p.passage_id: p for p in passages}
++    noeuds = [p for p in passages if p.level > 0]
++    assert any(p.level == 0 for p in passages) and noeuds
++    assert max(p.level for p in passages) <= 3
++    for n in noeuds:
++        assert n.child_ids and list(n.child_ids) == sorted(n.child_ids)
++        enfants = [par_id[c] for c in n.child_ids]
++        assert all(e.level < n.level for e in enfants)
++        attendu = tuple(dict.fromkeys(a for e in enfants for a in e.anchor_ids))
++        assert n.anchor_ids == attendu
++        docs = {e.doc_id for e in enfants}
++        assert n.doc_id == (next(iter(docs)) if len(docs) == 1 else None)
++        assert n.passage_id == sha16("node", "raptor", str(n.level), *sorted(n.child_ids))
++    assert any(n.doc_id is None for n in noeuds)  # le sommet couvre plusieurs Documents
++
++
++def test_tailles_de_groupes_sur_23_feuilles(
++    ctx: RunCtx, minicorpus: ParsedCorpus, tmp_path: Path
++) -> None:
++    arch = _arch(ctx)
++    _synthetiques(arch, 23)
++    with ctx.scope(post="indexing"):
++        arch.index(_un_document(minicorpus), tmp_path)
++    passages = lire_passages(tmp_path)
++    niveaux = {n: [p for p in passages if p.level == n] for n in (0, 1, 2, 3)}
++    assert len(niveaux[0]) == 23
++    assert sorted(len(p.child_ids) for p in niveaux[1]) == [3, 10, 10]
++    assert [len(p.child_ids) for p in niveaux[2]] == [3]
++    assert niveaux[3] == []
++    assert len(niveaux[2][0].anchor_ids) == 23
++
++
++def test_profondeur_limitee_par_max_depth(
++    ctx: RunCtx, minicorpus: ParsedCorpus, tmp_path: Path
++) -> None:
++    arch = _arch(ctx, group_min=2, group_max=2, max_depth=2)
++    _synthetiques(arch, 16)
++    with ctx.scope(post="indexing"):
++        arch.index(_un_document(minicorpus), tmp_path)
++    assert {p.level for p in lire_passages(tmp_path)} == {0, 1, 2}
++
++
++def test_une_seule_feuille_sans_noeud_ni_appel(
++    ctx: RunCtx, minicorpus: ParsedCorpus, tmp_path: Path
++) -> None:
++    arch = _arch(ctx)
++    _synthetiques(arch, 1)
++    with ctx.scope(post="indexing"):
++        arch.index(_un_document(minicorpus), tmp_path)
++    assert [p.level for p in lire_passages(tmp_path)] == [0]
++    assert _spans(ctx) == []
++
++
++def test_determinisme_octet_pour_octet(
++    ctx: RunCtx, minicorpus: ParsedCorpus, tmp_path: Path
++) -> None:
++    _indexer(ctx, minicorpus, tmp_path / "a")
++    _indexer(ctx, minicorpus, tmp_path / "b")
++    a = (tmp_path / "a" / "passages.jsonl").read_bytes()
++    assert a == (tmp_path / "b" / "passages.jsonl").read_bytes()
++
++
++def test_appels_summarize_step_et_poste(
++    ctx: RunCtx, minicorpus: ParsedCorpus, tmp_path: Path
++) -> None:
++    _indexer(ctx, minicorpus, tmp_path / "i")
++    noeuds = [p for p in lire_passages(tmp_path / "i") if p.level > 0]
++    spans = _spans(ctx)
++    assert len(spans) == len(noeuds)
++    assert all(s["wl.kind"] == "llm" and s["wl.post"] == "indexing" for s in spans)
++    steps = sorted(s["wl.step"] for s in spans)
++    assert steps == sorted(f"raptor.summarize.level{n.level}" for n in noeuds)
++
++
++def test_resume_vide_repli_sur_concatenation(
++    ctx: RunCtx, minicorpus: ParsedCorpus, tmp_path: Path, caplog: pytest.LogCaptureFixture
++) -> None:
++    ctx.provider.script("summarize", "raptor.summarize.*", "")  # type: ignore[attr-defined]
++    with caplog.at_level(logging.WARNING):
++        _indexer(ctx, minicorpus, tmp_path / "i")
++    passages = lire_passages(tmp_path / "i")
++    par_id = {p.passage_id: p for p in passages}
++    n1 = next(p for p in passages if p.level == 1)
++    assert n1.text == "\n\n".join(par_id[c].text for c in n1.child_ids)
++    assert "résumé vide" in caplog.text
++
++
++def test_question_niveaux_et_citations_vers_les_feuilles(
++    ctx: RunCtx, minicorpus: ParsedCorpus, tmp_path: Path
++) -> None:
++    ctx.provider.script("generate", "generate*", REPONSE)  # type: ignore[attr-defined]
++    arch, _ = IndexCache(tmp_path / "home").build(ctx, lambda: _arch(ctx, k=1000), minicorpus)
++    with ctx.scope(post="query", question_id="q-001"):
++        rep = arch.answer(_question())
++    assert any(s.passage.level >= 1 for s in rep.retrieved)
++    anchors = {a for d in minicorpus.documents for a in d.anchors}
++    premier = rep.retrieved[0].passage  # [S1] : citation du premier Passage retrouvé
++    assert {c.anchor_id for c in rep.citations} == set(premier.anchor_ids)
++    assert set(premier.anchor_ids) <= anchors
++
++
++def test_citation_d_un_noeud_donne_les_ancrages_de_ses_feuilles(
++    ctx: RunCtx, minicorpus: ParsedCorpus, tmp_path: Path
++) -> None:
++    arch, _ = IndexCache(tmp_path / "home").build(ctx, lambda: _arch(ctx, k=1000), minicorpus)
++    with ctx.scope(post="query", question_id="q-001"):
++        sans = arch.retriever.retrieve(_question().text, 1000, arch._index)
++    rangs = [i for i, s in enumerate(sans, 1) if s.passage.level >= 1]
++    assert rangs
++    rang = rangs[0]
++    ctx.provider.script(  # type: ignore[attr-defined]
++        "generate",
++        "generate*",
++        f'{{"answer": "R.", "citations": ["S{rang}"], "abstain": false}}',
++    )
++    with ctx.scope(post="query", question_id="q-001"):
++        rep = arch.answer(_question())
++    noeud = rep.retrieved[rang - 1].passage
++    anchors = {a for d in minicorpus.documents for a in d.anchors}
++    assert {c.anchor_id for c in rep.citations} == set(noeud.anchor_ids)
++    assert all(c.anchor_id in anchors for c in rep.citations)
++
++
++def test_k_hors_cle_et_group_max_dans_la_cle(ctx: RunCtx) -> None:
++    assert _arch(ctx, k=5).index_key() == _arch(ctx, k=3).index_key()
++    assert _arch(ctx).index_key() != _arch(ctx, group_max=8).index_key()
++
++
++def test_mise_a_jour_reconstruit_au_poste_update(
++    ctx: RunCtx, minicorpus: ParsedCorpus, tmp_path: Path
++) -> None:
++    from wavelibrarian.corpus.scenario import appliquer_fichier
++
++    scenario = Path(__file__).resolve().parents[3] / "corpora/minicorpus/scenario/scenario.yaml"
++    change, apres = appliquer_fichier(minicorpus, scenario, parser="markdown")
++    cache = IndexCache(tmp_path / "home")
++    _, cle = cache.build(ctx, lambda: _arch(ctx), minicorpus)
++    avant = len(_spans(ctx))
++    _, cle2 = cache.build(
++        ctx, lambda: _arch(ctx), apres, post="update", change=change, old_dir=cache.path(cle)
++    )
++    nouveaux = _spans(ctx)[avant:]
++    assert nouveaux and all(s["wl.post"] == "update" for s in nouveaux)
++    sortants = set(change.removed) | {ancien for ancien, _ in change.modified}
++    ancres = {a for d in minicorpus.documents if d.doc_id in sortants for a in d.anchors}
++    assert ancres
++    passages = lire_passages(cache.path(cle2))
++    assert any(p.level > 0 for p in passages)
++    assert not any(set(p.anchor_ids) & ancres for p in passages)
++    assert not any(p.doc_id in sortants for p in passages)

@@ -1,0 +1,269 @@
+diff --git a/src/wavelibrarian/stats/bootstrap.py b/src/wavelibrarian/stats/bootstrap.py
+new file mode 100644
+index 0000000..5ca7389
+--- /dev/null
++++ b/src/wavelibrarian/stats/bootstrap.py
+@@ -0,0 +1,108 @@
++"""Bootstrap percentile et bootstrap apparié (fonctions pures, AD-22)."""
++
++from collections.abc import Mapping, Sequence
++from typing import NamedTuple
++
++import numpy as np
++from scipy import stats
++
++
++class IC(NamedTuple):
++    """Intervalle de confiance."""
++
++    bas: float
++    haut: float
++
++
++class ResultatApparie(NamedTuple):
++    """Différence moyenne (a − b), son IC et la p-valeur bilatérale."""
++
++    diff: float
++    ic: IC
++    p_value: float
++    n: int
++
++
++class ResultatContinu(NamedTuple):
++    """Comparaison appariée sur les Questions communes."""
++
++    diff: float
++    ic: IC
++    p_value: float
++    n_common: int
++
++
++def bootstrap_ci(
++    values: Sequence[float | bool],
++    *,
++    n_resamples: int = 2000,
++    confidence: float = 0.95,
++    seed: int = 42,
++) -> IC:
++    """IC par percentile de la moyenne, identique à `scipy.stats.bootstrap`."""
++    if len(values) == 0:
++        raise ValueError("vecteur vide")
++    data = np.asarray(values, dtype=float)
++    res = stats.bootstrap(
++        (data,),
++        np.mean,
++        n_resamples=n_resamples,
++        confidence_level=confidence,
++        method="percentile",
++        rng=np.random.default_rng(seed),
++    )
++    return IC(float(res.confidence_interval.low), float(res.confidence_interval.high))
++
++
++def paired_bootstrap(
++    a: Sequence[float],
++    b: Sequence[float],
++    *,
++    n_resamples: int = 2000,
++    confidence: float = 0.95,
++    seed: int = 42,
++) -> ResultatApparie:
++    """Bootstrap apparié de la différence moyenne a − b.
++
++    IC par percentile des différences rééchantillonnées ; p-valeur bilatérale
++    par rééchantillonnage des différences recentrées (hypothèse nulle).
++    """
++    if len(a) != len(b):
++        raise ValueError(f"longueurs différentes : {len(a)} et {len(b)}")
++    n = len(a)
++    if n == 0:
++        raise ValueError("vecteurs vides")
++    d = np.asarray(a, dtype=float) - np.asarray(b, dtype=float)
++    obs = float(d.mean())
++    if np.all(d == d[0]):
++        # Différences constantes : aucune variabilité à rééchantillonner.
++        p = 1.0 if obs == 0.0 else 0.0
++        return ResultatApparie(obs, IC(obs, obs), p, n)
++    rng = np.random.default_rng(seed)
++    idx = rng.integers(0, n, size=(n_resamples, n))
++    moyennes = d[idx].mean(axis=1)
++    alpha = (1.0 - confidence) / 2.0
++    bas, haut = np.quantile(moyennes, [alpha, 1.0 - alpha])
++    extremes = int(np.sum(np.abs(moyennes - obs) >= abs(obs) - 1e-12))
++    p = min(1.0, (extremes + 1) / (n_resamples + 1))
++    return ResultatApparie(obs, IC(float(bas), float(haut)), float(p), n)
++
++
++def compare_continu(
++    a: Mapping[str, float],
++    b: Mapping[str, float],
++    *,
++    n_resamples: int = 2000,
++    confidence: float = 0.95,
++    seed: int = 42,
++) -> ResultatContinu:
++    """Bootstrap apparié restreint aux Questions communes (`n_common`)."""
++    communes = sorted(a.keys() & b.keys())
++    r = paired_bootstrap(
++        [a[q] for q in communes],
++        [b[q] for q in communes],
++        n_resamples=n_resamples,
++        confidence=confidence,
++        seed=seed,
++    )
++    return ResultatContinu(r.diff, r.ic, r.p_value, len(communes))
+diff --git a/src/wavelibrarian/stats/mcnemar.py b/src/wavelibrarian/stats/mcnemar.py
+new file mode 100644
+index 0000000..c4a50e9
+--- /dev/null
++++ b/src/wavelibrarian/stats/mcnemar.py
+@@ -0,0 +1,33 @@
++"""Test exact de McNemar (fonctions pures, AD-22)."""
++
++from collections.abc import Mapping
++from typing import NamedTuple
++
++from scipy import stats
++
++
++class ResultatMcNemar(NamedTuple):
++    """Paires discordantes, p-valeur bilatérale et nombre de Questions communes."""
++
++    b: int
++    c: int
++    p_value: float
++    n_common: int
++
++
++def mcnemar_exact(b: int, c: int) -> float:
++    """P-valeur bilatérale exacte pour b et c paires discordantes."""
++    if b < 0 or c < 0:
++        raise ValueError("b et c doivent être positifs ou nuls")
++    n = b + c
++    if n == 0:
++        return 1.0
++    return float(stats.binomtest(min(b, c), n, 0.5).pvalue)
++
++
++def compare(a: Mapping[str, bool], b: Mapping[str, bool]) -> ResultatMcNemar:
++    """McNemar sur les seules Questions communes ; `b` = a oui / b non."""
++    communes = a.keys() & b.keys()
++    n_b = sum(1 for q in communes if a[q] and not b[q])
++    n_c = sum(1 for q in communes if not a[q] and b[q])
++    return ResultatMcNemar(n_b, n_c, mcnemar_exact(n_b, n_c), len(communes))
+diff --git a/src/wavelibrarian/stats/pareto.py b/src/wavelibrarian/stats/pareto.py
+new file mode 100644
+index 0000000..29b7dcc
+--- /dev/null
++++ b/src/wavelibrarian/stats/pareto.py
+@@ -0,0 +1,26 @@
++"""Front de Pareto (Qualité maximisée, coût minimisé ; fonction pure, AD-22)."""
++
++from collections.abc import Iterable
++from typing import NamedTuple
++
++
++class Point(NamedTuple):
++    """Une Configuration placée sur (Qualité, coût)."""
++
++    config_id: str
++    qualite: float
++    cout: float
++
++
++def _domine(p: Point, q: Point) -> bool:
++    """`p` domine `q` : au moins aussi bon partout, strictement meilleur quelque part."""
++    return (
++        p.qualite >= q.qualite and p.cout <= q.cout and (p.qualite > q.qualite or p.cout < q.cout)
++    )
++
++
++def front_pareto(points: Iterable[Point]) -> list[Point]:
++    """Points non dominés, triés par coût, Qualité décroissante puis `config_id`."""
++    pts = list(points)
++    front = [p for p in pts if not any(_domine(q, p) for q in pts)]
++    return sorted(front, key=lambda p: (p.cout, -p.qualite, p.config_id))
+diff --git a/tests/unit/stats/test_bootstrap_mcnemar_pareto.py b/tests/unit/stats/test_bootstrap_mcnemar_pareto.py
+new file mode 100644
+index 0000000..15db867
+--- /dev/null
++++ b/tests/unit/stats/test_bootstrap_mcnemar_pareto.py
+@@ -0,0 +1,78 @@
++"""Tests de bootstrap, McNemar et Pareto."""
++
++import numpy as np
++import pytest
++from scipy import stats
++
++from wavelibrarian.stats.bootstrap import (
++    bootstrap_ci,
++    compare_continu,
++    paired_bootstrap,
++)
++from wavelibrarian.stats.mcnemar import compare, mcnemar_exact
++from wavelibrarian.stats.pareto import Point, front_pareto
++
++
++def test_bootstrap_ci_reproduit_scipy() -> None:
++    v = [1] * 70 + [0] * 30
++    ref = stats.bootstrap(
++        (np.asarray(v, dtype=float),),
++        np.mean,
++        n_resamples=2000,
++        confidence_level=0.95,
++        method="percentile",
++        rng=np.random.default_rng(42),
++    ).confidence_interval
++    ic = bootstrap_ci(v, n_resamples=2000, seed=42)
++    assert ic.bas == pytest.approx(ref.low, abs=1e-9)
++    assert ic.haut == pytest.approx(ref.high, abs=1e-9)
++    assert bootstrap_ci(v, seed=42) == bootstrap_ci(v, seed=42)
++
++
++def test_paired_bootstrap_decalage_constant() -> None:
++    b = np.random.default_rng(0).normal(0, 1, 200)
++    r = paired_bootstrap(b + 0.5, b)
++    assert r.diff == pytest.approx(0.5)
++    assert r.ic.bas == pytest.approx(0.5)
++    assert r.ic.haut == pytest.approx(0.5)
++    assert r.p_value < 0.01
++    nul = paired_bootstrap([1.0, 2.0], [1.0, 2.0])
++    assert nul.diff == 0 and nul.p_value == 1.0
++
++
++def test_paired_bootstrap_bruite_et_reproductible() -> None:
++    rng = np.random.default_rng(1)
++    a = rng.normal(1.0, 1, 100)
++    b = rng.normal(0.0, 1, 100)
++    r = paired_bootstrap(a, b)
++    assert r == paired_bootstrap(a, b)
++    assert r.ic.bas < r.diff < r.ic.haut
++    assert r.p_value < 0.01
++    with pytest.raises(ValueError):
++        paired_bootstrap([1.0], [1.0, 2.0])
++
++
++def test_mcnemar() -> None:
++    assert mcnemar_exact(12, 3) == stats.binomtest(3, 15, 0.5).pvalue
++    assert mcnemar_exact(0, 0) == 1.0
++
++
++def test_compare_questions_communes() -> None:
++    a = {"q1": True, "q2": True, "q3": False, "q4": True}
++    b = {"q2": False, "q3": True, "q4": True, "q5": False}
++    r = compare(a, b)
++    assert r.n_common == 3
++    assert (r.b, r.c) == (1, 1)
++    c = compare_continu({"q1": 1.0, "q2": 0.5}, {"q2": 0.0, "q9": 3.0})
++    assert c.n_common == 1 and c.diff == 0.5
++
++
++def test_front_pareto() -> None:
++    pts = [
++        Point("d", 0.5, 5.0),  # dominé
++        Point("c", 0.9, 3.0),
++        Point("b", 0.9, 3.0),  # ex æquo avec c
++        Point("a", 0.6, 1.0),
++        Point("e", 0.95, 9.0),
++    ]
++    assert [p.config_id for p in front_pareto(pts)] == ["a", "b", "c", "e"]

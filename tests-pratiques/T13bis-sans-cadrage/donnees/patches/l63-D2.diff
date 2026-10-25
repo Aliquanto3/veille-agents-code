@@ -1,0 +1,242 @@
+diff --git a/src/wavelibrarian/architectures/hyde.py b/src/wavelibrarian/architectures/hyde.py
+new file mode 100644
+index 0000000..bdeb522
+--- /dev/null
++++ b/src/wavelibrarian/architectures/hyde.py
+@@ -0,0 +1,77 @@
++"""Architecture `hyde` : recherche dense avec l'embedding d'une réponse hypothétique (FR-20)."""
++
++from typing import Annotated, Any, ClassVar
++
++import numpy as np
++from numpy.typing import NDArray
++
++from wavelibrarian.architectures.naive_rag import NaiveRag
++from wavelibrarian.components.context import build_arch_answer
++from wavelibrarian.core.types import ArchAnswer, ModelRefMeta, QuestionInput
++from wavelibrarian.ports.gateway import LLMRequest, Message
++from wavelibrarian.registry import register
++
++_SYSTEM = (
++    "Rédige un court passage de document qui répondrait à la question, dans la langue de la "
++    "question, comme si tu l'extrayais d'un corpus. Même si tu n'es pas sûr des faits, écris "
++    "une réponse plausible : elle ne sert qu'à la recherche et ne sera jamais montrée."
++)
++_MAX_TOKENS = 256
++
++
++@register("architecture", "hyde")
++class Hyde(NaiveRag):
++    """Même index que `naive_rag` ; la requête dense est le vecteur d'une réponse hypothétique
++    (rôle `hyde`, step `hyde`), éventuellement moyenné avec celui de la Question."""
++
++    name = "hyde"
++    query_params: ClassVar[frozenset[str]] = frozenset({"k", "mix_question"})
++
++    class Params(NaiveRag.Params):
++        hyde_model: Annotated[str | None, ModelRefMeta("generator_models[0]")] = None
++        mix_question: bool = False
++
++    def __init__(self, params: Any, ctx: Any) -> None:
++        super().__init__(params, ctx)
++        self._hyde_model: str = params.hyde_model or ctx.profile.defaults.generator_models[0]
++
++    def _reponse_hypothetique(self, question: QuestionInput) -> str:
++        requete = LLMRequest(
++            model_id=self._hyde_model,
++            role="hyde",
++            step="hyde",
++            system=_SYSTEM,
++            messages=(Message(role="user", content=question.text),),
++            max_tokens=_MAX_TOKENS,
++            seed=self.ctx.seed,  # type: ignore[attr-defined]
++            inputs={"text": question.text},
++        )
++        return str(self.ctx.gateway.complete(requete).text)  # type: ignore[attr-defined]
++
++    def _vecteur_de_recherche(self, question: QuestionInput) -> NDArray[np.float32]:
++        hypothese = self._reponse_hypothetique(question)
++        melange = self.params.mix_question  # type: ignore[attr-defined]
++        textes = [hypothese, question.text] if melange else [hypothese]
++        vecteurs = np.asarray(self.embedder.embed_queries(textes), dtype=np.float32)
++        if len(textes) == 1:
++            return vecteurs[0]
++        moyenne = vecteurs.mean(axis=0)
++        norme = float(np.linalg.norm(moyenne))
++        return (moyenne / norme if norme > 0 else moyenne).astype(np.float32)
++
++    def answer(self, question: QuestionInput) -> ArchAnswer:
++        if self._index is None:
++            raise RuntimeError("`load` doit précéder `answer`")
++        vecteur = self._vecteur_de_recherche(question)
++        # La réponse hypothétique ne sort pas de cette méthode : ni Contexte, ni Citation.
++        k = self.params.k  # type: ignore[attr-defined]
++        classes = self.retriever.retrieve(question.text, k, self._index, vecteur)  # type: ignore[attr-defined]
++        contexte = self.context_builder.build([s.passage for s in classes])
++        resultat = self.generator.generate(question, contexte)
++        return build_arch_answer(
++            contexte,
++            resultat,
++            classes,
++            "ranked",
++            tokenizer=self.ctx.tokenizer_for(self.generator.model_id),
++        )
+diff --git a/tests/unit/architectures/test_story_6_3.py b/tests/unit/architectures/test_story_6_3.py
+new file mode 100644
+index 0000000..cee868a
+--- /dev/null
++++ b/tests/unit/architectures/test_story_6_3.py
+@@ -0,0 +1,153 @@
++"""Story 6.3 : Architecture `hyde` (recherche dense par réponse hypothétique)."""
++
++import json
++from pathlib import Path
++from typing import Any
++
++import numpy as np
++import pytest
++
++from wavelibrarian import registry
++from wavelibrarian.architectures.hyde import Hyde
++from wavelibrarian.core.types import ParsedCorpus, QuestionInput
++from wavelibrarian.llm.providers.fake import FakeProvider
++from wavelibrarian.ports.components import ComponentSpec
++from wavelibrarian.ports.gateway import LLMRequest
++from wavelibrarian.runner.context import Context as RunCtx
++
++PETITS = {"name": "fixed_tokens", "params": {"size": 40, "overlap": 5}}
++HYPOTHESE = "Le phare de Keld guide les navires pendant la brume."
++
++
++@pytest.fixture
++def ctx(tmp_path: Path):  # type: ignore[no-untyped-def]
++    provider = FakeProvider()
++    c = RunCtx.from_profile(
++        "test", wl_home=tmp_path / "wl", run_id="r-1", seed=1, providers={"fake": provider}
++    )
++    c.parser = "markdown"
++    c.provider = provider  # type: ignore[attr-defined]
++    with c:
++        yield c
++
++
++def _arch(ctx: RunCtx, **params: Any) -> Any:
++    params.setdefault("embedder", {"name": "fake"})
++    params.setdefault("chunker", PETITS)
++    return ctx.build("architecture", ComponentSpec(name="hyde", params=params))
++
++
++def _question() -> QuestionInput:
++    return QuestionInput(question_id="q-001", text="Que sait-on de la guilde Orvane ?", lang="fr")
++
++
++def _repondre(arch: Any, ctx: RunCtx) -> Any:
++    with ctx.scope(post="query", question_id="q-001"):
++        return arch.answer(_question())
++
++
++def _encoder(arch: Any, ctx: RunCtx, *textes: str) -> Any:
++    with ctx.scope(post="query", question_id="q-001"):
++        return arch.embedder.embed_queries(list(textes))
++
++
++def _spans(ctx: RunCtx) -> list[dict[str, Any]]:
++    lignes = (ctx.run_dir / "traces.jsonl").read_text(encoding="utf-8").splitlines()
++    return [json.loads(x) for x in lignes]
++
++
++def _prete(ctx: RunCtx, corpus: ParsedCorpus, tmp_path: Path, **params: Any) -> Any:
++    arch = _arch(ctx, **params)
++    with ctx.scope(post="indexing"):
++        arch.index(corpus, tmp_path / "i")
++    arch.load(tmp_path / "i")
++    return arch
++
++
++def _espionner_requetes(arch: Any) -> list[np.ndarray]:
++    """Vecteurs réellement passés au Retriever."""
++    vus: list[np.ndarray] = []
++    origine = arch.retriever.retrieve
++
++    def espion(query: str, k: int, index: Any, query_vector: Any = None) -> Any:
++        vus.append(query_vector)
++        return origine(query, k, index, query_vector)
++
++    arch.retriever.retrieve = espion
++    return vus
++
++
++def test_hyde_enregistree_et_query_params() -> None:
++    assert registry.get("architecture", "hyde") is Hyde
++    assert Hyde.query_params == {"k", "mix_question"}
++    assert Hyde.Params().mix_question is False
++
++
++def test_hyde_appelle_le_role_hyde_dans_un_span_distinct_et_encode_la_reponse(
++    ctx: RunCtx, minicorpus: ParsedCorpus, tmp_path: Path
++) -> None:
++    requetes: list[LLMRequest] = []
++
++    def hyde(req: LLMRequest) -> str:
++        requetes.append(req)
++        return HYPOTHESE
++
++    ctx.provider.script("hyde", "hyde", hyde)  # type: ignore[attr-defined]
++    arch = _prete(ctx, minicorpus, tmp_path)
++    vus = _espionner_requetes(arch)
++    _repondre(arch, ctx)
++    assert len(requetes) == 1
++    assert requetes[0].inputs == {"text": _question().text}
++    assert np.allclose(vus[0], _encoder(arch, ctx, HYPOTHESE)[0])
++    assert not np.allclose(vus[0], _encoder(arch, ctx, _question().text)[0])
++    spans = [s for s in _spans(ctx) if s.get("wl.post") == "query"]
++    etapes = [s.get("wl.step") for s in spans]
++    assert etapes.count("hyde") == 1 and etapes.count("generate") == 1
++
++
++def test_hyde_mix_question_moyenne_renormalisee(
++    ctx: RunCtx, minicorpus: ParsedCorpus, tmp_path: Path
++) -> None:
++    ctx.provider.script("hyde", "hyde", HYPOTHESE)  # type: ignore[attr-defined]
++    arch = _prete(ctx, minicorpus, tmp_path, mix_question=True)
++    vus = _espionner_requetes(arch)
++    _repondre(arch, ctx)
++    h, q = _encoder(arch, ctx, HYPOTHESE, _question().text)
++    moyenne = (h + q) / 2
++    attendu = moyenne / np.linalg.norm(moyenne)
++    assert np.allclose(vus[0], attendu, atol=1e-6)
++    assert np.linalg.norm(vus[0]) == pytest.approx(1.0, abs=1e-5)
++
++
++def test_hyde_hypothese_absente_du_contexte_et_des_citations(
++    ctx: RunCtx, minicorpus: ParsedCorpus, tmp_path: Path
++) -> None:
++    secret = "zxqv-hypothese-unique-jamais-dans-le-corpus"
++    ctx.provider.script("hyde", "hyde", secret)  # type: ignore[attr-defined]
++    generes: list[LLMRequest] = []
++
++    def generation(req: LLMRequest) -> str:
++        generes.append(req)
++        return '{"answer": "Réponse.", "citations": ["S1"], "abstain": false}'
++
++    ctx.provider.script("generate", "generate*", generation)  # type: ignore[attr-defined]
++    arch = _prete(ctx, minicorpus, tmp_path)
++    rep = _repondre(arch, ctx)
++    assert secret not in json.dumps(generes[0].inputs, ensure_ascii=False)
++    assert secret not in generes[0].system
++    assert all(secret not in m.content for m in generes[0].messages)
++    assert all(secret not in s.passage.text for s in rep.retrieved)
++    ancrages = {a for s in rep.retrieved for a in s.passage.anchor_ids}
++    assert rep.citations and {c.anchor_id for c in rep.citations} <= ancrages
++
++
++def test_hyde_passage_repris_par_la_reponse_hypothetique_est_au_rang_1(
++    ctx: RunCtx, minicorpus: ParsedCorpus, tmp_path: Path
++) -> None:
++    arch = _prete(ctx, minicorpus, tmp_path)
++    cible = arch._index.passages  # noqa: SLF001
++    passage = sorted(cible.values(), key=lambda p: p.passage_id)[7]
++    ctx.provider.script("hyde", "hyde", passage.text)  # type: ignore[attr-defined]
++    rep = _repondre(arch, ctx)
++    assert rep.retrieved[0].passage.passage_id == passage.passage_id
++    assert rep.retrieved[0].rank == 1

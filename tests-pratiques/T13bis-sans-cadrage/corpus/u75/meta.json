@@ -1,0 +1,38 @@
+{
+  "id": "u75",
+  "repo": "usine-migration-jira-demo",
+  "pkg": "usine",
+  "label": "7.5",
+  "commit": "97734e642519022d0ccc8e1465ad2c706b309c44",
+  "base": "54606dc337c096586a1501d82b44f500800b9c80",
+  "fichiers_commit": [
+    "_bmad-output/implementation-artifacts/spec-7-5-ecran-ce-qu-il-faut-pour-le-faire-en-vrai.md",
+    "src/usine/ui/app.py",
+    "src/usine/ui/navigation.py",
+    "src/usine/ui/outillage.py",
+    "tests/unit/ui/conftest.py",
+    "tests/unit/ui/test_app.py",
+    "tests/unit/ui/test_navigation.py",
+    "tests/unit/ui/test_outillage.py"
+  ],
+  "tests_caches": [
+    "tests/unit/ui/test_outillage.py"
+  ],
+  "tests_executes": [
+    "tests/unit/ui/test_outillage.py"
+  ],
+  "spec_origine": "_bmad-output/implementation-artifacts/spec-7-5-ecran-ce-qu-il-faut-pour-le-faire-en-vrai.md",
+  "src_modifies": [
+    "src/usine/ui/app.py",
+    "src/usine/ui/navigation.py",
+    "src/usine/ui/outillage.py"
+  ],
+  "c_disponible": true,
+  "total_ref": 8,
+  "base_passed": 0,
+  "base_failed": 0,
+  "duree_ref_s": 7.0,
+  "tests_appui": [
+    "tests/unit/ui/conftest.py"
+  ]
+}

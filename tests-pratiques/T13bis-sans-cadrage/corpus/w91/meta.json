@@ -1,0 +1,39 @@
+{
+  "id": "w91",
+  "repo": "wavelocalai",
+  "pkg": "wavelocalai",
+  "label": "9.1",
+  "commit": "ab1fcfec97ba3e9a5ee287847c97c31d06fb8289",
+  "base": "ba606cb2585788400428f528546c16854cbf239d",
+  "fichiers_commit": [
+    "README.md",
+    "_bmad-output/implementation-artifacts/story-9-1.md",
+    "src/wavelocalai/__main__.py",
+    "src/wavelocalai/config.py",
+    "tests/v2/e2e/conftest.py",
+    "tests/v2/unit/test_browser_open.py",
+    "tests/v2/web/test_real_launch.py",
+    "tests/v2/web/test_real_shutdown.py",
+    "wavelocalai.toml"
+  ],
+  "tests_caches": [
+    "tests/v2/unit/test_browser_open.py"
+  ],
+  "tests_executes": [
+    "tests/v2/unit/test_browser_open.py"
+  ],
+  "spec_origine": "_bmad-output/implementation-artifacts/story-9-1.md",
+  "src_modifies": [
+    "src/wavelocalai/__main__.py",
+    "src/wavelocalai/config.py",
+    "wavelocalai.toml"
+  ],
+  "c_disponible": false,
+  "total_ref": 6,
+  "base_passed": 0,
+  "base_failed": 1,
+  "duree_ref_s": 15.2,
+  "tests_appui": [
+    "tests/v2/e2e/conftest.py"
+  ]
+}

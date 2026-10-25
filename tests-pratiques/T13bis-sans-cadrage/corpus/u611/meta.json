@@ -1,0 +1,32 @@
+{
+  "id": "u611",
+  "repo": "usine-migration-jira-demo",
+  "pkg": "usine",
+  "label": "6.11",
+  "commit": "81a97cf0354ff9ec12a2158b12d36cea9a4c948f",
+  "base": "38201b99193fff93947cdaf324e670fb7895d494",
+  "fichiers_commit": [
+    "_bmad-output/implementation-artifacts/spec-6-11-detection-de-doublons.md",
+    "src/usine/composition.py",
+    "src/usine/ia/cli.py",
+    "src/usine/ia/doublons.py",
+    "tests/unit/ia/test_doublons.py"
+  ],
+  "tests_caches": [
+    "tests/unit/ia/test_doublons.py"
+  ],
+  "tests_executes": [
+    "tests/unit/ia/test_doublons.py"
+  ],
+  "tests_appui": [],
+  "src_modifies": [
+    "src/usine/composition.py",
+    "src/usine/ia/cli.py",
+    "src/usine/ia/doublons.py"
+  ],
+  "c_disponible": false,
+  "total_ref": 10,
+  "base_passed": 0,
+  "base_failed": 1,
+  "duree_ref_s": 15.7
+}

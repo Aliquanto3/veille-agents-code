@@ -1,0 +1,22 @@
+20 tâches, engagé 34.87 $
+12:27:40 l63-Dc1 dev: cout=0.41784390000000005 tours=35 mur=268.1s cache=6/8 ruff=0/0 hors=0
+12:29:11 u51-Dc1 dev: cout=0.5499668000000001 tours=35 mur=356.0s cache=3/6 ruff=0/0 hors=0
+12:31:49 l65-Dc1 dev: cout=0.5109568999999999 tours=38 mur=239.0s cache=6/8 ruff=0/0 hors=3
+12:31:49 u25-Dc1 dev: cout=0.32322439999999997 tours=27 mur=85.6s cache=9/13 ruff=0/0 hors=1
+12:32:16 l27-Dc1 dev: cout=0.30599560000000003 tours=16 mur=71.4s cache=6/9 ruff=0/0 hors=0
+12:35:30 u75-Dc1 dev: cout=0.307584 tours=25 mur=204.2s cache=5/8 ruff=0/0 hors=0
+12:35:30 l51-Dc1 dev: cout=0.3265375 tours=15 mur=89.0s cache=10/14 ruff=0/0 hors=0
+12:36:04 l23-Dc1 dev: cout=0.3292647999999999 tours=25 mur=114.0s cache=7/7 ruff=0/0 hors=1
+12:42:10 u45-Dc1 dev: cout=0.48223610000000006 tours=37 mur=367.8s cache=3/3 ruff=0/0 hors=6
+12:42:10 w91-Dc1 dev: cout=0.20038899999999998 tours=17 mur=67.3s cache=1/6 ruff=-1/-1 hors=1
+12:42:10 l35-Dc1 dev: cout=0.6221837 tours=24 mur=174.2s cache=9/11 ruff=0/0 hors=0
+12:42:28 u611-Dc1 dev: cout=0.2207711 tours=12 mur=72.9s cache=0/10 ruff=0/0 hors=0
+12:43:35 s52-Dc1 dev: cout=0.22273869999999998 tours=13 mur=78.4s cache=66/86 ruff=0/0 hors=0
+12:45:18 l71-Dc1 dev: cout=0.4924751 tours=32 mur=156.7s cache=5/7 ruff=0/0 hors=0
+12:47:37 u78-Dc1 dev: cout=0.48585890000000004 tours=26 mur=223.8s cache=9/23 ruff=0/0 hors=1
+12:47:37 l34-Dc1 dev: cout=0.4864619 tours=24 mur=118.3s cache=5/7 ruff=0/0 hors=0
+12:49:40 s102-Dc1 dev: cout=0.4913359 tours=23 mur=125.0s cache=3/10 ruff=0/0 hors=0
+12:49:48 l36-Dc1 dev: cout=0.3603645 tours=21 mur=115.4s cache=4/18 ruff=0/0 hors=0
+12:51:27 l410-Dc1 dev: cout=0.2640998 tours=15 mur=94.3s cache=2/6 ruff=0/0 hors=0
+12:51:39 s32-Dc1 dev: cout=0.38626320000000003 tours=17 mur=101.8s cache=0/41 ruff=0/0 hors=0
+fin du lot, engagé 42.66 $

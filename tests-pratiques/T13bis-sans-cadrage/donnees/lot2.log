@@ -1,0 +1,37 @@
+24 tâches, engagé 15.70 $
+11:19:40 l35-A1 cadrage: cout=1.1443278 tours=36 mur=326.3s chars=11193 vide=False
+11:19:40 l35-A1 dev: cout=0.5099296 tours=28 mur=179.4s cache=8/11 ruff=0/0 hors=0
+11:19:40 l35-D1 dev: cout=0.5261308 tours=27 mur=198.3s cache=8/11 ruff=0/0 hors=0
+11:19:40 u611-A1 cadrage: cout=1.0230088 tours=22 mur=127.7s chars=9186 vide=False
+11:19:40 u611-A1 dev: cout=0.20395819999999998 tours=9 mur=141.1s cache=3/10 ruff=0/0 hors=0
+11:24:12 u611-D1 dev: cout=0.32469190000000003 tours=16 mur=273.1s cache=0/10 ruff=0/0 hors=0
+11:24:22 s52-A1 cadrage: cout=0.5864212 tours=10 mur=140.5s chars=9276 vide=False
+11:24:22 s52-A1 dev: cout=0.3099019 tours=19 mur=134.6s cache=71/86 ruff=0/0 hors=0
+11:26:00 s52-D1 dev: cout=0.20079999999999998 tours=9 mur=99.9s cache=52/86 ruff=0/0 hors=0
+11:32:24 l71-A1 cadrage: cout=0.8537835999999999 tours=30 mur=182.2s chars=10552 vide=False
+11:32:24 l71-A1 dev: cout=0.5093403 tours=25 mur=285.3s cache=4/7 ruff=0/0 hors=0
+11:32:24 l71-D1 dev: cout=0.4752833999999999 tours=17 mur=158.7s cache=5/7 ruff=0/0 hors=0
+11:43:21 u78-A1 cadrage: cout=1.0243462 tours=27 mur=153.4s chars=9834 vide=False
+11:43:21 u78-A1 dev: cout=0.4680483 tours=2 mur=688.7s cache=6/23 ruff=0/0 hors=1
+11:43:21 u78-D1 dev: cout=0.3015185 tours=20 mur=219.4s cache=5/23 ruff=0/0 hors=1
+11:43:21 l34-A1 cadrage: cout=0.9240937999999999 tours=28 mur=171.4s chars=10498 vide=False
+11:43:21 l34-A1 dev: cout=0.3954668 tours=28 mur=197.1s cache=5/7 ruff=0/0 hors=0
+11:49:17 l34-D1 dev: cout=0.41177240000000004 tours=36 mur=388.8s cache=5/7 ruff=0/0 hors=0
+11:52:25 s102-A1 cadrage: cout=0.9644618 tours=27 mur=242.0s chars=13680 vide=False
+11:52:25 s102-A1 dev: cout=0.5375403000000001 tours=22 mur=290.2s cache=0/10 ruff=0/0 hors=1
+11:52:53 s102-D1 dev: cout=0.2859483 tours=19 mur=205.3s cache=1/10 ruff=0/0 hors=0
+11:56:51 l36-A1 cadrage: cout=0.6826231999999999 tours=16 mur=143.2s chars=8979 vide=False
+11:56:51 l36-A1 dev: cout=0.2897519 tours=20 mur=111.7s cache=3/18 ruff=0/0 hors=0
+11:56:51 l36-D1 dev: cout=0.3124674 tours=22 mur=193.6s cache=12/18 ruff=0/0 hors=0
+12:08:26 u57-A1 cadrage: cout=0.9265399999999999 tours=27 mur=161.6s chars=10143 vide=False
+12:08:26 u57-A1 dev: cout=0.22567020000000002 tours=10 mur=549.7s cache=0/8 ruff=0/0 hors=1
+12:08:55 u57-D1 dev: cout=0.6942997999999999 tours=34 mur=711.0s cache=0/8 ruff=0/0 hors=1
+12:14:14 l410-A1 cadrage: cout=0.5838804 tours=17 mur=175.1s chars=10216 vide=False
+12:14:14 l410-A1 dev: cout=0.2223454 tours=13 mur=159.0s cache=1/6 ruff=0/0 hors=3
+12:14:14 l410-D1 dev: cout=0.21609899999999996 tours=14 mur=174.6s cache=2/6 ruff=0/0 hors=0
+12:16:37 l13-A1 cadrage: cout=0.6600104 tours=20 mur=178.2s chars=10121 vide=False
+12:16:37 l13-A1 dev: cout=0.20541489999999998 tours=17 mur=91.4s cache=0/6 ruff=0/0 hors=3
+12:16:37 l13-D1 dev: cout=0.2041939 tours=16 mur=75.8s cache=0/6 ruff=0/0 hors=0
+12:16:37 s32-A1: SAUTÉE (budget : engagé 32.70 $, en cours 2.60 $, plafond 37.5 $)
+12:16:37 s32-D1: SAUTÉE (A de la même story sautée)
+fin du lot, engagé 32.91 $

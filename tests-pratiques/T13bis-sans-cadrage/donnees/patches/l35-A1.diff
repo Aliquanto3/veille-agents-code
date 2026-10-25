@@ -1,0 +1,516 @@
+diff --git a/src/wavelibrarian/cli.py b/src/wavelibrarian/cli.py
+index 7d2e148..e9fa2f8 100644
+--- a/src/wavelibrarian/cli.py
++++ b/src/wavelibrarian/cli.py
+@@ -26,7 +26,7 @@ from wavelibrarian.corpus.ingest import ingest, nom_parser_resolu, parsers_par_f
+ from wavelibrarian.corpus.profile import profile as profil_corpus
+ from wavelibrarian.corpus.scenario import corpus_apres as scenario_corpus_apres
+ from wavelibrarian.corpus.tiers import tirer_chemins
+-from wavelibrarian.evalset import check, generate, io
++from wavelibrarian.evalset import check, closed_book, generate, io
+ from wavelibrarian.llm.preflight import preflight
+ from wavelibrarian.measure.tokenizers import make_tokenizer
+ from wavelibrarian.runner import installer as installation
+@@ -41,7 +41,9 @@ app = typer.Typer(
+ 
+ 
+ questions_app = typer.Typer(
+-    help="Jeu d'évaluation : contrôle des Questions.", no_args_is_help=True, add_completion=False
++    help="Jeu d'évaluation : contrôle, génération et filtre closed-book des Questions.",
++    no_args_is_help=True,
++    add_completion=False,
+ )
+ app.add_typer(questions_app, name="questions")
+ 
+@@ -265,6 +267,53 @@ def questions_generer(
+     typer.echo(f"Coût : {res.cout.replace('.', ',')} ({origine}), Poste evalset.")
+ 
+ 
++@questions_app.command("closed-book")
++def questions_closed_book(
++    questions: Annotated[Path, typer.Argument(help="Fichier `questions.yaml` à filtrer.")],
++    modeles: Annotated[
++        str | None,
++        typer.Option("--modeles", help="Modèles interrogés, séparés par des virgules."),
++    ] = None,
++    profil: Annotated[str, typer.Option("--profil", help="Profil : cpu, gpu ou test.")] = "cpu",
++    graine: Annotated[int, typer.Option("--graine", help="Graine des appels.")] = 42,
++) -> None:
++    """Pose chaque Question utilisable sans contexte aux modèles et note `contaminated_by`."""
++    try:
++        jeu = io.load(questions)
++        if modeles is None:
++            liste = list(load_profile(profil).defaults.closed_book_models)
++        else:
++            liste = [m.strip() for m in modeles.split(",") if m.strip()]
++    except ConfigError as erreur:
++        typer.echo(f"Erreur : {erreur}", err=True)
++        raise typer.Exit(2) from erreur
++    try:
++        with _contexte_hors_execution(profil, graine) as ctx:
++            res = closed_book.filtrer(ctx, jeu, liste)
++    except BudgetExceeded as erreur:
++        typer.echo(f"Plafond atteint : {erreur} ; fichier inchangé.", err=True)
++        raise typer.Exit(3) from erreur
++    except ConfigError as erreur:
++        typer.echo(f"Erreur : {erreur}", err=True)
++        raise typer.Exit(2) from erreur
++    except ProviderError as erreur:
++        typer.echo(f"Erreur : {erreur}", err=True)
++        raise typer.Exit(4) from erreur
++    except WlError as erreur:
++        typer.echo(f"Erreur : {erreur}", err=True)
++        raise typer.Exit(1) from erreur
++    avant = {q.id: q.contaminated_by for q in jeu.questions}
++    if any(q.contaminated_by != avant[q.id] for q in res.fichier.questions):
++        io.save(questions, res.fichier)
++    typer.echo(f"Questions filtrées : {len(res.filtrees)} ({questions})")
++    typer.echo(f"Exclues (unanswerable) : {res.exclues_unanswerable}")
++    typer.echo(f"Ignorées par statut : {res.ignorees_statut}")
++    typer.echo(f"Questions contaminées : {len(res.contaminees)}")
++    for ident, par in res.contaminees.items():
++        typer.echo(f"  - {ident} : {', '.join(par)}")
++    typer.echo(f"Coût : {res.cout.replace('.', ',')}, Poste judging.")
++
++
+ def _fr(valeur: float, decimales: int = 2) -> str:
+     """Nombre à virgule décimale, pour les résumés en français."""
+     return f"{valeur:.{decimales}f}".replace(".", ",")
+diff --git a/src/wavelibrarian/evalset/closed_book.py b/src/wavelibrarian/evalset/closed_book.py
+new file mode 100644
+index 0000000..1c873ca
+--- /dev/null
++++ b/src/wavelibrarian/evalset/closed_book.py
+@@ -0,0 +1,109 @@
++"""Filtre closed-book (FR-12, AD-8 Poste `judging`, AD-14).
++
++Chaque Question utilisable est posée sans contexte à chaque modèle (rôle `closed_book`). Une
++réponse courte est tranchée par `exact_match`, une réponse libre par le Juge `closed_book_judge`
++(Critère `correctness`). Le module remplit `contaminated_by` et n'écrit rien : l'appelant
++sauvegarde une fois, donc un plafond atteint ne laisse aucune écriture partielle. Seul
++`contaminated_by` change, l'empreinte du Gel (AD-15) reste donc valide.
++"""
++
++from collections.abc import Sequence
++from dataclasses import dataclass, field
++
++from wavelibrarian.config.panel import closed_book_judge
++from wavelibrarian.core.errors import ConfigError
++from wavelibrarian.core.types import Question
++from wavelibrarian.evalset.generate import ContexteGeneration
++from wavelibrarian.evalset.io import QuestionsFile
++from wavelibrarian.ports.components import ComponentSpec, Judge, JudgeInput
++from wavelibrarian.ports.gateway import LLMRequest, Message
++from wavelibrarian.scoring.answer import exact_match
++
++_SYSTEM = "Réponds à la question de mémoire, de façon concise."
++_MAX_TOKENS = 200
++_STATUTS = frozenset({"validated", "corrected"})
++
++
++@dataclass(frozen=True)
++class Filtrage:
++    """Résultat du filtre : le fichier mis à jour et le détail du tri."""
++
++    fichier: QuestionsFile
++    filtrees: tuple[str, ...]  # ids des Questions posées aux modèles
++    exclues_unanswerable: int
++    ignorees_statut: int  # generated ou rejected
++    contaminees: dict[str, tuple[str, ...]] = field(default_factory=dict)  # id -> modèles
++    cout: str = "0"
++
++
++def _requete(ctx: ContexteGeneration, q: Question, modele: str) -> LLMRequest:
++    plafond = ctx.catalog.get(modele).max_output_tokens
++    return LLMRequest(
++        model_id=modele,
++        role="closed_book",
++        step="closed_book",
++        system=_SYSTEM,
++        messages=(Message(role="user", content=q.text),),
++        max_tokens=min(_MAX_TOKENS, plafond) if plafond else _MAX_TOKENS,
++        seed=ctx.seed,
++        inputs={"text": q.text},
++    )
++
++
++def filtrer(ctx: ContexteGeneration, jeu: QuestionsFile, modeles: Sequence[str]) -> Filtrage:
++    """Pose les Questions `validated` ou `corrected` (hors `unanswerable`) à chaque modèle.
++
++    `ConfigError` avant tout appel si la liste est vide, si un modèle manque au Catalogue ou si
++    aucun Juge d'une autre Famille n'existe ; `BudgetExceeded` si le Plafond l'interdit.
++    """
++    modeles = tuple(dict.fromkeys(modeles))
++    if not modeles:
++        raise ConfigError("--modeles", "aucun modèle à interroger")
++    pool = ctx.profile.defaults.judge_pool
++    choix = {m: closed_book_judge(m, pool, ctx.catalog) for m in modeles}  # Catalogue inclus
++
++    filtrees = [q for q in jeu.questions if q.status in _STATUTS and q.type != "unanswerable"]
++    ids = {q.id for q in filtrees}
++    juges: dict[str, Judge] = {}
++    for modele in modeles:
++        juge = choix[modele]
++        if juge not in juges:
++            juges[juge] = ctx.build("judge", ComponentSpec(name="llm", params={"model": juge}))
++
++    reussies: dict[str, tuple[str, ...]] = {}
++    cout = 0
++    for q in filtrees:
++        gagnants: list[str] = []
++        for modele in modeles:
++            with ctx.scope(post="judging", question_id=q.id):
++                res = ctx.gateway.complete(_requete(ctx, q, modele))
++                cout += res.cost
++                if q.answer_form == "short":
++                    ok = exact_match(q.reference_answer, res.text)
++                else:
++                    item = JudgeInput(
++                        question=q.text,
++                        reference_answer=q.reference_answer,
++                        reference_texts=(),
++                        answer_text=res.text,
++                        context_texts=(),
++                    )
++                    ok = juges[choix[modele]].judge(item, ["correctness"], 0)["correctness"][0]
++            if ok:
++                gagnants.append(modele)
++        reussies[q.id] = tuple(gagnants)
++
++    questions = tuple(
++        q.model_copy(update={"contaminated_by": reussies[q.id]}) if q.id in ids else q
++        for q in jeu.questions
++    )
++    return Filtrage(
++        fichier=jeu.model_copy(update={"questions": questions}),
++        filtrees=tuple(q.id for q in filtrees),
++        exclues_unanswerable=sum(
++            1 for q in jeu.questions if q.status in _STATUTS and q.type == "unanswerable"
++        ),
++        ignorees_statut=sum(1 for q in jeu.questions if q.status not in _STATUTS),
++        contaminees={i: m for i, m in reussies.items() if m},
++        cout=f"{cout:f}",
++    )
+diff --git a/tests/unit/evalset/test_closed_book.py b/tests/unit/evalset/test_closed_book.py
+new file mode 100644
+index 0000000..6653fa8
+--- /dev/null
++++ b/tests/unit/evalset/test_closed_book.py
+@@ -0,0 +1,317 @@
++"""Filtre closed-book et `wl questions closed-book` (story 3.5), Faux LLM seul."""
++
++import hashlib
++import json
++from decimal import Decimal
++from pathlib import Path
++from typing import Any
++
++import pytest
++import yaml
++from typer.testing import CliRunner
++
++import wavelibrarian.cli as cli
++from wavelibrarian.cli import app
++from wavelibrarian.config.experiment import Amount, Budget
++from wavelibrarian.core.errors import ConfigError
++from wavelibrarian.core.ids import canonical_json
++from wavelibrarian.evalset import closed_book, io
++from wavelibrarian.llm.providers.fake import FakeProvider
++from wavelibrarian.ports.gateway import LLMRequest
++from wavelibrarian.runner.context import Context
++
++TEXTE_COURTE = "Quelle année a eu lieu le sacre ?"
++TEXTE_LIBRE = "Décris le rôle du gardien du phare"
++REF_LIBRE = "Il allume la lampe chaque soir"
++
++
++def _question(i: int, **kw: Any) -> dict[str, Any]:
++    base: dict[str, Any] = {
++        "id": f"q-{i:03d}",
++        "type": "factual",
++        "follow_up": False,
++        "cross_lingual": False,
++        "text": TEXTE_COURTE,
++        "lang": "fr",
++        "reference_answer": "1412",
++        "answer_form": "short",
++        "reference_anchors": [{"doc": "a.md", "headings": ["Guide", "Alpha"]}],
++        "status": "validated",
++        "split": None,
++        "contaminated_by": [],
++        "history": [],
++        "origin": {"kind": "human", "name": "anael"},
++        "scenario_target": None,
++    }
++    base.update(kw)
++    return base
++
++
++def _jeu() -> list[dict[str, Any]]:
++    """validated courte, corrected libre, generated, unanswerable, rejected."""
++    return [
++        _question(1),
++        _question(
++            2, text=TEXTE_LIBRE, reference_answer=REF_LIBRE, answer_form="free", status="corrected"
++        ),
++        _question(3, text="Autre texte généré", status="generated"),
++        _question(
++            4,
++            text="Question sans réponse",
++            type="unanswerable",
++            reference_answer="",
++            reference_anchors=[],
++        ),
++        _question(5, text="Question rejetée", status="rejected"),
++    ]
++
++
++def _ecrire(chemin: Path, questions: list[dict[str, Any]], **kw: Any) -> Path:
++    doc: dict[str, Any] = {
++        "corpus_id": "minicorpus",
++        "target_count": 10,
++        "freeze": None,
++        "questions": questions,
++    }
++    doc.update(kw)
++    chemin.write_text(yaml.safe_dump(doc, sort_keys=False, allow_unicode=True), encoding="utf-8")
++    return chemin
++
++
++class Env:
++    def __init__(self) -> None:
++        self.provider = FakeProvider()
++        self.requetes: list[LLMRequest] = []
++        self.budget: Budget | None = None
++
++    def script(self, reponses: dict[str, str]) -> None:
++        """Sortie `closed_book` par texte de Question (modèle : `fake-llm-a` seulement)."""
++
++        def _sortie(req: LLMRequest) -> str:
++            self.requetes.append(req)
++            if req.model_id == "fake-llm-a" and req.inputs["text"] in reponses:
++                return reponses[req.inputs["text"]]
++            return req.inputs["text"]
++
++        self.provider.script("closed_book", "closed_book*", _sortie)
++
++
++@pytest.fixture
++def env(wl_home: Path, monkeypatch: pytest.MonkeyPatch) -> Env:
++    e = Env()
++
++    def _contexte(profil: str, seed: int) -> Context:
++        return Context.from_profile(
++            "test",
++            wl_home=wl_home,
++            run_id="hors-1",
++            seed=seed,
++            providers={"fake": e.provider},
++            budget=e.budget,
++        )
++
++    monkeypatch.setattr(cli, "_contexte_hors_execution", _contexte)
++    return e
++
++
++def _lancer(fichier: Path, *args: str):
++    return CliRunner().invoke(
++        app, ["questions", "closed-book", str(fichier), "--profil", "test", *args]
++    )
++
++
++def _spans(wl_home: Path) -> list[dict[str, Any]]:
++    traces = wl_home / "hors-execution" / "hors-1" / "traces.jsonl"
++    return [json.loads(x) for x in traces.read_text(encoding="utf-8").splitlines()]
++
++
++def _contaminees(fichier: Path) -> dict[str, list[str]]:
++    return {q.id: list(q.contaminated_by) for q in io.load(fichier).questions}
++
++
++def _empreinte(fichier: Path) -> str:
++    brut = io.load(fichier).model_dump(mode="json")
++    brut.pop("freeze")
++    for q in brut["questions"]:
++        q.pop("contaminated_by")
++    return hashlib.sha256(canonical_json(brut).encode("utf-8")).hexdigest()
++
++
++# --- sélection des Questions et des modèles -------------------------------------------------
++
++
++def test_un_span_par_question_filtree_et_par_modele(
++    tmp_path: Path, env: Env, wl_home: Path
++) -> None:
++    fichier = _ecrire(tmp_path / "q.yaml", _jeu())
++    res = _lancer(fichier, "--modeles", "fake-llm-a,fake-llm-b")
++    assert res.exit_code == 0, res.output
++    appels = sorted(
++        (s["wl.question_id"], s["gen_ai.request.model"])
++        for s in _spans(wl_home)
++        if s["wl.step"] == "closed_book"
++    )
++    assert appels == [
++        ("q-001", "fake-llm-a"),
++        ("q-001", "fake-llm-b"),
++        ("q-002", "fake-llm-a"),
++        ("q-002", "fake-llm-b"),
++    ]
++    assert "Questions filtrées : 2" in res.output
++    assert "Exclues (unanswerable) : 1" in res.output
++    assert "Ignorées par statut : 2" in res.output
++
++
++def test_sans_modeles_prend_ceux_du_profil(tmp_path: Path, env: Env, wl_home: Path) -> None:
++    fichier = _ecrire(tmp_path / "q.yaml", [_question(1)])
++    assert _lancer(fichier).exit_code == 0
++    modeles = sorted(s["gen_ai.request.model"] for s in _spans(wl_home))
++    assert modeles == ["fake-llm-a", "fake-llm-b", "fake-llm-c"]
++
++
++def test_aucun_contexte_envoye_au_modele(tmp_path: Path, env: Env) -> None:
++    env.script({})
++    fichier = _ecrire(tmp_path / "q.yaml", [_question(1)])
++    assert _lancer(fichier, "--modeles", "fake-llm-a").exit_code == 0
++    (req,) = env.requetes
++    assert req.role == "closed_book" and req.inputs == {"text": TEXTE_COURTE}
++    assert [m.content for m in req.messages] == [TEXTE_COURTE]
++
++
++def test_questions_exclues_restent_intactes(tmp_path: Path, env: Env) -> None:
++    jeu = _jeu()
++    for i in (2, 3, 4):  # generated, unanswerable, rejected
++        jeu[i]["contaminated_by"] = ["fake-llm-b"]
++    fichier = _ecrire(tmp_path / "q.yaml", jeu)
++    assert _lancer(fichier, "--modeles", "fake-llm-a").exit_code == 0
++    assert all(_contaminees(fichier)[f"q-{i:03d}"] == ["fake-llm-b"] for i in (3, 4, 5))
++
++
++# --- verdicts -------------------------------------------------------------------------------
++
++
++def test_courte_contaminee_sans_juge(tmp_path: Path, env: Env, wl_home: Path) -> None:
++    env.script({TEXTE_COURTE: "En 1412."})
++    fichier = _ecrire(tmp_path / "q.yaml", [_question(1)])
++    res = _lancer(fichier, "--modeles", "fake-llm-a,fake-llm-b")
++    assert res.exit_code == 0, res.output
++    assert _contaminees(fichier) == {"q-001": ["fake-llm-a"]}
++    assert not [s for s in _spans(wl_home) if s["wl.step"] == "judge"]
++    assert "q-001 : fake-llm-a" in res.output
++
++
++def test_libre_jugee_par_un_autre_modele(tmp_path: Path, env: Env, wl_home: Path) -> None:
++    env.script({TEXTE_LIBRE: REF_LIBRE})
++    jeu = [_question(2, text=TEXTE_LIBRE, reference_answer=REF_LIBRE, answer_form="free")]
++    fichier = _ecrire(tmp_path / "q.yaml", jeu)
++    res = _lancer(fichier, "--modeles", "fake-llm-a")
++    assert res.exit_code == 0, res.output
++    assert _contaminees(fichier) == {"q-002": ["fake-llm-a"]}
++    (juge,) = [s for s in _spans(wl_home) if s["wl.step"] == "judge"]
++    assert juge["gen_ai.request.model"] == "fake-llm-c"
++
++
++def test_faux_llm_par_defaut_ne_contamine_rien(tmp_path: Path, env: Env) -> None:
++    jeu = [
++        _question(1),
++        _question(2, text=TEXTE_LIBRE, reference_answer=REF_LIBRE, answer_form="free"),
++    ]
++    fichier = _ecrire(tmp_path / "q.yaml", jeu)
++    octets = fichier.read_bytes()
++    assert _lancer(fichier).exit_code == 0
++    assert all(v == [] for v in _contaminees(fichier).values())
++    assert fichier.read_bytes() == octets  # rien à changer : pas de réécriture
++
++
++def test_chaque_span_porte_poste_judging_et_question(
++    tmp_path: Path, env: Env, wl_home: Path
++) -> None:
++    env.script({TEXTE_LIBRE: REF_LIBRE})
++    fichier = _ecrire(tmp_path / "q.yaml", _jeu())
++    assert _lancer(fichier, "--modeles", "fake-llm-a,fake-llm-b").exit_code == 0
++    spans = _spans(wl_home)
++    assert {s["wl.step"] for s in spans} == {"closed_book", "judge"}
++    assert all(s["wl.post"] == "judging" for s in spans)
++    assert all(s["wl.question_id"] in {"q-001", "q-002"} for s in spans)
++
++
++def test_nouvelle_passe_remplace_contaminated_by(tmp_path: Path, env: Env) -> None:
++    jeu = [_question(1, contaminated_by=["fake-llm-b", "fake-llm-a"])]
++    fichier = _ecrire(tmp_path / "q.yaml", jeu)
++    assert _lancer(fichier, "--modeles", "fake-llm-a,fake-llm-b").exit_code == 0
++    assert _contaminees(fichier) == {"q-001": []}
++
++
++def test_ordre_des_modeles_et_sans_doublon(tmp_path: Path, env: Env) -> None:
++    def tous(req: LLMRequest) -> str:
++        return "1412"
++
++    env.provider.script("closed_book", "closed_book*", tous)
++    fichier = _ecrire(tmp_path / "q.yaml", [_question(1)])
++    assert _lancer(fichier, "--modeles", "fake-llm-b,fake-llm-a,fake-llm-b").exit_code == 0
++    assert _contaminees(fichier) == {"q-001": ["fake-llm-b", "fake-llm-a"]}
++
++
++# --- Jeu gelé -------------------------------------------------------------------------------
++
++
++def test_jeu_gele_seul_contaminated_by_change(tmp_path: Path, env: Env) -> None:
++    env.script({TEXTE_COURTE: "En 1412."})
++    gel = {"sha256": "abc", "at": "2026-10-01T00:00:00Z", "seed": 7, "dev_ratio": 0.5}
++    fichier = _ecrire(tmp_path / "q.yaml", _jeu(), freeze=gel)
++    avant = _empreinte(fichier)
++    assert _lancer(fichier, "--modeles", "fake-llm-a").exit_code == 0
++    apres = io.load(fichier)
++    assert apres.freeze is not None and apres.freeze.model_dump() == gel
++    assert _empreinte(fichier) == avant
++    assert _contaminees(fichier)["q-001"] == ["fake-llm-a"]
++
++
++# --- erreurs --------------------------------------------------------------------------------
++
++
++@pytest.mark.parametrize("modeles", ["inconnu", "fake-llm-a,inconnu", ","])
++def test_modele_inconnu_ou_liste_vide_code_2(tmp_path: Path, env: Env, modeles: str) -> None:
++    env.script({})
++    fichier = _ecrire(tmp_path / "q.yaml", [_question(1)])
++    octets = fichier.read_bytes()
++    res = _lancer(fichier, "--modeles", modeles)
++    assert res.exit_code == 2, res.output
++    assert env.requetes == [] and fichier.read_bytes() == octets
++
++
++def test_pas_de_juge_d_une_autre_famille_code_2(
++    tmp_path: Path, env: Env, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    env.script({})
++
++    def _sans_juge(modele: str, pool: Any, catalog: Any) -> str:
++        raise ConfigError("judges.pool", "aucun Juge closed-book : même Famille")
++
++    monkeypatch.setattr(closed_book, "closed_book_judge", _sans_juge)
++    fichier = _ecrire(tmp_path / "q.yaml", [_question(1)])
++    res = _lancer(fichier, "--modeles", "fake-llm-a")
++    assert res.exit_code == 2 and "closed-book" in res.output
++    assert env.requetes == []
++
++
++def test_plafond_code_3_fichier_intact(tmp_path: Path, env: Env) -> None:
++    env.budget = Budget(per_run={"fake": Amount(amount=Decimal("0.0000001"), currency="USD")})
++    env.script({})
++    fichier = _ecrire(tmp_path / "q.yaml", _jeu())
++    octets = fichier.read_bytes()
++    res = _lancer(fichier, "--modeles", "fake-llm-a")
++    assert res.exit_code == 3, res.output
++    assert "Plafond atteint" in res.output
++    assert fichier.read_bytes() == octets
++
++
++def test_filtrer_sans_cli_ne_modifie_pas_le_jeu_d_origine(wl_home: Path) -> None:
++    """Module seul : le résultat porte les ids filtrés et ne touche pas au fichier d'origine."""
++    jeu = io.QuestionsFile.model_validate(
++        {"corpus_id": "minicorpus", "target_count": 1, "questions": [_question(1)]}
++    )
++    with Context.from_profile("test", wl_home=wl_home, run_id="r-1", seed=1) as ctx:
++        res = closed_book.filtrer(ctx, jeu, ["fake-llm-a"])
++    assert res.filtrees == ("q-001",) and res.contaminees == {}
++    assert res.fichier.questions == jeu.questions

@@ -1,0 +1,172 @@
+diff --git a/src/usine/adaptateurs/journal/__init__.py b/src/usine/adaptateurs/journal/__init__.py
+index 9508d58..1872eff 100644
+--- a/src/usine/adaptateurs/journal/__init__.py
++++ b/src/usine/adaptateurs/journal/__init__.py
+@@ -3,6 +3,9 @@
+ Le Journal est un fichier UTF-8 : un `EnteteJournal` en première ligne, puis un `Evenement`
+ par ligne, par horodatage croissant. Toute anomalie de lecture devient une `UsineErreur` qui
+ nomme le fichier et, pour une ligne, son numéro (1 = en-tête).
++
++Avec un `ManifesteInjection`, `correspondance_cles` est appliquée à la lecture : les événements
++émis portent la clé Jira, clé canonique en aval (AD-4).
+ """
+ 
+ import json
+@@ -13,7 +16,10 @@ from pathlib import Path
+ from pydantic import ValidationError
+ 
+ from usine.contrats.erreurs import UsineErreur
+-from usine.contrats.evenements import EnteteJournal, Evenement
++from usine.contrats.evenements import EnteteJournal, Evenement, ManifesteInjection
++
++CHEMIN_MANIFESTE_INJECTION = Path("donnees/injection/manifeste_injection.json")
++"""Manifeste écrit par l'injecteur, relatif à la racine du dépôt."""
+ 
+ 
+ def _motifs(exc: ValidationError) -> str:
+@@ -24,11 +30,32 @@ def _motifs(exc: ValidationError) -> str:
+     )
+ 
+ 
++def charger_manifeste(chemin: Path) -> ManifesteInjection:
++    """Lit et valide un `ManifesteInjection` ; toute anomalie devient une `UsineErreur`."""
++    try:
++        texte = chemin.read_text(encoding="utf-8")
++    except FileNotFoundError as exc:
++        raise UsineErreur(f"{chemin} : manifeste d'injection introuvable") from exc
++    except UnicodeDecodeError as exc:
++        raise UsineErreur(
++            f"{chemin} : manifeste d'injection non encodé en UTF-8 (octet {exc.start})"
++        ) from exc
++    except OSError as exc:
++        raise UsineErreur(
++            f"{chemin} : manifeste d'injection illisible ({exc.strerror or exc})"
++        ) from exc
++    try:
++        return ManifesteInjection.model_validate_json(texte)
++    except ValidationError as exc:
++        raise UsineErreur(f"{chemin} : manifeste d'injection invalide ({_motifs(exc)})") from exc
++
++
+ class SourceJournal:
+     """Lit et valide le Journal à la construction, puis rend ses événements à la demande."""
+ 
+-    def __init__(self, chemin: Path) -> None:
++    def __init__(self, chemin: Path, manifeste: ManifesteInjection | None = None) -> None:
+         self._chemin = chemin
++        self._manifeste = manifeste
+         # Découpe sur « \n » seul : `splitlines` couperait aussi sur U+2028, U+0085, etc.,
+         # que `model_dump_json` laisse tels quels dans les chaînes.
+         lignes = self._lire().split("\n")
+@@ -54,9 +81,21 @@ class SourceJournal:
+                     f" précédente (ordre croissant attendu)"
+                 )
+             vus.add(evenement.id_evenement)
+-            evenements.append(evenement)
++            evenements.append(self._a_cle_jira(numero, evenement))
+         self._evenements = tuple(evenements)
+ 
++    def _a_cle_jira(self, numero: int, evenement: Evenement) -> Evenement:
++        """Remplace la clé générée par la clé Jira ; sans manifeste, rend l'événement tel quel."""
++        if self._manifeste is None:
++            return evenement
++        cle = self._manifeste.correspondance_cles.get(evenement.cle_ticket)
++        if cle is None:
++            raise UsineErreur(
++                f"{self._chemin} : ligne {numero} : clé {evenement.cle_ticket!r}"
++                " absente de la correspondance des clés du manifeste d'injection"
++            )
++        return evenement.model_copy(update={"cle_ticket": cle})
++
+     def _lire(self) -> str:
+         try:
+             return self._chemin.read_text(encoding="utf-8")
+@@ -95,6 +134,11 @@ class SourceJournal:
+         """Chemin du Journal lu."""
+         return self._chemin
+ 
++    @property
++    def manifeste(self) -> ManifesteInjection | None:
++        """Manifeste d'injection appliqué à la lecture, s'il y en a un."""
++        return self._manifeste
++
+     @property
+     def entete(self) -> EnteteJournal:
+         """En-tête du Journal (paramètres de génération)."""
+diff --git a/tests/unit/adaptateurs/journal/test_source_journal.py b/tests/unit/adaptateurs/journal/test_source_journal.py
+index 78019dd..ff713ef 100644
+--- a/tests/unit/adaptateurs/journal/test_source_journal.py
++++ b/tests/unit/adaptateurs/journal/test_source_journal.py
+@@ -8,10 +8,15 @@ from pathlib import Path
+ 
+ import pytest
+ 
+-from usine.adaptateurs.journal import SourceJournal
++from usine.adaptateurs.journal import (
++    CHEMIN_MANIFESTE_INJECTION,
++    SourceJournal,
++    charger_manifeste,
++)
+ from usine.config import charger_yaml
+ from usine.contrats.config import ConfigProgramme
+ from usine.contrats.erreurs import UsineErreur
++from usine.contrats.evenements import ManifesteInjection
+ from usine.contrats.tickets import Champ
+ from usine.generateur.journal import Generation, generer, serialiser_journal
+ from usine.ports import SourceTickets
+@@ -161,3 +166,55 @@ def test_journal_illisible(tmp_path: Path) -> None:
+     # Un répertoire : ni introuvable ni décodable, l'ouverture lève une autre `OSError`.
+     with pytest.raises(UsineErreur, match=re.escape(f"{tmp_path} : Journal illisible")):
+         SourceJournal(tmp_path)
++
++
++def _manifeste(generation: Generation, **remplace: object) -> ManifesteInjection:
++    cles = sorted({e.cle_ticket for e in generation.evenements})
++    donnees: dict[str, object] = {
++        "date_injection": generation.entete.date_injection,
++        "debut_injection": datetime(2026, 10, 12, 8, tzinfo=UTC),
++        "horodatage_fin_injection": datetime(2026, 10, 12, 9, tzinfo=UTC),
++        "cle_projet": "DEMO",
++        "correspondance_cles": {cle: f"DEMO-{i}" for i, cle in enumerate(cles, start=1)},
++    }
++    return ManifesteInjection.model_validate(donnees | remplace)
++
++
++def test_applique_la_correspondance_des_cles(tmp_path: Path, generation: Generation) -> None:
++    chemin = tmp_path / "journal.jsonl"
++    chemin.write_bytes(serialiser_journal(generation))
++    manifeste = _manifeste(generation)
++    source = SourceJournal(chemin, manifeste)
++    rendus = tuple(source.evenements())
++    assert source.manifeste == manifeste
++    assert rendus == tuple(
++        e.model_copy(update={"cle_ticket": manifeste.correspondance_cles[e.cle_ticket]})
++        for e in generation.evenements
++    )
++    assert all(e.cle_ticket.startswith("DEMO-") for e in rendus)
++
++
++def test_cle_absente_de_la_correspondance(tmp_path: Path, generation: Generation) -> None:
++    chemin = tmp_path / "journal.jsonl"
++    chemin.write_bytes(serialiser_journal(generation))
++    cles = sorted({e.cle_ticket for e in generation.evenements})
++    partielle = {cle: f"DEMO-{i}" for i, cle in enumerate(cles[1:], start=1)}
++    with pytest.raises(UsineErreur, match="absente de la correspondance"):
++        SourceJournal(chemin, _manifeste(generation, correspondance_cles=partielle))
++
++
++def test_charger_manifeste(tmp_path: Path, generation: Generation) -> None:
++    manifeste = _manifeste(generation)
++    chemin = tmp_path / "manifeste_injection.json"
++    chemin.write_text(manifeste.model_dump_json(), encoding="utf-8")
++    assert charger_manifeste(chemin) == manifeste
++    assert CHEMIN_MANIFESTE_INJECTION.as_posix() == "donnees/injection/manifeste_injection.json"
++
++
++def test_charger_manifeste_absent_ou_invalide(tmp_path: Path) -> None:
++    with pytest.raises(UsineErreur, match="manifeste d'injection introuvable"):
++        charger_manifeste(tmp_path / "absent.json")
++    invalide = tmp_path / "invalide.json"
++    invalide.write_text("{}", encoding="utf-8")
++    with pytest.raises(UsineErreur, match="manifeste d'injection invalide"):
++        charger_manifeste(invalide)

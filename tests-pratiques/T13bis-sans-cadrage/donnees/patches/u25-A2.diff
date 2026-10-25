@@ -1,0 +1,503 @@
+diff --git a/pyproject.toml b/pyproject.toml
+index a5b34d0..30adbda 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -59,9 +59,10 @@ default-groups = ["dev"]
+ 
+ [tool.pytest.ini_options]
+ testpaths = ["tests"]
+-addopts = ["-m", "not reseau", "--strict-markers"]
++addopts = ["-m", "not reseau and not lent", "--strict-markers"]
+ markers = [
+     "reseau: test qui accède au réseau (Jira, LLM) ; exclu par défaut, lancé par `-m reseau`",
++    "lent: test de volumétrie cible ; exclu par défaut, lancé par `-m lent`",
+ ]
+ 
+ [tool.ruff]
+diff --git a/src/usine/adaptateurs/journal/__init__.py b/src/usine/adaptateurs/journal/__init__.py
+index 9508d58..553ceea 100644
+--- a/src/usine/adaptateurs/journal/__init__.py
++++ b/src/usine/adaptateurs/journal/__init__.py
+@@ -2,7 +2,8 @@
+ 
+ Le Journal est un fichier UTF-8 : un `EnteteJournal` en première ligne, puis un `Evenement`
+ par ligne, par horodatage croissant. Toute anomalie de lecture devient une `UsineErreur` qui
+-nomme le fichier et, pour une ligne, son numéro (1 = en-tête).
++nomme le fichier et, pour une ligne, son numéro (1 = en-tête). Avec un `ManifesteInjection`,
++les clés générées sont remplacées par les clés Jira à la lecture (AD-4).
+ """
+ 
+ import json
+@@ -13,7 +14,11 @@ from pathlib import Path
+ from pydantic import ValidationError
+ 
+ from usine.contrats.erreurs import UsineErreur
+-from usine.contrats.evenements import EnteteJournal, Evenement
++from usine.contrats.evenements import EnteteJournal, Evenement, ManifesteInjection
++from usine.contrats.passage import REPERTOIRE_DONNEES
++
++CHEMIN_MANIFESTE_INJECTION = REPERTOIRE_DONNEES / "injection" / "manifeste_injection.json"
++"""Manifeste écrit par l'injecteur, relatif à la racine."""
+ 
+ 
+ def _motifs(exc: ValidationError) -> str:
+@@ -24,11 +29,40 @@ def _motifs(exc: ValidationError) -> str:
+     )
+ 
+ 
++def charger_manifeste(chemin: Path) -> ManifesteInjection:
++    """Lit et valide le manifeste d'injection ; toute anomalie est une `UsineErreur`."""
++    try:
++        texte = chemin.read_text(encoding="utf-8")
++    except FileNotFoundError as exc:
++        raise UsineErreur(f"{chemin} : manifeste d'injection introuvable") from exc
++    except UnicodeDecodeError as exc:
++        raise UsineErreur(
++            f"{chemin} : manifeste d'injection non encodé en UTF-8 (octet {exc.start})"
++        ) from exc
++    except OSError as exc:
++        raise UsineErreur(
++            f"{chemin} : manifeste d'injection illisible ({exc.strerror or exc})"
++        ) from exc
++    try:
++        donnees = json.loads(texte)
++    except json.JSONDecodeError as exc:
++        raise UsineErreur(f"{chemin} : manifeste invalide, JSON illisible ({exc.msg})") from exc
++    if not isinstance(donnees, dict):
++        raise UsineErreur(
++            f"{chemin} : manifeste invalide, objet JSON attendu ({type(donnees).__name__} reçu)"
++        )
++    try:
++        return ManifesteInjection.model_validate(donnees)
++    except ValidationError as exc:
++        raise UsineErreur(f"{chemin} : manifeste invalide ({_motifs(exc)})") from exc
++
++
+ class SourceJournal:
+     """Lit et valide le Journal à la construction, puis rend ses événements à la demande."""
+ 
+-    def __init__(self, chemin: Path) -> None:
++    def __init__(self, chemin: Path, manifeste: ManifesteInjection | None = None) -> None:
+         self._chemin = chemin
++        self._manifeste = manifeste
+         # Découpe sur « \n » seul : `splitlines` couperait aussi sur U+2028, U+0085, etc.,
+         # que `model_dump_json` laisse tels quels dans les chaînes.
+         lignes = self._lire().split("\n")
+@@ -55,8 +89,37 @@ class SourceJournal:
+                 )
+             vus.add(evenement.id_evenement)
+             evenements.append(evenement)
++        if manifeste is not None:
++            evenements = self._appliquer_correspondance(manifeste, evenements)
+         self._evenements = tuple(evenements)
+ 
++    def _appliquer_correspondance(
++        self, manifeste: ManifesteInjection, evenements: list[Evenement]
++    ) -> list[Evenement]:
++        """Remplace les clés générées par les clés Jira ; refuse date incohérente et collision."""
++        if manifeste.date_injection != self._entete.date_injection:
++            raise UsineErreur(
++                f"{self._chemin} : Date d'injection du manifeste"
++                f" ({manifeste.date_injection.isoformat()}) différente de celle de l'en-tête"
++                f" ({self._entete.date_injection.isoformat()})"
++            )
++        correspondance = manifeste.correspondance_cles
++        finales: dict[str, str] = {}  # clé finale → clé du Journal
++        for evenement in evenements:
++            cle = evenement.cle_ticket
++            finale = correspondance.get(cle, cle)
++            deja = finales.setdefault(finale, cle)
++            if deja != cle:
++                raise UsineErreur(
++                    f"{self._chemin} : {cle} et {deja} reçoivent la même clé {finale}"
++                )
++        return [
++            evenement.model_copy(update={"cle_ticket": correspondance[evenement.cle_ticket]})
++            if evenement.cle_ticket in correspondance
++            else evenement
++            for evenement in evenements
++        ]
++
+     def _lire(self) -> str:
+         try:
+             return self._chemin.read_text(encoding="utf-8")
+@@ -95,6 +158,11 @@ class SourceJournal:
+         """Chemin du Journal lu."""
+         return self._chemin
+ 
++    @property
++    def manifeste(self) -> ManifesteInjection | None:
++        """Manifeste d'injection appliqué, s'il y en a un."""
++        return self._manifeste
++
+     @property
+     def entete(self) -> EnteteJournal:
+         """En-tête du Journal (paramètres de génération)."""
+diff --git a/src/usine/composition.py b/src/usine/composition.py
+index 07cb94c..89095a2 100644
+--- a/src/usine/composition.py
++++ b/src/usine/composition.py
+@@ -15,7 +15,8 @@ L'étape `extraction` verse Jira dans `donnees/entrepot.duckdb` (`EtapeExtractio
+ présent (`mode: cloud` : `JIRA_TOKEN_LECTURE`, puis `JIRA_EMAIL` exigé ; `mode: dc` :
+ `JIRA_DC_PAT`) ; l'adaptateur (`SourceJiraCloud` ou `SourceJiraDC`) suit `mode`. Sinon elle
+ reste un bouchon et le Journal est la seule source. `instantanes` lit toujours le Journal
+-(source composite : Story 2.6). Les services de l'UI vivent dans
++(source composite : Story 2.6), avec les clés Jira de `donnees/injection/manifeste_injection.json`
++quand ce manifeste existe. Les services de l'UI vivent dans
+ `ui/cli.py`, l'écriture du Journal dans `generateur.journal.ecrire_journal`.
+ """
+ 
+@@ -33,7 +34,11 @@ from usine.adaptateurs.entrepot_duckdb import CHEMIN_ENTREPOT, EtapeExtraction
+ from usine.adaptateurs.jira_cloud import SourceJiraCloud
+ from usine.adaptateurs.jira_dc import SourceJiraDC
+ from usine.adaptateurs.jira_http import construire_client_lecture
+-from usine.adaptateurs.journal import SourceJournal
++from usine.adaptateurs.journal import (
++    CHEMIN_MANIFESTE_INJECTION,
++    SourceJournal,
++    charger_manifeste,
++)
+ from usine.adaptateurs.pseudonymisation import (
+     MOTIFS_PAR_DEFAUT,
+     PseudonymiseurHmac,
+@@ -282,7 +287,9 @@ def construire_rapport(
+     empreinte_grille = version_grille(_octets(chemin_grille, "Grille de météo"))
+ 
+     chemin_journal = racine / CHEMIN_JOURNAL
+-    source = SourceJournal(chemin_journal)
++    chemin_manifeste = racine / CHEMIN_MANIFESTE_INJECTION
++    manifeste = charger_manifeste(chemin_manifeste) if chemin_manifeste.exists() else None
++    source = SourceJournal(chemin_journal, manifeste)
+     empreinte_donnees = version_donnees(_octets(chemin_journal, "Journal"), None)
+     premier_jour = source.entete.ancrage_semaines
+     entites = [entite.code for entite in programme.entites]
+diff --git a/tests/contrat/source_tickets/fabriques.py b/tests/contrat/source_tickets/fabriques.py
+index 9acc988..85e2a32 100644
+--- a/tests/contrat/source_tickets/fabriques.py
++++ b/tests/contrat/source_tickets/fabriques.py
+@@ -23,7 +23,12 @@ from tests.unit.adaptateurs.jira_dc.outils import source_fixtures_dc
+ from usine.adaptateurs.journal import SourceJournal
+ from usine.config import charger_yaml
+ from usine.contrats.config import ConfigProgramme
+-from usine.contrats.evenements import Evenement, NatureEvenement, SourceEvenement
++from usine.contrats.evenements import (
++    Evenement,
++    ManifesteInjection,
++    NatureEvenement,
++    SourceEvenement,
++)
+ from usine.contrats.tickets import Champ, TypeTicket
+ from usine.generateur.journal import generer, serialiser_journal
+ from usine.ports import SourceTickets
+@@ -128,6 +133,32 @@ def fabrique_journal() -> CasSourceTickets:
+     return CasSourceTickets(SourceJournal(chemin), generation.evenements)
+ 
+ 
++def fabrique_journal_manifeste() -> CasSourceTickets:
++    """`SourceJournal` avec un manifeste qui permute deux clés du Journal réduit."""
++    config = charger_yaml(
++        Path(__file__).resolve().parents[3] / "tests/unit/generateur/programme_reduit.yaml",
++        ConfigProgramme,
++    )
++    generation = generer(config, 42, date(2026, 10, 12))
++    repertoire = Path(tempfile.mkdtemp(prefix="usine-journal-"))
++    atexit.register(shutil.rmtree, repertoire, True)
++    chemin = repertoire / "journal.jsonl"
++    chemin.write_bytes(serialiser_journal(generation))
++    permutation = {"DEMO-1": "DEMO-2", "DEMO-2": "DEMO-1"}
++    manifeste = ManifesteInjection(
++        date_injection=generation.entete.date_injection,
++        debut_injection=T0,
++        horodatage_fin_injection=T0,
++        cle_projet="DEMO",
++        correspondance_cles=permutation,
++    )
++    attendus = tuple(
++        e.model_copy(update={"cle_ticket": permutation.get(e.cle_ticket, e.cle_ticket)})
++        for e in generation.evenements
++    )
++    return CasSourceTickets(SourceJournal(chemin, manifeste), attendus)
++
++
+ def fabrique_jira_cloud() -> CasSourceTickets:
+     """`SourceJiraCloud` sur les fixtures `tests/fixtures/jira_cloud/source_*`, sans réseau."""
+     return CasSourceTickets(source_fixtures(), evenements_attendus_cloud())
+@@ -142,6 +173,7 @@ FABRIQUES: list[tuple[str, Callable[[], CasSourceTickets]]] = [
+     ("source_en_memoire", fabrique_source_en_memoire),
+     ("journal_genere", fabrique_journal_genere),
+     ("journal", fabrique_journal),
++    ("journal_manifeste", fabrique_journal_manifeste),
+     ("jira_cloud", fabrique_jira_cloud),
+     ("jira_dc", fabrique_jira_dc),
+ ]
+diff --git a/tests/unit/adaptateurs/journal/test_source_journal.py b/tests/unit/adaptateurs/journal/test_source_journal.py
+index 78019dd..60e5939 100644
+--- a/tests/unit/adaptateurs/journal/test_source_journal.py
++++ b/tests/unit/adaptateurs/journal/test_source_journal.py
+@@ -3,15 +3,16 @@
+ import json
+ import re
+ from dataclasses import replace
+-from datetime import UTC, date, datetime
++from datetime import UTC, date, datetime, timedelta
+ from pathlib import Path
+ 
+ import pytest
+ 
+-from usine.adaptateurs.journal import SourceJournal
++from usine.adaptateurs.journal import CHEMIN_MANIFESTE_INJECTION, SourceJournal, charger_manifeste
+ from usine.config import charger_yaml
+ from usine.contrats.config import ConfigProgramme
+ from usine.contrats.erreurs import UsineErreur
++from usine.contrats.evenements import ManifesteInjection
+ from usine.contrats.tickets import Champ
+ from usine.generateur.journal import Generation, generer, serialiser_journal
+ from usine.ports import SourceTickets
+@@ -161,3 +162,114 @@ def test_journal_illisible(tmp_path: Path) -> None:
+     # Un répertoire : ni introuvable ni décodable, l'ouverture lève une autre `OSError`.
+     with pytest.raises(UsineErreur, match=re.escape(f"{tmp_path} : Journal illisible")):
+         SourceJournal(tmp_path)
++
++
++# --- Manifeste d'injection et correspondance des clés (Story 2.5) ---
++
++
++def _manifeste(
++    generation: Generation,
++    correspondance: dict[str, str],
++    date_injection: date | None = None,
++) -> ManifesteInjection:
++    debut = datetime(2026, 10, 12, 8, 0, tzinfo=UTC)
++    return ManifesteInjection(
++        date_injection=date_injection or generation.entete.date_injection,
++        debut_injection=debut,
++        horodatage_fin_injection=debut,
++        cle_projet="DEMO",
++        correspondance_cles=correspondance,
++    )
++
++
++def _journal(tmp_path: Path, generation: Generation) -> Path:
++    chemin = tmp_path / "journal.jsonl"
++    chemin.write_bytes(serialiser_journal(generation))
++    return chemin
++
++
++def test_sans_manifeste_flux_inchange(tmp_path: Path, generation: Generation) -> None:
++    source = SourceJournal(_journal(tmp_path, generation))
++    assert source.manifeste is None
++    assert tuple(source.evenements()) == generation.evenements
++
++
++def test_correspondance_totale_permute_les_cles(tmp_path: Path, generation: Generation) -> None:
++    permutation = {"DEMO-1": "DEMO-7", "DEMO-7": "DEMO-1"}
++    assert "DEMO-7" in {e.cle_ticket for e in generation.evenements}
++    manifeste = _manifeste(generation, permutation)
++    source = SourceJournal(_journal(tmp_path, generation), manifeste)
++    assert source.manifeste is manifeste
++    rendus = tuple(source.evenements())
++    assert len(rendus) == len(generation.evenements)
++    for rendu, origine in zip(rendus, generation.evenements, strict=True):
++        assert rendu.cle_ticket == permutation.get(origine.cle_ticket, origine.cle_ticket)
++        assert rendu == origine.model_copy(update={"cle_ticket": rendu.cle_ticket})
++
++
++def test_correspondance_partielle_et_entree_sans_ticket(
++    tmp_path: Path, generation: Generation
++) -> None:
++    cles = {e.cle_ticket for e in generation.evenements}
++    assert "DEMO-9999" not in cles
++    manifeste = _manifeste(generation, {"DEMO-1": "DEMO-9999", "DEMO-8888": "DEMO-8887"})
++    rendus = tuple(SourceJournal(_journal(tmp_path, generation), manifeste).evenements())
++    attendues = {"DEMO-9999" if c == "DEMO-1" else c for c in cles}
++    assert {e.cle_ticket for e in rendus} == attendues
++    assert [e.id_evenement for e in rendus] == [e.id_evenement for e in generation.evenements]
++
++
++def test_collision_refusee(tmp_path: Path, generation: Generation) -> None:
++    assert "DEMO-2" in {e.cle_ticket for e in generation.evenements}
++    manifeste = _manifeste(generation, {"DEMO-1": "DEMO-2"})
++    with pytest.raises(UsineErreur, match=r"journal\.jsonl.*DEMO-1.*DEMO-2"):
++        SourceJournal(_journal(tmp_path, generation), manifeste)
++
++
++def test_date_injection_incoherente(tmp_path: Path, generation: Generation) -> None:
++    autre = generation.entete.date_injection + timedelta(days=1)
++    manifeste = _manifeste(generation, {"DEMO-1": "DEMO-9999"}, autre)
++    with pytest.raises(UsineErreur) as erreur:
++        SourceJournal(_journal(tmp_path, generation), manifeste)
++    assert autre.isoformat() in str(erreur.value)
++    assert generation.entete.date_injection.isoformat() in str(erreur.value)
++
++
++def _ecrire_manifeste(repertoire: Path, contenu: str | bytes) -> Path:
++    chemin = repertoire / "manifeste_injection.json"
++    if isinstance(contenu, bytes):
++        chemin.write_bytes(contenu)
++    else:
++        chemin.write_text(contenu, encoding="utf-8")
++    return chemin
++
++
++def test_charger_manifeste_valide(tmp_path: Path, generation: Generation) -> None:
++    manifeste = _manifeste(generation, {"DEMO-1": "DEMO-9999"})
++    chemin = _ecrire_manifeste(tmp_path, manifeste.model_dump_json())
++    assert charger_manifeste(chemin) == manifeste
++
++
++def test_charger_manifeste_absent(tmp_path: Path) -> None:
++    with pytest.raises(UsineErreur, match="manifeste d'injection introuvable"):
++        charger_manifeste(tmp_path / "absent.json")
++
++
++@pytest.mark.parametrize(
++    ("contenu", "motif"),
++    [
++        ("{pas du json", "JSON illisible"),
++        ("[1, 2]", "objet JSON attendu"),
++        ('{"cle_projet": "demo"}', "manifeste invalide"),
++        (b"\xff\xfe{}", "UTF-8"),
++    ],
++)
++def test_charger_manifeste_invalide(tmp_path: Path, contenu: str | bytes, motif: str) -> None:
++    chemin = _ecrire_manifeste(tmp_path, contenu)
++    with pytest.raises(UsineErreur, match=motif) as erreur:
++        charger_manifeste(chemin)
++    assert "manifeste_injection.json" in str(erreur.value)
++
++
++def test_chemin_manifeste_injection() -> None:
++    assert Path("donnees/injection/manifeste_injection.json") == CHEMIN_MANIFESTE_INJECTION
+diff --git a/tests/unit/adaptateurs/journal/test_volumetrie.py b/tests/unit/adaptateurs/journal/test_volumetrie.py
+new file mode 100644
+index 0000000..2261e50
+--- /dev/null
++++ b/tests/unit/adaptateurs/journal/test_volumetrie.py
+@@ -0,0 +1,45 @@
++"""Volumétrie cible de FR-8 : Journal complet et correspondance des clés (Story 2.5)."""
++
++import re
++from datetime import UTC, date, datetime
++from pathlib import Path
++
++import pytest
++
++from usine.adaptateurs.journal import SourceJournal
++from usine.config import charger_yaml
++from usine.contrats.calendrier import jours_ouvres
++from usine.contrats.config import ConfigProgramme
++from usine.contrats.evenements import ManifesteInjection
++from usine.domaine.instantanes import tickets_etats
++from usine.generateur.journal import generer, serialiser_journal
++
++RACINE = Path(__file__).resolve().parents[4]
++DECALAGE = 10_000
++
++
++@pytest.mark.lent
++def test_journal_complet_toutes_cles_renommees(tmp_path: Path) -> None:
++    config = charger_yaml(RACINE / "config/programme.yaml", ConfigProgramme)
++    generation = generer(config, 42, date(2026, 10, 12))
++    chemin = tmp_path / "journal.jsonl"
++    chemin.write_bytes(serialiser_journal(generation))
++    generees = {e.cle_ticket for e in generation.evenements}
++    instant = datetime(2026, 10, 12, 8, 0, tzinfo=UTC)
++    manifeste = ManifesteInjection(
++        date_injection=generation.entete.date_injection,
++        debut_injection=instant,
++        horodatage_fin_injection=instant,
++        cle_projet="DEMO",
++        correspondance_cles={cle: f"DEMO-{int(cle.split('-')[1]) + DECALAGE}" for cle in generees},
++    )
++    rendus = tuple(SourceJournal(chemin, manifeste).evenements())
++    assert len(rendus) == len(generation.evenements)
++    cles = {e.cle_ticket for e in rendus}
++    assert not generees & cles
++    assert all(re.fullmatch(r"DEMO-\d+", cle) for cle in cles)
++    jours = jours_ouvres(generation.entete.ancrage_semaines, generation.entete.date_injection)
++    table = tickets_etats(rendus, jours)
++    assert not table.is_empty()
++    assert set(table["date"].unique().to_list()) == set(jours)
++    assert set(table["cle_ticket"].unique().to_list()) <= cles
+diff --git a/tests/unit/test_composition.py b/tests/unit/test_composition.py
+index dcc0a55..14271f3 100644
+--- a/tests/unit/test_composition.py
++++ b/tests/unit/test_composition.py
+@@ -1,5 +1,6 @@
+ """Racine de composition : secrets, URL Jira et sélection de l'extraction Jira (Story 2.4)."""
+ 
++import json
+ from datetime import date, timedelta
+ from pathlib import Path
+ from typing import Any
+@@ -18,11 +19,13 @@ from usine.adaptateurs.entrepot_duckdb import EntrepotDuckDB, EtapeExtraction
+ from usine.adaptateurs.jira_cloud import SourceJiraCloud
+ from usine.adaptateurs.jira_dc import SourceJiraDC
+ from usine.adaptateurs.jira_http import construire_client_lecture
++from usine.adaptateurs.journal import CHEMIN_MANIFESTE_INJECTION, SourceJournal
+ from usine.chaine.etapes import EtapeBouchon
+ from usine.config import charger_yaml
++from usine.consultation.passage import ConsultationPassage
+ from usine.contrats.config import ConfigJira, ConfigProgramme
+ from usine.contrats.erreurs import UsineErreur
+-from usine.contrats.passage import Etape
++from usine.contrats.passage import CHEMIN_JOURNAL, Etape
+ from usine.ports.etape import Etape as PortEtape
+ 
+ _VARIABLES_JIRA = ("USINE_MODE_REPLI", "JIRA_EMAIL", "JIRA_TOKEN_LECTURE", "JIRA_DC_PAT")
+@@ -242,3 +245,55 @@ def test_client_ferme_si_le_passage_echoue_avant_l_extraction(
+         composition.lancer_rapport(racine_journal, DATE_ARRETE, horloge_figee())
+     assert fermetures == ["fermé"]
+     assert serveur.requetes == []
++
++
++# --- Manifeste d'injection et clés Jira en mode Journal seul (Story 2.5) ---
++
++
++def _ecrire_manifeste(racine: Path, correspondance: dict[str, str]) -> None:
++    entete = SourceJournal(racine / CHEMIN_JOURNAL).entete
++    instant = "2026-10-12T08:00:00Z"
++    chemin = racine / CHEMIN_MANIFESTE_INJECTION
++    chemin.parent.mkdir(parents=True, exist_ok=True)
++    chemin.write_text(
++        json.dumps(
++            {
++                "date_injection": entete.date_injection.isoformat(),
++                "debut_injection": instant,
++                "horodatage_fin_injection": instant,
++                "cle_projet": "DEMO",
++                "correspondance_cles": correspondance,
++            }
++        ),
++        encoding="utf-8",
++    )
++
++
++def test_passage_journal_seul_applique_le_manifeste(
++    racine_journal: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    _interdire_le_client(monkeypatch)
++    _ecrire_manifeste(racine_journal, {"DEMO-1": "DEMO-9999"})
++    lance = composition.lancer_rapport(racine_journal, DATE_ARRETE, horloge_figee())
++    assert lance.manifeste.source == "journal"
++    cles = ConsultationPassage(lance.repertoire).tickets_etats()["cle_ticket"].to_list()
++    assert "DEMO-9999" in cles
++    assert "DEMO-1" not in cles
++
++
++def test_passage_journal_seul_sans_manifeste_inchange(
++    racine_journal: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    _interdire_le_client(monkeypatch)
++    lance = composition.lancer_rapport(racine_journal, DATE_ARRETE, horloge_figee())
++    cles = ConsultationPassage(lance.repertoire).tickets_etats()["cle_ticket"].to_list()
++    assert "DEMO-1" in cles
++    assert "DEMO-9999" not in cles
++
++
++def test_manifeste_invalide_refuse_a_la_composition(racine_journal: Path) -> None:
++    chemin = racine_journal / CHEMIN_MANIFESTE_INJECTION
++    chemin.parent.mkdir(parents=True)
++    chemin.write_text("[]", encoding="utf-8")
++    with pytest.raises(UsineErreur, match=r"manifeste_injection\.json.*objet JSON attendu"):
++        composition.construire_rapport(racine_journal)
