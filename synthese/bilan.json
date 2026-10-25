@@ -226,10 +226,10 @@
       "note": "Vérification à la main pendant une session ; pas pour les runs autonomes."
     },
     "playwright-mcp": {
-      "decision": "Intégrer",
+      "decision": "Déjà en place",
       "statut": "conclu",
       "preuve": "T7, T12",
-      "note": "Pour le sous-agent qui vérifie les critères d'acceptation d'une story front, après dev-story et avant second-avis : 22 défauts d'interface semés sur 25 trouvés (IC 70 à 96 %) que pytest et axe-core ne voient pas, 0 faux positif sur 8 témoins, 0,14 $ par vérification. Mais aucun gain mesuré dans la boucle de développement (6 cellules : l'agent tenait déjà les critères) : c'est un filet de sécurité. Conditions : même spec que dev-story, captures à 390 px relues, correction seulement s'il y a un FAIL (sinon 0,6 à 1,6 $ pour rien)."
+      "note": "Livré dans agent-cost-kit 0.13.0 comme sous-agent expérimental verif-front (modèle copié dans .claude/agents/ d'un projet front ; les sous-agents de plugin ignorent mcpServers). Pour le sous-agent qui vérifie les critères d'acceptation d'une story front, après dev-story et avant second-avis : 22 défauts d'interface semés sur 25 trouvés (IC 70 à 96 %) que pytest et axe-core ne voient pas, 0 faux positif sur 8 témoins, 0,14 $ par vérification. Mais aucun gain mesuré dans la boucle de développement (6 cellules : l'agent tenait déjà les critères) : c'est un filet de sécurité. Conditions : même spec que dev-story, captures à 390 px relues, correction seulement s'il y a un FAIL (sinon 0,6 à 1,6 $ pour rien)."
     },
     "playwright-cli": {
       "decision": "Écarter",
@@ -955,6 +955,6 @@
     "<strong>La découverte de la série : la mutation guidée.</strong> Montrer à l'agent les mutants qui survivent à ses tests lui fait boucher 134 trous non équivalents sur 134, contre 59 % avec une simple consigne, pour 0,22 $ par story. C'est le seul ajout à ta chaîne que les tests justifient (étape optionnelle de la revue, 3 à 13 min).",
     "<strong>Ce qui ne rapporte pas, mesuré aussi</strong> : un relecteur d'une autre famille (+6 points, non significatif), la porte empirique, le verrouillage des tests (aucune triche observée sur 40 runs), <code>/advisor</code>, les tests Hypothesis, les juges de commandes shell, les modèles de décision (Jev), la compression des sorties, une voie « story légère » façon OpenSpec (−46 % de coût mais −10 points de réussite, T13), la correction systématique après vérification du front, le TTL d'une heure, les modèles locaux au quotidien, tailler un CLAUDE.md de quelques milliers de tokens.",
     "<strong>Gagnants stricts</strong> (au moins aussi bons et moins chers, sur tes données) : la chaîne agent-cost-kit contre bmad-build, la réduction du contexte fixe contre la compression, Haiku contre les modèles locaux pour le lookup, Sonnet seul contre Sonnet + conseiller, la mutation guidée contre la consigne seule. Partout ailleurs, pas de gagnant strict : choisir l'option la plus simple.",
-    "<strong>À faire de ton côté</strong> : noter à l'aveugle les 8 rendus de design (<code>tests-pratiques/T7/notation.html</code>, ~10 min) et les 32 réécritures (<code>tests-pratiques/T11-ecriture/notation.html</code>, ~20 min) ; décider si le sous-agent de vérification front entre dans agent-cost-kit. T13 bis (sauter le cadrage BMAD pour les petites stories bien décrites) est en cours."
+    "<strong>À faire de ton côté</strong> : noter à l'aveugle les 8 rendus de design (<code>tests-pratiques/T7/notation.html</code>, ~10 min) et les 32 réécritures (<code>tests-pratiques/T11-ecriture/notation.html</code>, ~20 min) ; essayer le sous-agent <code>verif-front</code> (agent-cost-kit 0.13.0, expérimental) sur tes prochaines stories front. T13 bis (sauter le cadrage BMAD pour les petites stories bien décrites) est en cours."
   ]
 }
